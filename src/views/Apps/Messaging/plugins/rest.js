@@ -3,7 +3,7 @@ import { Message, Channel } from '@/types'
 
 export default {
   install (Vue, store) {
-    const JSONbig = require('json-bigint')({'storeAsString': true})
+    const JSONbig = require('json-bigint')({ 'storeAsString': true })
 
     const stdRejection = (reject) => (error) => {
       reject(error)
@@ -31,8 +31,8 @@ export default {
           withCredentials: true,
           baseURL: this.baseURL(),
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         })
       },
 
@@ -48,7 +48,7 @@ export default {
         return new Promise((resolve, reject) => {
           this.api().put(
             `/channels/${ch.ID}`,
-            {topic: ch.topic, name: ch.name, type: ch.type}
+            { topic: ch.topic, name: ch.name, type: ch.type }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
@@ -57,7 +57,7 @@ export default {
         return new Promise((resolve, reject) => {
           this.api().post(
             `/channels/`,
-            {topic: ch.topic, name: ch.name, type: ch.type}
+            { topic: ch.topic, name: ch.name, type: ch.type }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
@@ -66,7 +66,7 @@ export default {
         return new Promise((resolve, reject) => {
           this.api().post(
             `/users/${userId}/message`,
-            {message}
+            { message }
           ).then(response => {
             if (response.data.error) {
               reject(response.data.error)
@@ -78,7 +78,7 @@ export default {
             resolve(new Message(msg))
           }, stdRejection)
         })
-      }
+      },
     }
-  }
+  },
 }

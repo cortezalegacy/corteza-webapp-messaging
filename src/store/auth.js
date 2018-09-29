@@ -2,7 +2,7 @@ const localStorageKey = 'auth.user'
 
 // Initial state
 const state = {
-  user: null
+  user: null,
 }
 
 const storedJSON = localStorage.getItem(localStorageKey)
@@ -25,20 +25,20 @@ try {
 // getters
 const getters = {
   isAuthenticated: (state) => !!state.user,
-  user: (state) => state.user
+  user: (state) => state.user,
 }
 
 // actions
 const actions = {
-  clear ({commit}) {
+  clear ({ commit }) {
     commit('clean')
     commit('flush')
   },
 
-  setUser ({commit}, user) {
+  setUser ({ commit }, user) {
     commit('setUser', user)
     commit('flush')
-  }
+  },
 }
 
 // mutations
@@ -59,7 +59,7 @@ const mutations = {
     if (user) {
       state.user = user
     }
-  }
+  },
 }
 
 export default {
@@ -67,5 +67,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

@@ -4,7 +4,7 @@ var BigNumber = require('bignumber.js')
 const state = {
   current: null,
   list: [],
-  lastMessages: [] // set of channelID-messageId pairs
+  lastMessages: [], // set of channelID-messageId pairs
 }
 
 // getters
@@ -15,34 +15,34 @@ const getters = {
     return ci < 0 ? 0 : state.lastMessages[ci].messageId
   },
   current: (state) => state.list.find(ch => ch.ID === state.current),
-  list: (state) => state.list
+  list: (state) => state.list,
 }
 
 // actions
 const actions = {
-  setCurrentById ({commit}, channelID) {
+  setCurrentById ({ commit }, channelID) {
     commit('setCurrent', channelID)
   },
 
-  setLastMessageId ({commit, state}, {channelID, messageId}) {
+  setLastMessageId ({ commit, state }, { channelID, messageId }) {
     let ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
 
     if (ci < 0 || (new BigNumber(messageId)).isGreaterThan(new BigNumber(state.lastMessages[ci].messageId))) {
-      commit('updateLastMessage', {channelID, messageId})
+      commit('updateLastMessage', { channelID, messageId })
     }
   },
 
-  resetList ({commit}, list) {
+  resetList ({ commit }, list) {
     commit('resetList', list)
   },
 
-  updateList ({commit}, channel) {
+  updateList ({ commit }, channel) {
     commit('updateList', channel)
   },
 
-  removeFromList ({commit}, channel) {
+  removeFromList ({ commit }, channel) {
     commit('removeFromList', channel)
-  }
+  },
 }
 
 // mutations
@@ -72,14 +72,14 @@ const mutations = {
     state.list = [...state.list.filter(ch => channel.ID !== ch.ID)]
   },
 
-  updateLastMessage (state, {channelID, messageId}) {
+  updateLastMessage (state, { channelID, messageId }) {
     const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
     if (ci < 0) {
-      state.lastMessages.push({channelID, messageId})
+      state.lastMessages.push({ channelID, messageId })
     } else {
-      state.lastMessages.splice(ci, 1, {channelID, messageId})
+      state.lastMessages.splice(ci, 1, { channelID, messageId })
     }
-  }
+  },
 }
 
 export default {
@@ -87,5 +87,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

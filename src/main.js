@@ -25,8 +25,8 @@ new Vue({
   el: '#app',
   store,
   router,
-  components: {App},
-  template: '<App/>'
+  components: { App },
+  template: '<App/>',
 })
 
 unsync()

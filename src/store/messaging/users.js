@@ -1,29 +1,29 @@
 // initial state
 const state = {
-  list: []
+  list: [],
 }
 
 // getters
 const getters = {
   list: (state) => state.list,
   length: (state) => state.list.length,
-  findByID: (state) => (ID) => state.list.find(u => ID === u.ID)
+  findByID: (state) => (ID) => state.list.find(u => ID === u.ID),
 
 }
 
 // actions
 const actions = {
-  resetList ({commit}, list) {
+  resetList ({ commit }, list) {
     commit('resetList', list)
   },
 
-  connected ({commit}, id) {
+  connected ({ commit }, id) {
     commit('incConnected', id)
   },
 
-  disconnected ({commit}, id) {
+  disconnected ({ commit }, id) {
     commit('decConnected', id)
-  }
+  },
 }
 
 // mutations
@@ -48,7 +48,7 @@ const mutations = {
         console.debug('User disconnected', user.ID, user.name, user.username, user.handle)
       }
     })
-  }
+  },
 }
 
 export default {
@@ -56,5 +56,5 @@ export default {
   state,
   getters,
   actions,
-  mutations
+  mutations,
 }

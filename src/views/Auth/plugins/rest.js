@@ -13,8 +13,8 @@ export default {
           baseURL: this.baseURL(),
           withCredentials: true,
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         })
       },
 
@@ -24,7 +24,7 @@ export default {
 
           this.api().delete(
             `/check`
-          ).then(({data}) => {
+          ).then(({ data }) => {
             resolve()
           }).catch((error) => {
             reject(error || new Error('Protocol error'))
@@ -36,7 +36,7 @@ export default {
         return new Promise((resolve, reject) => {
           this.api().get(
             `/check`
-          ).then(({data}) => {
+          ).then(({ data }) => {
             if (!data.response) {
               // Not authenticated
               // make sure this is reflected in the state
@@ -53,7 +53,7 @@ export default {
             reject(error || new Error('Protocol error'))
           })
         })
-      }
+      },
     }
-  }
+  },
 }

@@ -5,7 +5,7 @@ export default {
   install (Vue) {
     const ws = new Websocket()
     Vue.prototype.$ws = ws
-  }
+  },
 }
 
 function Websocket () {
@@ -38,7 +38,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
       this.active = true
 
       if (this.queue.length > 0) {
-        console.debug('', 'Draining message queue', {length: this.queue.length})
+        console.debug('', 'Draining message queue', { length: this.queue.length })
 
         while (this.active && this.queue.length > 0) {
           const msg = this.queue.shift()
@@ -90,40 +90,40 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   },
 
   async getChannels () {
-    return this.send(JSON.stringify({channels: {}}))
+    return this.send(JSON.stringify({ channels: {} }))
   },
 
   async createChannel (ch) {
-    return this.send(JSON.stringify({createChannel: ch}))
+    return this.send(JSON.stringify({ createChannel: ch }))
   },
 
   async updateChannel (ch) {
     // @todo merge these two into one function
-    return this.send(JSON.stringify({updateChannel: ch}))
+    return this.send(JSON.stringify({ updateChannel: ch }))
   },
 
   async deleteChannel (id) {
-    return this.send(JSON.stringify({deleteChannel: {id}}))
+    return this.send(JSON.stringify({ deleteChannel: { id } }))
   },
 
   async sendMessage (channelID, message) {
-    return this.send(JSON.stringify({createMessage: {channelID, message}}))
+    return this.send(JSON.stringify({ createMessage: { channelID, message } }))
   },
 
   async getMessages (channelID) {
-    return this.send(JSON.stringify({messages: {channelID}}))
+    return this.send(JSON.stringify({ messages: { channelID } }))
   },
 
   async newMessages (channelID, fromId) {
-    return this.send(JSON.stringify({messages: {channelID, fromId}}))
+    return this.send(JSON.stringify({ messages: { channelID, fromId } }))
   },
 
   async oldMessages (channelID, untilId) {
-    return this.send(JSON.stringify({messages: {channelID, untilId}}))
+    return this.send(JSON.stringify({ messages: { channelID, untilId } }))
   },
 
   async users () {
-    return this.send(JSON.stringify({getUsers: {}}))
+    return this.send(JSON.stringify({ getUsers: {} }))
   },
 
   subscribe (type, handler, once = false) {
@@ -133,7 +133,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
 
     this.listeners[type].push({
       handler: handler,
-      once: once
+      once: once,
     })
   },
 
@@ -148,6 +148,6 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   converters: {
     message (m) {
       return new Message(m)
-    }
-  }
+    },
+  },
 })

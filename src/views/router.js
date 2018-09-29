@@ -24,11 +24,11 @@ export default new Router({
       beforeEnter: protect,
       component: Messaging,
       children: [
-        {path: 'channel/new', name: 'new-channel', component: ChannelEditor, props: true},
-        {path: 'channel/:channelID', name: 'channel', component: Channel, props: true},
-        {path: 'channel/:channelID/editor', name: 'edit-channel', component: ChannelEditor, props: true},
-        {path: 'user/:userId', name: 'user', component: User, props: true}
-      ]
+        { path: 'channel/new', name: 'new-channel', component: ChannelEditor, props: true },
+        { path: 'channel/:channelID', name: 'channel', component: Channel, props: true },
+        { path: 'channel/:channelID/editor', name: 'edit-channel', component: ChannelEditor, props: true },
+        { path: 'user/:userId', name: 'user', component: User, props: true },
+      ],
     },
     {
       path: '/auth',
@@ -36,9 +36,9 @@ export default new Router({
       redirect: '/auth/signin',
 
       children: [
-        {path: 'signin', name: 'signin', component: AuthSignIn},
-        {path: 'signout', name: 'signout', component: AuthSignOut}
-      ]
-    }
-  ]
+        { path: 'signin', name: 'signin', component: AuthSignIn },
+        { path: 'signout', name: 'signout', component: AuthSignOut },
+      ],
+    },
+  ],
 })

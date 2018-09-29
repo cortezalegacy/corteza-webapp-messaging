@@ -12,8 +12,8 @@ const store = new Vuex.Store({
     messagingChannels,
     messagingUsers,
     messagingUi,
-    auth
-  }
+    auth,
+  },
 })
 
 export default store
