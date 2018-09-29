@@ -1,0 +1,144 @@
+.crust
+{
+	&_iam_main
+	{
+		padding:0;
+	}
+
+	&_iam-menu
+	{
+		float:left;
+		display:block;
+		width:25vw;
+		transition:none;
+		padding-top:5rem;
+		.crust-closer
+		{
+			display:none;
+		}
+	}
+
+	&_iam_messages_wrapper
+	{
+		//margin-bottom:6rem;
+		padding: 7rem 0 0;
+	}
+	
+	&_iam-menu,
+	&_iam-header
+	{
+		position:fixed;	
+	}
+		
+	&_iam_footer,
+	&_iam-header
+	{
+		width:calc(100% - 25vw);
+	}
+
+	&_iam-header
+	{
+		height:7rem;
+		line-height:7rem;
+	}
+	
+	&_iam_thread_n_project
+	{
+		padding-top:1rem;
+	}
+}
+
+.crust_iam_footer
+{
+	position:fixed;
+	bottom:5px;
+	background-color : $mainbgcolor;
+	padding: 0 20px;
+
+	.message-input
+	{
+		display:block;
+		width:100%;
+		margin:0 auto;
+		background-color:transparent;
+		border:solid 1px $defaultlinecolor;
+		padding:0.5em 0.5em 0.5em 3em;
+		border-radius:5px;
+		font-size:1.5rem;
+		outline: none;
+	}
+	.dropzone .dz-message{
+	margin-top: 10px;
+	}
+	.vue-dropzone .dz-preview .dz-image{
+		display: none;
+	}
+	.dropzone.dz-started .dz-message{
+		display: block;
+	}
+}
+
+.crust_iam-channel_members
+{
+	margin-top:10.1rem;
+}
+
+.crust_iam_main__messages
+{
+	max-height:calc(100vh - 12rem);
+	overflow-x:hidden;
+	overflow-y:auto;
+	padding-left:1.5rem;
+}
+
+.from-me
+{
+
+}
+
+.crust_iam_main__message
+{
+	margin-top:2rem;
+	clear:both;
+}
+
+.channel
+{
+	float: right;
+    width: 75vw;
+    height: 100vh;
+    .overlay{
+    	background: white;
+    	width: 75vw;
+		height:calc(100vh - 7rem);
+		bottom: 0;
+		right: 0;
+    	z-index: 100;
+    	position: absolute;
+    	opacity: 0.9;
+    	h2{
+    		font-size: 3rem;
+    		position: absolute;
+    		top: 50%;
+    		left: 50%;
+    		transform: translate(-50%, -50%);
+    	}
+    	img{
+    		position: absolute;
+    		top: 60%;
+    		left: 50%;
+    		transform: translate(-50%, -50%);
+    		width: 200px;
+    		opacity: .25;
+    	}
+    }
+    #dropzone{
+      width: 40%;
+      margin: 100px auto 0;
+      text-align: center;
+    }
+    .message-confirm{
+      width: 40%;
+      margin: 0 auto;
+    }
+}
