@@ -20,8 +20,8 @@ export default {
       user: 'auth/user',
       ch: 'messagingChannels/current',
       isChannelPanelOpen: 'messagingUi/isChannelPanelOpen',
-      isUserPanelOpen: 'messagingUi/isUserPanelOpen'
-    })
+      isUserPanelOpen: 'messagingUi/isUserPanelOpen',
+    }),
   },
   data () {
     return {
@@ -29,14 +29,14 @@ export default {
       wideWidth: 768,
       window: {
         width: 0,
-        height: 0
-      }
+        height: 0,
+      },
     }
   },
 
   components: {
     PanelChannels,
-    PanelUsers
+    PanelUsers,
   },
 
   beforeCreate () {
@@ -84,13 +84,12 @@ export default {
 
   watch: {
     'isAuthenticated' (newval, oldval) {
-      console.log('Watching isAuthenticated', newval, oldval)
       if (newval && !oldval) {
         this.$ws.connect()
       } else if (!newval && oldval) {
         this.$ws.close()
       }
-    }
+    },
   },
 
   methods: {
@@ -101,8 +100,7 @@ export default {
       updateChannels: 'messagingChannels/updateList',
       removeFromChannels: 'messagingChannels/removeFromList',
       userConnected: 'messagingUsers/connected',
-      userDisconnected: 'messagingUsers/disconnected'
-
+      userDisconnected: 'messagingUsers/disconnected',
     }),
 
     handleResize () {
@@ -111,18 +109,13 @@ export default {
     },
 
     onOpenDirectChannel (userId) {
-      console.debug(
-        'Opening direct messaging channel',
-        {userId})
-
       this.toggleUserPanel(false)
-
       this.$router.push({
         name: 'user',
-        params: {userId}
+        params: { userId },
       })
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>

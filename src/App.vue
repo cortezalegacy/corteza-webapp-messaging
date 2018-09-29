@@ -1,5 +1,5 @@
 <template>
-  <div id="crust-sam" class="crust">
+  <div id="crust-messaging" class="crust">
     <router-view/>
   </div>
 </template>
