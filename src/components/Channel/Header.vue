@@ -25,15 +25,15 @@ export default {
 
   computed: {
     ...mapGetters({
-      ch: 'messagingChannels/current',
-      usersCount: 'messagingUsers/length'
+      ch: 'channels/current',
+      usersCount: 'users/length'
     })
   },
 
   methods: {
     ...mapActions({
-      toggleChannelPanel: 'messagingUi/toggleChannelPanel',
-      toggleUserPanel: 'messagingUi/toggleUserPanel'
+      toggleChannelPanel: 'ui/toggleChannelPanel',
+      toggleUserPanel: 'ui/toggleUserPanel'
     })
   }
 }

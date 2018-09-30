@@ -12,7 +12,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ChannelHistory, ChannelInput } from './components/Channel'
+import { ChannelHistory, ChannelInput } from '../components/Channel'
 
 export default {
   props: ['userId'],
@@ -25,8 +25,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      ch: 'messagingChannels/current',
-      editor: 'messagingChannels/editor',
+      ch: 'channels/current',
+      editor: 'channels/editor',
       isAuthenticated: 'auth/isAuthenticated'
     })
   },
@@ -43,7 +43,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setCurrentById: 'messagingChannels/setCurrentById'
+      setCurrentById: 'channels/setCurrentById'
     }),
 
     onDirectMessageSent (msg) {

@@ -13,18 +13,18 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ChannelHistory, ChannelInput, ChannelHeader, ChannelUpload } from './components/Channel'
+import { ChannelHistory, ChannelInput, ChannelHeader, ChannelUpload } from '../components/Channel'
 
 export default {
   props: ['channelID'],
 
   computed: {
     ...mapGetters({
-      ch: 'messagingChannels/current',
-      editor: 'messagingChannels/editor',
+      ch: 'channels/current',
+      editor: 'channels/editor',
       isAuthenticated: 'auth/isAuthenticated',
-      files: 'messagingChannels/files',
-      lastMessage: 'messagingChannels/lastMessage'
+      files: 'channels/files',
+      lastMessage: 'channels/lastMessage'
     })
   },
 
@@ -37,13 +37,9 @@ export default {
   },
 
   mounted () {
-    this.setCurrentById(this.channelID)
-
     window.addEventListener('keyup', (event) => {
-      const ESC = 27
-      // If down arrow was pressed...
-      if (event.keyCode === ESC) {
-        console.debug('Closing overlay on ESC')
+      if (event.key === "Escape") {
+        // @todo fix this.
         this.closeUploadOverlay()
       }
     })
@@ -51,7 +47,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setCurrentById: 'messagingChannels/setCurrentById'
+      setCurrentById: 'channels/setCurrentById'
     }),
 
     updateHistory () {

@@ -11,16 +11,16 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { PanelChannels, PanelUsers } from './components/Panel'
+import { PanelChannels, PanelUsers } from '../components/Panel'
 
 export default {
   computed: {
     ...mapGetters({
       isAuthenticated: 'auth/isAuthenticated',
       user: 'auth/user',
-      ch: 'messagingChannels/current',
-      isChannelPanelOpen: 'messagingUi/isChannelPanelOpen',
-      isUserPanelOpen: 'messagingUi/isUserPanelOpen',
+      ch: 'channels/current',
+      isChannelPanelOpen: 'ui/isChannelPanelOpen',
+      isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },
   data () {
@@ -69,7 +69,7 @@ export default {
       this.$ws.connect()
     }).catch((err) => {
       console.error(err)
-      this.$router.push('/auth/signin')
+      this.$router.push({ name: 'signin' })
     })
   },
 
@@ -94,13 +94,13 @@ export default {
 
   methods: {
     ...mapActions({
-      toggleUserPanel: 'messagingUi/toggleUserPanel',
-      resetUsers: 'messagingUsers/resetList',
-      resetChannels: 'messagingChannels/resetList',
-      updateChannels: 'messagingChannels/updateList',
-      removeFromChannels: 'messagingChannels/removeFromList',
-      userConnected: 'messagingUsers/connected',
-      userDisconnected: 'messagingUsers/disconnected',
+      toggleUserPanel: 'ui/toggleUserPanel',
+      resetUsers: 'users/resetList',
+      resetChannels: 'channels/resetList',
+      updateChannels: 'channels/updateList',
+      removeFromChannels: 'channels/removeFromList',
+      userConnected: 'users/connected',
+      userDisconnected: 'users/disconnected',
     }),
 
     handleResize () {
@@ -118,6 +118,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style lang="scss">
 
 </style>
+

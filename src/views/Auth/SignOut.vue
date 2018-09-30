@@ -36,7 +36,7 @@ export default {
       })
     }
 
-    this.$router.push('/auth/signin')
+    this.$router.push({ name: 'signin' })
   }
 }
 </script>

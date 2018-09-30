@@ -29,15 +29,15 @@ export default {
 
   computed: {
     ...mapGetters({
-      chatChannels: 'messagingChannels/list',
-      current: 'messagingChannels/current',
-      findUserByID: 'messagingUsers/findByID'
+      chatChannels: 'channels/list',
+      current: 'channels/current',
+      findUserByID: 'users/findByID'
     })
   },
 
   methods: {
     ...mapActions({
-      toggleChannelPanel: 'messagingUi/toggleChannelPanel'
+      toggleChannelPanel: 'ui/toggleChannelPanel'
     }),
 
     name (ch) {

@@ -2,17 +2,17 @@ import store from '@/store'
 import Auth from '@/views/Auth'
 import AuthSignIn from '@/views/Auth/SignIn'
 import AuthSignOut from '@/views/Auth/SignOut'
-import Messaging from '@/views/Apps/Messaging'
-import Channel from '@/views/Apps/Messaging/Channel'
-import ChannelEditor from '@/views/Apps/Messaging/ChannelEditor'
-import User from '@/views/Apps/Messaging/User'
+import Messanger from '@/views/Messanger'
+import Channel from '@/views/Channel'
+import ChannelEditor from '@/views/ChannelEditor'
+import User from '@/views/User'
 import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router)
 
 function protect (to, from, next) {
-  next(store.getters['auth/isAuthenticated'] ? true : '/auth/signin')
+  next(store.getters['auth/isAuthenticated'] ? true : { name: 'signin' })
 }
 
 export default new Router({
@@ -20,9 +20,10 @@ export default new Router({
 
   routes: [
     {
-      path: '/',
+      name: 'root',
+      path: '/messaging/',
       beforeEnter: protect,
-      component: Messaging,
+      component: Messanger,
       children: [
         { path: 'channel/new', name: 'new-channel', component: ChannelEditor, props: true },
         { path: 'channel/:channelID', name: 'channel', component: Channel, props: true },
@@ -31,9 +32,9 @@ export default new Router({
       ],
     },
     {
-      path: '/auth',
+      path: '/messaging/auth',
       component: Auth,
-      redirect: '/auth/signin',
+      redirect: { name: 'signin' },
 
       children: [
         { path: 'signin', name: 'signin', component: AuthSignIn },

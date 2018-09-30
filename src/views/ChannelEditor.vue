@@ -63,7 +63,7 @@ export default {
 
   methods: {
     ...mapActions({
-      updateList: 'messagingChannels/updateList'
+      updateList: 'channels/updateList'
     }),
 
     submit () {

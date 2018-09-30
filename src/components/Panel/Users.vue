@@ -26,7 +26,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      users: 'messagingUsers/list'
+      users: 'users/list'
     })
   },
 
@@ -44,8 +44,8 @@ export default {
 
   methods: {
     ...mapActions({
-      resetList: 'messagingUsers/resetList',
-      toggleUserPanel: 'messagingUi/toggleUserPanel'
+      resetList: 'users/resetList',
+      toggleUserPanel: 'ui/toggleUserPanel'
     })
   },
 

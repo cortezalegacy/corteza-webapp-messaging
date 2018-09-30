@@ -65,7 +65,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      lastMessage: 'messagingChannels/lastMessage'
+      lastMessage: 'channels/lastMessage'
     }),
 
     dropzoneHasFile () {

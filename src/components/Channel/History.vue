@@ -34,15 +34,15 @@ export default {
 
   computed: {
     ...mapGetters({
-      ch: 'messagingChannels/current',
-      users: 'messagingUsers/list',
+      ch: 'channels/current',
+      users: 'users/list',
       user: 'auth/user'
     })
   },
 
   methods: {
     ...mapActions({
-      setLastMessageId: 'messagingChannels/setLastMessageId'
+      setLastMessageId: 'channels/setLastMessageId'
     }),
 
     moment: function (timeString) {

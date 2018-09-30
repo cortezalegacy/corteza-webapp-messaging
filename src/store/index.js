@@ -1,19 +1,20 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import auth from './auth'
-import messagingChannels from './messaging/channels'
-import messagingUsers from './messaging/users'
-import messagingUi from './messaging/ui'
+import channels from './channels'
+import users from './users'
+import ui from './ui'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
   modules: {
-    messagingChannels,
-    messagingUsers,
-    messagingUi,
+    channels,
+    users,
+    ui,
     auth,
   },
 })
+
 
 export default store

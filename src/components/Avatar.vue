@@ -22,7 +22,7 @@ export default
 
 <style scoped lang="scss">
 //this import is for variables
-@import '@/sass/_0.declare.scss';
+@import '@/assets/sass/_0.declare.scss';
 i.u-avatar
 {
   display:inline-block;

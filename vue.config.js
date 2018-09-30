@@ -1,4 +1,5 @@
 module.exports = {
+  baseUrl: '/messaging/',
   configureWebpack: {
     // other webpack options to merge in ...
   },

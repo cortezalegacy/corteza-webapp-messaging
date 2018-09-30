@@ -38,7 +38,7 @@ export default {
 
   mounted () {
     this.$auth.check().then((user) => {
-      this.$router.push('/')
+      this.$router.push({ name: 'root' })
     }).catch((error) => {
       console.error(error)
     })
