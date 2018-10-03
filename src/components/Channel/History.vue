@@ -1,6 +1,6 @@
 <template>
   <div class="crust_iam_messages_wrapper">
-    <ul class="crust_iam_main__messages" v-if="ch" v-chat-scroll>
+    <ul class="crust_iam_main__messages" v-if="ch" v-chat-scroll="{ always: false }" ref="msgList">
       <li class="crust_iam_main__message" v-for="msg in this.messages" :key="msg.ID">
         <section class="crust_iam_main__message__metas" :data-msg-user-id="msg.userId" :data-current-user-id="'id'+user.id">
           <i class="crust_profile-pic crust_iam_main__message__meta-avatar" :style="'background-image:url(/static/pics/user'+(msg.userId%10)+'.png)'"></i>
@@ -37,7 +37,15 @@ export default {
       ch: 'channels/current',
       users: 'users/list',
       user: 'auth/user'
-    })
+    }),
+
+    getFirstMsgId () {
+      return (this.messages[0] || {}).ID
+    },
+
+    getLastMsgId () {
+      return (this.messages[this.messages.length - 1] || {}).ID
+    },
   },
 
   methods: {
@@ -59,36 +67,71 @@ export default {
     },
 
     addMessage (message) {
-      if (this.ch && message.channelID !== this.ch.ID) {
-        return
+      if (this.ch && message.channelID !== this.ch.ID) return
+
+      // Push msg to either top or back
+      // Check timestamp to determine where in array to push it to
+      if ( this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt)) ) {
+        this.messages.unshift(message)
+      } else {
+        this.messages.push(message)
       }
 
+      // Replaces given msg due to an update
       let n = this.messages.findIndex(m => m.ID === message.ID)
       if (n < 0) {
         this.messages.push(message)
       } else {
         this.messages.splice(n, 1, message)
       }
-    }
+    },
+
+    isScrolledToTop (target) {
+      return target.scrollTop <= 0
+    },
+
+    isScrolledToBottom (target) {
+      return target.scrollHeight - target.scrollTop - target.clientHeight <= 0
+    },
+
+    scrollHandeler (e) {
+      let { target } = e
+      if (this.isScrolledToTop(target)) {
+        // Scrolled to top
+        this.$ws.getMessages(this.ch.ID, this.getFirstMsgId)
+      }
+
+      if (this.isScrolledToBottom(target)) {
+        // Scrolled to bottom
+        // this.$ws.getMessages(this.ch.ID, undefined, this.getLastMsgId)
+      }
+    },
   },
 
   watch: {
-    'ch' () {
-      this.messages = []
+    'ch' (newV, oldV = {}) {
+      if (newV && newV.ID !== oldV.ID) {
+        this.messages = []
 
-      if (this.ch) {
-        this.$ws.getMessages(this.ch.ID)
+        this.$ws.getMessages(newV.ID)
       }
     }
   },
 
   beforeCreate () {
     this.$ws.subscribe('messages', (messages) => {
-      messages.reverse().forEach((message) => {
+      // Slight scroll from edges to keep it from resetting to top/bottom
+      let target = this.$refs.msgList
+      if (this.isScrolledToTop(target)) {
+        target.scrollTop = 1
+      } else if (this.isScrolledToBottom(target)) {
+        target.scrollTop -= 1
+      }
+      messages.forEach((message) => {
         this.addMessage(new Message(message))
       })
 
-      messages.reverse().forEach(m => {
+      messages.forEach(m => {
         this.setLastMessageId({channelID: m.channelID, messageId: m.ID})
       })
     })
@@ -102,6 +145,10 @@ export default {
     if (this.ch) {
       this.$ws.getMessages(this.ch.ID)
     }
+
+    this.$nextTick(() => {
+      this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandeler(e) })
+    })
   },
 
   components: {

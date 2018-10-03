@@ -110,8 +110,8 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send(JSON.stringify({ createMessage: { channelID, message } }))
   },
 
-  async getMessages (channelID) {
-    return this.send(JSON.stringify({ messages: { channelID } }))
+  async getMessages (channelID, untilId, fromId) {
+    return this.send(JSON.stringify({ messages: { channelID, untilId, fromId } }))
   },
 
   async newMessages (channelID, fromId) {
