@@ -28,7 +28,7 @@ export default {
   name: 'channel-history',
   data () {
     return {
-      messages: []
+      messages: [],
     }
   },
 
@@ -36,7 +36,7 @@ export default {
     ...mapGetters({
       ch: 'channels/current',
       users: 'users/list',
-      user: 'auth/user'
+      user: 'auth/user',
     }),
 
     getFirstMsgId () {
@@ -50,7 +50,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setLastMessageId: 'channels/setLastMessageId'
+      setLastMessageId: 'channels/setLastMessageId',
     }),
 
     moment: function (timeString) {
@@ -71,7 +71,7 @@ export default {
 
       // Push msg to either top or back
       // Check timestamp to determine where in array to push it to
-      if ( this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt)) ) {
+      if (this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt))) {
         this.messages.unshift(message)
       } else {
         this.messages.push(message)
@@ -115,7 +115,7 @@ export default {
 
         this.$ws.getMessages(newV.ID)
       }
-    }
+    },
   },
 
   beforeCreate () {
@@ -132,7 +132,7 @@ export default {
       })
 
       messages.forEach(m => {
-        this.setLastMessageId({channelID: m.channelID, messageId: m.ID})
+        this.setLastMessageId({ channelID: m.channelID, messageId: m.ID })
       })
     })
 
@@ -152,8 +152,8 @@ export default {
   },
 
   components: {
-    Attachment
-  }
+    Attachment,
+  },
 }
 
 </script>

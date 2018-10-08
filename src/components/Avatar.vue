@@ -15,8 +15,8 @@ export default
   // require user param
   props: {
     'user': Object,
-    'required': true
-  }
+    'required': true,
+  },
 }
 </script>
 

@@ -21,7 +21,7 @@
           placeholder="Things we talk about">
       </div>
 
-      <p>@todo Channel type</p>
+      <p>Type: <b>{{channel.type}}</b></p>
       <p>@todo Invite users</p>
 
       <hr />
@@ -43,7 +43,7 @@ export default {
 
   data () {
     return {
-      channel: new Channel()
+      channel: new Channel(),
     }
   },
 
@@ -54,7 +54,7 @@ export default {
         console.debug('Channel info loaded into editor', ch)
         this.channel = ch
       }).catch((error) => {
-        console.error('Failed to load channel info', {error})
+        console.error('Failed to load channel info', { error })
       }).finally(() => {
         // this.disabled = false
       })
@@ -63,23 +63,23 @@ export default {
 
   methods: {
     ...mapActions({
-      updateList: 'channels/updateList'
+      updateList: 'channels/updateList',
     }),
 
     submit () {
       if (this.channel.ID) {
         console.debug('Updating channel', this.channel)
         this.$rest.updateChannel(this.channel).then((ch) => {
-          this.$router.push({name: 'channel', params: {channelID: this.channelID}})
+          this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
-          console.error('Failed to store channel update', {error})
+          console.error('Failed to store channel update', { error })
         })
       } else {
         console.debug('Creating channel', this.channel)
         this.$rest.createChannel(this.channel).then((ch) => {
-          this.$router.push({name: 'channel', params: {channelID: ch.ID}})
+          this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch((error) => {
-          console.error('Failed to store channel update', {error})
+          console.error('Failed to store channel update', { error })
         })
       }
     },
@@ -94,8 +94,8 @@ export default {
 
         this.$ws.deleteChannel(this.channel.ID)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>

@@ -23,7 +23,7 @@ export default {
   data () {
     return {
       msg: '',
-      disabled: true
+      disabled: true,
     }
   },
 
@@ -46,7 +46,7 @@ export default {
       if (this.channelID) {
         console.debug(
           'Sending message to channel',
-          {msg: this.msg, channelID: this.channelID})
+          { msg: this.msg, channelID: this.channelID })
 
         this.$ws.sendMessage(this.channelID, this.msg).then(() => {
           this.msg = ''
@@ -55,18 +55,18 @@ export default {
       } else if (this.userId) {
         console.debug(
           'Sending direct message to user',
-          {msg: this.msg, userId: this.userId})
+          { msg: this.msg, userId: this.userId })
 
         this.$rest.sendDirectMessage(this.userId, this.msg).then((newMessage) => {
           this.$emit('directMessageSent', newMessage)
         }).catch((error) => {
-          console.error('Failed to send direct message', {error})
+          console.error('Failed to send direct message', { error })
         }).finally(() => {
           this.disabled = false
         })
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -24,8 +24,8 @@ export default {
       editor: 'channels/editor',
       isAuthenticated: 'auth/isAuthenticated',
       files: 'channels/files',
-      lastMessage: 'channels/lastMessage'
-    })
+      lastMessage: 'channels/lastMessage',
+    }),
   },
 
   watch: {
@@ -33,12 +33,12 @@ export default {
       if (newChannelID !== oldChannelId && newChannelID) {
         this.setCurrentById(newChannelID)
       }
-    }
+    },
   },
 
   mounted () {
     window.addEventListener('keyup', (event) => {
-      if (event.key === "Escape") {
+      if (event.key === 'Escape') {
         // @todo fix this.
         this.closeUploadOverlay()
       }
@@ -47,7 +47,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setCurrentById: 'channels/setCurrentById'
+      setCurrentById: 'channels/setCurrentById',
     }),
 
     updateHistory () {
@@ -68,14 +68,14 @@ export default {
 
     closeUploadOverlay () {
       this.$refs.upload.closeOverlay()
-    }
+    },
   },
 
   components: {
     ChannelHistory,
     ChannelInput,
     ChannelUpload,
-    ChannelHeader
-  }
+    ChannelHeader,
+  },
 }
 </script>

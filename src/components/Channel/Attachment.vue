@@ -33,8 +33,8 @@ export default {
       }, 500)
     },
 
-    numeral: numeral
-  }
+    numeral: numeral,
+  },
 }
 
 </script>

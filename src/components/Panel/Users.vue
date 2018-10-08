@@ -26,8 +26,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      users: 'users/list'
-    })
+      users: 'users/list',
+    }),
   },
 
   // beforeCreate () {
@@ -45,13 +45,13 @@ export default {
   methods: {
     ...mapActions({
       resetList: 'users/resetList',
-      toggleUserPanel: 'ui/toggleUserPanel'
-    })
+      toggleUserPanel: 'ui/toggleUserPanel',
+    }),
   },
 
   components: {
-    'user-avatar': Avatar
-  }
+    'user-avatar': Avatar,
+  },
 }
 </script>
 

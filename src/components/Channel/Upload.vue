@@ -59,13 +59,13 @@ export default {
       fileUpload: null,
       dndOverlay: false,
       dropzoneOverlayed: true,
-      disabled: false
+      disabled: false,
     }
   },
 
   computed: {
     ...mapGetters({
-      lastMessage: 'channels/lastMessage'
+      lastMessage: 'channels/lastMessage',
     }),
 
     dropzoneHasFile () {
@@ -99,10 +99,10 @@ export default {
         headers: {
           // https://github.com/enyo/dropzone/issues/1154
           'Cache-Control': '',
-          'X-Requested-With': ''
-        }
+          'X-Requested-With': '',
+        },
       }
-    }
+    },
   },
 
   methods: {
@@ -110,7 +110,7 @@ export default {
       return this.$refs.dropzone
     },
 
-    toggleDisabled ({disabled}) {
+    toggleDisabled ({ disabled }) {
       this.disabled = disabled
     },
 
@@ -161,13 +161,13 @@ export default {
       if (e.status !== 'error') {
         this.resetUpload()
       }
-    }
+    },
   },
 
   components: {
     Lightbox,
-    vueDropzone
-  }
+    vueDropzone,
+  },
 }
 </script>
 

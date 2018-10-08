@@ -26,15 +26,15 @@ export default {
   computed: {
     ...mapGetters({
       ch: 'channels/current',
-      usersCount: 'users/length'
-    })
+      usersCount: 'users/length',
+    }),
   },
 
   methods: {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
-      toggleUserPanel: 'ui/toggleUserPanel'
-    })
-  }
+      toggleUserPanel: 'ui/toggleUserPanel',
+    }),
+  },
 }
 </script>

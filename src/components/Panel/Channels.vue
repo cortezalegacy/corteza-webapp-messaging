@@ -23,7 +23,7 @@ export default {
   name: 'panel-channels',
   data () {
     return {
-      shown: false
+      shown: false,
     }
   },
 
@@ -31,13 +31,13 @@ export default {
     ...mapGetters({
       chatChannels: 'channels/list',
       current: 'channels/current',
-      findUserByID: 'users/findByID'
-    })
+      findUserByID: 'users/findByID',
+    }),
   },
 
   methods: {
     ...mapActions({
-      toggleChannelPanel: 'ui/toggleChannelPanel'
+      toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
 
     name (ch) {
@@ -49,8 +49,8 @@ export default {
       } else {
         return '#' + (ch.name || ch.ID)
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

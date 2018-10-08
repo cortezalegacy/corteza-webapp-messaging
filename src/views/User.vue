@@ -19,7 +19,7 @@ export default {
 
   data () {
     return {
-      showChannelEditor: false
+      showChannelEditor: false,
     }
   },
 
@@ -27,14 +27,14 @@ export default {
     ...mapGetters({
       ch: 'channels/current',
       editor: 'channels/editor',
-      isAuthenticated: 'auth/isAuthenticated'
-    })
+      isAuthenticated: 'auth/isAuthenticated',
+    }),
   },
 
   watch: {
     'directId' (newchannelID) {
       this.setCurrentById(newchannelID)
-    }
+    },
   },
 
   mounted () {
@@ -43,24 +43,24 @@ export default {
 
   methods: {
     ...mapActions({
-      setCurrentById: 'channels/setCurrentById'
+      setCurrentById: 'channels/setCurrentById',
     }),
 
     onDirectMessageSent (msg) {
       // Expecting to get notified about new channel, so let's go there when it comes
       this.$ws.once('channels', () => {
         // We know where we want to go from the msg reply
-        this.$router.push({name: 'channel', params: {channelID: msg.channelID}})
+        this.$router.push({ name: 'channel', params: { channelID: msg.channelID } })
       })
 
       // @todo remove this when REST actions trigger updates via WS
       this.$ws.getChannels()
-    }
+    },
   },
 
   components: {
     ChannelHistory,
-    ChannelInput
-  }
+    ChannelInput,
+  },
 }
 </script>
