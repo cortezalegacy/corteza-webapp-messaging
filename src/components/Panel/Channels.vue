@@ -41,7 +41,7 @@ export default {
     }),
 
     name (ch) {
-      if (ch.type === 'direct' && ch.members !== undefined && ch.members.length === 2) {
+      if (ch.type === 'group' && ch.members !== undefined && ch.members.length === 2) {
         const u1 = this.findUserByID(ch.members[0])
         const u2 = this.findUserByID(ch.members[1])
 
