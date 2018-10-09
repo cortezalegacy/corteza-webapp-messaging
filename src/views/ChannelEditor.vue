@@ -1,5 +1,6 @@
 <template>
   <section class="channel">
+    <router-link :to="{ name: 'channel', params: { channelID: channelID } }">&times;</router-link>
     <h1>Channel editor</h1>
     <form class="editor" @submit.prevent="submit">
       <div>
