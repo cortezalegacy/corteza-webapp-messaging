@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Message, Channel } from '@/types'
+import { Message, Channel, Member } from '@/types'
 
 export default {
   install (Vue, store) {
@@ -15,6 +15,21 @@ export default {
       } else {
         resolve(new Channel(response.data.response))
       }
+    }
+
+    const stdMemberResolve = (resolve, reject) => (response) => {
+      if (response.data.error) {
+        reject(response.data.error)
+        return
+      }
+
+      let members = []
+
+      response.data.response.forEach(m => {
+        members.push(new Member(m))
+      })
+
+      resolve(members)
     }
 
     Vue.prototype.$rest = {
@@ -76,7 +91,38 @@ export default {
             const msg = response.data.response
 
             resolve(new Message(msg))
-          }, stdRejection)
+          }, stdRejection(reject))
+        })
+      },
+
+      async getMembers (channelID) {
+        return new Promise((resolve, reject) => {
+          this.api().get(
+            `/channels/${channelID}/members`
+          ).then(stdMemberResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async addMember (channelID, userID) {
+        return new Promise((resolve, reject) => {
+          this.api().put(
+            `/channels/${channelID}/members/${userID}`
+          ).then(stdMemberResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async removeMember (channelID, userID) {
+        return new Promise((resolve, reject) => {
+          this.api().delete(
+            `/channels/${channelID}/members/${userID}`
+          ).then(response => {
+            if (response.data.error) {
+              reject(response.data.error)
+              return
+            }
+
+            resolve(response.data.response)
+          }, stdRejection(reject))
         })
       },
     }

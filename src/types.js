@@ -60,3 +60,15 @@ export function User (u) {
   this.name = u.name
   this.connections = u.connections
 }
+
+export function Member (m) {
+  if (!m) {
+    return
+  }
+
+  this.user = new User(m.user)
+  this.type = m.type
+  this.channelID = m.channelID
+  this.createdAt = m.createdAt
+  this.updatedAt = m.updatedAt
+}

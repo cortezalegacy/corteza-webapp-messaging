@@ -9,9 +9,12 @@
       <label
         class="crust_iam-people"
         @click="toggleUserPanel()"><sup class="crust_iam-people_count">{{ usersCount }}</sup><i class="icon-user2"></i></label>
-      <label
-        class="crust_iam-info"
-        @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">Edit</label>
+    <label
+            class="crust_iam-info"
+            @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">Edit</label>
+    <label
+            class="crust_iam-info"
+            @click="$router.push({name: 'members', params: {channelID: channel.ID}})">Members</label>
     </div>
   </header>
 </template>
