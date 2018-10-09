@@ -19,14 +19,14 @@ import { mapGetters } from 'vuex'
 export default {
   data () {
     return {
-      oidc: this.$auth.baseURL() + '/oidc'
+      oidc: this.$auth.baseURL() + '/oidc',
     }
   },
 
   computed: {
     ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated'
-    })
+      isAuthenticated: 'auth/isAuthenticated',
+    }),
   },
 
   mounted () {
@@ -37,6 +37,6 @@ export default {
     }
 
     this.$router.push({ name: 'signin' })
-  }
+  },
 }
 </script>

@@ -20,20 +20,20 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data () {
     return {
-      oidc: this.$auth.baseURL() + '/oidc'
+      oidc: this.$auth.baseURL() + '/oidc',
     }
   },
 
   computed: {
     ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated'
-    })
+      isAuthenticated: 'auth/isAuthenticated',
+    }),
   },
 
   methods: {
     ...mapActions({
-      setUser: 'auth/setUser'
-    })
+      setUser: 'auth/setUser',
+    }),
   },
 
   mounted () {
@@ -42,7 +42,7 @@ export default {
     }).catch((error) => {
       console.error(error)
     })
-  }
+  },
 }
 </script>
 
