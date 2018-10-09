@@ -87,7 +87,7 @@ export default {
     },
 
     isScrolledToTop (target) {
-      return target.scrollTop <= 0
+      return target ? target.scrollTop <= 0 : true
     },
 
     isScrolledToBottom (target) {
@@ -122,18 +122,20 @@ export default {
     this.$ws.subscribe('messages', (messages) => {
       // Slight scroll from edges to keep it from resetting to top/bottom
       let target = this.$refs.msgList
-      if (this.isScrolledToTop(target)) {
-        target.scrollTop = 1
-      } else if (this.isScrolledToBottom(target)) {
-        target.scrollTop -= 1
-      }
-      messages.forEach((message) => {
-        this.addMessage(new Message(message))
-      })
+      if (target !== undefined) {
+        if (this.isScrolledToTop(target)) {
+          target.scrollTop = 1
+        } else if (this.isScrolledToBottom(target)) {
+          target.scrollTop -= 1
+        }
+        messages.forEach((message) => {
+          this.addMessage(new Message(message))
+        })
 
-      messages.forEach(m => {
-        this.setLastMessageId({ channelID: m.channelID, messageId: m.ID })
-      })
+        messages.forEach(m => {
+          this.setLastMessageId({ channelID: m.channelID, messageId: m.ID })
+        })
+      }
     })
 
     this.$ws.subscribe('message', (message) => {
