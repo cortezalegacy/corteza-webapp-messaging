@@ -17,7 +17,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import 'vue-simple-suggest/dist/styles.css' // @todo apply Crust styling
 
 export default {
   name: 'channel-members',
