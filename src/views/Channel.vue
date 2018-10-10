@@ -36,7 +36,9 @@ export default {
     },
   },
 
-  mounted () {
+  beforeMount () {
+    this.setCurrentById(this.channelID)
+
     window.addEventListener('keyup', (event) => {
       if (event.key === 'Escape') {
         // @todo fix this.
