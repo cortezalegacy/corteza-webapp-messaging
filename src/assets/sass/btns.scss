@@ -1,0 +1,73 @@
+/*
+button structure :
+<tag1 class="btn"><tag2 class="btn-txt">button content</tag2></tag1>
+*/
+
+@import './_0.declare';
+
+.btn
+{
+  display:inline-block;
+  border: solid 1px $appgrey;
+  color: $appgrey;
+  padding:0.25em 1em;
+  border-radius:1.5em;
+  text-decoration: none;
+  transition: color 0.2s, background-color 0.2s;
+  cursor:pointer;
+  .btn-i
+  {
+    font-size:1.25em;
+    text-align: center;
+    margin-right:0.25em;
+    margin-left:-0.5em; // put icon more into the circle
+    text-decoration: none;
+  }
+  .btn-i, .btn-txt
+  {
+    background-color: transparent;
+    color: $appgrey;
+    display:inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+  }
+}
+
+.btn-block
+{
+  display:block;
+  .btn-txt
+  {
+    max-width:calc(100% - 3.5em);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.btn-w75
+{
+  width:75%;
+}
+.btn-w50
+{
+  width:50%;
+}
+
+.btn-dark
+{
+  background-color: $appgrey;
+  color:white;
+	.btn-txt, .btn-i
+	{
+    color:white;
+	}
+  &:hover
+  {
+    color: $appgrey;
+    background-color:white;
+    .btn-txt, .btn-i
+    {
+      color:$appgrey;
+    }
+  }
+}

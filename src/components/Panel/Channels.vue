@@ -1,18 +1,42 @@
 <template>
-  <nav class="crust_iam-menu crust_sliding_menu">
-    <label class="crust_hide-iam-menu crust-closer"
-      @click="toggleChannelPanel(false)"><i class="icon-close"><span class="crust_readable_text">close</span></i></label>
-    <ul class="crust_main-menu_list" v-if="chatChannels">
-      <li class="crust_iam-menu_item"><a>Inbox</a></li>
-      <li class="crust_iam-menu_item"><a>Channels</a>
-        <ul class="crust_iam-channel_subitems" v-if="chatChannels">
-          <li v-for="ch in chatChannels" :key="ch.ID" v-bind:class="['crust_iam-channel_item', {current:(current && (ch === current))}]">
-            <router-link :to="{name:'channel', params:{channelID:ch.ID}}">{{name(ch)}}</router-link>
+  <nav class="menu-layer always-deployed-on-desktop">
+    <label class="closer"
+      @click="toggleChannelPanel(false)">
+        <i class="icon-close" aria-label="close"></i>
+    </label>
+    <div class="layer-section-wrapper">
+      <div class="layer-item">
+        <span class="badge badge-block badge-pill badge-tall">
+          <i class="icon-search"></i>
+          <input type="text" placeholder="search" class="txt no-border">
+          <i class="icon-settings-horizontal float-right"></i>
+        </span>
+      </div>
+      <!-- one section per "board" (group of channels) -->
+      <section class="layer-section">
+        <div class="layer-item layer-section-title"><a>Channels</a></div>
+        <ul v-if="chatChannels">
+          <!-- @darh : the color could be set at channel selection -->
+          <li
+            v-for="(ch, index) in chatChannels"
+            :key="ch.ID"
+            v-bind:class="[
+              'layer-item',
+              'layer-selectable',
+              'channel-name',
+              channelColor(index),
+              { current:(current && (ch === current)) },
+            ]">
+            <router-link
+              :to="{name:'channel', params:{channelID:ch.ID}}">{{name(ch)}}</router-link>
           </li>
         </ul>
-      </li>
-      <li class="new-channel"><span @click="$router.push({name: 'new-channel'})"><i class="icon-plus"></i>New Channel</span></li>
-    </ul>
+      </section>
+      <div class="layer-item new-channel">
+        <span class="btn btn-dark" @click="$router.push({name: 'new-channel'})">
+          <i class="btn-i icon-plus"></i><span class="btn-txt">New Channel</span></span>
+      </div>
+    </div>
   </nav>
 </template>
 
@@ -47,13 +71,64 @@ export default {
 
         return (u1.username || u1.ID) + ' & ' + (u2.username || u2.ID)
       } else {
-        return '#' + (ch.name || ch.ID)
+        // juan : removed auto # appended, controlled by css
+        return '' + (ch.name || ch.ID)
       }
+    },
+
+    channelColor (index)
+    {
+      var colors = ['blue', 'red', 'green', 'yellow']
+      return (colors[index % colors.length])
     },
   },
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  //inlude generic definitions
+  @import '@/assets/sass/menu-layer.scss';
+  @import '@/assets/sass/btns.scss';
+  @import '@/assets/sass/inputs.scss';
+  @import '@/assets/sass/badges.scss';
+  // add specific stuff here if desired
+  .channel-name a
+  {
+    text-decoration:none;
+  }
+  .channel-name:before
+  {
+    content:"#";
+    display:inline-block;
+    margin-right:0.5em;
+    font-weight:400;
+  }
+  .channel-name.blue
+  {
+    &:before
+    {
+      color:$appblue;
+    }
+  }
+  .channel-name.green
+  {
+    &:before
+    {
+      color:$appgreen;
+    }
+  }
+  .channel-name.red
+  {
+    &:before
+    {
+      color:$appgreen;
+    }
+  }
+  .channel-name.yellow
+  {
+    &:before
+    {
+      color:$appgreen;
+    }
+  }
 </style>

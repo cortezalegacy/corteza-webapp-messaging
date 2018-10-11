@@ -1,0 +1,15 @@
+@import "_0.declare";
+
+body
+{
+  font-family: $crustregular;
+}
+*
+{
+  box-sizing: border-box;
+}
+
+.float-right
+{
+  float:right;
+}

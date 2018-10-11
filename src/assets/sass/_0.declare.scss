@@ -1,14 +1,26 @@
 // All future configurable elements colors and dimensions reside here.
-$wideminwidth:768px;
+
+$wideminwidth:720px;
 
 //paths
-$fonts_dir : '/assets/fonts/';
+$fonts_dir : './assets/fonts/';
 $icomoon-font-path: $fonts_dir + 'crust-icomoon' !default;
+$icomoon-font-family: "crust-icomoon" !default;
 
 //variabilize fonts, so we can change theme easily
 $crustregular: 'nunito_sansregular';
 $crustheavy : 'nunito_sansbold';
 $crustsemibold : 'nunito_sanssemibold';
+
+$gris-bleu: #90A3B1;
+$bleu: #1397CB;
+$white: #ffffff;
+$black: #1E2224;
+$error: #E85568;
+$success: #00D53E;
+$jaune: #FFCC32;
+$vert-bleu: #2FBC95;
+$gris: #F3F3F5;
 
 $appyellow : #FFCC32;
 $appred    : #E85568;
@@ -18,6 +30,9 @@ $applime   : #00D53E;
 $appgrey   : #90A3B1;
 $appcream  : #F3F3F5;
 
+$appselectorbg : #EDF1F4;
+$appselectoritembg : #fff;
+
 //generics
 $mainbgcolor      : #EEF1F3;
 $inactivebgcolor  : #f3f3F5;
@@ -25,12 +40,16 @@ $hoverbgcolor     : #f3f3F5;
 $defaulttextcolor : #1E2224;
 $defaultlinkcolor : #1397CB;
 $defaultbodysize  : 10px;
-$defaultlinecolor : #90A3B1;
-$defaulticoncolor : #90A3B1;
+$defaultlinecolor   : $gris-bleu;
+$defaulticoncolor   : $gris-bleu;
+$defaultitembgcolor : $gris-bleu;
 
 //header
 $headerbgcolor    : #fff;
 $pfbgcolor        : #FFCC32;
+
+//menupanes
+$menupanebgcolor  : #fff;
 
 //forms
 $defaultbuttonbkg : #1397CB;
@@ -68,4 +87,3 @@ $messagebgcolor          : #fff;
 $currentmessagebgcolor   : $tabcurrentbgcolor;
 $currentmessagetxtcolor  : #fff;
 $currentmymessagebgcolor : lighten(rgba($appblue,1),40%);
-

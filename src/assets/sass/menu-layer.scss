@@ -1,0 +1,111 @@
+@import './_0.declare';
+@import './closer';
+
+.menu-layer
+{
+  font-size:14px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  width:0;
+  overflow: hidden auto;
+  transition:width 0.5s ease-in;
+  background-color:$menupanebgcolor;
+  &.shadowed
+  {
+    box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
+  }
+  &.right
+  {
+    border-left: solid 1px $defaultlinecolor;
+  }
+  &.left
+  {
+    border-right: solid 1px $defaultlinecolor;
+  }
+  .closer
+  {
+    float:right;
+  }
+  ul
+  {
+    list-style:none;
+    padding:0;
+    margin:0;
+  }
+  .badge, .btn
+  {
+    font-size:12px;
+  }
+}
+
+.layer-section
+{
+}
+
+.layer-item
+{
+  display:block;
+  width:100%;
+  padding:0.5em 10%;
+}
+
+.layer-selectable
+{
+  border-right:solid 3px transparent;
+  &.current
+  {
+    background-color:rgba($appblue,0.15);
+    border-color:$appblue;
+    a
+    {
+      color:$appblue;
+      font-weight:bold;
+    }
+  }
+}
+
+.menu-layer.display,
+.menu-layer.force-on
+{
+  max-width:320px;
+  min-width:190px;
+  width:90vw;
+  .menu-layer-section-wrapper
+  {
+    width:100%;
+    margin:0;
+    padding:20px 0;
+    color: $appgrey;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 26px;
+    text-align: left;
+    a
+    {
+      color:$appgrey;
+      text-decoration:none;
+    }
+  }
+}
+
+@media (min-width: $wideminwidth)
+{
+  .menu-layer
+  {
+    padding:60px 0;
+  }
+  .always-deployed-on-desktop
+  {
+    max-width:320px;
+    min-width:190px;
+    width:90vw;
+
+    .closer
+    {
+      visibility:hidden;
+    }
+  }
+}

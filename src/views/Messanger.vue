@@ -1,12 +1,17 @@
 <template>
-    <main :class="['crust_iam_main', (window.width > wideWidth? 'wide' : 'slim') ]" :data-width="window.width">
+    <main>
+      <!-- if no channel selected channel list should be displayed -->
       <panel-channels
-        v-if="window.width > wideWidth || isChannelPanelOpen"></panel-channels>
-      <router-view/>
+        :class="[
+          { 'force-on' : !ch },
+        ]"></panel-channels>
+      <!-- no use in displaying messages if no channel -->
+      <router-view />
       <panel-users
         v-if="isUserPanelOpen"
         @openDirectMessage="onOpenDirectChannel"
         ></panel-users>
+      <div v-if="ch">test</div>
     </main>
 </template>
 <script>
@@ -23,6 +28,7 @@ export default {
       isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },
+
   data () {
     return {
       showChannelCreator: false,
@@ -118,7 +124,7 @@ export default {
   },
 }
 </script>
-<style lang="scss">
+
+<style scoped lang="scss">
 
 </style>
-
