@@ -1,6 +1,8 @@
 /*
 button structure :
 <tag1 class="btn"><tag2 class="btn-txt">button content</tag2></tag1>
+<tag1 class="btn"><tag2 class="btn-txt">button content</tag2></tag1>
+<tag1 class="btn"><i class="btn-i icon-icontag"></i><tag2 class="btn-txt">button content</tag2></tag1>
 */
 
 @import './_0.declare';
@@ -15,6 +17,7 @@ button structure :
   text-decoration: none;
   transition: color 0.2s, background-color 0.2s;
   cursor:pointer;
+
   .btn-i
   {
     font-size:1.25em;
