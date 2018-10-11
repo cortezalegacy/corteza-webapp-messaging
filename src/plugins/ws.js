@@ -21,7 +21,8 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   },
 
   connect () {
-    const baseUrl = window.CrustConfig.sam.baseUrl
+    const baseUrl = window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
+
     console.log('Connecting to Crust Messaging Websocket')
     const url = baseUrl.replace(/^http/, 'ws') + '/websocket/'
 

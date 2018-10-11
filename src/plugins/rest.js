@@ -34,7 +34,7 @@ export default {
 
     Vue.prototype.$rest = {
       baseURL () {
-        return window.CrustConfig.sam.baseUrl
+        return window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
       },
 
       api () {
