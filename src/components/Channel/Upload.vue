@@ -171,7 +171,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   #dropzone.overlayed {
     position: absolute;
     right: 0;
