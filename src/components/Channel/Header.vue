@@ -5,25 +5,25 @@
       @click="toggleChannelPanel()">
       <i class="icon-menu4"></i></label>
 
-    <div class="thread-n-project">
+    <div class="channel-n-topic">
       <strong v-if="channel.name" class="channel-name">{{ channel.name }}</strong>
       <span  v-if="channel.topic" class="badge badge-blue">{{ channel.topic }}</span>
     </div>
 
-    <div class="header-toolbox">
+    <div class="channel-toolbox">
       <label
-        class="people"
-        @click="toggleUserPanel()">
-        <sup class="crust_iam-people_count">{{ usersCount }}</sup>
-        <i class="icon-user2"></i></label>
-      <label
-        class="crust_iam-info"
-        @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
-        Edit</label>
-      <label
-        class="crust_iam-info"
+        class="tool"
         @click="$router.push({name: 'members', params: {channelID: channel.ID}})">
-        Members</label>
+        <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
+      <label
+        class="tool people"
+        @click="toggleUserPanel()">
+        <sup class="count">{{ usersCount }}</sup>
+        <i title="Users" aria-label="Users" class="icon icon-user2"></i></label>
+      <label
+        class="tool edit"
+        @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
+        <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-info"></i></label>
     </div>
   </header>
 </template>
@@ -64,15 +64,58 @@ export default {
     font-family: $crustheavy;
     font-weight: bold;
   }
+  .channel-n-topic
+  {
+    max-width:calc(100% - 160px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    float:left;
+  }
   //channel toggle is specific to here so no include.
   .channel-toggle
   {
     font-size:24px;
     float:left;
-    line-height:52px;
+    line-height:50px;
     width:60px;
+    margin:0;
     margin-left:-20px;
     text-align:center;
+    border:none;
+  }
+
+  .channel-toolbox
+  {
+    float:right;
+    line-height:50px;
+    margin:0;
+    padding:0;
+  }
+
+  .tool
+  {
+    display: inline-block;
+    margin:0 5px;
+    &:last-of-type
+    {
+      border-right:0;
+    }
+    &:first-of-type
+    {
+      border-left:0;
+    }
+    .count
+    {
+      color:$appgrey;
+      font-size:0.8em;
+    }
+    .icon
+    {
+      vertical-align: middle;
+      font-size:24px;
+      width:24px;
+    }
   }
 
   @media (min-width: $wideminwidth)
