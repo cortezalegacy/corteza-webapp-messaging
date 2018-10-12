@@ -111,14 +111,13 @@ export default {
   {
     position:relative;
     margin:0;
-    padding-top:30px;
     max-width:100vw;
     height:100vh;
     overflow:hidden auto;
   }
   .history
   {
-    top:32px;
+    top:52px;
     bottom:50px;
   }
   @media (min-width: $wideminwidth)

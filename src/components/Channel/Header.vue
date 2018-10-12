@@ -67,10 +67,11 @@ export default {
   //channel toggle is specific to here so no include.
   .channel-toggle
   {
-    font-size:16px;
+    font-size:24px;
     float:left;
-    line-height:30px;
+    line-height:52px;
     width:60px;
+    margin-left:-20px;
     text-align:center;
   }
 
