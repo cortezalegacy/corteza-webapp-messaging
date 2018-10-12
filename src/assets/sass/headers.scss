@@ -1,0 +1,33 @@
+@import './_0.declare';
+
+.header
+{
+  font-size:10px;
+  height:6em;
+  overflow:hidden;
+  background-color: $headerbgcolor;
+  box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
+  padding:0 10px;
+}
+
+.sub-header
+{
+  background-color: transparent;
+  height:3em;
+  line-height:3em;
+  padding:0 10px;
+}
+
+@media (min-width: $wideminwidth)
+{
+  .header, .sub-header
+  {
+    padding:0 20px;
+    height:6em;
+    line-height:6em;
+  }
+  .sub-header
+  {
+    background-color: transparent;
+  }
+}

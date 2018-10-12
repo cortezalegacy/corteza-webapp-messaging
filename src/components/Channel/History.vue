@@ -1,19 +1,45 @@
 <template>
-  <div class="crust_iam_messages_wrapper">
-    <ul class="crust_iam_main__messages" v-if="ch" v-chat-scroll="{ always: false }" ref="msgList">
-      <li class="crust_iam_main__message" v-for="msg in this.messages" :key="msg.ID">
-        <section class="crust_iam_main__message__metas" :data-msg-user-id="msg.userId" :data-current-user-id="'id'+user.id">
-          <i class="crust_profile-pic crust_iam_main__message__meta-avatar" :style="'background-image:url(/static/pics/user'+(msg.userId%10)+'.png)'"></i>
-          <em class="crust_iam_main__message__meta-author">{{ msg.user ? (msg.user.name || msg.user.username || msg.user.ID) : 'Anonymous coward' }}</em>
-          <span class="crust_iam_main__message__meta-date">{{ moment(msg.createdAt).fromNow() }}</span>
-          <em v-if="isToday(msg.createdAt)" class="crust_iam_main__message__meta-time">{{ momentHourMinute(msg.createdAt) }}</em>
+  <div class="history">
+    <ul class="discussion"
+      v-if="ch"
+      v-chat-scroll="{ always: false }"
+      ref="msgList">
+      <li class="crust_iam_main__message"
+        v-for="msg in this.messages"
+        :key="msg.id">
+        <section class="crust_iam_main__message__metas"
+          :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
+          :data-current-user-id="user.id">
+          <avatar :user="msg.user" />
+          <em class="crust_iam_main__message__meta-author">{{
+            msg.user ? ( msg.user.name || msg.user.username || msg.user.ID )
+            : 'Anonymous coward'
+          }}</em>
+          <span class="crust_iam_main__message__meta-date">
+            {{ moment(msg.createdAt).fromNow() }}
+          </span>
+          <em
+            v-if="isToday(msg.createdAt)"
+            class="crust_iam_main__message__meta-time">
+            {{ momentHourMinute(msg.createdAt) }}
+          </em>
           <em v-else class="crust_iam_main__message__meta-time">{{ momentDayMonth(msg.createdAt) }}</em>
         </section>
-         <!--i don't know why user.id and msg.userid are not the same size, so i compared what i found to be common root -->
-        <!--(msg.user.ID.toString().substring(0,14) == user.id.toString().substring(0,14))-->
-
-        <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
-        <p v-else :id="msg.id" :class="['crust_iam_main__message__content',{ from_me: false }]"><span class="crust_iam_main__message__content-wrap">{{msg.message}}</span></p>
+        <!--
+          @darh
+          i don't know why user.id and msg.userid are
+          not the same size, so i compared what i found to be common root
+          ie : the first 14 chars.
+        -->
+        <p
+          :id="msg.id"
+          :class="[
+            'crust_iam_main__message__content',
+            { from_me: user && msg.user && (msg.user.ID.toString().substring(0,14) === user.id.toString().substring(0,14)) }
+          ]">
+            <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
+            <span v-else class="crust_iam_main__message__content-wrap">{{msg.message}}</span>
+          </p>
       </li>
     </ul>
   </div>
@@ -23,6 +49,7 @@ import { mapGetters, mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import { Message } from '@/types'
+import Avatar from '@/components/Avatar'
 
 export default {
   name: 'channel-history',
@@ -155,11 +182,25 @@ export default {
 
   components: {
     Attachment,
+    Avatar,
   },
 }
 
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+  .discussion
+  {
+    list-style:none;
+    max-height:100%;
+    overflow:hidden auto;
+    padding:0 20px;
+    margin:0;
+  }
+  .avatar
+  {
+    position:absolute;
+    left:0;
+    top:0;
+  }
 </style>

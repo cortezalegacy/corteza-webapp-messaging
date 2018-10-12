@@ -1,11 +1,15 @@
 <!-- template for the user avatar component -->
 <template>
-  <i name="avatar"
-     class="u-avatar"
-     :title="user.username"
-     :data-uid="user.ID"
-     :style="'background-image:url(/static/pics/user'+(user.ID%10)+'.png)'"
-     aria-hidden="true"><span>{{ user.username }}</span></i>
+  <i v-if="user" class="avatar u-avatar"
+     :class="[ { 'no-avatar' : !user.avatar } ]"
+     :title="user.name || user.username"
+     :style="user.avatar?'background-image:'+user.avatar:''">
+      <span aria-hidden="true">{{ user.name[0] || user.username[0] }}</span>
+  </i>
+  <i v-else
+     class="avatar u-avatar coward">
+      <span aria-hidden="true">?</span>
+  </i>
 </template>
 
 <script>
@@ -23,18 +27,20 @@ export default
 <style scoped lang="scss">
 //this import is for variables
 @import '@/assets/sass/_0.declare.scss';
-i.u-avatar
+.u-avatar
 {
   display:inline-block;
-  height:3rem;
-  width:3rem;
+  font-size:16px;
+  height:32px;
+  width:32px;
   border:solid 2px $defaultlinecolor;
   border-radius:100%;
   background:url('/static/pics/no-profile-pic.png') center center no-repeat;
   background-size:contain;
-  span
-  {
-    display:none;
-  }
+  line-height:32px;
+  text-align:center;
+  font-style:normal;
+  background-color:$appgrey;
+  color:$appwhite;
 }
 </style>

@@ -7,18 +7,22 @@
   position:fixed;
   top:0;
   left:0;
-  right:0;
+  width:90vw;
+  margin-left:-100%;
   bottom:0;
-  width:0;
   overflow: hidden auto;
-  transition:width 0.5s ease-in;
+  transition:margin 0.5s ease-in;
   background-color:$menupanebgcolor;
+  z-index:50;
+
   &.shadowed
   {
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
   }
   &.right
   {
+    margin-left:0;
+    margin-right:-100%;
     border-left: solid 1px $defaultlinecolor;
   }
   &.left
@@ -28,6 +32,7 @@
   .closer
   {
     float:right;
+    padding-top:10px;
   }
   ul
   {
@@ -45,11 +50,32 @@
 {
 }
 
+.layer-section-title
+{
+  font-size:14px;
+  font-weight:600;
+  color:$defaulttextcolor;
+  padding:0 5px;
+  a
+  {
+    color:$defaulttextcolor;
+  }
+}
+
 .layer-item
 {
   display:block;
-  width:100%;
+  max-width: 100%;
   padding:0.5em 10%;
+}
+
+.layer-item.layer-selectable
+{
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow:hidden;
+  padding:0.5em 10%;
+  white-space: nowrap;
 }
 
 .layer-selectable
@@ -68,14 +94,15 @@
 }
 
 .menu-layer.display,
-.menu-layer.force-on
+.menu-layer.force-on,
+.menu-layer.open
 {
+  background-color:$menupanebgcolor;
   max-width:320px;
   min-width:190px;
-  width:90vw;
+  margin-left:0;
   .menu-layer-section-wrapper
   {
-    width:100%;
     margin:0;
     padding:20px 0;
     color: $appgrey;
@@ -91,6 +118,17 @@
   }
 }
 
+.menu-layer.right.display,
+.menu-layer.right.force-on,
+.menu-layer.right.open
+{
+  margin-right:0;
+  .menu-layer-section-wrapper
+  {
+    margin:0;
+  }
+}
+
 @media (min-width: $wideminwidth)
 {
   .menu-layer
@@ -102,7 +140,7 @@
     max-width:320px;
     min-width:190px;
     width:90vw;
-
+    margin-left:0;
     .closer
     {
       visibility:hidden;

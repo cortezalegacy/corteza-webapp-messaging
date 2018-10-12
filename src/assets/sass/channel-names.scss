@@ -1,0 +1,37 @@
+@import './_0.declare';
+
+.channel-name:before
+{
+  content:"#";
+  display:inline-block;
+  margin-right:0.5em;
+  font-weight:400;
+}
+.channel-name.blue
+{
+  &:before
+  {
+    color:$appblue;
+  }
+}
+.channel-name.green
+{
+  &:before
+  {
+    color:$appgreen;
+  }
+}
+.channel-name.red
+{
+  &:before
+  {
+    color:$appgreen;
+  }
+}
+.channel-name.yellow
+{
+  &:before
+  {
+    color:$appgreen;
+  }
+}

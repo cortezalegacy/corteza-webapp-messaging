@@ -1,14 +1,19 @@
 <template>
   <section
-    class="channel" v-if="ch"
+    class="channel"
+    v-if="ch"
     id="channelContainer"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
-
-    <channel-upload :channelID="channelID" v-if="ch" ref="upload"></channel-upload>
-    <channel-header :channel="ch" v-if="ch"></channel-header>
+    <channel-upload
+      :channelID="channelID" v-if="ch" ref="upload"></channel-upload>
+    <channel-header
+      :channel="ch"
+      v-if="ch"></channel-header>
     <channel-history></channel-history>
-    <channel-input :channelID="channelID" @promptFilePicker="openFilePicker"></channel-input>
+    <channel-input
+      :channelID="channelID"
+      @promptFilePicker="openFilePicker"></channel-input>
   </section>
 </template>
 <script>
@@ -81,3 +86,55 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+  @import '@/assets/sass/_0.commons.scss';
+  //disposition of elements is done here:
+  .header,
+  .channel-input,
+  .history
+  {
+    position:fixed;
+    width:100%;
+    max-width:100vw;
+    left:0;
+  }
+  .header
+  {
+    top:0;
+  }
+  .channel-input
+  {
+    bottom:0;
+  }
+  .channel
+  {
+    position:relative;
+    margin:0;
+    padding-top:30px;
+    max-width:100vw;
+    height:100vh;
+    overflow:hidden auto;
+  }
+  .history
+  {
+    top:32px;
+    bottom:50px;
+  }
+  @media (min-width: $wideminwidth)
+  {
+    .header,
+    .channel,
+    .channel-input,
+    .history
+    {
+      margin-left:320px;
+      max-width:calc(100vw - 320px);
+    }
+    .history
+    {
+      top:62px;
+      bottom:50px;
+    }
+  }
+</style>

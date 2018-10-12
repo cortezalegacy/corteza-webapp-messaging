@@ -7,12 +7,15 @@ badge structure :
 
 .badge
 {
+  font-size:12px;
+  line-height:1;
   display:inline-block;
   border: solid 1px $appgrey;
   color: $appgrey;
   padding:0.25em 1em;
   border-radius:1.5em;
   text-decoration: none;
+  margin:0 5px;
   transition: color 0.2s, background-color 0.2s;
   [class^="icon-"],
   [class*=" icon-"],
@@ -56,6 +59,7 @@ badge structure :
 .badge-block
 {
   display:block;
+  margin:0;
   .badge-txt
   {
     max-width:calc(100% - 3.5em);
@@ -82,4 +86,11 @@ badge structure :
   {
     color:white;
   }
+}
+
+.badge-blue
+{
+  background-color:$appblue;
+  border-color:$appblue;
+  color:$appwhite;
 }

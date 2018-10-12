@@ -4,6 +4,7 @@
       <panel-channels
         :class="[
           { 'force-on' : !ch },
+          { 'open' : isChannelPanelOpen },
         ]"></panel-channels>
       <!-- no use in displaying messages if no channel -->
       <router-view />
@@ -11,7 +12,6 @@
         v-if="isUserPanelOpen"
         @openDirectMessage="onOpenDirectChannel"
         ></panel-users>
-      <div v-if="ch">test</div>
     </main>
 </template>
 <script>
@@ -126,5 +126,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+  @import '@/assets/sass/_0.commons.scss';
+  main
+  {
+    background-color : $mainbgcolor;
+  }
 </style>

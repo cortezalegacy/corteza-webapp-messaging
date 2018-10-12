@@ -1,6 +1,10 @@
 <template>
-  <nav class="menu-layer always-deployed-on-desktop">
+  <nav
+    class="menu-layer always-deployed-on-desktop"
+    :class="current?'':'no-current'">
+    <!-- cant close this if no channel selected-->
     <label class="closer"
+      v-if="current"
       @click="toggleChannelPanel(false)">
         <i class="icon-close" aria-label="close"></i>
     </label>
@@ -26,7 +30,8 @@
               'channel-name',
               channelColor(index),
               { current:(current && (ch === current)) },
-            ]">
+            ]"
+            @click="toggleChannelPanel(false)">
             <router-link
               :to="{name:'channel', params:{channelID:ch.ID}}">{{name(ch)}}</router-link>
           </li>
@@ -87,48 +92,17 @@ export default {
 
 <style scoped lang="scss">
   //inlude generic definitions
+  @import '@/assets/sass/_0.commons.scss';
   @import '@/assets/sass/menu-layer.scss';
   @import '@/assets/sass/btns.scss';
   @import '@/assets/sass/inputs.scss';
   @import '@/assets/sass/badges.scss';
+
+  @import '@/assets/sass/channel-names.scss';
+
   // add specific stuff here if desired
   .channel-name a
   {
     text-decoration:none;
-  }
-  .channel-name:before
-  {
-    content:"#";
-    display:inline-block;
-    margin-right:0.5em;
-    font-weight:400;
-  }
-  .channel-name.blue
-  {
-    &:before
-    {
-      color:$appblue;
-    }
-  }
-  .channel-name.green
-  {
-    &:before
-    {
-      color:$appgreen;
-    }
-  }
-  .channel-name.red
-  {
-    &:before
-    {
-      color:$appgreen;
-    }
-  }
-  .channel-name.yellow
-  {
-    &:before
-    {
-      color:$appgreen;
-    }
   }
 </style>
