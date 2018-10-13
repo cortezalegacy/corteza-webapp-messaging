@@ -13,7 +13,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 function protect (to, from, next) {
-  next(store.getters['auth/isAuthenticated'] ? true : { name: 'signin' })
+  next(store.getters['auth/isAuthenticated'] ? true : '/messaging/auth/signin')
 }
 
 export default new Router({
@@ -21,7 +21,6 @@ export default new Router({
 
   routes: [
     {
-      name: 'root',
       path: '/messaging/',
       beforeEnter: protect,
       component: Messanger,
@@ -36,7 +35,7 @@ export default new Router({
     {
       path: '/messaging/auth',
       component: Auth,
-      redirect: { name: 'signin' },
+      redirect: '/messaging/auth/signin',
 
       children: [
         { path: 'signin', name: 'signin', component: AuthSignIn },

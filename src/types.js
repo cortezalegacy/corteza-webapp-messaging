@@ -3,7 +3,7 @@ export function Channel (c) {
     return
   }
 
-  this.ID = c.ID
+  this.ID = c.ID || c.id // cover both cases (BC)
   this.name = c.name
   this.topic = c.topic
   this.type = c.type
@@ -16,7 +16,7 @@ export function Message (m) {
     return
   }
 
-  this.ID = m.ID
+  this.ID = m.ID || m.id // cover both cases (BC)
   this.message = m.message
   this.type = m.type
   this.channelID = m.channelID
@@ -40,7 +40,7 @@ export function Attachment (a) {
     return
   }
 
-  this.ID = a.ID
+  this.ID = a.ID || a.id // cover both cases (BC)
   this.userID = a.userID
   this.name = a.name
   this.meta = a.meta
@@ -54,7 +54,7 @@ export function User (u) {
     return
   }
 
-  this.ID = u.ID
+  this.ID = u.ID || u.id // cover both cases (BC)
   this.username = u.username
   this.handle = u.handle
   this.name = u.name

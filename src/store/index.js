@@ -4,6 +4,7 @@ import auth from './auth'
 import channels from './channels'
 import users from './users'
 import ui from './ui'
+import suggestions from './suggestions'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,7 @@ const store = new Vuex.Store({
     users,
     ui,
     auth,
+    suggestions,
   },
 })
 

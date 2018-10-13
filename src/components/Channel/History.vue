@@ -6,7 +6,7 @@
       ref="msgList">
       <li class="crust_iam_main__message"
         v-for="msg in this.messages"
-        :key="msg.id">
+        :key="msg.ID">
         <section class="crust_iam_main__message__metas"
           :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
           :data-current-user-id="user.id">
@@ -25,7 +25,8 @@
           </em>
           <em v-else class="crust_iam_main__message__meta-time">{{ momentDayMonth(msg.createdAt) }}</em>
         </section>
-        <!--
+
+         <!--
           @darh
           i don't know why user.id and msg.userid are
           not the same size, so i compared what i found to be common root
@@ -38,9 +39,9 @@
             'crust_iam_main__message__content',
             { from_me: user && msg.user && (msg.user.ID.toString().substring(0,14) === user.id.toString().substring(0,14)) }
           ]">
-            <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
-            <span v-else class="crust_iam_main__message__content-wrap">{{msg.message}}</span>
-          </p>
+          <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
+          <history-message :id="msg.id" v-else :chunks="processMsg(msg.message)"/>
+        </p>
       </li>
     </ul>
   </div>
@@ -49,8 +50,10 @@
 import { mapGetters, mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
+import HistoryMessage from '@/components/Channel/HistoryMessage'
 import { Message } from '@/types'
 import Avatar from '@/components/Avatar'
+import triggers from '@/plugins/triggers'
 
 export default {
   name: 'channel-history',
@@ -65,6 +68,9 @@ export default {
       ch: 'channels/current',
       users: 'users/list',
       user: 'auth/user',
+
+      findUserByID: 'users/findByID',
+      findChannelByID: 'channels/findByID',
     }),
 
     getFirstMsgId () {
@@ -97,18 +103,17 @@ export default {
     addMessage (message) {
       if (this.ch && message.channelID !== this.ch.ID) return
 
-      // Push msg to either top or back
-      // Check timestamp to determine where in array to push it to
-      if (this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt))) {
-        this.messages.unshift(message)
-      } else {
-        this.messages.push(message)
-      }
-
       // Replaces given msg due to an update
       let n = this.messages.findIndex(m => m.ID === message.ID)
+      // Doesn't yet exist -- add it
       if (n < 0) {
-        this.messages.push(message)
+        // Push msg to either top or back
+        // Check timestamp to determine where in array to push it to
+        if (this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt))) {
+          this.messages.unshift(message)
+        } else {
+          this.messages.push(message)
+        }
       } else {
         this.messages.splice(n, 1, message)
       }
@@ -124,15 +129,19 @@ export default {
 
     scrollHandeler (e) {
       let { target } = e
-      if (this.isScrolledToTop(target)) {
+      if (target && this.isScrolledToTop(target)) {
         // Scrolled to top
         this.$ws.getMessages(this.ch.ID, this.getFirstMsgId)
       }
 
-      if (this.isScrolledToBottom(target)) {
+      if (target && this.isScrolledToBottom(target)) {
         // Scrolled to bottom
         // this.$ws.getMessages(this.ch.ID, undefined, this.getLastMsgId)
       }
+    },
+
+    processMsg (msg) {
+      return triggers.parse(msg.trim().split(/[ \n]/), this.findUserByID, this.findChannelByID)
     },
   },
 
@@ -150,20 +159,15 @@ export default {
     this.$ws.subscribe('messages', (messages) => {
       // Slight scroll from edges to keep it from resetting to top/bottom
       let target = this.$refs.msgList
-      if (target !== undefined) {
-        if (this.isScrolledToTop(target)) {
-          target.scrollTop = 1
-        } else if (this.isScrolledToBottom(target)) {
-          target.scrollTop -= 1
-        }
-        messages.forEach((message) => {
-          this.addMessage(new Message(message))
-        })
-
-        messages.forEach(m => {
-          this.setLastMessageId({ channelID: m.channelID, messageId: m.ID })
-        })
+      if (target && this.isScrolledToTop(target)) {
+        target.scrollTop = 1
+      } else if (target && this.isScrolledToBottom(target)) {
+        target.scrollTop -= 1
       }
+
+      messages.forEach((message) => {
+        this.addMessage(new Message(message))
+      })
     })
 
     this.$ws.subscribe('message', (message) => {
@@ -177,12 +181,15 @@ export default {
     }
 
     this.$nextTick(() => {
-      this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandeler(e) })
+      if (this.$refs.msgList) {
+        this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandeler(e) })
+      }
     })
   },
 
   components: {
     Attachment,
+    HistoryMessage,
     Avatar,
   },
 }

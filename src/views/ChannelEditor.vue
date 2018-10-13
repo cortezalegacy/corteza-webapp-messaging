@@ -89,6 +89,7 @@ export default {
       } else {
         console.debug('Creating channel', this.channel)
         this.$rest.createChannel(this.channel).then((ch) => {
+          console.debug('Channel created', ch)
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch((error) => {
           console.error('Failed to store channel update', { error })

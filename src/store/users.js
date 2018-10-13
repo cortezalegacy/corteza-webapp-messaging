@@ -8,6 +8,9 @@ const getters = {
   list: (state) => state.list,
   length: (state) => state.list.length,
   findByID: (state) => (ID) => state.list.find(u => ID === u.ID),
+  findByUsername: (state) => (username) => {
+    return state.list.filter(user => user.username === username)[0] || undefined
+  },
 
 }
 

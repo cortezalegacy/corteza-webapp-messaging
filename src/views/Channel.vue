@@ -41,7 +41,7 @@ export default {
     },
   },
 
-  beforeMount () {
+  mounted () {
     this.setCurrentById(this.channelID)
 
     window.addEventListener('keyup', (event) => {
@@ -50,6 +50,9 @@ export default {
         this.closeUploadOverlay()
       }
     })
+
+    // Set initial channel on load
+    this.setCurrentById(this.channelID)
   },
 
   methods: {

@@ -16,6 +16,12 @@ const getters = {
   },
   current: (state) => state.list.find(ch => ch.ID === state.current),
   list: (state) => state.list,
+  findByName: (state) => (name) => {
+    return state.list.filter(c => c.name === name)[0] || undefined
+  },
+  findByID: (state) => (ID) => {
+    return state.list.filter(c => c.ID === ID)[0] || undefined
+  },
 }
 
 // actions
