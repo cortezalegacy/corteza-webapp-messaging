@@ -34,6 +34,7 @@
         <p
           :id="msg.id"
           :class="[
+            'message',
             'crust_iam_main__message__content',
             { from_me: user && msg.user && (msg.user.ID.toString().substring(0,14) === user.id.toString().substring(0,14)) }
           ]">
@@ -188,9 +189,21 @@ export default {
 
 </script>
 
+<!-- this does not work in scoped... -->
+<!-- no clue why, in any case should not break anything -->
+<style>
+  img
+  {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+
+
 <style scoped lang="scss">
   .discussion
   {
+    position:relative;
     list-style:none;
     max-height:100%;
     overflow:hidden auto;
@@ -202,5 +215,10 @@ export default {
     position:absolute;
     left:0;
     top:0;
+  }
+  .discussion .message
+  {
+    position:relative;
+    word-wrap: break-word;
   }
 </style>

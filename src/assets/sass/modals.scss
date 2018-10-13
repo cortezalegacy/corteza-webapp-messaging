@@ -1,0 +1,86 @@
+/*
+  structure (from : https://getbootstrap.com/docs/4.1/components/modal/)
+  <div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+*/
+@import './_0.declare';
+@import './btns.scss';
+.modal
+{
+  font-size:10px;
+  display:block;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:100;
+  background-color:rgba(0,0,0,0.1);
+  .close
+  {
+    position:absolute;
+    right:1em;
+    top:1em;
+    text-decoration: none;
+    > *
+    {
+      color:$appgrey;
+      text-decoration: none;
+      font-size:24px;
+      color:$appgrey;
+      text-decoration: none;
+    }
+    a
+    {
+      text-decoration: none;
+    }
+  }
+}
+.modal-header
+{
+  position:static;
+  display:block;
+}
+.modal-footer
+{
+  text-align:center;
+}
+.modal-dialog
+{
+  position:relative;
+  padding:2em;
+  display: block;
+  max-width:90vw;
+  width:90vw;
+  max-height:90vh;
+  overflow:hidden auto;
+  background-color:$appwhite;
+  margin:0 auto;
+  margin-top:10vh;
+  box-shadow: 0 0 0.2em 0.2em  rgba($defaulttextcolor, 0.1);
+}
+
+@media (min-width: $wideminwidth)
+{
+  .modal-dialog
+  {
+    max-width:500px;
+  }
+}

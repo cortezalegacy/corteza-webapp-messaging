@@ -1,37 +1,51 @@
 <template>
-  <section class="channel">
-    <router-link :to="{ name: 'channel', params: { channelID: channelID } }">&times;</router-link>
-    <h1>Channel editor</h1>
-    <form class="editor" @submit.prevent="submit">
-      <div>
-        <label>Channel name</label>
-        <input
-          name="name"
-          v-model.trim="channel.name"
-          required
-          autocomplete="channel-name"
-          placeholder="Make it short, make it sweet">
-      </div>
+  <section class="modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <router-link
+            class="close"
+            :to="{ name: 'channel', params: { channelID: channelID } }"><i class="icon-close"></i></router-link>
+          <h1>Channel editor</h1>
+        </div>
+        <form class="editor" @submit.prevent="submit">
+          <div>
+            <label>Channel name</label>
+            <input
+              name="name"
+              v-model.trim="channel.name"
+              required
+              autocomplete="channel-name"
+              placeholder="Make it short, make it sweet">
+          </div>
 
-      <div>
-        <label>Topic</label>
-        <input
-          name="topic"
-          v-model.trim="channel.topic"
-          autocomplete="channel-topic"
-          placeholder="Things we talk about">
-      </div>
+          <div>
+            <label>Topic</label>
+            <input
+              name="topic"
+              v-model.trim="channel.topic"
+              autocomplete="channel-topic"
+              placeholder="Things we talk about">
+          </div>
 
-      <p>Type: <b>{{channel.type}}</b></p>
-      <p>@todo Invite users</p>
+          <p>Type: <b>{{channel.type}}</b></p>
+          <p>@todo Invite users</p>
 
-      <hr />
-      <div class="right">
-        <button v-if="channel">Update</button>
-        <button v-else>Create</button>
-        <button v-if="channel" @click.prevent="deleteChannel">Delete</button>
+          <div class="modal-footer">
+            <!--
+              @darh
+              the v-if condition does not seem to work.
+            -->
+            <button class="btn btn-success" v-if="channel">Update</button>
+            <button class="btn btn-success" v-else>Create</button>
+            <button class="btn btn-danger"  v-if="channel" @click.prevent="deleteChannel">Delete</button>
+            <router-link
+              class="btn btn-info"
+              :to="{ name: 'channel', params: { channelID: channelID } }">Cancel</router-link>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </section>
 </template>
 <script>
@@ -99,16 +113,8 @@ export default {
   },
 }
 </script>
-<style scoped>
-section {
-  padding-left: 30px;
-}
-
-label {
-  display:block
-}
-
-.right {
-  text-align: right
-}
+<style scoped lang="scss">
+  @import '@/assets/sass/_0.commons.scss';
+  @import '@/assets/sass/modals.scss';
+  @import '@/assets/sass/inputs.scss';
 </style>
