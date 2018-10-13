@@ -10,7 +10,7 @@
     <channel-header
       :channel="ch"
       v-if="ch"></channel-header>
-    <channel-history></channel-history>
+    <channel-history ref="history"></channel-history>
     <channel-input
       :channelID="channelID"
       @promptFilePicker="openFilePicker"></channel-input>
@@ -55,18 +55,11 @@ export default {
     this.setCurrentById(this.channelID)
   },
 
+
   methods: {
     ...mapActions({
       setCurrentById: 'channels/setCurrentById',
     }),
-
-    updateHistory () {
-      const lastMessageId = this.lastMessage(this.channelID)
-
-      if (lastMessageId > 0) {
-        this.$ws.newMessages(this.channelID, lastMessageId)
-      }
-    },
 
     openFilePicker () {
       this.$refs.upload.openFilePicker()

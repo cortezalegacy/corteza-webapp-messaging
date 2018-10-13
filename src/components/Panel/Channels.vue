@@ -34,6 +34,9 @@
             @click="toggleChannelPanel(false)">
             <router-link
               :to="{name:'channel', params:{channelID:ch.ID}}">{{name(ch)}}</router-link>
+            <transition name="slide-fade">
+              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
+            </transition>
           </li>
         </ul>
       </section>
@@ -105,4 +108,30 @@ export default {
   {
     text-decoration:none;
   }
+
+span.unread {
+  // @todo apply proper styling
+  float: right;
+  background: #1397CB;
+  color: white;
+  border-radius: 10px;
+  width: 24px;
+  height: 18px;
+  font-size: 9px;
+  text-align: center;
+  padding-top: 3px;
+  margin-right: -20px;
+
+  &.slide-fade-enter-active {
+    transition: all .5s ease;
+  }
+  &.slide-fade-leave-active {
+    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  &.slide-fade-enter, &.slide-fade-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
+  }
+}
+
 </style>

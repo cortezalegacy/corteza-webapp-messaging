@@ -5,6 +5,7 @@ export default {
   install (Vue) {
     const ws = new Websocket()
     Vue.prototype.$ws = ws
+    window.$ws = ws
   },
 }
 
@@ -125,6 +126,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
 
   async oldMessages (channelID, untilId) {
     return this.send(JSON.stringify({ messages: { channelID, untilId } }))
+  },
+
+  async recordChannelView (channelID, lastMessageID) {
+    return this.send(JSON.stringify({ recordChannelView: { channelID, lastMessageID } }))
   },
 
   async users () {

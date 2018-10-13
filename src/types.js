@@ -7,9 +7,11 @@ export function Channel (c) {
   this.name = c.name
   this.topic = c.topic
   this.type = c.type
-  this.lastMessageID = c.lastMessageID
+
+  this.view = new ChannelView(c.view)
   // this.members = c.members
 }
+
 
 export function Message (m) {
   if (!m) {
@@ -71,4 +73,15 @@ export function Member (m) {
   this.channelID = m.channelID
   this.createdAt = m.createdAt
   this.updatedAt = m.updatedAt
+}
+
+function ChannelView (v) {
+  if (!v) {
+    this.lastMessageID = undefined
+    this.newMessagesCount = 0
+    return
+  }
+
+  this.lastMessageID = v.lastMessageID
+  this.newMessagesCount = v.newMessagesCount
 }

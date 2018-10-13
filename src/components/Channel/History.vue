@@ -63,6 +63,8 @@ export default {
     }
   },
 
+  resetUnreadTimeout: null,
+
   computed: {
     ...mapGetters({
       ch: 'channels/current',
@@ -84,7 +86,8 @@ export default {
 
   methods: {
     ...mapActions({
-      setLastMessageId: 'channels/setLastMessageId',
+      incUnreadMessageCount: 'channels/incUnreadMessageCount',
+      resetUnreadMessageCount: 'channels/resetUnreadMessageCount',
     }),
 
     moment: function (timeString) {
@@ -101,7 +104,11 @@ export default {
     },
 
     addMessage (message) {
-      if (this.ch && message.channelID !== this.ch.ID) return
+      if (this.ch && message.channelID !== this.ch.ID) {
+        // Received message for another chan, just increase msg counter
+        this.incUnreadMessageCount(message.channelID)
+        return
+      }
 
       // Replaces given msg due to an update
       let n = this.messages.findIndex(m => m.ID === message.ID)
@@ -127,7 +134,7 @@ export default {
       return target.scrollHeight - target.scrollTop - target.clientHeight <= 0
     },
 
-    scrollHandeler (e) {
+    scrollHandler (e) {
       let { target } = e
       if (target && this.isScrolledToTop(target)) {
         // Scrolled to top
@@ -137,11 +144,23 @@ export default {
       if (target && this.isScrolledToBottom(target)) {
         // Scrolled to bottom
         // this.$ws.getMessages(this.ch.ID, undefined, this.getLastMsgId)
+        this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }
     },
 
     processMsg (msg) {
       return triggers.parse(msg.trim().split(/[ \n]/), this.findUserByID, this.findChannelByID)
+    },
+
+    resetUnreadAfterTimeout () {
+      if (this.resetUnreadTimeout !== null) {
+        window.clearTimeout(this.resetUnreadTimeout)
+      }
+
+      this.resetUnreadTimeout = window.setTimeout(() => {
+        this.resetUnreadMessageCount(this.ch.ID)
+        this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
+      }, 1000)
     },
   },
 
@@ -151,6 +170,8 @@ export default {
         this.messages = []
 
         this.$ws.getMessages(newV.ID)
+
+        this.resetUnreadAfterTimeout()
       }
     },
   },
@@ -182,9 +203,11 @@ export default {
 
     this.$nextTick(() => {
       if (this.$refs.msgList) {
-        this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandeler(e) })
+        this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandler(e) })
       }
     })
+
+    this.resetUnreadAfterTimeout()
   },
 
   components: {

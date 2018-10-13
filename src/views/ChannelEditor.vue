@@ -47,7 +47,6 @@
   </section>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import { Channel } from '@/types'
 
 export default {
@@ -74,10 +73,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      updateList: 'channels/updateList',
-    }),
-
     submit () {
       if (this.channel.ID) {
         console.debug('Updating channel', this.channel)

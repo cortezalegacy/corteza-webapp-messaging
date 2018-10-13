@@ -17,6 +17,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers } from '../components/Panel'
+import { Channel } from '@/types'
 
 export default {
   computed: {
@@ -47,11 +48,16 @@ export default {
 
   beforeCreate () {
     this.$ws.subscribe('channels', (channels) => {
-      this.resetChannels(channels)
+      let cc = []
+      channels.forEach((c) => {
+        cc.push(new Channel(c))
+      })
+
+      this.resetChannels(cc)
     })
 
     this.$ws.subscribe('channel', (channel) => {
-      this.updateChannels(channel)
+      this.updateChannels(new Channel(channel))
     })
 
     this.$ws.subscribe('channelDeleted', (channel) => {

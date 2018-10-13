@@ -1,5 +1,3 @@
-var BigNumber = require('bignumber.js')
-
 // initial state
 const state = {
   current: null,
@@ -30,14 +28,6 @@ const actions = {
     commit('setCurrent', channelID)
   },
 
-  setLastMessageId ({ commit, state }, { channelID, messageId }) {
-    let ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
-
-    if (ci < 0 || (new BigNumber(messageId)).isGreaterThan(new BigNumber(state.lastMessages[ci].messageId))) {
-      commit('updateLastMessage', { channelID, messageId })
-    }
-  },
-
   resetList ({ commit }, list) {
     commit('resetList', list)
   },
@@ -48,6 +38,24 @@ const actions = {
 
   removeFromList ({ commit }, channel) {
     commit('removeFromList', channel)
+  },
+
+  incUnreadMessageCount ({ commit, getters }, channelID) {
+    const ch = getters.findByID(channelID)
+
+    if (ch) {
+      ch.view.newMessagesCount++
+      commit('updateList', ch)
+    }
+  },
+
+  resetUnreadMessageCount ({ commit, getters }, channelID) {
+    const ch = getters.findByID(channelID)
+
+    if (ch) {
+      ch.view.newMessagesCount = 0
+      commit('updateList', ch)
+    }
   },
 }
 
