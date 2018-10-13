@@ -43,5 +43,10 @@ export default new Router({
         { path: 'signout', name: 'signout', component: AuthSignOut },
       ],
     },
+    {
+      path: '*',
+      redirect: { name: 'root' },
+    },
   ],
 })
+
