@@ -1,6 +1,6 @@
 <template>
   <section class="channel">
-    <router-link :to="{ name: 'channel', params: { channelID: channelID } }">&times;</router-link>
+    <a @click="$router.back()" class="closer">&times;</a>
     <h1>Members</h1>
     <table>
       <tr v-for="u in users" :key="u.ID">

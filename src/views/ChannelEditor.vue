@@ -3,9 +3,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <router-link
-            class="close"
-            :to="{ name: 'channel', params: { channelID: channelID } }"><i class="icon-close"></i></router-link>
+          <a @click="$router.back()" class="close"><i class="icon-close"></i></a>
           <h1>Channel editor</h1>
         </div>
         <form class="editor" @submit.prevent="submit">
@@ -63,7 +61,6 @@ export default {
   },
 
   mounted () {
-    console.log(this.channel)
     if (this.channelID !== undefined) {
       this.$rest.getChannel(this.channelID).then((ch) => {
         console.debug('Channel info loaded into editor', ch)
