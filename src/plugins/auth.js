@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { User } from '@/types'
+
 
 // Handles basic auth comm + state management
 export default {
@@ -48,7 +50,7 @@ export default {
                 // and notify the caller
                 console.debug('AuthCheck:', data.response.user)
                 store.dispatch('auth/setUser', data.response.user)
-                resolve(data.response.user)
+                resolve(new User(data.response.user))
               }
             })
             .catch(error => {

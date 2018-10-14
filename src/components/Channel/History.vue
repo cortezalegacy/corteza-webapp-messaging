@@ -37,7 +37,7 @@
           :class="[
             'message',
             'crust_iam_main__message__content',
-            { from_me: user && msg.user && (msg.user.ID.toString().substring(0,14) === user.id.toString().substring(0,14)) }
+            { from_me: (msg.user || {}).ID === user.ID }
           ]">
           <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
           <history-message :id="msg.id" v-else :chunks="processMsg(msg.message)"/>
