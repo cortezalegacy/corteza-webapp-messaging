@@ -2,8 +2,8 @@
   <div>
       <div v-if="msg.type == 'inlineImage' && msg.attachment.meta.preview">
         <a :href="prefixAttachmentUrl(msg.attachment.downloadUrl)">
-          <img :width="msg.attachment.meta.preview.image.width || 320"
-               :height="msg.attachment.meta.preview.image.height || 180"
+          <img :width="(msg.attachment.meta.preview.image || {}).width || 320"
+               :height="(msg.attachment.meta.preview.image || {}).height || 180"
                @error.once="reloadBrokenImage"
                :src="prefixAttachmentUrl(msg.attachment.previewUrl)">
         </a>
