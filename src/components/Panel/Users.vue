@@ -9,7 +9,7 @@
         @click="$emit('openDirectMessage', u.ID);"
         v-bind:class="[{active:u.connections}, 'crust_iam-channel_member']">
         <user-avatar :user="u" />
-        <span class="crust_iam-channel_member_name">{{ u.name || u.username || u.ID }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
+        <span class="crust_iam-channel_member_name">{{ u | userLabel }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
       </li>
     </ul>
   </div>

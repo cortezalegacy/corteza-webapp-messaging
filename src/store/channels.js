@@ -14,6 +14,8 @@ const getters = {
   },
   current: (state) => state.list.find(ch => ch.ID === state.current),
   list: (state) => state.list,
+  listChannels: (state) => state.list.filter(c => c.type === 'private' || c.type === 'public'),
+  listGroups: (state) => state.list.filter(c => c.type === 'group'),
   findByName: (state) => (name) => {
     return state.list.filter(c => c.name === name)[0] || undefined
   },

@@ -1,5 +1,5 @@
 <template>
-  <section class="channel">
+  <section class="user">
     <a @click="$router.back()" class="closer">&times;</a>
     <h1>Members</h1>
     <table>

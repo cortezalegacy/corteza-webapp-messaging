@@ -9,7 +9,7 @@ export function Channel (c) {
   this.type = c.type
 
   this.view = new ChannelView(c.view)
-  // this.members = c.members
+  this.members = c.members
 }
 
 

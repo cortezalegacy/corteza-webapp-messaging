@@ -29,11 +29,11 @@
               'layer-selectable',
               'channel-name',
               channelColor(index),
-              { current:(current && (ch === current)) },
+              { current: (current||{}).ID === ch.ID },
             ]"
             @click="toggleChannelPanel(false)">
             <router-link
-              :to="{name:'channel', params:{channelID:ch.ID}}">{{name(ch)}}</router-link>
+              :to="{name:'channel', params:{channelID:ch.ID}}">{{ ch.name || ch.ID }}</router-link>
             <transition name="slide-fade">
               <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
             </transition>
@@ -44,6 +44,30 @@
         <span class="btn btn-dark" @click="$router.push({name: 'new-channel'})">
           <i class="btn-i icon-plus"></i><span class="btn-txt">New Channel</span></span>
       </div>
+      <section class="layer-section">
+        <div class="layer-item layer-section-title"><a>Direct messages</a></div>
+        <ul v-if="chatGroups">
+          <li
+            v-for="(ch, index) in chatGroups"
+            :key="ch.ID"
+            v-bind:class="[
+              'layer-item',
+              'layer-selectable',
+              'channel-name',
+              channelColor(index),
+              { current: (current||{}).ID === ch.ID },
+            ]"
+            @click="toggleChannelPanel(false)">
+            <router-link
+                    :to="{name:'channel', params:{channelID:ch.ID}}">
+              <span v-for="(m, index) in groupMembers(ch)" :key="m.ID"><span if v-if="index > 0">, </span>{{ m | userLabel }}</span>
+            </router-link>
+            <transition name="slide-fade">
+              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
+            </transition>
+          </li>
+        </ul>
+      </section>
     </div>
   </nav>
 </template>
@@ -61,9 +85,11 @@ export default {
 
   computed: {
     ...mapGetters({
-      chatChannels: 'channels/list',
+      chatChannels: 'channels/listChannels',
+      chatGroups: 'channels/listGroups',
       current: 'channels/current',
       findUserByID: 'users/findByID',
+      users: 'users/list',
     }),
   },
 
@@ -72,16 +98,10 @@ export default {
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
 
-    name (ch) {
-      if (ch.type === 'group' && ch.members !== undefined && ch.members.length === 2) {
-        const u1 = this.findUserByID(ch.members[0])
-        const u2 = this.findUserByID(ch.members[1])
-
-        return (u1.username || u1.ID) + ' & ' + (u2.username || u2.ID)
-      } else {
-        // juan : removed auto # appended, controlled by css
-        return '' + (ch.name || ch.ID)
-      }
+    groupMembers (ch) {
+      return (ch.members || []).map((memberID) => {
+        return this.findUserByID(memberID) || {}
+      })
     },
 
     channelColor (index)
