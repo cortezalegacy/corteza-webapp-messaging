@@ -1,16 +1,14 @@
 <template>
-  <section class="user">
+  <section class="members">
     <a @click="$router.back()" class="closer">&times;</a>
     <h1>Members</h1>
     <table>
       <tr v-for="u in users" :key="u.ID">
-        <td>{{u.ID}}</td>
-        <td>{{u.name}}</td>
-        <td>???</td>
-        <td>
+        <td class="right">
           <button @click="remove(u.ID)" v-if="isMember(u.ID)">remove</button>
           <button @click="add(u.ID)" v-if="!isMember(u.ID)">add</button>
         </td>
+        <td>{{u | userLabel }}</td>
       </tr>
     </table>
   </section>
@@ -64,10 +62,8 @@ export default {
   },
 }
 </script>
-<style scoped>
-section {
-  padding-left: 30px;
-}
+<style lang="scss" scoped>
+@import '@/assets/sass/_0.commons.scss';
 
 label {
   display:block
@@ -75,5 +71,23 @@ label {
 
 .right {
   text-align: right
+}
+
+@media (min-width: $wideminwidth) {
+  section.members {
+    margin-left:320px;
+    max-width:calc(100vw - 320px);
+
+  .history {
+    top:62px;
+  }
+}
+}
+
+section.members {
+  position:fixed;
+  width:100%;
+  max-width:100vw;
+  left:0;
 }
 </style>

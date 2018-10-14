@@ -1,6 +1,6 @@
 <template>
   <section
-    class="user"
+    class="channel"
     v-if="ch"
     id="channelContainer"
     @dragover="openUploadOverlay"
@@ -103,7 +103,7 @@ export default {
   {
     bottom:0;
   }
-  .user
+  .channel
   {
     position:relative;
     margin:0;
@@ -119,7 +119,7 @@ export default {
   @media (min-width: $wideminwidth)
   {
     .header,
-    .user,
+    .channel,
     .channel-input,
     .history
     {
