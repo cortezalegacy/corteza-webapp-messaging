@@ -30,13 +30,9 @@
           <p>@todo Invite users</p>
 
           <div class="modal-footer">
-            <!--
-              @darh
-              the v-if condition does not seem to work.
-            -->
-            <button class="btn btn-success" v-if="channel">Update</button>
+            <button class="btn btn-success" v-if="channel.ID">Update</button>
             <button class="btn btn-success" v-else>Create</button>
-            <button class="btn btn-danger"  v-if="channel" @click.prevent="deleteChannel">Delete</button>
+            <button class="btn btn-danger"  v-if="channel.ID" @click.prevent="deleteChannel">Delete</button>
             <router-link
               class="btn btn-info"
               :to="{ name: 'channel', params: { channelID: channelID } }">Cancel</router-link>
