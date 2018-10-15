@@ -109,7 +109,8 @@ export default {
     margin:0;
     max-width:100vw;
     height:100vh;
-    overflow:hidden auto;
+    // this does not work in some browsers
+    // overflow:hidden auto;
   }
   .history
   {
@@ -132,7 +133,7 @@ export default {
     .history
     {
       top:62px;
-      bottom:62px;
+      bottom:82px;
     }
   }
 </style>

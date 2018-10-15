@@ -71,7 +71,8 @@
   max-width:90vw;
   width:90vw;
   max-height:90vh;
-  overflow:hidden auto;
+  overflow-x:hidden;
+  overflow-y:auto;
   background-color:$appwhite;
   margin:0 auto;
   margin-top:10vh;

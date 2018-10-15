@@ -16,7 +16,7 @@
         ref="richTextInput" />
 
       <button class="upload-button" @click="promptFilePicker">
-        +
+        <span>+</span>
       </button>
     </div>
   </div>
@@ -173,7 +173,7 @@ export default {
     border:solid 5px $appwhite;
     background-color:$appwhite;
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
-
+    padding-bottom:20px;
     .wrap {
       float:left;
       width:100%;
@@ -187,6 +187,11 @@ export default {
     background-color:transparent;
   }
 
+  .upload-button span
+  {
+    display:inline-block;
+    line-height: 1;
+  }
   .message-input
   {
     font-family: $crustregular;
@@ -195,9 +200,9 @@ export default {
     border-radius: 0 5px 5px 0;
     border-left:0;
     float:right;
-    font-size:14px;
-    padding:14px 5px;
-    line-height:15px;
+    font-size:15px;
+    padding:11px 5px;
+    line-height:16px;
   }
 
   .upload-button {
@@ -209,7 +214,7 @@ export default {
     font-size: 1.5rem;
     cursor: pointer;
     text-align: center;
-    font-size:32px;
+    font-size:30px;
     line-height: 100%;
     float:left;
     z-index: 2;

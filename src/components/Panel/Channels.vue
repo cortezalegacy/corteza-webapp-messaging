@@ -134,29 +134,29 @@ export default {
     max-width:calc(100% - 40px);
   }
 
-span.unread {
-  // @todo apply proper styling
-  float: right;
-  background: #1397CB;
-  color: white;
-  border-radius: 10px;
-  width: 24px;
-  height: 18px;
-  font-size: 9px;
-  text-align: center;
-  padding-top: 3px;
-  margin-right: -20px;
-
-  &.slide-fade-enter-active {
-    transition: all .5s ease;
+  span.unread {
+    // @todo apply proper styling
+    float: right;
+    background: #1397CB;
+    color: white;
+    border-radius: 10px;
+    width: 24px;
+    height: 18px;
+    font-size: 9px;
+    text-align: center;
+    padding-top: 3px;
+    margin-right: -20px;
+    margin-top:-100%;
+    &.slide-fade-enter-active {
+      transition: all .5s ease;
+    }
+    &.slide-fade-leave-active {
+      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    }
+    &.slide-fade-enter, &.slide-fade-leave-to {
+      transform: translateX(10px);
+      opacity: 0;
+    }
   }
-  &.slide-fade-leave-active {
-    transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  }
-  &.slide-fade-enter, &.slide-fade-leave-to {
-    transform: translateX(10px);
-    opacity: 0;
-  }
-}
 
 </style>

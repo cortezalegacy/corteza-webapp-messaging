@@ -236,7 +236,8 @@ export default {
     position:relative;
     list-style:none;
     max-height:100%;
-    overflow:hidden auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding:0 20px;
     margin:0;
   }

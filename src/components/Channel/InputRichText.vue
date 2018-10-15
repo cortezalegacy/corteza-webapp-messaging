@@ -404,7 +404,7 @@ export default {
   left: 0;
   top: 0;
   margin: 0;
-  /* this breaks the placeholder in firefox */
+  /* @darh this breaks the placeholder in firefox changed to 0 */
   /* z-index: -1; */
   z-index:0;
   nav-index: -1;
