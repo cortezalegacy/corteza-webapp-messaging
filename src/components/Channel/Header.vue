@@ -131,7 +131,6 @@ export default {
     .topic
     {
       display:block;
-      vertical-align: top;
       max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
