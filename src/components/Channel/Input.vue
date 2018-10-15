@@ -171,6 +171,7 @@ export default {
     min-height:50px;
     width:100%;
     border:solid 5px $appwhite;
+    border-top:none;
     background-color:$appwhite;
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
     padding-bottom:20px;
@@ -239,7 +240,7 @@ export default {
   {
     .channel-input
     {
-      border:solid 5px $mainbgcolor;
+      border-color: $mainbgcolor;
       background-color:$mainbgcolor;
       box-shadow: none;
     }

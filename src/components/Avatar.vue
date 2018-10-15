@@ -1,6 +1,6 @@
 <!-- template for the user avatar component -->
 <template>
-  <i v-if="user" class="avatar u-avatar"
+  <i v-if="user && (user.name[0] || user.username[0])" class="avatar u-avatar"
      :class="[ { 'no-avatar' : !user.avatar } ]"
      :title="user.name || user.username"
      :style="user.avatar?'background-image:'+user.avatar:''">

@@ -39,8 +39,8 @@
             'crust_iam_main__message__content',
             { from_me: (msg.user || {}).ID === user.ID }
           ]">
-          <attachment v-bind:msg="msg" v-if="msg.attachment"></attachment>
-          <history-message :id="msg.id" v-else :chunks="processMsg(msg.message)"/>
+          <attachment  class="message-content" v-bind:msg="msg" v-if="msg.attachment"></attachment>
+          <history-message :id="msg.id" class="message-content" v-else :chunks="processMsg(msg.message)"/>
         </p>
       </li>
     </ul>
@@ -247,9 +247,21 @@ export default {
     left:0;
     top:0;
   }
-  .discussion .message
+  .discussion
   {
-    position:relative;
-    word-wrap: break-word;
+    .message
+    {
+      position:relative;
+      word-wrap: break-word;
+      .message-content
+      {
+        font-size:14px;
+        pre
+        {
+          max-width:100%;
+          overflow:scroll;
+        }
+      }
+    }
   }
 </style>

@@ -8,6 +8,11 @@
                :src="prefixAttachmentUrl(msg.attachment.previewUrl)">
         </a>
       </div>
+      <!-- @darh : file has no size so probably error -->
+      <span class="missing" v-else-if="!msg.attachment.size">
+        <i>Oups...{{msg.attachment.name}} is no longer here...</i>
+      </span>
+      <!-- @darh : file has no size so probably error -->
       <pre v-else-if="msg.attachment">
         <a v-bind:href="msg.attachment.download">Download {{msg.attachment.name}}</a> ({{msg.attachment.mimetype}}, size: {{ numeral(msg.attachment.size).format('0b') }} )
         <i>@todo preview; if not available, we need to get appropriate image/icon from font-awesome (file-*)</i>
@@ -36,5 +41,10 @@ export default {
     numeral: numeral,
   },
 }
-
 </script>
+
+<style lang="scss" scoped>
+  .missing {
+    color: #ccc;
+  }
+</style>

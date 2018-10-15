@@ -3,6 +3,7 @@
     class="channel"
     v-if="ch"
     id="channelContainer"
+    :class="[ { 'with-right-panel':isUserPanelOpen } ]"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
     <channel-upload
@@ -10,7 +11,8 @@
     <channel-header
       :channel="ch"
       v-if="ch"></channel-header>
-    <channel-history ref="history"></channel-history>
+    <channel-history
+      ref="history"></channel-history>
     <channel-input
       :channelID="channelID"
       @promptFilePicker="openFilePicker"></channel-input>
@@ -30,6 +32,7 @@ export default {
       isAuthenticated: 'auth/isAuthenticated',
       files: 'channels/files',
       lastMessage: 'channels/lastMessage',
+      isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },
 
@@ -124,6 +127,10 @@ export default {
       margin-left:320px;
       max-width:calc(100vw - 320px);
     }
+    .with-right-panel
+    {
+      margin-right:320px;
+    }
     .header,
     .channel-input,
     .history
@@ -133,7 +140,7 @@ export default {
     .history
     {
       top:62px;
-      bottom:82px;
+      bottom:65px;
     }
   }
 </style>

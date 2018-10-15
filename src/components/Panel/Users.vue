@@ -57,11 +57,32 @@ export default {
 
 <style scoped>
 .crust_sliding_menu {
-  top: 35px;
-  width: 20vw;
+  top:0;
+  width:320px;
 }
 
+.crust_iam-channel_member_list
+{
+  list-style : none;
+  margin:0;
+  padding:5px;
+}
+.crust_iam-channel_member
+{
+  line-height:30px;
+  margin-top:10px;
+
+}
+.crust_iam-channel_member_name
+{
+  display:inline-block;
+  line-height:1;
+  max-width:80%;
+  overflow:hidden;
+  padding-left:5px;
+}
 li:hover {
   background: lightblue;
+  border-radius:30px 0 0  30px;
 }
 </style>
