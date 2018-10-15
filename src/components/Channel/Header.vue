@@ -143,6 +143,10 @@ export default {
 
   @media (min-width: $wideminwidth)
   {
+    .channel-n-topic
+    {
+      width:calc(100% - 160px);
+    }
     .channel-name, .topic
     {
       display:inline-block;
