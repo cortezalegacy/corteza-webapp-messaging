@@ -12,7 +12,7 @@
       <div class="layer-item">
         <span class="badge badge-block badge-pill badge-tall">
           <i class="icon-search"></i>
-          <input type="text" placeholder="search" class="txt no-border">
+          <input type="text" placeholder="search" class="txt no-border search">
           <i class="icon-settings-horizontal float-right"></i>
         </span>
       </div>
@@ -127,6 +127,11 @@ export default {
   .channel-name a
   {
     text-decoration:none;
+  }
+  // problem with input ... only on FF59 ubuntu
+  .search
+  {
+    max-width:calc(100% - 40px);
   }
 
 span.unread {

@@ -404,7 +404,9 @@ export default {
   left: 0;
   top: 0;
   margin: 0;
-  z-index: -1;
+  /* this breaks the placeholder in firefox */
+  /* z-index: -1; */
+  z-index:0;
   nav-index: -1;
   pointer-events: none;
   -webkit-touch-callout: none;
@@ -423,6 +425,7 @@ export default {
   -webkit-appearance: textarea;
   overflow: auto;
   white-space: pre-wrap;
+  border:none;
 }
 #richInput:focus {
   border: none;
@@ -449,4 +452,3 @@ export default {
   background-color: rgba(68, 255, 100, 0.336);
 }
 </style>
-

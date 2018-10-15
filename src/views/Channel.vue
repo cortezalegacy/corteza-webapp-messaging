@@ -90,7 +90,7 @@ export default {
   .channel-input,
   .history
   {
-    position:fixed;
+    position:absolute;
     width:100%;
     max-width:100vw;
     left:0;
@@ -114,22 +114,25 @@ export default {
   .history
   {
     top:52px;
-    bottom:50px;
+    bottom:52px;
   }
   @media (min-width: $wideminwidth)
   {
-    .header,
-    .channel,
-    .channel-input,
-    .history
+    .channel
     {
       margin-left:320px;
       max-width:calc(100vw - 320px);
     }
+    .header,
+    .channel-input,
+    .history
+    {
+      right:0;
+    }
     .history
     {
       top:62px;
-      bottom:50px;
+      bottom:62px;
     }
   }
 </style>

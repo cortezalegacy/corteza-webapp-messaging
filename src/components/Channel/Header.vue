@@ -7,7 +7,7 @@
 
     <div class="channel-n-topic">
       <strong v-if="channel.name" class="channel-name">{{ channel.name }}</strong>
-      <span  v-if="channel.topic" class="badge badge-blue">{{ channel.topic }}</span>
+      <span  v-if="channel.topic" class="topic"><span class="badge badge-blue">{{ channel.topic }}</span></span>
     </div>
 
     <div class="channel-toolbox">
@@ -64,6 +64,7 @@ export default {
     font-family: $crustheavy;
     font-weight: bold;
   }
+
   .channel-n-topic
   {
     max-width:calc(100% - 160px);
@@ -72,7 +73,8 @@ export default {
     white-space: nowrap;
     float:left;
   }
-  //channel toggle is specific to here so no include.
+
+  // channel toggle is specific to here so no include.
   .channel-toggle
   {
     font-size:24px;
@@ -88,7 +90,7 @@ export default {
   .channel-toolbox
   {
     float:right;
-    line-height:50px;
+    line-height:35px; // the folding breaks line height
     margin:0;
     padding:0;
   }
@@ -118,11 +120,45 @@ export default {
     }
   }
 
+  @media (max-width: $wideminwidth - 1)
+  {
+    // in our case the label should not be one line on mobile
+    .channel-n-topic
+    {
+      margin-top:0.5em;
+      line-height: 1.5em;
+    }
+    .topic
+    {
+      display:block;
+      vertical-align: top;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .channel-name
+    {
+      vertical-align: bottom;
+    }
+  }
+
   @media (min-width: $wideminwidth)
   {
+    .channel-name, .topic
+    {
+      display:inline-block;
+      max-width:50%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .channel-toggle
     {
       display:none;
+    }
+    .channel-toolbox
+    {
+      line-height:5em; // the folding breaks line height
     }
   }
 
