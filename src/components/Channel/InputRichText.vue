@@ -1,7 +1,7 @@
 <template>
   <div class="input-wrapper">
     <div
-      @keydown="suggestionNavigation"
+      @keydown="handleKeyDown"
       @keyup="updateValue"
       @focus="updateFocus(true)"
       @blur="updateFocus(false)"
@@ -87,6 +87,17 @@ export default {
       this.$set(this, 'value', '')
       this.$emit('msgUpdate', { msg: this.value })
       this.$emit('nodeChunkChanged', { chunk: {} })
+    },
+
+    handleKeyDown (e) {
+      this.preventInputJumps(e)
+      this.suggestionNavigation(e)
+    },
+
+    preventInputJumps (e) {
+      if (e.which === 13 && !e.shiftKey) {
+        e.preventDefault()
+      }
     },
 
     suggestionNavigation (e) {

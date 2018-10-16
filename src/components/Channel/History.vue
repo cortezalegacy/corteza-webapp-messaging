@@ -60,6 +60,7 @@ export default {
   data () {
     return {
       messages: [],
+      loadSuspended: false,
     }
   },
 
@@ -136,13 +137,15 @@ export default {
 
     scrollHandler (e) {
       let { target } = e
-      if (target && this.isScrolledToTop(target)) {
+      if (target && this.isScrolledToTop(target) && !this.loadSuspended) {
         // Scrolled to top
+        this.loadSuspended = true
         this.$ws.getMessages(this.ch.ID, this.getFirstMsgId)
       }
 
-      if (target && this.isScrolledToBottom(target)) {
+      if (target && this.isScrolledToBottom(target) && !this.loadSuspended) {
         // Scrolled to bottom
+        // this.loadSuspended = true
         // this.$ws.getMessages(this.ch.ID, undefined, this.getLastMsgId)
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }
@@ -178,6 +181,8 @@ export default {
 
   beforeCreate () {
     this.$ws.subscribe('messages', (messages) => {
+      this.loadSuspended = false
+
       // Slight scroll from edges to keep it from resetting to top/bottom
       let target = this.$refs.msgList
       if (target && this.isScrolledToTop(target)) {
