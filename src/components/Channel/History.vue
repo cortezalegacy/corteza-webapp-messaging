@@ -4,26 +4,34 @@
       v-if="ch"
       v-chat-scroll="{ always: false }"
       ref="msgList">
-      <li class="crust_iam_main__message"
+      <li class="message-n-meta"
         v-for="msg in this.messages"
         :key="msg.ID">
-        <section class="crust_iam_main__message__metas"
+        <section class="metas"
           :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
           :data-current-user-id="user.id">
           <avatar :user="msg.user" />
-          <em class="crust_iam_main__message__meta-author">{{
-            msg.user ? ( msg.user.name || msg.user.username || msg.user.ID )
-            : 'Anonymous coward'
-          }}</em>
-          <span class="crust_iam_main__message__meta-date">
+          <em class="author">
+            {{ msg.user ? ( msg.user.name || msg.user.username || msg.user.ID ) : 'Anonymous coward' }}
+          </em>
+          <span class="date">
             {{ moment(msg.createdAt).fromNow() }}
+            <span v-if="!isToday(msg.createdAt)">at {{ momentHourMinute(msg.createdAt) }}</span>
           </span>
           <em
             v-if="isToday(msg.createdAt)"
-            class="crust_iam_main__message__meta-time">
-            {{ momentHourMinute(msg.createdAt) }}
+            class="time">
+              {{ momentHourMinute(msg.createdAt) }}
           </em>
-          <em v-else class="crust_iam_main__message__meta-time">{{ momentDayMonth(msg.createdAt) }}</em>
+          <em
+            v-else
+            class="time">
+              {{ momentDayMonth(msg.createdAt) }}
+          </em>
+          <div class="actions">
+            <i class="action icon-message-circle-left-speak"></i>
+            <i class="action icon-bubbles3"></i>
+          </div>
         </section>
 
          <!--
@@ -32,16 +40,15 @@
           not the same size, so i compared what i found to be common root
           ie : the first 14 chars.
         -->
-        <p
+        <div
           :id="msg.id"
           :class="[
             'message',
-            'crust_iam_main__message__content',
             { from_me: (msg.user || {}).ID === user.ID }
           ]">
           <attachment  class="message-content" v-bind:msg="msg" v-if="msg.attachment"></attachment>
           <history-message :id="msg.id" class="message-content" v-else :chunks="processMsg(msg.message)"/>
-        </p>
+        </div>
       </li>
     </ul>
   </div>
@@ -235,8 +242,8 @@ export default {
   }
 </style>
 
-
 <style scoped lang="scss">
+  @import '@/assets/sass/_0.commons.scss';
   .discussion
   {
     position:relative;
@@ -244,29 +251,117 @@ export default {
     max-height:100%;
     overflow-x: hidden;
     overflow-y: auto;
-    padding:0 20px;
+    padding:0;
     margin:0;
   }
   .avatar
   {
     position:absolute;
-    left:0;
-    top:0;
+    left:20px;
+    top:3px;
   }
-  .discussion
+  .message-n-meta
   {
-    .message
+    position:relative;
+    padding-left:50px;
+    position:relative;
+    padding:3px 20px 23px 65px;
+    min-height:75px;
+    background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 55px;
+    background-size: auto 15px;
+  }
+  .author, .date, .time
+  {
+    font-style:normal;
+    color:$appgrey;
+    font-size:12px;
+  }
+  .time
+  {
+    position:absolute;
+    left:20px;
+    top:40px;
+  }
+  .date, .actions
+  {
+    display:none;
+  }
+  .message-n-meta:hover,
+  .message-n-meta:focus
+  {
+    background-color:rgba($appgrey,0.1);
+    .date
     {
-      position:relative;
-      word-wrap: break-word;
-      .message-content
+      display:inline-block;
+      padding:0 0.5em;
+    }
+    .actions
+    {
+      position:absolute;
+      border-radius:3px;
+      right:5px;
+      top:-5px;
+      display:inline-block;
+      padding:0 0.5em;
+      z-index:5;
+      .action
       {
-        font-size:14px;
-        pre
-        {
-          max-width:100%;
-          overflow:scroll;
-        }
+        display:inline-block;
+        border:solid 1px rgba($appgrey,0.25);
+        margin:0 5px;
+        border-radius:30px;
+        line-height:30px;
+        width:30px;
+        background-color:$appwhite;
+        font-size:20px;
+        text-align:center;
+      }
+    }
+  }
+
+  .message
+  {
+    position:relative;
+    display:table;
+    background-color:$messagebgcolor;
+    word-wrap: break-word;
+    border-radius:3px;
+    padding:6px;
+
+    // the little triangle on the left of message
+    &:before
+    {
+      content:" ";
+      background-color:$messagebgcolor;
+      position:absolute;
+      left:-5px;
+      top:8px;
+      width:10px;
+      height:10px;
+      transform:rotate(45deg);
+    }
+
+    // my messages in blue
+    &.from_me
+    {
+      background-color:$currentmymessagebgcolor;
+      span
+      {
+        background-color:$currentmymessagebgcolor;
+      }
+      &:before
+      {
+        background-color:$currentmymessagebgcolor;
+      }
+    }
+
+    .message-content
+    {
+      font-size:14px;
+      pre
+      {
+        max-width:100%;
+        overflow:scroll;
       }
     }
   }
