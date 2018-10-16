@@ -40,12 +40,16 @@
           </li>
         </ul>
       </section>
+
       <div class="layer-item new-channel">
-        <span class="btn btn-dark" @click="$router.push({name: 'new-channel'})">
-          <i class="btn-i icon-plus"></i><span class="btn-txt">New Channel</span></span>
+        <router-link :to="{name: 'new-channel'}">
+            <span class="btn btn-dark">
+              <i class="btn-i icon-plus"></i><span class="btn-txt">New Channel</span></span>
+        </router-link>
       </div>
+
       <section class="layer-section">
-        <div class="layer-item layer-section-title"><a>Direct messages</a></div>
+        <div class="layer-item layer-section-title"><a>Groups and direct messages</a></div>
         <ul v-if="chatGroups">
           <li
             v-for="(ch, index) in chatGroups"
@@ -68,6 +72,13 @@
           </li>
         </ul>
       </section>
+
+        <div class="layer-item new-channel">
+          <router-link :to="{name: 'new-group'}">
+            <span class="btn btn-dark">
+              <i class="btn-i icon-plus"></i><span class="btn-txt">New Direct Message</span></span>
+          </router-link>
+        </div>
     </div>
   </nav>
 </template>
