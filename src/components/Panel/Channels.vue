@@ -101,6 +101,7 @@ export default {
       current: 'channels/current',
       findUserByID: 'users/findByID',
       users: 'users/list',
+      auth: 'auth/user',
     }),
   },
 
@@ -109,8 +110,10 @@ export default {
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
 
+    // Return all members of each group sans the current user!
     groupMembers (ch) {
-      return (ch.members || []).map((memberID) => {
+      const currentUserID = this.auth.ID
+      return (ch.members || []).filter((memberID) => currentUserID !== memberID).map((memberID) => {
         return this.findUserByID(memberID) || {}
       })
     },
