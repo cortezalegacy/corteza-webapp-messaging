@@ -389,7 +389,7 @@ export default {
     placeholder: {
       type: String,
       required: false,
-      default: 'Jot something down',
+      default: 'Write a Message',
     },
   },
 }
