@@ -28,10 +28,6 @@ export default {
   computed: {
     ...mapGetters({
       ch: 'channels/current',
-      editor: 'channels/editor',
-      isAuthenticated: 'auth/isAuthenticated',
-      files: 'channels/files',
-      lastMessage: 'channels/lastMessage',
       isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },

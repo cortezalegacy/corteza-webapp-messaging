@@ -95,19 +95,6 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send(JSON.stringify({ channels: {} }))
   },
 
-  async createChannel (ch) {
-    return this.send(JSON.stringify({ createChannel: ch }))
-  },
-
-  async updateChannel (ch) {
-    // @todo merge these two into one function
-    return this.send(JSON.stringify({ updateChannel: ch }))
-  },
-
-  async deleteChannel (id) {
-    return this.send(JSON.stringify({ deleteChannel: { id } }))
-  },
-
   async sendMessage (channelID, message) {
     return this.send(JSON.stringify({ createMessage: { channelID, message } }))
   },

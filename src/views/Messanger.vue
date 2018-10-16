@@ -122,10 +122,6 @@ export default {
 
     onOpenDirectChannel (userId) {
       this.toggleUserPanel(false)
-      this.$router.push({
-        name: 'user',
-        params: { userId },
-      })
     },
   },
 }

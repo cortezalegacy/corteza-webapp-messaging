@@ -1,15 +1,13 @@
 export function Channel (c) {
-  if (!c) {
-    return
-  }
+  c = c || {}
 
-  this.ID = c.ID || c.id // cover both cases (BC)
+  this.ID = c.ID || c.id || undefined // cover both cases (BC)
   this.name = c.name
   this.topic = c.topic
   this.type = c.type
+  this.members = c.members || [] // []string
 
   this.view = new ChannelView(c.view)
-  this.members = c.members
 }
 
 

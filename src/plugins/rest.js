@@ -77,6 +77,14 @@ export default {
         })
       },
 
+      async deleteChannel (ch) {
+        return new Promise((resolve, reject) => {
+          this.api().delete(
+            `/channels/${ch.ID}`,
+          ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
       async sendDirectMessage (userId, message) {
         return new Promise((resolve, reject) => {
           this.api().post(
