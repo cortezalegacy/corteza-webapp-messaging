@@ -20,26 +20,12 @@
       <section class="layer-section">
         <div class="layer-item layer-section-title"><a>Channels</a></div>
         <ul v-if="chatChannels">
-          <!-- @darh : the color could be set at channel selection -->
-          <li
-            class="layer-item-wrap"
-            v-for="(ch, index) in chatChannels"
+          <channel-panel-item
+            v-for="(ch) in chatChannels"
             :key="ch.ID"
-            @click="toggleChannelPanel(false)">
-            <router-link
-              v-bind:class="[
-                'layer-item',
-                'layer-selectable',
-                'channel-name',
-                channelColor(index),
-                { current: (current||{}).ID === ch.ID },
-              ]"
-              :to="{name:'channel', params:{channelID:ch.ID}}">{{ ch.name || ch.ID }}</router-link>
-            <transition name="slide-fade">
-              <!-- @darh added a rule that the count displayed cannot be greater than 100, so it never breaks :) -->
-              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount > 100 ? '99+' : ch.view.newMessagesCount }}</span>
-            </transition>
-          </li>
+            :channel="ch"
+            @click="toggleChannelPanel(false)"
+          ></channel-panel-item>
         </ul>
       </section>
 
@@ -53,26 +39,12 @@
       <section class="layer-section">
         <div class="layer-item layer-section-title"><a>Groups and direct messages</a></div>
         <ul v-if="chatGroups">
-          <li
-            class="layer-item-wrap"
-            v-for="(ch, index) in chatGroups"
+          <channel-panel-item
+            v-for="(ch) in chatGroups"
             :key="ch.ID"
-            @click="toggleChannelPanel(false)">
-            <router-link
-              v-bind:class="[
-                'layer-item',
-                'layer-selectable',
-                'channel-name',
-                channelColor(index),
-                { current: (current||{}).ID === ch.ID },
-              ]"
-              :to="{name:'channel', params:{channelID:ch.ID}}">
-              <span v-for="(m, index) in otherMembersOf(ch.ID, auth.ID)" :key="m.ID"><span if v-if="index > 0">, </span>{{ findUserByID(m) | userLabel }}</span>
-            </router-link>
-            <transition name="slide-fade">
-              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
-            </transition>
-          </li>
+            :channel="ch"
+            @click="toggleChannelPanel(false)"
+          ></channel-panel-item>
         </ul>
       </section>
 
@@ -88,6 +60,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { ChannelPanelItem } from '@/components/Channel'
 
 export default {
   name: 'panel-channels',
@@ -102,10 +75,6 @@ export default {
       chatChannels: 'channels/listChannels',
       chatGroups: 'channels/listGroups',
       current: 'channels/current',
-      findUserByID: 'users/findByID',
-      otherMembersOf: 'channels/otherMembersOf',
-      users: 'users/list',
-      auth: 'auth/user',
     }),
   },
 
@@ -113,64 +82,25 @@ export default {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
+  },
 
-    channelColor (index)
-    {
-      var colors = ['blue', 'red', 'green', 'yellow']
-      return (colors[index % colors.length])
-    },
+  components: {
+    ChannelPanelItem,
   },
 }
 </script>
 
 <style scoped lang="scss">
-  //inlude generic definitions
-  @import '@/assets/sass/_0.commons.scss';
-  @import '@/assets/sass/menu-layer.scss';
-  @import '@/assets/sass/btns.scss';
-  @import '@/assets/sass/inputs.scss';
-  @import '@/assets/sass/badges.scss';
+//inlude generic definitions
+@import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/menu-layer.scss';
+@import '@/assets/sass/btns.scss';
+@import '@/assets/sass/inputs.scss';
+@import '@/assets/sass/badges.scss';
 
-  @import '@/assets/sass/channel-names.scss';
-
-  // add specific stuff here if desired
-  .channel-name
-  {
-    text-decoration:none;
-    line-height:20px;
-    &:hover
-    {
-      background-color:rgba($appgrey,0.15);
-      border-color:rgba($appgrey,0.5);
-    }
-  }
-  // problem with input ... only on FF59 ubuntu
-  .search
-  {
-    max-width:calc(100% - 40px);
-  }
-
-  span.unread {
-    position:absolute;
-    top:10px;
-    right:5px;
-    background: #1397CB;
-    color: white;
-    border-radius: 10px;
-    width: 24px;
-    font-size: 9px;
-    text-align: center;
-    padding-top: 3px;
-    &.slide-fade-enter-active {
-      transition: all .5s ease;
-    }
-    &.slide-fade-leave-active {
-      transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-    }
-    &.slide-fade-enter, &.slide-fade-leave-to {
-      transform: translateX(10px);
-      opacity: 0;
-    }
-  }
-
+// problem with input ... only on FF59 ubuntu
+.search
+{
+  max-width:calc(100% - 40px);
+}
 </style>
