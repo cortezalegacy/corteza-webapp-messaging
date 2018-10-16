@@ -225,7 +225,8 @@ export default {
   img
   {
     max-width: 100% !important;
-    height: auto !important;
+    width:auto;
+    max-height: 180px !important;
   }
 </style>
 

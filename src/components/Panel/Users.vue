@@ -55,23 +55,32 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  //inlude generic definitions
+  @import '@/assets/sass/_0.commons.scss';
+
 .crust_sliding_menu {
   top:0;
   width:320px;
+}
+
+.crust-closer
+{
+  position:fixed;
+  top:5px;
+  right:20px;
 }
 
 .crust_iam-channel_member_list
 {
   list-style : none;
   margin:0;
-  padding:5px;
+  padding:20px 0 5px 5px;
 }
 .crust_iam-channel_member
 {
   line-height:30px;
   margin-top:10px;
-
 }
 .crust_iam-channel_member_name
 {
@@ -82,7 +91,7 @@ export default {
   padding-left:5px;
 }
 li:hover {
-  background: lightblue;
+  background:rgba($appgrey,0.15);
   border-radius:30px 0 0  30px;
 }
 </style>

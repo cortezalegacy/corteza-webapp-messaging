@@ -22,20 +22,22 @@
         <ul v-if="chatChannels">
           <!-- @darh : the color could be set at channel selection -->
           <li
+            class="layer-item-wrap"
             v-for="(ch, index) in chatChannels"
             :key="ch.ID"
-            v-bind:class="[
-              'layer-item',
-              'layer-selectable',
-              'channel-name',
-              channelColor(index),
-              { current: (current||{}).ID === ch.ID },
-            ]"
             @click="toggleChannelPanel(false)">
             <router-link
+              v-bind:class="[
+                'layer-item',
+                'layer-selectable',
+                'channel-name',
+                channelColor(index),
+                { current: (current||{}).ID === ch.ID },
+              ]"
               :to="{name:'channel', params:{channelID:ch.ID}}">{{ ch.name || ch.ID }}</router-link>
             <transition name="slide-fade">
-              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
+              <!-- @darh added a rule that the count displayed cannot be greater than 100, so it never breaks :) -->
+              <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount > 100 ? '99+' : ch.view.newMessagesCount }}</span>
             </transition>
           </li>
         </ul>
@@ -52,18 +54,19 @@
         <div class="layer-item layer-section-title"><a>Groups and direct messages</a></div>
         <ul v-if="chatGroups">
           <li
+            class="layer-item-wrap"
             v-for="(ch, index) in chatGroups"
             :key="ch.ID"
-            v-bind:class="[
-              'layer-item',
-              'layer-selectable',
-              'channel-name',
-              channelColor(index),
-              { current: (current||{}).ID === ch.ID },
-            ]"
             @click="toggleChannelPanel(false)">
             <router-link
-                    :to="{name:'channel', params:{channelID:ch.ID}}">
+              v-bind:class="[
+                'layer-item',
+                'layer-selectable',
+                'channel-name',
+                channelColor(index),
+                { current: (current||{}).ID === ch.ID },
+              ]"
+              :to="{name:'channel', params:{channelID:ch.ID}}">
               <span v-for="(m, index) in groupMembers(ch)" :key="m.ID"><span if v-if="index > 0">, </span>{{ m | userLabel }}</span>
             </router-link>
             <transition name="slide-fade">
@@ -138,9 +141,15 @@ export default {
   @import '@/assets/sass/channel-names.scss';
 
   // add specific stuff here if desired
-  .channel-name a
+  .channel-name
   {
     text-decoration:none;
+    line-height:20px;
+    &:hover
+    {
+      background-color:rgba($appgrey,0.15);
+      border-color:rgba($appgrey,0.5);
+    }
   }
   // problem with input ... only on FF59 ubuntu
   .search
@@ -149,18 +158,16 @@ export default {
   }
 
   span.unread {
-    // @todo apply proper styling
-    float: right;
+    position:absolute;
+    top:10px;
+    right:5px;
     background: #1397CB;
     color: white;
     border-radius: 10px;
     width: 24px;
-    height: 18px;
     font-size: 9px;
     text-align: center;
     padding-top: 3px;
-    margin-right: -20px;
-    margin-top:-100%;
     &.slide-fade-enter-active {
       transition: all .5s ease;
     }
