@@ -11,8 +11,6 @@ export function Channel (c) {
   this.archivedAt = c.archivedAt
 
   this.members = c.members || [] // []string
-
-  this.view = new ChannelView(c.view)
 }
 
 export function Message (m) {
@@ -75,15 +73,4 @@ export function Member (m) {
   this.channelID = m.channelID
   this.createdAt = m.createdAt
   this.updatedAt = m.updatedAt
-}
-
-function ChannelView (v) {
-  if (!v) {
-    this.lastMessageID = undefined
-    this.newMessagesCount = 0
-    return
-  }
-
-  this.lastMessageID = v.lastMessageID
-  this.newMessagesCount = v.newMessagesCount
 }

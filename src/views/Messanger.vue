@@ -17,7 +17,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers } from '../components/Panel'
-import { Channel } from '@/types'
+import { Channel, Message } from '@/types'
 
 export default {
   computed: {
@@ -51,6 +51,9 @@ export default {
       let cc = []
       channels.forEach((c) => {
         cc.push(new Channel(c))
+
+        // Set unread state for all channels
+        this.setChannelUnreadCount({ ID: c.ID, count: (c.view || {}).newMessagesCount })
       })
 
       this.resetChannels(cc)
@@ -80,6 +83,20 @@ export default {
     this.$ws.subscribe('clientDisconnected', (user) => {
       this.userDisconnected(user.uid)
     })
+
+    // Handles single-message updates that gets from the backend
+    this.$ws.subscribe('message', (message) => {
+      const msg = new Message(message)
+      if (msg.channelID === this.ch.ID) {
+        this.pushSingleMessageToHistory(msg)
+      } else {
+        this.incChannelUnreadCount(msg.channelID)
+      }
+    })
+
+    // This serves a sole purpose of handling callback to getMessage calls to $ws
+    this.$ws.subscribe('messages', messages => this.pushMessagesToHistory(messages.map(message => new Message(message))))
+
 
     this.$auth.check().then(() => {
       this.$ws.connect()
@@ -119,6 +136,10 @@ export default {
       removeFromChannels: 'channels/removeFromList',
       userConnected: 'users/connected',
       userDisconnected: 'users/disconnected',
+      incChannelUnreadCount: 'unread/incChannel',
+      setChannelUnreadCount: 'unread/setChannel',
+      pushSingleMessageToHistory: 'history/pushSingle',
+      pushMessagesToHistory: 'history/push',
     }),
 
     handleResize () {

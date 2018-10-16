@@ -35,13 +35,13 @@ export default {
   watch: {
     'channelID' (newChannelID, oldChannelId) {
       if (newChannelID !== oldChannelId && newChannelID) {
-        this.setCurrentById(newChannelID)
+        this.changeChannel(newChannelID)
       }
     },
   },
 
   mounted () {
-    this.setCurrentById(this.channelID)
+    this.changeChannel(this.channelID)
 
     window.addEventListener('keyup', (event) => {
       if (event.key === 'Escape') {
@@ -51,14 +51,21 @@ export default {
     })
 
     // Set initial channel on load
-    this.setCurrentById(this.channelID)
+    this.changeChannel(this.channelID)
   },
 
 
   methods: {
     ...mapActions({
       setCurrentById: 'channels/setCurrentById',
+      clearHistory: 'history/clear',
     }),
+
+    changeChannel (channelID) {
+      this.setCurrentById(this.channelID)
+      this.clearHistory()
+      this.$ws.getMessages(this.channelID)
+    },
 
     openFilePicker () {
       this.$refs.upload.openFilePicker()

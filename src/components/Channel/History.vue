@@ -2,10 +2,11 @@
   <div class="history">
     <ul class="discussion"
       v-if="ch"
-      v-chat-scroll="{ always: false }"
+      @scroll="scrollHandler"
       ref="msgList">
       <li class="message-n-meta"
-        v-for="msg in this.messages"
+        v-for="(msg, index) in this.messages"
+        ref="message"
         :key="msg.ID">
         <section class="metas"
           :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
@@ -33,13 +34,6 @@
             <i class="action icon-bubbles3"></i>
           </div>
         </section>
-
-         <!--
-          @darh
-          i don't know why user.id and msg.userid are
-          not the same size, so i compared what i found to be common root
-          ie : the first 14 chars.
-        -->
         <div
           :id="msg.id"
           :class="[
@@ -48,8 +42,10 @@
           ]">
           <attachment  class="message-content" v-bind:msg="msg" v-if="msg.attachment"></attachment>
           <history-message :id="msg.id" class="message-content" v-else :chunks="processMsg(msg.message)"/>
+          <code>#{{ index }} / {{ messages.length }} ID:{{ msg.ID }}</code>
         </div>
       </li>
+      <li ref="anchor" />
     </ul>
   </div>
 </template>
@@ -58,7 +54,6 @@ import { mapGetters, mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import HistoryMessage from '@/components/Channel/HistoryMessage'
-import { Message } from '@/types'
 import Avatar from '@/components/Avatar'
 import triggers from '@/plugins/triggers'
 
@@ -66,8 +61,10 @@ export default {
   name: 'channel-history',
   data () {
     return {
-      messages: [],
       loadSuspended: false,
+      previousMessageCount: -1,
+      allowAutoScroll: true,
+      scrollToRef: null,
     }
   },
 
@@ -81,21 +78,17 @@ export default {
 
       findUserByID: 'users/findByID',
       findChannelByID: 'channels/findByID',
+
+      getFirstMsgId: 'history/getFirstId',
+      getLastMsgId: 'history/getLastId',
+      messages: 'history/get',
     }),
-
-    getFirstMsgId () {
-      return (this.messages[0] || {}).ID
-    },
-
-    getLastMsgId () {
-      return (this.messages[this.messages.length - 1] || {}).ID
-    },
   },
 
   methods: {
     ...mapActions({
-      incUnreadMessageCount: 'channels/incUnreadMessageCount',
-      resetUnreadMessageCount: 'channels/resetUnreadMessageCount',
+      incChannelUnreadCount: 'unread/incChannel',
+      setChannelUnreadCount: 'unread/setChannel',
     }),
 
     moment: function (timeString) {
@@ -111,29 +104,6 @@ export default {
       return (moment().startOf('day').unix() === moment(timeString).startOf('day').unix())
     },
 
-    addMessage (message) {
-      if (this.ch && message.channelID !== this.ch.ID) {
-        // Received message for another chan, just increase msg counter
-        this.incUnreadMessageCount(message.channelID)
-        return
-      }
-
-      // Replaces given msg due to an update
-      let n = this.messages.findIndex(m => m.ID === message.ID)
-      // Doesn't yet exist -- add it
-      if (n < 0) {
-        // Push msg to either top or back
-        // Check timestamp to determine where in array to push it to
-        if (this.messages.length && moment(message.createdAt).isSameOrBefore(moment(this.messages[0].createdAt))) {
-          this.messages.unshift(message)
-        } else {
-          this.messages.push(message)
-        }
-      } else {
-        this.messages.splice(n, 1, message)
-      }
-    },
-
     isScrolledToTop (target) {
       return target ? target.scrollTop <= 0 : true
     },
@@ -143,17 +113,32 @@ export default {
     },
 
     scrollHandler (e) {
+      if (this.$refs.message.length === 0) {
+        // Do not do any auto scrolling when there are no messages
+        return
+      }
+
       let { target } = e
+
+      this.allowAutoScroll = this.isScrolledToBottom(target)
+
       if (target && this.isScrolledToTop(target) && !this.loadSuspended) {
-        // Scrolled to top
+        console.debug('Scrolled to top')
+        // Suspend loading until DOM is updated
         this.loadSuspended = true
-        this.$ws.getMessages(this.ch.ID, this.getFirstMsgId)
+
+        // Scroll to earliest message we had before loading
+        // any older messages, see updated()
+        this.scrollToRef = this.$refs.message[this.$refs.message.length - 1]
+
+        this.$ws.oldMessages(this.ch.ID, this.getFirstMsgId)
       }
 
       if (target && this.isScrolledToBottom(target) && !this.loadSuspended) {
-        // Scrolled to bottom
+        console.debug('Scrolled to bottom')
+
         // this.loadSuspended = true
-        // this.$ws.getMessages(this.ch.ID, undefined, this.getLastMsgId)
+        // this.$ws.newMessages(this.ch.ID, undefined, this.getLastMsgId)
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }
     },
@@ -168,58 +153,46 @@ export default {
       }
 
       this.resetUnreadTimeout = window.setTimeout(() => {
-        this.resetUnreadMessageCount(this.ch.ID)
+        this.setChannelUnreadCount({ ID: this.ch.ID, unread: 0 })
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }, 1000)
+    },
+
+    channelChanged () {
+      this.resetUnreadAfterTimeout()
+      this.previousMessageCount = -1
+      this.loadSuspended = false
     },
   },
 
   watch: {
     'ch' (newV, oldV = {}) {
       if (newV && newV.ID !== oldV.ID) {
-        this.messages = []
-
-        this.$ws.getMessages(newV.ID)
-
-        this.resetUnreadAfterTimeout()
+        this.channelChanged()
       }
     },
   },
 
-  beforeCreate () {
-    this.$ws.subscribe('messages', (messages) => {
-      this.loadSuspended = false
-
-      // Slight scroll from edges to keep it from resetting to top/bottom
-      let target = this.$refs.msgList
-      if (target && this.isScrolledToTop(target)) {
-        target.scrollTop = 1
-      } else if (target && this.isScrolledToBottom(target)) {
-        target.scrollTop -= 1
-      }
-
-      messages.forEach((message) => {
-        this.addMessage(new Message(message))
-      })
-    })
-
-    this.$ws.subscribe('message', (message) => {
-      this.addMessage(new Message(message))
-    })
+  mounted () {
+    this.channelChanged()
   },
 
-  mounted () {
-    if (this.ch) {
-      this.$ws.getMessages(this.ch.ID)
-    }
-
+  updated () {
     this.$nextTick(() => {
-      if (this.$refs.msgList) {
-        this.$refs.msgList.addEventListener('scroll', (e) => { this.scrollHandler(e) })
+      if (this.scrollToRef) {
+        this.scrollToRef.scrollIntoView()
+      } else if (this.allowAutoScroll) {
+        this.$refs.anchor.scrollIntoView()
       }
     })
 
-    this.resetUnreadAfterTimeout()
+    // When length increased, remove suspension flag
+    // and allow another load
+    const l = this.messages.length
+    if (l > this.previousMessageCount) {
+      this.previousMessageCount = l
+      this.loadSuspended = false
+    }
   },
 
   components: {

@@ -12,8 +12,9 @@
       <channel-name :channel="channel"></channel-name>
     </router-link>
     <transition name="slide-fade">
-      <span class="unread" v-if="channel.view && channel.view.newMessagesCount > 0">
-        {{ channel.view.newMessagesCount > 100 ? '99+' : channel.view.newMessagesCount }}
+      <span>
+        <span class="unread" v-if="unread(channel.ID) > 99">99+</span>
+        <span class="unread" v-else-if="unread(channel.ID) > 0">{{ unread(channel.ID) }}</span>
       </span>
     </transition>
   </li>
@@ -31,6 +32,7 @@ export default {
   computed: {
     ...mapGetters({
       current: 'channels/current',
+      unread: 'unread/channel',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
       currentUser: 'auth/user',
