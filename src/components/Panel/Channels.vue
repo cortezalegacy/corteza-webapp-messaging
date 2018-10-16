@@ -67,7 +67,7 @@
                 { current: (current||{}).ID === ch.ID },
               ]"
               :to="{name:'channel', params:{channelID:ch.ID}}">
-              <span v-for="(m, index) in groupMembers(ch)" :key="m.ID"><span if v-if="index > 0">, </span>{{ m | userLabel }}</span>
+              <span v-for="(m, index) in otherMembersOf(ch.ID, auth.ID)" :key="m.ID"><span if v-if="index > 0">, </span>{{ findUserByID(m) | userLabel }}</span>
             </router-link>
             <transition name="slide-fade">
               <span class="unread" v-if="ch.view && ch.view.newMessagesCount > 0">{{ ch.view.newMessagesCount }}</span>
@@ -103,6 +103,7 @@ export default {
       chatGroups: 'channels/listGroups',
       current: 'channels/current',
       findUserByID: 'users/findByID',
+      otherMembersOf: 'channels/otherMembersOf',
       users: 'users/list',
       auth: 'auth/user',
     }),
@@ -112,14 +113,6 @@ export default {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
-
-    // Return all members of each group sans the current user!
-    groupMembers (ch) {
-      const currentUserID = this.auth.ID
-      return (ch.members || []).filter((memberID) => currentUserID !== memberID).map((memberID) => {
-        return this.findUserByID(memberID) || {}
-      })
-    },
 
     channelColor (index)
     {

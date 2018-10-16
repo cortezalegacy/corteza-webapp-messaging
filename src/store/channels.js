@@ -13,14 +13,38 @@ const getters = {
     return ci < 0 ? 0 : state.lastMessages[ci].messageId
   },
   current: (state) => state.list.find(ch => ch.ID === state.current),
-  list: (state) => state.list,
-  listChannels: (state) => state.list.filter(c => c.type === 'private' || c.type === 'public'),
-  listGroups: (state) => state.list.filter(c => c.type === 'group'),
-  findByName: (state) => (name) => {
-    return state.list.filter(c => c.name === name)[0] || undefined
+
+  // Return all but deleted
+  list: (state) => state.list.filter(c => !c.deletedAt && !c.archivedAt),
+
+  // Return private & public channels
+  listChannels: (state, getters) => getters.list.filter(c => c.type === 'private' || c.type === 'public'),
+
+  // Return groups
+  listGroups: (state, getters) => getters.list.filter(c => c.type === 'group'),
+
+  // Find channel by name
+  findByName: (state, getters) => (name) => {
+    return getters.list.filter(c => c.name === name)[0] || undefined
   },
-  findByID: (state) => (ID) => {
-    return state.list.filter(c => c.ID === ID)[0] || undefined
+
+  // Find channel by
+  findByID: (state, getters) => (ID) => {
+    return getters.list.filter(c => c.ID === ID)[0] || undefined
+  },
+
+  otherMembersOf: (state, getters) => (channelID, userID) => {
+    const ch = getters.findByID(channelID)
+
+    if (!ch) {
+      return []
+    }
+
+    if (ch.members.length === 1) {
+      return ch.members
+    }
+
+    return ch.members.filter(memberID => memberID !== userID)
   },
 }
 
@@ -36,6 +60,27 @@ const actions = {
 
   updateList ({ commit }, channel) {
     commit('updateList', channel)
+  },
+
+  join ({ commit, getters }, { channelID, memberID }) {
+    const ch = getters.findByID(channelID)
+    if (ch) {
+      if (ch.members.findIndex(m => m === memberID) > -1) {
+        ch.members.push(memberID)
+        commit('updateList', ch)
+      }
+    }
+  },
+
+  part ({ commit }, { channelID, memberID }) {
+    const ch = getters.findByID(channelID)
+    if (ch) {
+      const i = ch.members.findIndex(m => m === memberID)
+      if (i > -1) {
+        ch.members.splice(i, 1)
+        commit('updateList', ch)
+      }
+    }
   },
 
   removeFromList ({ commit }, channel) {

@@ -60,8 +60,12 @@ export default {
       this.updateChannels(new Channel(channel))
     })
 
-    this.$ws.subscribe('channelDeleted', (channel) => {
-      this.removeFromChannels(channel)
+    this.$ws.subscribe('channelJoin', (join) => {
+      this.joinChannel({ channelID: join.ID, userID: join.userID })
+    })
+
+    this.$ws.subscribe('channelPart', (part) => {
+      this.partChannel({ channelID: part.ID, userID: part.userID })
     })
 
     // Handle users payload when it gets back
@@ -110,6 +114,8 @@ export default {
       resetUsers: 'users/resetList',
       resetChannels: 'channels/resetList',
       updateChannels: 'channels/updateList',
+      joinChannel: 'channels/join',
+      partChannel: 'channels/part',
       removeFromChannels: 'channels/removeFromList',
       userConnected: 'users/connected',
       userDisconnected: 'users/disconnected',

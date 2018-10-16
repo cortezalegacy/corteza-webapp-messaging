@@ -44,9 +44,9 @@
             <button class="btn btn-success" v-if="ch.ID">Update</button>
             <button class="btn btn-success" v-else>Create</button>
             <button class="btn btn-danger"  v-if="ch.ID" @click.prevent="deleteChannel">Delete</button>
-            <router-link
+            <button
               class="btn btn-info"
-              :to="{ name: 'channel', params: { channelID: channelID } }">Cancel</router-link>
+              @click.prevent="$router.back()">Cancel</button>
           </div>
         </form>
       </div>
@@ -111,7 +111,6 @@ export default {
         console.debug('Updating channel', this.ch)
         this.$rest.updateChannel(this.ch).then((ch) => {
           console.debug('Channel updated', ch)
-          this.updateChannelList(ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
           console.error('Failed to store channel update', { error })
@@ -120,7 +119,6 @@ export default {
         console.debug('Creating channel', this.ch)
         this.$rest.createChannel(this.ch).then((ch) => {
           console.debug('Channel created', ch)
-          this.updateChannelList(ch)
 
           // Add each selected member to the channel we've just created...
           this.ch.members.forEach((memberID) => {

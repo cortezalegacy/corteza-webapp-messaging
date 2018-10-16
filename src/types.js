@@ -5,11 +5,15 @@ export function Channel (c) {
   this.name = c.name
   this.topic = c.topic
   this.type = c.type
+  this.createdAt = c.createdAt
+  this.updatedAt = c.updatedAt
+  this.deletedAt = c.deletedAt
+  this.archivedAt = c.archivedAt
+
   this.members = c.members || [] // []string
 
   this.view = new ChannelView(c.view)
 }
-
 
 export function Message (m) {
   if (!m) {
