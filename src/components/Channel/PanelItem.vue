@@ -64,24 +64,34 @@ export default {
   }
 }
 
-span.unread {
+.unread
+{
   position:absolute;
-  top:10px;
+  top:7px;
   right:5px;
   background: #1397CB;
   color: white;
   border-radius: 10px;
-  width: 24px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
   font-size: 9px;
   text-align: center;
-  padding-top: 3px;
-  &.slide-fade-enter-active {
+  vertical-align: middle;
+  display:inline-block;
+
+  pointer-events: none; // make this click through.
+
+  &.slide-fade-enter-active
+  {
     transition: all .5s ease;
   }
-  &.slide-fade-leave-active {
+  &.slide-fade-leave-active
+  {
     transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
-  &.slide-fade-enter, &.slide-fade-leave-to {
+  &.slide-fade-enter, &.slide-fade-leave-to
+  {
     transform: translateX(10px);
     opacity: 0;
   }

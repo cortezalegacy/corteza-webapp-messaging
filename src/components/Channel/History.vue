@@ -249,7 +249,7 @@ export default {
   {
     position:absolute;
     left:20px;
-    top:3px;
+    top:8px;
   }
   .message-n-meta
   {
@@ -258,8 +258,10 @@ export default {
     position:relative;
     padding:3px 20px 23px 65px;
     min-height:75px;
-    background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 55px;
+    background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 60px;
     background-size: auto 15px;
+    margin:0 5px;
+    border-radius:5px;
   }
   .author, .date, .time
   {
@@ -267,11 +269,15 @@ export default {
     color:$appgrey;
     font-size:12px;
   }
+  .author, .date
+  {
+    padding:3px 0;
+  }
   .time
   {
     position:absolute;
     left:20px;
-    top:40px;
+    top:45px;
   }
   .date, .actions
   {
@@ -317,7 +323,8 @@ export default {
     background-color:$messagebgcolor;
     word-wrap: break-word;
     border-radius:3px;
-    padding:6px;
+    padding:10px;
+    margin-top:2px;
 
     // the little triangle on the left of message
     &:before
@@ -348,11 +355,12 @@ export default {
 
     .message-content
     {
-      font-size:14px;
+      font-size:16px;
       pre
       {
         max-width:100%;
         overflow:scroll;
+        font-size:12px;
       }
     }
   }

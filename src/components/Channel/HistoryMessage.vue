@@ -1,5 +1,5 @@
 <template>
-  <span class="crust_iam_main__message__content-wrap">
+  <span class="content-wrap">
     <component
       v-if="!isEmbedded.src"
       :is="getChunkTag(c)"
@@ -67,8 +67,7 @@ export default {
   margin-left: 5px;
 }
 
-.crust_iam_main__message__content-wrap .spaced:first-child {
+.content-wrap .spaced:first-child {
   margin-left: 0;
 }
-
 </style>
