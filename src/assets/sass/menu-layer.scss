@@ -83,14 +83,20 @@
 .layer-selectable
 {
   border-right:solid 3px transparent;
+  color:$appgrey;
+  a
+  {
+    color:$appgrey;
+  }
   &.current
   {
     background-color:rgba($appblue,0.15);
     border-color:$appblue;
+    color:$appblue;
+    font-weight:bold;
     a
     {
       color:$appblue;
-      font-weight:bold;
     }
   }
 }
