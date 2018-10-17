@@ -3,7 +3,7 @@
     class="channel"
     v-if="ch"
     id="channelContainer"
-    :class="[ { 'with-right-panel':isUserPanelOpen } ]"
+    :class="[ { 'with-right-panel':isUserPanelOpen, 'unread-messages': unread(channelID) } ]"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
     <channel-upload
@@ -28,6 +28,7 @@ export default {
   computed: {
     ...mapGetters({
       ch: 'channels/current',
+      unread: 'unread/channel',
       isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },
@@ -117,6 +118,10 @@ export default {
     height:100vh;
     // this does not work in some browsers
     // overflow:hidden auto;
+
+    &.unread-messages {
+      border-bottom: 5px solid red;
+    }
   }
   .history
   {

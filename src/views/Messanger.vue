@@ -87,10 +87,10 @@ export default {
     // Handles single-message updates that gets from the backend
     this.$ws.subscribe('message', (message) => {
       const msg = new Message(message)
+      this.incChannelUnreadCount(msg.channelID)
+
       if (msg.channelID === this.ch.ID) {
         this.pushSingleMessageToHistory(msg)
-      } else {
-        this.incChannelUnreadCount(msg.channelID)
       }
     })
 
@@ -149,6 +149,10 @@ export default {
 
     onOpenDirectChannel (userId) {
       this.toggleUserPanel(false)
+    },
+
+    test () {
+      console.log('yay')
     },
   },
 }

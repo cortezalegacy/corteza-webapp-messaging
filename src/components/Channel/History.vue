@@ -5,7 +5,7 @@
       @scroll="scrollHandler"
       ref="msgList">
       <li class="message-n-meta"
-        v-for="(msg, index) in this.messages"
+        v-for="(msg) in this.messages"
         ref="message"
         :key="msg.ID">
         <section class="metas"
@@ -42,7 +42,6 @@
           ]">
           <attachment  class="message-content" v-bind:msg="msg" v-if="msg.attachment"></attachment>
           <history-message :id="msg.id" class="message-content" v-else :chunks="processMsg(msg.message)"/>
-          <code>#{{ index }} / {{ messages.length }} ID:{{ msg.ID }}</code>
         </div>
       </li>
       <li ref="anchor" />
@@ -65,10 +64,10 @@ export default {
       previousMessageCount: -1,
       allowAutoScroll: true,
       scrollToRef: null,
+      resetUnreadTimeout: null,
     }
   },
 
-  resetUnreadTimeout: null,
 
   computed: {
     ...mapGetters({
@@ -89,6 +88,8 @@ export default {
     ...mapActions({
       incChannelUnreadCount: 'unread/incChannel',
       setChannelUnreadCount: 'unread/setChannel',
+      ignoreChannelUnreadCount: 'unread/ignoreChannel',
+      unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
 
     moment: function (timeString) {
@@ -123,7 +124,6 @@ export default {
       this.allowAutoScroll = this.isScrolledToBottom(target)
 
       if (target && this.isScrolledToTop(target) && !this.loadSuspended) {
-        console.debug('Scrolled to top')
         // Suspend loading until DOM is updated
         this.loadSuspended = true
 
@@ -135,11 +135,17 @@ export default {
       }
 
       if (target && this.isScrolledToBottom(target) && !this.loadSuspended) {
-        console.debug('Scrolled to bottom')
-
         // this.loadSuspended = true
         // this.$ws.newMessages(this.ch.ID, undefined, this.getLastMsgId)
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
+      }
+
+      if (this.allowAutoScroll) {
+        this.resetUnreadAfterTimeout()
+        this.ignoreChannelUnreadCount(this.ch.ID)
+      } else {
+        this.clearUnreadTimeout()
+        this.unignoreChannelUnreadCount(this.ch.ID)
       }
     },
 
@@ -148,20 +154,25 @@ export default {
     },
 
     resetUnreadAfterTimeout () {
-      if (this.resetUnreadTimeout !== null) {
-        window.clearTimeout(this.resetUnreadTimeout)
-      }
+      this.clearUnreadTimeout()
 
       this.resetUnreadTimeout = window.setTimeout(() => {
-        this.setChannelUnreadCount({ ID: this.ch.ID, unread: 0 })
+        this.setChannelUnreadCount({ ID: this.ch.ID, count: 0 })
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }, 1000)
     },
 
+    clearUnreadTimeout () {
+      if (this.resetUnreadTimeout !== null) {
+        window.clearTimeout(this.resetUnreadTimeout)
+      }
+    },
+
     channelChanged () {
-      this.resetUnreadAfterTimeout()
+      this.ignoreChannelUnreadCount(this.ch.ID)
       this.previousMessageCount = -1
       this.loadSuspended = false
+      this.allowAutoScroll = true
     },
   },
 
