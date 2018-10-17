@@ -64,11 +64,11 @@ export default {
     })
 
     this.$ws.subscribe('channelJoin', (join) => {
-      this.joinChannel({ channelID: join.ID, userID: join.userID })
+      this.joinChannel(join)
     })
 
     this.$ws.subscribe('channelPart', (part) => {
-      this.partChannel({ channelID: part.ID, userID: part.userID })
+      this.partChannel(part)
     })
 
     // Handle users payload when it gets back
@@ -89,7 +89,7 @@ export default {
       const msg = new Message(message)
       this.incChannelUnreadCount(msg.channelID)
 
-      if (msg.channelID === this.ch.ID) {
+      if (msg.channelID === (this.ch || {}).ID) {
         this.pushSingleMessageToHistory(msg)
       }
     })
@@ -149,10 +149,6 @@ export default {
 
     onOpenDirectChannel (userId) {
       this.toggleUserPanel(false)
-    },
-
-    test () {
-      console.log('yay')
     },
   },
 }

@@ -62,23 +62,30 @@ const actions = {
     commit('updateList', channel)
   },
 
-  join ({ commit, getters }, { channelID, memberID }) {
+  join ({ commit, getters }, { channelID, userID }) {
     const ch = getters.findByID(channelID)
     if (ch) {
-      if (ch.members.findIndex(m => m === memberID) > -1) {
-        ch.members.push(memberID)
+      if (ch.members.findIndex(m => m === userID) > -1) {
+        ch.members.push(userID)
         commit('updateList', ch)
       }
     }
   },
 
-  part ({ commit }, { channelID, memberID }) {
+  part ({ commit, getters }, { channelID, userID }) {
     const ch = getters.findByID(channelID)
+
     if (ch) {
-      const i = ch.members.findIndex(m => m === memberID)
-      if (i > -1) {
-        ch.members.splice(i, 1)
-        commit('updateList', ch)
+      if (ch.type === 'public') {
+        // Keep public channels in the list
+        const i = ch.members.findIndex(m => m === userID)
+        if (i > -1) {
+          ch.members.splice(i, 1)
+          commit('updateList', ch)
+        }
+      } else {
+        // Remove non-public channels, groups from the list
+        commit('removeFromList', ch)
       }
     }
   },
