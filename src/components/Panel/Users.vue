@@ -79,6 +79,7 @@ export default {
 {
   line-height:30px;
   margin-top:10px;
+  margin-left:20px;
 }
 .member-name
 {
