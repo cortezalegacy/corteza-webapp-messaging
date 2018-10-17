@@ -33,13 +33,16 @@ export default {
   methods: {
     ...mapActions({
       setUser: 'auth/setUser',
+      clear: 'auth/clear',
     }),
   },
 
   mounted () {
     this.$auth.check().then((user) => {
+      this.setUser(user)
       this.$router.push({ name: 'root' })
     }).catch((error) => {
+      this.clear()
       console.error(error)
     })
   },

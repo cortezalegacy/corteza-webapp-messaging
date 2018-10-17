@@ -29,10 +29,18 @@ export default {
     }),
   },
 
+  methods: {
+    ...mapGetters({
+      clear: 'auth/clear',
+    }),
+  },
+
   mounted () {
     if (this.isAuthenticated) {
       this.$auth.clear().catch((err) => {
         console.error(err)
+      }).finally(() => {
+        this.clear()
       })
     }
 

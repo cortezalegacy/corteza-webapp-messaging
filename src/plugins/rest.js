@@ -2,9 +2,7 @@ import axios from 'axios'
 import { Message, Channel, Member } from '@/types'
 
 export default {
-  install (Vue, store) {
-    const JSONbig = require('json-bigint')({ 'storeAsString': true })
-
+  install (Vue) {
     const stdRejection = (reject) => (error) => {
       reject(error)
     }
@@ -39,10 +37,6 @@ export default {
 
       api () {
         return axios.create({
-          transformResponse: [function (data) {
-            // Do whatever you want to transform the data
-            return JSONbig.parse(data)
-          }],
           withCredentials: true,
           baseURL: this.baseURL(),
           headers: {

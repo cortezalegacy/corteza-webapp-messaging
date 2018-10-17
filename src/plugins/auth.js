@@ -4,7 +4,7 @@ import { User } from '@/types'
 
 // Handles basic auth comm + state management
 export default {
-  install (Vue, store) {
+  install (Vue) {
     Vue.prototype.$auth = {
       baseURL () {
         return window.CrustConfig.auth.baseUrl || 'https://auth.api.latest.rustbucket.io'
@@ -22,8 +22,6 @@ export default {
 
       async clear () {
         return new Promise((resolve, reject) => {
-          store.dispatch('auth/clear')
-
           this.api()
             .delete(`/check`)
             .then(({ data }) => {
@@ -43,13 +41,11 @@ export default {
               if (!data.response) {
                 // Not authenticated
                 // make sure this is reflected in the state
-                store.dispatch('auth/clear')
                 reject(new Error('Not authenticated'))
               } else {
                 // Authentication successful, update state
                 // and notify the caller
                 console.debug('AuthCheck:', data.response.user)
-                store.dispatch('auth/setUser', data.response.user)
                 resolve(new User(data.response.user))
               }
             })
