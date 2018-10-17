@@ -13,7 +13,7 @@
           :data-current-user-id="user.id">
           <avatar :user="msg.user" />
           <em class="author">
-            {{ msg.user ? ( msg.user.name || msg.user.username || msg.user.ID ) : 'Anonymous coward' }}
+            {{ msg.user | userLabel }}
           </em>
           <span class="date">
             {{ moment(msg.createdAt).fromNow() }}

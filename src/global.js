@@ -10,7 +10,10 @@ Vue.config.productionTip = false
 Vue.use(VueTextareaAutosize)
 
 
-Vue.filter('userLabel', (u) => u.name || u.username || u.handle || u.email || u.ID)
+Vue.filter('userLabel', (u) => {
+  u = u || {}
+  return u.name || u.username || u.handle || u.email || u.ID || 'N/A'
+})
 
 
 Vue.component('channel-name', ChannelName)
