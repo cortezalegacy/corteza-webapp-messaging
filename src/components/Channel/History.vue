@@ -63,7 +63,7 @@ export default {
       loadSuspended: false,
       previousMessageCount: -1,
       allowAutoScroll: true,
-      scrollToRef: null,
+      scrollToRef: false,
       resetUnreadTimeout: null,
     }
   },
@@ -95,12 +95,15 @@ export default {
     moment: function (timeString) {
       return moment(timeString)
     },
+
     momentDayMonth: function (timeString) {
       return moment(timeString).format('DD/MM')
     },
+
     momentHourMinute: function (timeString) {
       return moment(timeString).format('HH:mm')
     },
+
     isToday: function (timeString) {
       return (moment().startOf('day').unix() === moment(timeString).startOf('day').unix())
     },
@@ -118,7 +121,8 @@ export default {
     },
 
     scrollHandler (e) {
-      if (this.$refs.message.length === 0) {
+      const len = this.$refs.message.length
+      if (len === 0) {
         // Do not do any auto scrolling when there are no messages
         return
       }
@@ -131,9 +135,7 @@ export default {
         // Suspend loading until DOM is updated
         this.loadSuspended = true
 
-        // Scroll to earliest message we had before loading
-        // any older messages, see updated()
-        this.scrollToRef = this.$refs.message[this.$refs.message.length - 1]
+        this.$refs.msgList.scrollTop = 1
 
         this.$ws.oldMessages(this.ch.ID, this.getFirstMsgId)
       }
@@ -177,6 +179,7 @@ export default {
       this.previousMessageCount = -1
       this.loadSuspended = false
       this.allowAutoScroll = true
+      this.scrollToRef = false
     },
   },
 
@@ -190,6 +193,7 @@ export default {
 
   mounted () {
     this.channelChanged()
+    this.$refs.anchor.scrollIntoView()
   },
 
   updated () {
@@ -197,8 +201,6 @@ export default {
       if (!this.hasScrollbar()) {
         this.resetUnreadAfterTimeout()
         this.ignoreChannelUnreadCount(this.ch.ID)
-      } else if (this.scrollToRef) {
-        this.scrollToRef.scrollIntoView()
       } else if (this.allowAutoScroll) {
         this.$refs.anchor.scrollIntoView()
       }
@@ -209,7 +211,9 @@ export default {
     const l = this.messages.length
     if (l > this.previousMessageCount) {
       this.previousMessageCount = l
-      this.loadSuspended = false
+
+      // Remove loading suspension after a short delay
+      window.setTimeout(() => { this.loadSuspended = false }, 500)
     }
   },
 
