@@ -256,12 +256,10 @@ export default {
     position:relative;
     padding-left:50px;
     position:relative;
-    padding:3px 20px 23px 65px;
+    padding:3px 23px 24px 65px;
     min-height:75px;
-    background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 60px;
+    background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 58px;
     background-size: auto 15px;
-    margin:0 5px;
-    border-radius:5px;
   }
   .author, .date, .time
   {
@@ -271,13 +269,15 @@ export default {
   }
   .author, .date
   {
-    padding:3px 0;
+    display:inline-block;
+    padding:2px 0.5em;
+    //margin:2px 0;
   }
   .time
   {
     position:absolute;
     left:20px;
-    top:45px;
+    top:43px;
   }
   .date, .actions
   {
@@ -290,13 +290,14 @@ export default {
     .date
     {
       display:inline-block;
-      padding:0 0.5em;
     }
     .actions
     {
       position:absolute;
       border-radius:3px;
-      right:5px;
+      width:100%;
+      left:0px;
+      text-align: right;
       top:-5px;
       display:inline-block;
       padding:0 0.5em;
@@ -310,8 +311,9 @@ export default {
         line-height:30px;
         width:30px;
         background-color:$appwhite;
-        font-size:20px;
+        font-size:18px;
         text-align:center;
+        box-shadow: 0 0 5px 0 rgba($appgrey,0.5);
       }
     }
   }
@@ -362,6 +364,14 @@ export default {
         overflow:scroll;
         font-size:12px;
       }
+    }
+  }
+
+  @media (min-width: $wideminwidth)
+  {
+    .actions
+    {
+        transform: translateX(-50%);
     }
   }
 </style>

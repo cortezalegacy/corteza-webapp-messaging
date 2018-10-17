@@ -8,7 +8,7 @@
                :src="prefixAttachmentUrl(msg.attachment.previewUrl)">
         </a>
       </div>
-      <!-- @darh : added file has no size so probably error -->
+      <!-- @todo : added file has no size so probably error, maybe other possible errors -->
       <span class="missing" v-else-if="!msg.attachment.size">
         <i>Oups...{{msg.attachment.name}} is no longer here...</i>
       </span>

@@ -16,8 +16,7 @@
       <p
         v-if="placeholderShown"
         class="placeholder"
-        contenteditable="false">
-
+        contenteditable="false" v-html="placeholder">
         {{ placeholder }}
       </p>
   </div>
@@ -400,22 +399,25 @@ export default {
     placeholder: {
       type: String,
       required: false,
-      default: 'Write a Message',
+      default: '<strong>Write</strong> a Message',
     },
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
+
 .input-wrapper {
   position: relative;
 }
-.input-wrapper p.placeholder {
+
+.input-wrapper .placeholder {
   position: absolute;
   left: 0;
   top: 0;
   margin: 0;
-  /* @darh this breaks the placeholder in firefox changed to 0 */
+  /* @note : this breaks the placeholder in firefox changed to 0 */
   /* z-index: -1; */
   z-index:0;
   nav-index: -1;
@@ -427,9 +429,8 @@ export default {
   -ms-user-select: none;
   user-select: none;
   opacity: 0.35;
-
-  margin-top: 15px;
-  margin-left: 5px;
+  display:inline-block;
+  line-height:40px;
 }
 #richInput {
   -moz-appearance: textfield-multiline;
@@ -442,6 +443,13 @@ export default {
   border: none;
   outline: none!important;
 }
+
+@media (min-width: $wideminwidth)
+{
+  line-height:45px;
+}
+
+
 </style>
 
 <style>

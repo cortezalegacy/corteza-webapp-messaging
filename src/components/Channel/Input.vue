@@ -171,10 +171,8 @@ export default {
     min-height:50px;
     width:100%;
     border:solid 5px $appwhite;
-    border-top:none;
     background-color:$appwhite;
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
-    padding-bottom:20px;
     .wrap {
       float:left;
       width:100%;
@@ -238,12 +236,20 @@ export default {
   // another background in wide, and no shadow
   @media (min-width: $wideminwidth)
   {
+    .channel-input .wrap
+    {
+      border-radius: 5px;
+      border: 1px solid $appgrey;
+    }
     .channel-input
     {
+      border:solid 15px $appwhite;
+      border-top:none;
+      border-bottom:none;
+      padding-bottom:25px;
       border-color: $mainbgcolor;
       background-color:$mainbgcolor;
       box-shadow: none;
     }
   }
-
 </style>
