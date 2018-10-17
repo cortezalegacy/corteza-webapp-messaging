@@ -113,6 +113,10 @@ export default {
       return target.scrollHeight - target.scrollTop - target.clientHeight <= 0
     },
 
+    hasScrollbar () {
+      return this.$refs.msgList.scrollHeight > this.$refs.msgList.clientHeight
+    },
+
     scrollHandler (e) {
       if (this.$refs.message.length === 0) {
         // Do not do any auto scrolling when there are no messages
@@ -159,7 +163,7 @@ export default {
       this.resetUnreadTimeout = window.setTimeout(() => {
         this.setChannelUnreadCount({ ID: this.ch.ID, count: 0 })
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
-      }, 1000)
+      }, 2000)
     },
 
     clearUnreadTimeout () {
@@ -190,7 +194,10 @@ export default {
 
   updated () {
     this.$nextTick(() => {
-      if (this.scrollToRef) {
+      if (!this.hasScrollbar()) {
+        this.resetUnreadAfterTimeout()
+        this.ignoreChannelUnreadCount(this.ch.ID)
+      } else if (this.scrollToRef) {
         this.scrollToRef.scrollIntoView()
       } else if (this.allowAutoScroll) {
         this.$refs.anchor.scrollIntoView()
