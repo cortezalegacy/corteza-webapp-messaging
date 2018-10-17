@@ -20,21 +20,26 @@
   {
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
   }
+
   &.right
   {
+    right:0;
+    left:auto;
     margin-left:0;
-    margin-right:-100%;
     border-left: solid 1px $defaultlinecolor;
   }
+
   &.left
   {
     border-right: solid 1px $defaultlinecolor;
   }
+
   .closer
   {
     float:right;
     padding-top:10px;
   }
+
   ul
   {
     list-style:none;
@@ -131,6 +136,7 @@
 .menu-layer.right.open
 {
   margin-right:0;
+  width:90vw;
   .menu-layer-section-wrapper
   {
     margin:0;
