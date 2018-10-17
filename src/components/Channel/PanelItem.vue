@@ -1,5 +1,5 @@
 <template>
-  <li class="layer-item-wrap" :class="[channel.type]">
+  <li class="layer-item-wrap" :class="[channel.type]" @click="toggleChannelPanel()">
     <router-link
             class="layer-item layer-selectable channel-name"
             v-bind:class="[
@@ -9,7 +9,6 @@
             :to="{name:'channel', params:{channelID:channel.ID}}">
       <channel-name
         :channel="channel"
-        v-on:nameclicked="toggleChannelPanel"
       ></channel-name>
     </router-link>
     <transition name="slide-fade">
@@ -44,6 +43,7 @@ export default {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
+
     channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])

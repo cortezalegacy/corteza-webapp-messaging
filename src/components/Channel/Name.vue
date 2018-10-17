@@ -1,5 +1,5 @@
 <template>
-  <span v-on:click="emitClick">
+  <span>
       <span v-if="channel.type !== 'group'">{{ channel.name || channel.ID }}</span>
       <span v-if="channel.type === 'group'">
         <span v-for="(m, index) in otherMembersOf(channel.ID, currentUser.ID)" :key="m.ID">
@@ -25,12 +25,6 @@ export default {
       findUserByID: 'users/findByID',
       currentUser: 'auth/user',
     }),
-  },
-  methods: {
-    // @todo needs wrapper ? or emit directly ?
-    emitClick () {
-      this.$emit('nameclicked')
-    },
   },
 }
 </script>
