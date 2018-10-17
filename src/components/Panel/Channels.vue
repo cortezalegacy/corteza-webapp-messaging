@@ -25,7 +25,6 @@
             :key="ch.ID"
             :channel="ch"
             :index="index"
-            @click="toggleChannelPanel(false)"
           ></channel-panel-item>
         </ul>
       </section>
@@ -45,7 +44,6 @@
             :key="ch.ID"
             :channel="ch"
             :index="index"
-            @click="toggleChannelPanel(false)"
           ></channel-panel-item>
         </ul>
       </section>

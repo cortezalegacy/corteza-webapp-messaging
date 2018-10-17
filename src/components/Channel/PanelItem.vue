@@ -7,7 +7,10 @@
               { current: (current||{}).ID === channel.ID },
             ]"
             :to="{name:'channel', params:{channelID:channel.ID}}">
-      <channel-name :channel="channel"></channel-name>
+      <channel-name
+        :channel="channel"
+        v-on:nameclicked="toggleChannelPanel"
+      ></channel-name>
     </router-link>
     <transition name="slide-fade">
       <span>
@@ -18,7 +21,7 @@
   </li>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'channel-panel-item',
@@ -37,8 +40,10 @@ export default {
       currentUser: 'auth/user',
     }),
   },
-
   methods: {
+    ...mapActions({
+      toggleChannelPanel: 'ui/toggleChannelPanel',
+    }),
     channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])
