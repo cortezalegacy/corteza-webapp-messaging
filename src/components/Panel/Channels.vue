@@ -21,9 +21,10 @@
         <div class="layer-item layer-section-title"><a>Channels</a></div>
         <ul v-if="chatChannels">
           <channel-panel-item
-            v-for="(ch) in chatChannels"
+            v-for="(ch, index) in chatChannels"
             :key="ch.ID"
             :channel="ch"
+            :index="index"
             @click="toggleChannelPanel(false)"
           ></channel-panel-item>
         </ul>
@@ -40,9 +41,10 @@
         <div class="layer-item layer-section-title"><a>Groups and direct messages</a></div>
         <ul v-if="chatGroups">
           <channel-panel-item
-            v-for="(ch) in chatGroups"
+            v-for="(ch, index) in chatGroups"
             :key="ch.ID"
             :channel="ch"
+            :index="index"
             @click="toggleChannelPanel(false)"
           ></channel-panel-item>
         </ul>

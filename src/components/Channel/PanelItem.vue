@@ -1,11 +1,9 @@
 <template>
-  <li class="layer-item-wrap">
+  <li class="layer-item-wrap" :class="[channel.type]">
     <router-link
+            class="layer-item layer-selectable channel-name"
             v-bind:class="[
-              'layer-item',
-              'layer-selectable',
-              'channel-name',
-              channelColor(channel.ID),
+              channelColor(index),
               { current: (current||{}).ID === channel.ID },
             ]"
             :to="{name:'channel', params:{channelID:channel.ID}}">
@@ -27,6 +25,7 @@ export default {
 
   props: [
     'channel',
+    'index',
   ],
 
   computed: {
@@ -40,8 +39,7 @@ export default {
   },
 
   methods: {
-    channelColor (channelID) {
-      const index = parseInt(channelID.substr(channelID.length - 1, 1))
+    channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])
     },
