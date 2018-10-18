@@ -4,10 +4,12 @@
       v-if="ch"
       @scroll="scrollHandler"
       ref="msgList">
-      <li class="message-n-meta"
-        v-for="(msg) in this.messages"
+      <li v-for="(msg, index) in this.messages"
+        class="message-n-meta"
         ref="message"
+        :class="{'crust_iam_main__message': true, continued: isContinued(index, messages)}"
         :key="msg.ID">
+
         <section class="metas"
           :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
           :data-current-user-id="user.id">
@@ -56,6 +58,9 @@ import HistoryMessage from '@/components/Channel/HistoryMessage'
 import Avatar from '@/components/Avatar'
 import triggers from '@/plugins/triggers'
 
+// Time window for continued messages in seconds
+const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 10
+
 export default {
   name: 'channel-history',
   data () {
@@ -91,6 +96,20 @@ export default {
       ignoreChannelUnreadCount: 'unread/ignoreChannel',
       unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
+
+    isContinued (index, messages) {
+      // Leading message...
+      if (index === 0) return false
+
+      // Messages...
+      let lastMessage = messages[index - 1]
+      let currentMessage = messages[index]
+
+      // Checks -- user ID and timestamp
+      let sameUser = lastMessage.user.ID === currentMessage.user.ID
+      let timeSpanCheck = moment(currentMessage.createdAt).diff(moment(lastMessage.createdAt), 'seconds') <= continuedMessagesTimeWindow
+      return sameUser && timeSpanCheck
+    },
 
     moment: function (timeString) {
       return moment(timeString)
@@ -235,6 +254,7 @@ export default {
     width:auto;
     max-height: 180px !important;
   }
+
 </style>
 
 <style scoped lang="scss">
@@ -264,6 +284,12 @@ export default {
     min-height:75px;
     background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 58px;
     background-size: auto 15px;
+
+    &.continued {
+        .metas {
+            display: none;
+        }
+    }
   }
   .author, .date, .time
   {
