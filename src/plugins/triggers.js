@@ -70,8 +70,8 @@ export default {
 
         let { type } = this.isTriggered(m[1])
         parsed = type === 'user'
-          ? userGetter(m[2]).username
-          : channelGetter(m[2]).name
+          ? (userGetter(m[2]) || {}).username
+          : (channelGetter(m[2]) || {}).name
 
         let paramName = type === 'user'
           ? 'userId'
