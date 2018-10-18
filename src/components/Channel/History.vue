@@ -136,6 +136,10 @@ export default {
     },
 
     hasScrollbar () {
+      if (!this.$refs.msgList) {
+        return false
+      }
+
       return this.$refs.msgList.scrollHeight > this.$refs.msgList.clientHeight
     },
 
