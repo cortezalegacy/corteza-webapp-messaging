@@ -98,6 +98,10 @@ export default {
     this.$ws.subscribe('messages', messages => this.pushMessagesToHistory(messages.map(message => new Message(message))))
 
 
+    this.$ws.subscribe('commands', (commands) => {
+      this.setCommands(commands)
+    })
+
     this.$auth.check().then(() => {
       this.$ws.connect()
     }).catch((err) => {
@@ -140,6 +144,7 @@ export default {
       setChannelUnreadCount: 'unread/setChannel',
       pushSingleMessageToHistory: 'history/pushSingle',
       pushMessagesToHistory: 'history/push',
+      setCommands: 'suggestions/setCommands',
     }),
 
     handleResize () {

@@ -58,7 +58,6 @@ export default {
     ...mapActions({
       updateList: 'suggestions/updateList',
       setState: 'suggestions/setState',
-      setCommands: 'suggestions/setCommands',
     }),
 
     selectFocused () {
@@ -179,12 +178,6 @@ export default {
     pannelOpened () {
       return !!this.getInvokingTrigger
     },
-  },
-
-  beforeCreate () {
-    this.$ws.subscribe('commands', (commands) => {
-      this.setCommands(commands)
-    })
   },
 
   watch: {
