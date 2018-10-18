@@ -61,7 +61,7 @@ import Avatar from '@/components/Avatar'
 import triggers from '@/plugins/triggers'
 
 // Time window for continued messages in seconds
-const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 10
+const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 60
 
 export default {
   name: 'channel-history',
@@ -344,6 +344,13 @@ export default {
       display:block;
     }
     .day
+    {
+      display:none;
+    }
+  }
+  .written-today.continued
+  {
+    .time
     {
       display:none;
     }
