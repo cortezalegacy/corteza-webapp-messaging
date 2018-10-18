@@ -66,7 +66,12 @@ export default {
       this.setCurrentById(this.channelID)
       this.clearHistory()
       this.$ws.getMessages(this.channelID)
-      document.title = `${this.ch.name} | Crust`
+
+      if (this.ch) {
+        document.title = `${this.ch.name} | Crust`
+      } else {
+        document.title = `Crust`
+      }
     },
 
     openFilePicker () {
