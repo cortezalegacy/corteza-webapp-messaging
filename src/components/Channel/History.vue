@@ -106,7 +106,7 @@ export default {
       let currentMessage = messages[index]
 
       // Checks -- user ID and timestamp
-      let sameUser = lastMessage.user.ID === currentMessage.user.ID
+      let sameUser = (lastMessage.user || {}).ID === (currentMessage.user || {}).ID
       let timeSpanCheck = moment(currentMessage.createdAt).diff(moment(lastMessage.createdAt), 'seconds') <= continuedMessagesTimeWindow
       return sameUser && timeSpanCheck
     },

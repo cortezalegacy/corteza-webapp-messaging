@@ -90,12 +90,12 @@ export default {
       this.incChannelUnreadCount(msg.channelID)
 
       if (msg.channelID === (this.ch || {}).ID) {
-        this.pushSingleMessageToHistory(msg)
+        this.updateHistory([msg])
       }
     })
 
     // This serves a sole purpose of handling callback to getMessage calls to $ws
-    this.$ws.subscribe('messages', messages => this.pushMessagesToHistory(messages.map(message => new Message(message))))
+    this.$ws.subscribe('messages', messages => this.updateHistory(messages.map(message => new Message(message))))
 
 
     this.$ws.subscribe('commands', (commands) => {
@@ -142,8 +142,7 @@ export default {
       userDisconnected: 'users/disconnected',
       incChannelUnreadCount: 'unread/incChannel',
       setChannelUnreadCount: 'unread/setChannel',
-      pushSingleMessageToHistory: 'history/pushSingle',
-      pushMessagesToHistory: 'history/push',
+      updateHistory: 'history/update',
       setCommands: 'suggestions/setCommands',
     }),
 
