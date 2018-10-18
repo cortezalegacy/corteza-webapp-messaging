@@ -26,13 +26,13 @@
               autocomplete="channel-topic"
               placeholder="Things we talk about">
           </div>
-<!--
           <div v-if="ch.type !== 'group'">
-            <p><label><input type="checkbox" v-model="ch.type" value="private" id="channel-type-private">Make this channel private</label></p>
+            <label>
+              <input type="checkbox" v-model="ch.type" true-value="private" false-value="public">
+              Make this channel private
+            </label>
           </div>
--->
           <ul v-if="!ch.ID">
-            {{ch}}
             <li v-for="u in users" :key="u.ID">
               <label>
                 <input type="checkbox" v-model="ch.members" :value="u.ID"> {{u | userLabel }}
