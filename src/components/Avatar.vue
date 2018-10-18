@@ -1,13 +1,13 @@
 <!-- template for the user avatar component -->
 <template>
-  <i v-if="user && (user.name[0] || user.username[0])" class="avatar u-avatar"
+  <i v-if="user && (user.name[0] || user.username[0])" class="u-avatar"
      :class="[ { 'no-avatar' : !user.avatar } ]"
      :title="user.name || user.username"
      :style="user.avatar?'background-image:'+user.avatar:''">
       <span aria-hidden="true">{{ user.name[0] || user.username[0] }}</span>
   </i>
   <i v-else
-     class="avatar u-avatar coward">
+     class="u-avatar coward">
       <span aria-hidden="true">?</span>
   </i>
 </template>
@@ -42,5 +42,10 @@ export default
   font-style:normal;
   background-color:$appgrey;
   color:$appwhite;
+}
+.coward
+{
+  background-color:rgba($appgrey,0.5);
+  border-color:rgba($defaultlinecolor,0.15);
 }
 </style>

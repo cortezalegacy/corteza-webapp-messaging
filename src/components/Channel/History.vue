@@ -7,13 +7,17 @@
       <li v-for="(msg, index) in this.messages"
         class="message-n-meta"
         ref="message"
-        :class="{'crust_iam_main__message': true, continued: isContinued(index, messages)}"
+        :class="[
+          { 'written-today': isToday(msg.createdAt) },
+          { 'continued': isContinued(index, messages) }
+        ]"
         :key="msg.ID">
-
         <section class="metas"
           :data-msg-user-id="msg.user?msg.user.ID:'no-uid'"
           :data-current-user-id="user.id">
-          <avatar :user="msg.user" />
+          <em class="avatar">
+            <avatar :user="msg.user" />
+          </em>
           <em class="author">
             {{ msg.user | userLabel }}
           </em>
@@ -22,13 +26,11 @@
             <span v-if="!isToday(msg.createdAt)">at {{ momentHourMinute(msg.createdAt) }}</span>
           </span>
           <em
-            v-if="isToday(msg.createdAt)"
             class="time">
               {{ momentHourMinute(msg.createdAt) }}
           </em>
           <em
-            v-else
-            class="time">
+            class="day">
               {{ momentDayMonth(msg.createdAt) }}
           </em>
           <div class="actions">
@@ -288,14 +290,21 @@ export default {
     min-height:75px;
     background:url(../../assets/images/vertical-dots.svg) no-repeat 35px 58px;
     background-size: auto 15px;
-
-    &.continued {
-        .metas {
-            display: none;
+    &.continued
+    {
+        padding:10px 23px 24px 65px;
+        margin-top:-20px;
+        background:url(../../assets/images/vertical-dots.svg) no-repeat 90px 0px;
+        background-size: auto 8px;
+        .avatar,
+        .author,
+        .message:before
+        {
+            display: none !important;
         }
     }
   }
-  .author, .date, .time
+  .author, .date, .time, .day
   {
     font-style:normal;
     color:$appgrey;
@@ -307,11 +316,37 @@ export default {
     padding:2px 0.5em;
     //margin:2px 0;
   }
-  .time
+  .time, .day
   {
     position:absolute;
     left:20px;
     top:43px;
+  }
+  .time
+  {
+    display:none;
+  }
+  .continued
+  {
+    .time
+    {
+      top:28px;
+    }
+    .day
+    {
+      display:none;
+    }
+  }
+  .written-today
+  {
+    .time
+    {
+      display:block;
+    }
+    .day
+    {
+      display:none;
+    }
   }
   .date, .actions
   {
@@ -351,7 +386,18 @@ export default {
       }
     }
   }
-
+  .message-n-meta.continued:hover,
+  .message-n-meta.continued:focus
+  {
+    .date
+    {
+      display:none;
+    }
+    .time
+    {
+      display:block;
+    }
+  }
   .message
   {
     position:relative;
