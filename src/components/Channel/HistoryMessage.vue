@@ -31,7 +31,7 @@ export default {
         let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
         let match = msg.match(regExp)
         if (match && match[2].length === 11) {
-          return `https://www.youtube.com/embed/${match[2]}?autoplay=1&enablejsapi=1`
+          return `https://www.youtube.com/embed/${match[2]}?autoplay=0&enablejsapi=1`
         }
         return false
       }
