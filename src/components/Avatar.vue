@@ -1,10 +1,10 @@
 <!-- template for the user avatar component -->
 <template>
-  <i v-if="user && (user.name[0] || user.username[0])" class="u-avatar"
+  <i v-if="user" class="u-avatar"
      :class="[ { 'no-avatar' : !user.avatar } ]"
-     :title="user.name || user.username"
+     :title="title()"
      :style="user.avatar?'background-image:'+user.avatar:''">
-      <span aria-hidden="true">{{ user.name[0] || user.username[0] }}</span>
+      <span aria-hidden="true">{{ initials()}}</span>
   </i>
   <i v-else
      class="u-avatar coward">
@@ -20,6 +20,28 @@ export default
   props: {
     'user': Object,
     'required': true,
+  },
+
+  data () {
+    return {
+      initials: () => {
+        if (this.user.name) {
+          return this.user.name[0]
+        }
+
+        if (this.user.username) {
+          return this.user.username[0]
+        }
+      },
+
+      title: () => {
+        if (!this.user) {
+          return ''
+        }
+
+        return this.user.name || this.user.username
+      },
+    }
   },
 }
 </script>
@@ -37,7 +59,7 @@ export default
   border-radius:100%;
   background:url('/static/pics/no-profile-pic.png') center center no-repeat;
   background-size:contain;
-  line-height:32px;
+  line-height:28px;
   text-align:center;
   font-style:normal;
   background-color:$appgrey;
