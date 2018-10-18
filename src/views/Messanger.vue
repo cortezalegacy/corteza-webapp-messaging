@@ -27,6 +27,7 @@ export default {
       ch: 'channels/current',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       isUserPanelOpen: 'ui/isUserPanelOpen',
+      hasFocus: 'ui/hasFocus',
     }),
   },
 
@@ -87,11 +88,22 @@ export default {
     // Handles single-message updates that gets from the backend
     this.$ws.subscribe('message', (message) => {
       const msg = new Message(message)
+      const currentChannel = msg.channelID === (this.ch || {}).ID
+      // const currentUser = this.user.ID === (msg.user || {}).ID
       this.incChannelUnreadCount(msg.channelID)
 
-      if (msg.channelID === (this.ch || {}).ID) {
+      if (currentChannel) {
         this.updateHistory([msg])
       }
+
+      // @fixme needs additional attention and testing
+      // if (!currentUser && (!currentChannel || !this.hasFocus)) {
+      //   // Not in our current channel
+      //   // @todo need to check if window has focus as well
+      //   this.$notification.show(`New message in ${this.ch.name} | Crust`, {
+      //     body: msg.message.length > 200 ? msg.message.substring(0, 200) + '...' : msg.message,
+      //   }, {})
+      // }
     })
 
     // This serves a sole purpose of handling callback to getMessage calls to $ws
@@ -108,6 +120,9 @@ export default {
       console.error(err)
       this.$router.push({ name: 'signin' })
     })
+
+    window.onfocus = () => this.toggleFocus(true)
+    window.onblur = () => this.toggleFocus(false)
   },
 
   created () {
@@ -132,6 +147,7 @@ export default {
   methods: {
     ...mapActions({
       toggleUserPanel: 'ui/toggleUserPanel',
+      toggleFocus: 'ui/toggleFocus',
       resetUsers: 'users/resetList',
       resetChannels: 'channels/resetList',
       updateChannels: 'channels/updateList',
