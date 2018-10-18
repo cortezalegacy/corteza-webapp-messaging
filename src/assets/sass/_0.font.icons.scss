@@ -5,6 +5,9 @@
 
 //paste the rest of icomoon here
 
+$icon-grid-interface-close: "\e920";
+$icon-grid-interface-absent: "\e921";
+$icon-grid-interface-open: "\e922";
 $icon-search: "\e91f";
 $icon-fatlock: "\e91d";
 $icon-Fichier-2: "\e91e";
@@ -75,13 +78,12 @@ $icon-terminal: "\e912";
 $icon-user2: "\e902";
 $icon-x: "\e913";
 
-
 @font-face {
   font-family: '#{$icomoon-font-family}';
   src:
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?w7yfhs') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?w7yfhs') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?w7yfhs##{$icomoon-font-family}') format('svg');
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?yjnewp') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?yjnewp') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?yjnewp##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -101,6 +103,21 @@ $icon-x: "\e913";
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-grid-interface-close {
+  &:before {
+    content: $icon-grid-interface-close;
+  }
+}
+.icon-grid-interface-absent {
+  &:before {
+    content: $icon-grid-interface-absent;
+  }
+}
+.icon-grid-interface-open {
+  &:before {
+    content: $icon-grid-interface-open;
+  }
+}
 .icon-search {
   &:before {
     content: $icon-search;
