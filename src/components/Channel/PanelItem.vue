@@ -69,13 +69,8 @@ export default {
   }
 }
 
-.private .channel-name:before {
-  content: 'P';
-  font-weight: bold;
-}
-
 .group .channel-name:before {
-  content: 'G';
+  content: '●';
   font-weight: bold;
 }
 

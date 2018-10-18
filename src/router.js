@@ -26,7 +26,6 @@ export default new Router({
       component: Messanger,
       children: [
         { path: 'channel/new', name: 'new-channel', component: ChannelEditor, props: true },
-        { path: 'channel/new-group', name: 'new-group', component: ChannelEditor, props: { type: 'group' } },
         { path: 'channel/:channelID', name: 'channel', component: Channel, props: true },
         { path: 'channel/:channelID/editor', name: 'edit-channel', component: ChannelEditor, props: true },
         { path: 'channel/:channelID/members', name: 'members', component: ChannelMembers, props: true },

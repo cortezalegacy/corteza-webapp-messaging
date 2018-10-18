@@ -18,10 +18,11 @@ const getters = {
   list: (state) => state.list.filter(c => !c.deletedAt && !c.archivedAt),
 
   // Return private & public channels
-  listChannels: (state, getters) => getters.list.filter(c => c.type === 'private' || c.type === 'public'),
+  byType: (state, getters) => (type) => getters.list.filter(c => c.type === type),
 
-  // Return groups
-  listGroups: (state, getters) => getters.list.filter(c => c.type === 'group'),
+  publicOnly: (state, getters) => getters.byType('public'),
+  privateOnly: (state, getters) => getters.byType('private'),
+  groupsOnly: (state, getters) => getters.byType('group'),
 
   // Find channel by name
   findByName: (state, getters) => (name) => {
