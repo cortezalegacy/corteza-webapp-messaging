@@ -22,7 +22,8 @@ export function Message (m) {
   this.message = m.message
   this.type = m.type
   this.channelID = m.channelID
-  this.replyTo = m.replyTo
+  this.replyTo = m.replyTo || 0
+  this.replies = m.replies || 0
   this.createdAt = m.createdAt
 
   this.attachment = null

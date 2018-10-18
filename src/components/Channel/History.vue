@@ -47,6 +47,7 @@
           <attachment  class="message-content" v-bind:msg="msg" v-if="msg.attachment"></attachment>
           <history-message :id="msg.id" class="message-content" v-else :chunks="processMsg(msg.message)"/>
         </div>
+        <div v-if="msg.replies">{{msg.replies}} replies</div>
       </li>
       <li ref="anchor" />
     </ul>
@@ -162,12 +163,12 @@ export default {
 
         this.$refs.msgList.scrollTop = 1
 
-        this.$ws.oldMessages(this.ch.ID, this.getFirstMsgId)
+        this.$ws.olderMessages(this.ch.ID, this.getFirstMsgId)
       }
 
       if (target && this.isScrolledToBottom(target) && !this.loadSuspended) {
         // this.loadSuspended = true
-        // this.$ws.newMessages(this.ch.ID, undefined, this.getLastMsgId)
+        // this.$ws.newerMessages(this.ch.ID, undefined, this.getLastMsgId)
         this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
       }
 

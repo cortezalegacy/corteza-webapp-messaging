@@ -5,7 +5,7 @@ const state = {
 
 // getters
 const getters = {
-  get: (state) => state.set,
+  get: (state) => state.set.filter(m => m.replyTo === 0),
   getFirstId: (state) => (state.set[0] || {}).ID,
   getLastId: (state) => (state.set[state.set.length - 1] || {}).ID,
 }

@@ -99,6 +99,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send(JSON.stringify({ createMessage: { channelID, message } }))
   },
 
+  async sendReply (replyTo, message) {
+    return this.send(JSON.stringify({ createMessage: { replyTo, message } }))
+  },
+
   async exec (channelID, command, params, input) {
     return this.send(JSON.stringify({ exec: { channelID, command, params, input } }))
   },
@@ -107,12 +111,16 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send(JSON.stringify({ messages: { channelID, untilID, fromID } }))
   },
 
-  async newMessages (channelID, fromID) {
-    return this.send(JSON.stringify({ messages: { channelID, fromID } }))
+  async getReplies (replyTo) {
+    return this.send(JSON.stringify({ messages: { replyTo } }))
   },
 
-  async oldMessages (channelID, untilID) {
-    return this.send(JSON.stringify({ messages: { channelID, untilID } }))
+  async newerMessages (channelID, firstID) {
+    return this.send(JSON.stringify({ messages: { channelID, firstID } }))
+  },
+
+  async olderMessages (channelID, lastID) {
+    return this.send(JSON.stringify({ messages: { channelID, lastID } }))
   },
 
   async recordChannelView (channelID, lastMessageID) {
