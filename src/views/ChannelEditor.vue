@@ -120,11 +120,6 @@ export default {
         this.$rest.createChannel(this.ch).then((ch) => {
           console.debug('Channel created', ch)
 
-          // Add each selected member to the channel we've just created...
-          this.ch.members.forEach((memberID) => {
-            this.$rest.addMember(ch.ID, memberID)
-          })
-
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch((error) => {
           console.error('Failed to store channel update', { error })

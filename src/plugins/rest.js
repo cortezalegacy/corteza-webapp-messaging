@@ -66,7 +66,7 @@ export default {
         return new Promise((resolve, reject) => {
           this.api().post(
             `/channels/`,
-            { topic: ch.topic, name: ch.name, type: ch.type }
+            { topic: ch.topic, name: ch.name, type: ch.type, members: ch.members }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
