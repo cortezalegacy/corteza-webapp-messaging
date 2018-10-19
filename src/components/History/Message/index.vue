@@ -22,7 +22,7 @@
       </section>
       <div
         class="message"
-        :class="{ from_me: (message.user || {}).ID === user.ID }">
+        :class="{ from_me: (message.user || {}).ID === currentUser.ID }">
         <attachment  class="message-content" :attachment="message.attachment" :inline="message.type === 'inlineImage'"  v-if="message.attachment" />
         <contents class="message-content" v-else :chunks="parse(message.message)"/>
       </div>
@@ -30,8 +30,6 @@
     </li>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-import triggers from '@/plugins/triggers'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
@@ -41,6 +39,7 @@ export default {
   props: [
     'message',
     'continued',
+    'currentUser',
   ],
 
   data () {
@@ -51,17 +50,6 @@ export default {
       scrollToRef: false,
       resetUnreadTimeout: null,
     }
-  },
-
-
-  computed: {
-    ...mapGetters({
-      // @todo remove all getters, should be passed by props
-      users: 'users/list',
-      user: 'auth/user',
-      findUserByID: 'users/findByID',
-      findChannelByID: 'channels/findByID',
-    }),
   },
 
   methods: {
@@ -83,7 +71,7 @@ export default {
 
     parse (text) {
       // @todo, find*byID should be bonded with triggers on load time
-      return triggers.parse(text.trim().split(/[ \n]/), this.findUserByID, this.findChannelByID)
+      return this.$triggers.parse(text.trim().split(/[ \n]/))
     },
   },
 

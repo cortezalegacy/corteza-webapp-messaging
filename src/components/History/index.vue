@@ -8,6 +8,7 @@
         ref="message"
         :message="msg"
         :continued="isContinued(index, messages)"
+        :current-user="user"
         :key="msg.ID">
       </message>
       <li ref="anchor" />

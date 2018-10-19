@@ -35,7 +35,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import triggers from '@/plugins/triggers'
 
 export default {
   data () {
@@ -167,12 +166,12 @@ export default {
 
     getInvokingTrigger () {
       let c = this.getMsg[0]
-      if (triggers.isTrigger(c) && triggers.checkTriggerConstraints(c, this.msg)) return c
+      if (this.$triggers.isTrigger(c) && this.$triggers.checkTriggerConstraints(c, this.msg)) return c
       return false
     },
 
     getCommandType () {
-      return (triggers.isTriggered(this.getInvokingTrigger) || {}).type
+      return (this.$triggers.isTriggered(this.getInvokingTrigger) || {}).type
     },
 
     pannelOpened () {

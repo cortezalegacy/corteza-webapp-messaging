@@ -15,9 +15,8 @@
       <!-- file has size but not image -->
       <pre v-else-if="attachment">
         <a v-bind:href="attachment.download">Download {{attachment.name}}</a> ({{attachment.mimetype}}, size: {{ numeral(attachment.size).format('0b') }} )
-        <i>@todo preview; if not available, we need to get appropriate image/icon from font-awesome (file-*)</i>
+        <!--<i>@todo preview; if not available, we need to get appropriate image/icon from font-awesome (file-*)</i>-->
       </pre>
-      <!--{{msg}}-->
   </div>
 </template>
 <script>

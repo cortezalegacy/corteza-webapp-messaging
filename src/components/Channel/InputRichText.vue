@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import triggers from '@/plugins/triggers'
 import { Selection } from '@/libs/selection'
 import { mapGetters } from 'vuex'
 
@@ -302,7 +301,7 @@ export default {
 
     getInvokingTrigger (chunk) {
       let c = chunk.msg[0]
-      if (triggers.isTrigger(c) && triggers.checkTriggerConstraints(c, chunk)) return c
+      if (this.$triggers.isTrigger(c) && this.$triggers.checkTriggerConstraints(c, chunk)) return c
       return false
     },
 
