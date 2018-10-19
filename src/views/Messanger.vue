@@ -1,22 +1,24 @@
 <template>
     <main>
-      <!-- if no channel selected channel list should be displayed -->
-      <panel-channels
-        :class="[
-          { 'force-on' : !ch },
-          { 'open' : isChannelPanelOpen },
-        ]"></panel-channels>
-      <!-- no use in displaying messages if no channel -->
-      <router-view />
-      <panel-users
-        v-if="isUserPanelOpen"
-        @openDirectMessage="onOpenDirectChannel"
-        ></panel-users>
+        <!-- if no channel selected channel list should be displayed -->
+        <panel-channels
+            :class="[
+              { 'force-on' : !ch },
+              { 'open' : isChannelPanelOpen },
+            ]" />
+
+        <!-- no use in displaying messages if no channel -->
+        <router-view />
+        <panel-users
+            v-if="isUserPanelOpen"
+            @openDirectMessage="onOpenDirectChannel" />
+
+        <!--<panel-thread />-->
     </main>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { PanelChannels, PanelUsers } from '../components/Panel'
+import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
 import { Channel, Message } from '@/types'
 
 export default {
@@ -45,6 +47,7 @@ export default {
   components: {
     PanelChannels,
     PanelUsers,
+    PanelThread,
   },
 
   beforeCreate () {
