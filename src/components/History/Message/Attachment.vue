@@ -24,7 +24,6 @@
 import * as numeral from 'numeral'
 
 export default {
-  name: 'attachment',
   props: [ 'msg' ],
 
   methods: {

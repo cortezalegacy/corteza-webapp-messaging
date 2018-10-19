@@ -1,9 +1,8 @@
 <!-- template for the user avatar component -->
 <template>
   <i v-if="user" class="u-avatar"
-     :class="[ { 'no-avatar' : !user.avatar } ]"
      :title="title()"
-     :style="user.avatar?'background-image:'+user.avatar:''">
+     :style="img()?'background-image:'+img():''">
       <span aria-hidden="true">{{ initials()}}</span>
   </i>
   <i v-else
@@ -24,13 +23,23 @@ export default
 
   data () {
     return {
-      initials: () => {
-        if (this.user.name) {
-          return this.user.name[0]
+      img: () => {
+        if (!this.user) {
+          return ''
         }
 
-        if (this.user.username) {
-          return this.user.username[0]
+        return this.user.avatar
+      },
+
+      initials: () => {
+        if (this.user) {
+          if (this.user.name) {
+            return this.user.name[0]
+          }
+
+          if (this.user.username) {
+            return this.user.username[0]
+          }
         }
       },
 
