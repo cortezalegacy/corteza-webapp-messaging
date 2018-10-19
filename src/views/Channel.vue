@@ -11,8 +11,7 @@
     <channel-header
       :channel="ch"
       v-if="ch"></channel-header>
-    <channel-history
-      ref="history"></channel-history>
+    <history ref="history" />
     <channel-input
       :channelID="channelID"
       @promptFilePicker="openFilePicker"></channel-input>
@@ -20,7 +19,8 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { ChannelHistory, ChannelInput, ChannelHeader, ChannelUpload } from '../components/Channel'
+import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
+import History from '@/components/History'
 
 export default {
   props: ['channelID'],
@@ -88,7 +88,7 @@ export default {
   },
 
   components: {
-    ChannelHistory,
+    History,
     ChannelInput,
     ChannelUpload,
     ChannelHeader,

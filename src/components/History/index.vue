@@ -4,10 +4,10 @@
       v-if="ch"
       @scroll="scrollHandler"
       ref="msgList">
-      <message v-for="(msg, index) in this.messages"
+      <message v-for="(msg, index) in messages(ch.ID)"
         ref="message"
         :message="msg"
-        :continued="isContinued(index, messages)"
+        :continued="isContinued(messages, index)"
         :current-user="user"
         :key="msg.ID">
       </message>
@@ -17,13 +17,12 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import * as moment from 'moment'
 import Message from './Message'
-
-// Time window for continued messages in seconds
-const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 60
+import messages from '@/mixins/messages'
 
 export default {
+  name: 'history',
+
   data () {
     return {
       loadSuspended: false,
@@ -38,15 +37,9 @@ export default {
   computed: {
     ...mapGetters({
       ch: 'channels/current',
-      users: 'users/list',
       user: 'auth/user',
 
-      findUserByID: 'users/findByID',
-      findChannelByID: 'channels/findByID',
-
-      getFirstMsgId: 'history/getFirstId',
-      getLastMsgId: 'history/getLastId',
-      messages: 'history/get',
+      messages: 'history/getByChannelID',
     }),
   },
 
@@ -57,20 +50,6 @@ export default {
       ignoreChannelUnreadCount: 'unread/ignoreChannel',
       unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
-
-    isContinued (index, messages) {
-      // Leading message...
-      if (index === 0) return false
-
-      // Messages...
-      let lastMessage = messages[index - 1]
-      let currentMessage = messages[index]
-
-      // Checks -- user ID and timestamp
-      let sameUser = (lastMessage.user || {}).ID === (currentMessage.user || {}).ID
-      let timeSpanCheck = moment(currentMessage.createdAt).diff(moment(lastMessage.createdAt), 'seconds') <= continuedMessagesTimeWindow
-      return sameUser && timeSpanCheck
-    },
 
     isScrolledToTop (target) {
       return target ? target.scrollTop <= 0 : true
@@ -105,13 +84,13 @@ export default {
 
         this.$refs.msgList.scrollTop = 1
 
-        this.$ws.olderMessages(this.ch.ID, this.getFirstMsgId)
+        this.$ws.olderMessages(this.ch.ID, this.getFirstID(this.messages))
       }
 
       if (target && this.isScrolledToBottom(target) && !this.loadSuspended) {
         // this.loadSuspended = true
-        // this.$ws.newerMessages(this.ch.ID, undefined, this.getLastMsgId)
-        this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
+        // this.$ws.newerMessages(this.ch.ID, undefined, this.getLastIDthis.messages)
+        this.$ws.recordChannelView(this.ch.ID, this.getLastID(this.messages))
       }
 
       if (this.allowAutoScroll) {
@@ -128,7 +107,7 @@ export default {
 
       this.resetUnreadTimeout = window.setTimeout(() => {
         this.setChannelUnreadCount({ ID: this.ch.ID, count: 0 })
-        this.$ws.recordChannelView(this.ch.ID, this.getLastMsgId)
+        this.$ws.recordChannelView(this.ch.ID, this.getLastID(this.messages))
       }, 2000)
     },
 
@@ -184,6 +163,10 @@ export default {
   components: {
     Message,
   },
+
+  mixins: [
+    messages,
+  ],
 }
 
 </script>

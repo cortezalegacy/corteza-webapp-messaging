@@ -5,9 +5,12 @@ const state = {
 
 // getters
 const getters = {
-  get: (state) => state.set.filter(m => m.replyTo === 0),
-  getFirstId: (state) => (state.set[0] || {}).ID,
-  getLastId: (state) => (state.set[state.set.length - 1] || {}).ID,
+  getByID: (state) => (ID) => state.set.find(m => m.ID === ID),
+  getByChannelID: (state) => (channelID) => state.set.filter(m => m.replyTo === 0 && m.channelID === channelID),
+  getRepliesByID: (state) => (replyTo) => state.set.filter(m => m.replyTo === replyTo),
+
+  // @todo Move this to mixins
+
 }
 
 // actions

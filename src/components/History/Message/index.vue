@@ -64,6 +64,10 @@ export default {
   },
 
   methods: {
+    isCurrentUser () {
+      return (this.message.user || {}).ID === this.currentUser.ID
+    },
+
     moment: function (timeString) {
       return moment(timeString)
     },

@@ -1,50 +1,66 @@
 <template>
   <div
-    class="menu-layer right">
+    v-if="originalMessage(originalID)"
+    class="menu-layer right thread">
     <label class="closer"
            @click="toggleUserPanel(false)"
            aria-label="Close"><i class="icon-close"></i></label>
+
+    <message ref="original"
+             :message="originalMessage(originalID)"
+             :current-user="user" />
+
+    <message v-for="(msg, index) in replies(originalID)"
+             ref="message"
+             :message="msg"
+             :continued="isContinued(replies(originalID), index)"
+             :current-user="user"
+             :key="msg.ID" />
+
+    <channel-input />
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import Avatar from '@/components/Avatar'
+import Message from '@/components/History/Message'
+import ChannelInput from '../Channel/Input'
+import messages from '@/mixins/messages'
 
 export default {
   name: 'panel-user',
   data () {
-    return {}
+    return {
+      originalID: '60701390380466279',
+    }
   },
 
   computed: {
     ...mapGetters({
-      users: 'users/list',
+      user: 'auth/user',
+      originalMessage: 'history/getByID',
+      replies: 'history/getRepliesByID',
       isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
   },
 
-  // beforeCreate () {
-  //   // Handle users payload when it gets back
-  //   this.$ws.subscribe('users', (users) => {
-  //     this.resetList(users)
-  //   })
-  // },
-
-  // mounted () {
-  //   // Ask server to feed us the users we know
-  //   this.$ws.users()
-  // },
-
   methods: {
     ...mapActions({
-      resetList: 'users/resetList',
       toggleUserPanel: 'ui/toggleUserPanel',
     }),
   },
 
-  components: {
-    'user-avatar': Avatar,
+  mounted () {
+    this.$ws.getReplies(this.originalID)
   },
+
+  components: {
+    ChannelInput,
+    Message,
+  },
+
+  mixins: [
+    messages,
+  ],
 }
 </script>
 

@@ -13,7 +13,7 @@
             v-if="isUserPanelOpen"
             @openDirectMessage="onOpenDirectChannel" />
 
-        <!--<panel-thread />-->
+        <panel-thread />
     </main>
 </template>
 <script>
@@ -178,9 +178,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/sass/_0.commons.scss';
-  main
-  {
-    background-color : $mainbgcolor;
-  }
+@import '@/assets/sass/_0.commons.scss';
+main
+{
+  background-color : $mainbgcolor;
+}
+
+.thread {
+  width: 40%;
+}
 </style>
