@@ -29,8 +29,6 @@ import InputRichText from '@/components/Channel/InputRichText'
 
 
 export default {
-  name: 'channel-input',
-
   data () {
     return {
       cursorIndex: -1,
@@ -81,10 +79,12 @@ export default {
     },
 
     onEditLastPassthrough (e) {
+      console.log('onEditLastPassthrough ', e)
       this.$emit('editLast', e)
     },
 
     onSubmit (e) {
+      console.log('onSubmit', e)
       this.$emit('submit', { message: e.value, meta: this.submitMeta })
 
       // And reset meta data right after
@@ -95,6 +95,10 @@ export default {
       this.submitMeta = submitMeta
       this.$refs.richTextInput.setValue(message)
     },
+  },
+
+  mounted () {
+    console.log('input mounted value', this.value)
   },
 
   components: {

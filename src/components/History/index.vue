@@ -51,6 +51,10 @@ export default {
       unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
 
+    getLastEditable () {
+      return this.getLastMessageByUserID(this.messages(this.ch.ID), this.user.ID)
+    },
+
     isScrolledToTop (target) {
       return target ? target.scrollTop <= 0 : true
     },

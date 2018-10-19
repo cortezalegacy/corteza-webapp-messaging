@@ -122,7 +122,7 @@ export default {
         empty.appendChild(tNode)
         line.appendChild(empty)
 
-        // Insert new line after curent line.
+        // Insert new line after current line.
         let nodeWalker = this.getCurentNode()
         while (nodeWalker.tagName !== 'P') {
           nodeWalker = nodeWalker.parentNode
@@ -150,7 +150,7 @@ export default {
 
     updateValue (e) {
       // Pressed up key && no value is entered
-      if (NAVIGATION_Y[e.which] === 'up' && !this.value) {
+      if (NAVIGATION_Y[e.which] === 'up' && !this.value.trim()) {
         this.$emit('editLast', {})
         return
       }
@@ -164,21 +164,9 @@ export default {
 
         if (this.suggestionsOpened) return
 
-        // Was editing a message...
-        if (this.isEditing) {
-          this.editingMessage(false)
-          if (!this.message) {
-            // TODO: $ws messageDelete code goes here...
-          } else {
-            // TODO: $ws messageUpdate code goes here...
-          }
-          this.resetInput()
-          return
-        }
-
         // Shift key allows new line
         if (!e.shiftKey) {
-          this.$emit('submit', { value: this.value })
+          this.$emit('submit', { value: this.value.trim() })
           this.resetInput()
           return
         }
@@ -233,7 +221,7 @@ export default {
       let ctr = 0
       let word = ''
       for (let m of msg) {
-        // ctr is before word, and end of curent word is after next cell
+        // ctr is before word, and end of current word is after next cell
         if (ctr <= cursorIndex && ctr + m.length >= cursorIndex) {
           word = m
           break
@@ -261,12 +249,8 @@ export default {
 
     // To set input value from the outside
     setValue (value) {
-      this.setInput(this.$triggers.getNodes(value))
-    },
-
-    // Internal only
-    setInput (value = INITIAL_INPUT_DOM) {
-      this.$refs.richInput.innerHTML = value
+      this.value = value
+      this.$refs.richInput.innerHTML = this.$triggers.getNodes(value) || INITIAL_INPUT_DOM
       this.pushToEnd(this.textAreaRef())
     },
 
@@ -337,7 +321,7 @@ export default {
      * relative to given node.
      */
     processText (selection) {
-      // Get curent node
+      // Get current node
       let node = this.getCurentNode()
       let nodeCaretIndex = this.getCaretPositionRelative()
       let msg = node.textContent
@@ -346,7 +330,7 @@ export default {
       let chunk = this.getCurentChunk(msg, nodeCaretIndex)
       let trigger = this.getInvokingTrigger(chunk)
 
-      // Previus chunk is triggered; folowed by blank & just one suggestion -- make a new element
+      // Previous chunk is triggered; folowed by blank & just one suggestion -- make a new element
       if (node.dataset.triggered && !this.allowSpace && node.textContent.slice(-1) === ' ') {
         node.insertAdjacentHTML('afterend', `<span> </span>`)
 
@@ -355,7 +339,7 @@ export default {
         return { chunk }
       }
 
-      // Curent chunk is empty,
+      // Current chunk is empty,
       // If this node is not triggered and next one is neither, join them together
       let nextNode = node.nextElementSibling || undefined
       if (nextNode && !node.dataset.triggered && (nextNode && !nextNode.dataset.triggered)) {
@@ -374,8 +358,9 @@ export default {
 
           if (leftChunk) node.insertAdjacentHTML('beforebegin', `<span>${leftChunk}</span>`)
           if (rightChunk) node.insertAdjacentHTML('afterend', `<span>${rightChunk}</span>`)
-          if (triggeredChunk)
-          { node.outerHTML = `<span class="triggered" data-triggered="true" data-invalid="true">${triggeredChunk}</span>` }
+          if (triggeredChunk) {
+            node.outerHTML = `<span class="triggered" data-triggered="true" data-invalid="true">${triggeredChunk}</span>`
+          }
         }
       }
 

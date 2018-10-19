@@ -19,9 +19,10 @@
     <channel-input
       ref="channelInput"
       :channelID="channelID"
+      :value="inputValue"
       @submit="onInputSubmit"
       @promptFilePicker="openFilePicker"
-      @editLast="editLast" />
+      @editLast="editLastMessage" />
 
   </section>
 </template>
@@ -34,12 +35,17 @@ import History from '@/components/History'
 export default {
   props: ['channelID'],
 
+  data () {
+    return {
+      inputValue: '',
+    }
+  },
+
   computed: {
     ...mapGetters({
       ch: 'channels/current',
       unread: 'unread/channel',
       isUserPanelOpen: 'ui/isUserPanelOpen',
-      getLastMessageByUserID: 'history/getLastByUserID',
       user: 'auth/user',
     }),
   },
@@ -94,12 +100,9 @@ export default {
       this.$refs.channelInput.setValue(message, { ID })
     },
 
-    // Invoked from input -- we need to pass it our last message...
-    editLast () {
-      const msg = this.getLastMessageByUserID(this.user.ID)
-      if (msg) {
-        this.setEditMessage(msg)
-      }
+    editLastMessage () {
+      // Ask history component about last editable message
+      this.setEditMessage(this.$refs.history.getLastEditable())
     },
 
     openUploadOverlay () {
@@ -132,14 +135,13 @@ export default {
           this.$ws.exec(this.channelID, command, {}, input)
         }
       } else if (meta.ID && message.length === 0) {
-        console.debug('Delete message', { meta })
-        this.$ws.deleteMessage(meta.ID)
+        console.debug('Delete message [DISABLED UNTIL FIXED!]', { ID: meta.ID })
+        // this.$ws.deleteMessage(meta.ID)
       } else if (meta.ID) {
-        console.debug('Sending message update', { message, meta })
-
+        console.debug('Sending message update', { message, ID: meta.ID })
         this.$ws.updateMessage(meta.ID, message)
       } else {
-        console.debug('Sending message update', { message, channelID: this.channelID })
+        console.debug('Sending new message', { message, channelID: this.channelID })
         this.$ws.sendMessage(this.channelID, message)
       }
     },
