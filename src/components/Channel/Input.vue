@@ -10,8 +10,8 @@
         @nodeChunkChanged="nodeChunkChanged"
         @navigateSuggestions="navigateSuggestions"
         @selectFocused="selectFocused"
-        @msgUpdate="msgUpdate"
-        @send="send"
+        @submit="onSubmit"
+        @editLast="onEditLastPassthrough"
         class="message-input"
         ref="richTextInput" />
 
@@ -25,26 +25,18 @@
 <script>
 import { mapGetters } from 'vuex'
 import TriggerSuggestions from './TriggerSuggestions'
-import commander from '@/plugins/commander'
 import InputRichText from '@/components/Channel/InputRichText'
 
 
 export default {
   name: 'channel-input',
 
-  props: [ 'channelID', 'userId' ],
-
   data () {
     return {
-      msg: '',
-      disabled: true,
       cursorIndex: -1,
-      curentChunk: {},
+      currentChunk: {},
+      submitMeta: {},
     }
-  },
-
-  mounted () {
-    this.disabled = false
   },
 
   computed: {
@@ -55,13 +47,13 @@ export default {
 
     // Gives msg chung where commands are possible
     getCurrentMsgChunk () {
-      return this.curentChunk || {}
+      return this.currentChunk || {}
     },
   },
 
   methods: {
     nodeChunkChanged (e) {
-      this.$set(this, 'curentChunk', e.chunk)
+      this.$set(this, 'currentChunk', e.chunk)
     },
 
     selectFocused () {
@@ -80,74 +72,28 @@ export default {
       }
     },
 
-    msgUpdate (e) {
-      this.msg = e.msg
-    },
-
     selectSuggestion (e) {
-      if (this.$refs.richTextInput.insertTriggeredNode(e)) this.$set(this, 'curentChunk', {})
+      if (this.$refs.richTextInput.insertTriggeredNode(e)) this.$set(this, 'currentChunk', {})
     },
 
     promptFilePicker () {
       this.$emit('promptFilePicker', {})
     },
 
-    send () {
-      if (this.msg.length === 0) return
-      if (this.msg[0] === '/') {
-        if (this.execLocal(this.msg)) this.sendFinished()
-        else this.sendCommand(this.msg)
-      }
-      else this.sendMsg(this.msg)
+    onEditLastPassthrough (e) {
+      this.$emit('editLast', e)
     },
 
-    sendCommand (processedMsg) {
-      const i = processedMsg.indexOf(' ')
-      if (i < 1) {
-        return
-      }
+    onSubmit (e) {
+      this.$emit('submit', { message: e.value, meta: this.submitMeta })
 
-      this.disabled = true
-      const command = processedMsg.substr(1, i - 1)
-      const input = processedMsg.substr(i + 1)
-
-      console.debug('Executing a command', { command, input })
-
-      this.$ws.exec(this.channelID, command, {}, input).then(() => {
-        this.sendFinished()
-      })
+      // And reset meta data right after
+      this.submitMeta = {}
     },
 
-    sendMsg (processedMsg) {
-      this.disabled = true
-
-      if (this.channelID) {
-        console.debug(
-          'Sending message to channel',
-          { msg: processedMsg, channelID: this.channelID })
-
-        this.$ws.sendMessage(this.channelID, processedMsg).then(() => {
-          this.sendFinished()
-        })
-      } else if (this.userId) {
-        console.debug(
-          'Sending direct message to user',
-          { msg: processedMsg, userId: this.userId })
-
-        this.$rest.sendDirectMessage(this.userId, processedMsg).then((newMessage) => {
-          this.$emit('directMessageSent', newMessage)
-        }).catch((error) => {
-          console.error('Failed to send direct message', { error })
-        }).finally(() => {
-          this.disabled = false
-        })
-      }
-    },
-
-    sendFinished () {
-      this.msg = ''
-      this.disabled = false
-      this.$set(this, 'curentChunk', {})
+    setValue (message, submitMeta = {}) {
+      this.submitMeta = submitMeta
+      this.$refs.richTextInput.setValue(message)
     },
   },
 
@@ -155,10 +101,6 @@ export default {
     TriggerSuggestions,
     InputRichText,
   },
-
-  mixins: [
-    commander,
-  ],
 }
 </script>
 
@@ -201,7 +143,6 @@ export default {
     float:right;
     font-size:15px;
     padding:11px 5px;
-    line-height:16px;
   }
 
   .upload-button {

@@ -26,23 +26,11 @@ export function Message (m) {
   this.replies = m.replies || 0
   this.createdAt = m.createdAt
 
-  this.attachment = null
-  this.user = null
-
-  if (m.att) {
-    this.attachment = new Attachment(m.att)
-  }
-
-  if (m.user) {
-    this.user = new User(m.user)
-  }
+  this.user = new User(m.user)
+  this.attachment = m.att ? new Attachment(m.att) : null
 }
 
 export function Attachment (a) {
-  if (!a) {
-    return
-  }
-
   this.ID = a.ID || a.id // cover both cases (BC)
   this.userID = a.userID
   this.name = a.name
@@ -54,7 +42,7 @@ export function Attachment (a) {
 
 export function User (u) {
   if (!u) {
-    return
+    return {}
   }
 
   this.ID = u.ID || u.id // cover both cases (BC)

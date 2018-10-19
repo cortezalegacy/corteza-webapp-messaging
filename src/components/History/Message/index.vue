@@ -35,7 +35,8 @@
         <contents
           v-else
           class="message-content"
-          :chunks="parse(message.message)" />
+          :id="message.ID"
+          :chunks="getChunks(message.message)" />
       </div>
       <div v-if="message.replies">{{message.replies}} replies</div>
     </li>
@@ -84,9 +85,8 @@ export default {
       return (moment().startOf('day').unix() === moment(timeString).startOf('day').unix())
     },
 
-    parse (text) {
-      // @todo, find*byID should be bonded with triggers on load time
-      return this.$triggers.parse(text.trim().split(/[ \n]/))
+    getChunks (text) {
+      return this.$triggers.getChunks(text)
     },
   },
 

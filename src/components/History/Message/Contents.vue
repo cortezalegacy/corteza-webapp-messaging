@@ -1,13 +1,22 @@
 <template>
-  <span class="content-wrap">
-    <component
+  <span
+    @dblclick="editMessage"
+    class="crust_iam_main__message__content-wrap">
+    <p
       v-if="!isEmbedded.src"
-      :is="getChunkTag(c)"
-      class="spaced"
-      v-for="c in chunks"
-      :key="c.chunk"
-      v-bind="c.props"
-      v-html="c.chunk" />
+      v-for="(r, line) in chunks"
+      :key="`${id}${line}`"
+      class="line">
+
+      <component
+        :is="getChunkTag(c)"
+        class="spaced"
+        v-for="(c, i) in r"
+        :key="`${id}${line}${i}`"
+        v-bind="c.props"
+        v-html="c.chunk" />
+
+    </p>
 
     <embedded-box
       v-if="isEmbedded.src"
@@ -26,6 +35,10 @@ export default {
       return chunk.meta.tag || 'span'
     },
 
+    editMessage (e) {
+      this.$emit('editMessage', { id: this.id })
+    },
+
     isYtLink (msg) {
       if (msg) {
         let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
@@ -41,7 +54,7 @@ export default {
   computed: {
     isEmbedded () {
       if (this.chunks.length > 1) return false
-      let [ c = {} ] = this.chunks
+      let [ c = {} ] = this.chunks[0]
       c = c.chunk
 
       return { src: this.isYtLink(c), chunk: c }
@@ -54,6 +67,11 @@ export default {
       required: true,
       default: () => [],
     },
+
+    id: {
+      required: true,
+      default: null,
+    },
   },
 
   components: {
@@ -65,6 +83,10 @@ export default {
 <style scoped>
 .spaced {
   margin-left: 5px;
+}
+
+.crust_iam_main__message__content-wrap .line {
+  margin: 1px 0;
 }
 
 .content-wrap .spaced:first-child {

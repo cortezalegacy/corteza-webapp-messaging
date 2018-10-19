@@ -53,8 +53,17 @@ export default {
         return true
       },
 
-      // Parses triggered api chunks
-      parse (chunks) {
+      getChunks (text) {
+        let rows = text.trim().split(/[\n]/)
+        let rtr = []
+        for (let r of rows) {
+          rtr = [...rtr, this.getLineChunks(r.trim().split(/[ ]/))]
+        }
+        return rtr
+      },
+
+      // Prepares chunks for history
+      getLineChunks (chunks) {
         let regex = makeIdParserRegex()
         let buffer = []
         let rtr = []
@@ -102,6 +111,98 @@ export default {
           rtr.push({ chunk: buffer.join(' '), meta: {}, props: {}, triggered: false })
         }
         return rtr
+      },
+
+      // # Handles strings from API
+
+      // Prepares input node structure from api
+      getNodes (message) {
+        let lists = { '@': this.userByID, '#': this.channelByID }
+        /**
+         * m[0] - entire match
+         * m[1] - trigger
+         * m[2] - ID
+         */
+        let regex = /<([#@])(\d+)>/g
+
+        let addNormalChunk = (message, wrapper) => {
+          let normalNode = document.createElement('span')
+          normalNode.appendChild(document.createTextNode(message))
+          wrapper.appendChild(normalNode)
+        }
+
+        let match
+        let lastProcessed = 0
+        let wrapper = document.createElement('div')
+        while ((match = regex.exec(message)) !== null) {
+          // Get index of matched chunk
+          let [ entire, trigger, id ] = match
+          let triggeredIndex = message.indexOf(entire)
+
+          // Get normal and triggered chunks
+          let normalChunk = message.substring(lastProcessed, triggeredIndex)
+          let triggeredChunk = message.substring(triggeredIndex, triggeredIndex + entire.length)
+
+          // Create normal node
+          addNormalChunk(normalChunk, wrapper)
+
+          // Get node's text...
+          let triggeredText = ''
+          for (let object of lists[trigger] || []) {
+            if (object.ID === id) {
+              triggeredText = object.name || object.username
+            }
+          }
+
+          // Create a triggered node
+          let triggeredNode = document.createElement('span')
+          if (this.$triggers.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
+            this.$triggers.addNodeTrigger(triggeredNode, trigger, { id })
+          }
+          wrapper.appendChild(triggeredNode)
+
+          // Update lastProcessed index -- don't edit message it self because, regex is using it
+          lastProcessed = triggeredIndex + triggeredChunk.length
+        }
+
+        // Insert last normal chunk
+        message = message.substring(lastProcessed)
+        if (message) {
+          addNormalChunk(message, wrapper)
+        }
+
+        return wrapper.innerHTML
+      },
+
+      // # Node trigger handlers
+
+      prepareTriggeredNode (node, trigger, text) {
+        if (trigger === '/') {
+          node.appendChild(document.createTextNode(`${trigger}${text}`))
+          return { trigger: false }
+        } else {
+          node.classList.add('triggered')
+          node.appendChild(document.createTextNode(`${trigger}${text}`))
+          return { trigger: true }
+        }
+      },
+
+      addNodeTrigger (node, trigger, meta) {
+        node.classList.add('valid')
+
+        node.dataset.triggered = true
+        node.dataset.prefix = trigger
+        node.dataset.meta = JSON.stringify(meta)
+
+        delete node.dataset.invalid
+      },
+
+      removeNodeTrigger (node) {
+        delete node.dataset.prefix
+        delete node.dataset.meta
+
+        node.dataset.invalid = true
+        node.classList.remove('valid')
       },
     }
   },

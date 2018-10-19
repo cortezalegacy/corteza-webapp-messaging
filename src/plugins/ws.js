@@ -24,7 +24,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   connect () {
     const baseUrl = window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
 
-    console.log('Connecting to Crust Messaging Websocket')
+    console.debug('Connecting to Crust Messaging Websocket')
     const url = baseUrl.replace(/^http/, 'ws') + '/websocket/'
 
     this.conn = new ReconnectingWebSocket(url)
@@ -97,6 +97,14 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
 
   async sendMessage (channelID, message) {
     return this.send(JSON.stringify({ createMessage: { channelID, message } }))
+  },
+
+  async updateMessage (messageID, message) {
+    return this.send(JSON.stringify({ updateMessage: { messageID, message } }))
+  },
+
+  async deleteMessage (messageID) {
+    return this.send(JSON.stringify({ deleteMessage: { messageID } }))
   },
 
   async sendReply (replyTo, message) {

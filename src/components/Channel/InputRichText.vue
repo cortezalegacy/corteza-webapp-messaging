@@ -2,7 +2,7 @@
   <div class="input-wrapper">
     <div
       @keydown="handleKeyDown"
-      @keyup="updateValue"
+      @keyup="handleKeyUp"
       @focus="updateFocus(true)"
       @blur="updateFocus(false)"
 
@@ -12,7 +12,10 @@
       id="richInput"
       ref="richInput"
       data-nodetype="root"
-      contenteditable><span><br/></span></div>
+      contenteditable>
+      <p>
+        <span><br/></span>
+      </p></div>
       <p
         v-if="placeholderShown"
         class="placeholder"
@@ -49,20 +52,26 @@ const IGNORED_KEYCODES = Object.assign({}, NAVIGATION_KEYS, {
 })
 const SUBMIT_KEYCODES = { 13: true }
 
-const INITIAL_INPUT_DOM = '<span><br/></span>'
+const INITIAL_INPUT_DOM = '<p><span><br/></span></p>'
 
 export default {
   data () {
     return {
       value: '',
+      lastRawValue: null,
       focused: false,
       // When user selects from trigger suggestions - ignore submit
       ignoreNextSubmit: false,
       lastNode: null,
+      isEditing: false,
     }
   },
 
   methods: {
+    editingMessage (editing = true) {
+      this.isEditing = editing
+    },
+
     fOut () {
       this.$set(this, 'lastNode', this.getCurentNode())
     },
@@ -83,18 +92,44 @@ export default {
       // Reset input to initial state
       this.textAreaRef().innerHTML = INITIAL_INPUT_DOM
       this.$set(this, 'value', '')
-      this.$emit('msgUpdate', { msg: this.value })
       this.$emit('nodeChunkChanged', { chunk: {} })
     },
 
     handleKeyDown (e) {
       this.preventInputJumps(e)
+      this.handleLines(e)
       this.suggestionNavigation(e)
+    },
+
+    handleKeyUp (e) {
+      this.updateValue(e)
     },
 
     preventInputJumps (e) {
       if (e.which === 13 && !e.shiftKey) {
         e.preventDefault()
+      }
+    },
+
+    // On shift + enter, chunk up lines
+    // Create a new line and a new blank node; After insert, puch caret to end of it - inside the blank node
+    handleLines (e) {
+      if (e.which === 13 && e.shiftKey) {
+        e.preventDefault()
+        let line = document.createElement('p')
+        let empty = document.createElement('span')
+        let tNode = document.createElement('br')
+        empty.appendChild(tNode)
+        line.appendChild(empty)
+
+        // Insert new line after curent line.
+        let nodeWalker = this.getCurentNode()
+        while (nodeWalker.tagName !== 'P') {
+          nodeWalker = nodeWalker.parentNode
+        }
+        nodeWalker.parentNode.insertBefore(line, nodeWalker.nextSibling)
+
+        this.pushToEnd(line)
       }
     },
 
@@ -114,6 +149,12 @@ export default {
     },
 
     updateValue (e) {
+      // Pressed up key && no value is entered
+      if (NAVIGATION_Y[e.which] === 'up' && !this.value) {
+        this.$emit('editLast', {})
+        return
+      }
+
       // On submit
       if (SUBMIT_KEYCODES[e.which]) {
         if (this.ignoreNextSubmit) {
@@ -123,9 +164,21 @@ export default {
 
         if (this.suggestionsOpened) return
 
+        // Was editing a message...
+        if (this.isEditing) {
+          this.editingMessage(false)
+          if (!this.message) {
+            // TODO: $ws messageDelete code goes here...
+          } else {
+            // TODO: $ws messageUpdate code goes here...
+          }
+          this.resetInput()
+          return
+        }
+
         // Shift key allows new line
         if (!e.shiftKey) {
-          this.$emit('send', { submit: true })
+          this.$emit('submit', { value: this.value })
           this.resetInput()
           return
         }
@@ -137,7 +190,8 @@ export default {
         return
       }
 
-      if (!IGNORED_KEYCODES[e.which]) {
+      let isChanged = this.lastRawValue !== this.textAreaRef().textContent
+      if (!IGNORED_KEYCODES[e.which] && isChanged) {
         // Save selection state
         let selection = new Selection(this.textAreaRef())
         selection.saveCurrentSelection()
@@ -153,6 +207,8 @@ export default {
         // Pre process text for api
         this.processTriggeredText()
       }
+
+      this.lastRawValue = this.textAreaRef().textContent
     },
 
     getCurentChunk (msg, cursorIndex) {
@@ -203,16 +259,52 @@ export default {
       return node.nodeType === 3 ? node.parentNode : node
     },
 
+    // To set input value from the outside
+    setValue (value) {
+      this.setInput(this.$triggers.getNodes(value))
+    },
+
+    // Internal only
+    setInput (value = INITIAL_INPUT_DOM) {
+      this.$refs.richInput.innerHTML = value
+      this.pushToEnd(this.textAreaRef())
+    },
+
+    // Ref: https://stackoverflow.com/a/3866442
+    pushToEnd (el) {
+      let range, selection
+      // Firefox, Chrome, Opera, Safari, IE 9+
+      if (document.createRange) {
+        // Create a range (a range is a like the selection but invisible)
+        range = document.createRange()
+        // Select the entire contents of the element with the range
+        range.selectNodeContents(el)
+        // collapse the range to the end point. false means collapse to end rather than the start
+        range.collapse(false)
+        // get the selection object (allows you to change selection)
+        selection = window.getSelection()
+        // remove any selections already made
+        selection.removeAllRanges()
+        // make the range you have just created the visible selection
+        selection.addRange(range)
+      } else if (document.selection) {
+        // IE 8 and lower
+        // Create a range (a range is a like the selection but invisible)
+        range = document.body.createTextRange()
+        // Select the entire contents of the element with the range
+        range.moveToElementText(el)
+        // collapse the range to the end point. false means collapse to end rather than the start
+        range.collapse(false)
+        // Select the range (make it the visible selection
+        range.select()
+      }
+    },
+
     // Parent callable - creates and inserts triggered node
     insertTriggeredNode (suggestion) {
-      let node
-      if (suggestion.prefix === '/') {
-        node = document.createElement('span')
-        node.appendChild(document.createTextNode(`${suggestion.prefix}${suggestion.command.command}`))
-      } else {
-        node = document.createElement('span')
-        node.classList.add('triggered')
-        node.appendChild(document.createTextNode(`${suggestion.prefix}${suggestion.command.command}`))
+      let node = document.createElement('span')
+      let { prefix, command: { command } } = suggestion
+      if (this.$triggers.prepareTriggeredNode(node, prefix, command).trigger) {
         this.addNodeTrigger(node, suggestion)
       }
 
@@ -230,21 +322,12 @@ export default {
     },
 
     addNodeTrigger (node, suggestion) {
-      node.classList.add('valid')
-
-      node.dataset.triggered = true
-      node.dataset.prefix = suggestion.prefix
-      node.dataset.meta = JSON.stringify(suggestion.command.meta)
-
-      delete node.dataset.invalid
+      let { prefix, command: { meta = {} } } = suggestion
+      this.$triggers.addNodeTrigger(node, prefix, meta)
     },
 
     removeNodeTrigger (node) {
-      delete node.dataset.prefix
-      delete node.dataset.meta
-
-      node.dataset.invalid = true
-      node.classList.remove('valid')
+      this.$triggers.removeNodeTrigger(node)
     },
 
     /**
@@ -328,14 +411,17 @@ export default {
 
     processTriggeredText () {
       let rtr = ''
-      for (let c of this.textAreaRef().children) {
-        let data = c.dataset
-        if (data.triggered && !data.invalid) {
-          let meta = JSON.parse(data.meta || '{}')
-          rtr += `<${data.prefix}${meta.id}>`
-        } else {
-          rtr += c.textContent
+      for (let r of this.textAreaRef().children) {
+        for (let c of r.children) {
+          let data = c.dataset
+          if (data.triggered && !data.invalid) {
+            let meta = JSON.parse(data.meta || '{}')
+            rtr += `<${data.prefix}${meta.id}>`
+          } else {
+            rtr += c.textContent
+          }
         }
+        rtr += '\n'
       }
 
       this.$set(this, 'value', rtr)
@@ -347,6 +433,8 @@ export default {
     ...mapGetters({
       getSuggestions: 'suggestions/getSuggestions',
       suggestionsOpened: 'suggestions/isOpened',
+      channelList: 'channels/list',
+      userList: 'users/list',
     }),
 
     placeholderShown () {
@@ -469,4 +557,5 @@ export default {
 #richInput span.triggered.valid {
   background-color: rgba(68, 255, 100, 0.336);
 }
+
 </style>

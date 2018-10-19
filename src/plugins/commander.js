@@ -1,5 +1,3 @@
-// import triggers from '@/plugins/triggers'
-
 export default {
   methods: {
     execLocal (command) {
