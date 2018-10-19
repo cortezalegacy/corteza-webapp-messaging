@@ -10,7 +10,7 @@
       </div>
       <!-- @todo : added file has no size so probably error, maybe other possible errors -->
       <span class="missing" v-else-if="!attachment.size">
-        <i>Oups...{{attachment.name}} is no longer here...</i>
+        <i>Oups...<br/>{{attachment.name}} <br />is no longer here...</i>
       </span>
       <!-- file has size but not image -->
       <pre v-else-if="attachment">

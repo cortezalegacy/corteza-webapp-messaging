@@ -1,19 +1,23 @@
 <template>
     <li
       class="message-n-meta"
-      :class="{'continued': continued}"
+      :class="{
+        'continued': continued,
+        'attachement' : message.attachment,
+        'valid' : message.attachment && message.attachment.size > 0
+      }"
       ref="message"
       :key="message.ID">
-
-      <section v-if="!continued">
-        <avatar :user="message.user" class="avatar" />
-        <em class="author">{{ message.user | userLabel }}</em>
+      <section>
+        <em v-if="!continued" class="avatar">
+          <avatar :user="message.user" />
+        </em>
+        <em  v-if="!continued" class="author">{{ message.user | userLabel }}</em>
         <span class="date">
             {{ moment(message.createdAt).fromNow() }}
             <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
           </span>
-        <em class="time">{{ momentHourMinute(message.createdAt) }}
-        </em>
+        <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
         <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
         <div class="actions">
           <i class="action icon-message-circle-left-speak"></i>
@@ -23,8 +27,15 @@
       <div
         class="message"
         :class="{ from_me: (message.user || {}).ID === currentUser.ID }">
-        <attachment  class="message-content" :attachment="message.attachment" :inline="message.type === 'inlineImage'"  v-if="message.attachment" />
-        <contents class="message-content" v-else :chunks="parse(message.message)"/>
+        <attachment
+          v-if="message.attachment"
+          class="message-content"
+          :attachment="message.attachment"
+          :inline="message.type === 'inlineImage'" />
+        <contents
+          v-else
+          class="message-content"
+          :chunks="parse(message.message)" />
       </div>
       <div v-if="message.replies">{{message.replies}} replies</div>
     </li>
@@ -93,7 +104,6 @@ export default {
     width:auto;
     max-height: 180px !important;
   }
-
 </style>
 
 <style scoped lang="scss">
@@ -109,10 +119,14 @@ export default {
   background-size: auto 15px;
   &.continued
   {
-    padding:10px 23px 24px 65px;
+    padding:3px 23px 4px 65px;
     margin-top:-20px;
-    background:url(../../../assets/images/vertical-dots.svg) no-repeat 90px 0px;
-    background-size: auto 8px;
+    background:none;
+    min-height:65px;
+    &.attachement
+    {
+      margin-bottom:20px; // because attachements are bigger than 65px;
+    }
     .message:before
     {
       display: none !important;
@@ -125,6 +139,13 @@ export default {
   color:$appgrey;
   font-size:12px;
 }
+.avatar
+{
+  display:inline-block;
+  position:absolute;
+  left:20px;
+  top:10px;
+}
 .author, .date
 {
   display:inline-block;
@@ -135,7 +156,7 @@ export default {
 {
   position:absolute;
   left:20px;
-  top:43px;
+  top:45px;
 }
 .time
 {
@@ -145,7 +166,7 @@ export default {
 {
   .time
   {
-    top:28px;
+    top:18px;
   }
   .day
   {
