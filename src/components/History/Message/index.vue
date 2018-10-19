@@ -23,7 +23,7 @@
       <div
         class="message"
         :class="{ from_me: (message.user || {}).ID === user.ID }">
-        <attachment  class="message-content" v-bind:msg="message" v-if="message.attachment" />
+        <attachment  class="message-content" :attachment="message.attachment" :inline="message.type === 'inlineImage'"  v-if="message.attachment" />
         <contents class="message-content" v-else :chunks="parse(message.message)"/>
       </div>
       <div v-if="message.replies">{{message.replies}} replies</div>

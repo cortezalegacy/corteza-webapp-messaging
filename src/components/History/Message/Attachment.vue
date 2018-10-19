@@ -1,20 +1,20 @@
 <template>
   <div>
-      <div v-if="msg.type == 'inlineImage' && msg.attachment.meta.preview">
-        <a class="attachment-wrap" :href="prefixAttachmentUrl(msg.attachment.downloadUrl)">
-          <img :width="(msg.attachment.meta.preview.image || {}).width || 320"
-               :height="(msg.attachment.meta.preview.image || {}).height || 180"
+      <div v-if="inline && attachment.meta.preview">
+        <a class="attachment-wrap" :href="prefixAttachmentUrl(attachment.downloadUrl)">
+          <img :width="(attachment.meta.preview.image || {}).width || 320"
+               :height="(attachment.meta.preview.image || {}).height || 180"
                @error.once="reloadBrokenImage"
-               :src="prefixAttachmentUrl(msg.attachment.previewUrl)">
+               :src="prefixAttachmentUrl(attachment.previewUrl)">
         </a>
       </div>
       <!-- @todo : added file has no size so probably error, maybe other possible errors -->
-      <span class="missing" v-else-if="!msg.attachment.size">
-        <i>Oups...{{msg.attachment.name}} is no longer here...</i>
+      <span class="missing" v-else-if="!attachment.size">
+        <i>Oups...{{attachment.name}} is no longer here...</i>
       </span>
       <!-- file has size but not image -->
-      <pre v-else-if="msg.attachment">
-        <a v-bind:href="msg.attachment.download">Download {{msg.attachment.name}}</a> ({{msg.attachment.mimetype}}, size: {{ numeral(msg.attachment.size).format('0b') }} )
+      <pre v-else-if="attachment">
+        <a v-bind:href="attachment.download">Download {{attachment.name}}</a> ({{attachment.mimetype}}, size: {{ numeral(attachment.size).format('0b') }} )
         <i>@todo preview; if not available, we need to get appropriate image/icon from font-awesome (file-*)</i>
       </pre>
       <!--{{msg}}-->
@@ -24,7 +24,7 @@
 import * as numeral from 'numeral'
 
 export default {
-  props: [ 'msg' ],
+  props: [ 'attachment', 'inline' ],
 
   methods: {
     prefixAttachmentUrl (url) {
