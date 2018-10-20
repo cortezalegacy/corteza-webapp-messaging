@@ -6,6 +6,8 @@
       ref="msgList">
       <message v-for="(msg, index) in messages(ch.ID)"
         ref="message"
+        @dblckick="$emit('editMessage', msg)"
+        v-on="$listeners"
         :message="msg"
         :continued="isContinued(messages, index)"
         :current-user="user"
@@ -127,6 +129,11 @@ export default {
       this.loadSuspended = false
       this.allowAutoScroll = true
       this.scrollToRef = false
+    },
+
+    onOpenThreadPassthrough (e) {
+      console.log('onOpenThreadPassthrough')
+      this.$emit('openThread', e)
     },
   },
 

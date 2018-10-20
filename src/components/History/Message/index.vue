@@ -21,7 +21,10 @@
         <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
         <div class="actions">
           <i class="action icon-message-circle-left-speak"></i>
-          <i class="action icon-bubbles3"></i>
+          <i class="action icon-bubbles3"
+            v-if="!message.replyTo"
+            @click="$emit('openThread', { repliesTo: message.ID })"
+          ></i>
         </div>
       </section>
       <div

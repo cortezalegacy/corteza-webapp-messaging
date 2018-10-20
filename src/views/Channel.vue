@@ -14,6 +14,7 @@
 
     <history
       ref="history"
+      v-on="$listeners"
       @editMessage="setEditMessage" />
 
     <channel-input
@@ -88,14 +89,14 @@ export default {
     },
 
     setEditMessage (msg = {}) {
-      let { message, ID } = msg || {}
-      this.$refs.channelInput.setValue(message, { ID })
+      console.warn('Message editing disabled until fixed', msg)
+      // let { message, ID } = msg || {}
+      // this.$refs.channelInput.setValue(message, { ID })
     },
 
     editLastMessage () {
       // Ask history component about last editable message
-      // @todo uncomment when message editing is fixed
-      // this.setEditMessage(this.$refs.history.getLastEditable())
+      this.setEditMessage(this.$refs.history.getLastEditable())
     },
 
     openUploadOverlay () {

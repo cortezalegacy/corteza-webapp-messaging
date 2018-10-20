@@ -8,12 +8,17 @@
             ]" />
 
         <!-- no use in displaying messages if no channel -->
-        <router-view />
+        <router-view
+          @openThread="onOpenThread"
+          />
+
         <panel-users
             v-if="isUserPanelOpen"
             @openDirectMessage="onOpenDirectChannel" />
 
-        <panel-thread />
+        <panel-thread
+          @close="openThread = null"
+          :repliesTo="openThread" />
     </main>
 </template>
 <script>
@@ -35,6 +40,7 @@ export default {
 
   data () {
     return {
+      openThread: null,
       showChannelCreator: false,
       wideWidth: 768,
       window: {
@@ -172,6 +178,13 @@ export default {
 
     onOpenDirectChannel (userId) {
       this.toggleUserPanel(false)
+    },
+
+    onOpenThread (e) {
+      // Thread opened, set original message to openThread
+      // so that <panel-thread> component picks it up and
+      // opens itself...
+      this.openThread = e.repliesTo
     },
   },
 }
