@@ -18,8 +18,6 @@
 
     <channel-input
       ref="channelInput"
-      :channelID="channelID"
-      :value="inputValue"
       @submit="onInputSubmit"
       @promptFilePicker="openFilePicker"
       @editLast="editLastMessage" />
@@ -34,12 +32,6 @@ import History from '@/components/History'
 
 export default {
   props: ['channelID'],
-
-  data () {
-    return {
-      inputValue: '',
-    }
-  },
 
   computed: {
     ...mapGetters({
@@ -102,7 +94,8 @@ export default {
 
     editLastMessage () {
       // Ask history component about last editable message
-      this.setEditMessage(this.$refs.history.getLastEditable())
+      // @todo uncomment when message editing is fixed
+      // this.setEditMessage(this.$refs.history.getLastEditable())
     },
 
     openUploadOverlay () {
@@ -138,8 +131,8 @@ export default {
         console.debug('Delete message [DISABLED UNTIL FIXED!]', { ID: meta.ID })
         // this.$ws.deleteMessage(meta.ID)
       } else if (meta.ID) {
-        console.debug('Sending message update', { message, ID: meta.ID })
-        this.$ws.updateMessage(meta.ID, message)
+        console.debug('Sending message update [DISABLED UNTIL FIXED!]', { message, ID: meta.ID })
+        // this.$ws.updateMessage(meta.ID, message)
       } else {
         console.debug('Sending new message', { message, channelID: this.channelID })
         this.$ws.sendMessage(this.channelID, message)
