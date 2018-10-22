@@ -17,6 +17,7 @@
             @openDirectMessage="onOpenDirectChannel" />
 
         <panel-thread
+          v-if="ch && openThread"
           @close="openThread = null"
           :channel="ch"
           :repliesTo="openThread" />
@@ -41,7 +42,7 @@ export default {
 
   data () {
     return {
-      openThread: '',
+      openThread: null,
       showChannelCreator: false,
       wideWidth: 768,
       window: {

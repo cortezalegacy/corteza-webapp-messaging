@@ -2,12 +2,16 @@
   <aside
     v-if="repliesTo && originalMessage"
     class="menu-layer right thread">
+    <channel-upload v-if="channel"
+      :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
+
     <label class="closer"
            @click="$emit('close')"
            aria-label="Close"><i class="icon-close"></i></label>
 
     <message ref="original"
              :message="originalMessage"
+             hide-action-open-thread="true"
              :current-user="user" />
 
     <message v-for="(msg, index) in replies"
@@ -20,20 +24,27 @@
 
     <channel-input
       ref="replyInput"
-      @submit="onInputSubmit" />
+      @submit="onInputSubmit"
+      @promptFilePicker="openFilePicker"
+      @editLast="editLastMessage" />
   </aside>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Message from '@/components/History/Message'
-import ChannelInput from '../Channel/Input'
+import { ChannelInput, ChannelUpload } from '@/components/Channel'
 import messages from '@/mixins/messages'
 
 export default {
   props: {
     repliesTo: {
-      '†ype': String,
-      'required': true,
+      type: String,
+      required: true,
+    },
+
+    channel: {
+      type: Object,
+      required: true,
     },
   },
 
@@ -73,6 +84,10 @@ export default {
       this.$ws.getReplies(this.repliesTo)
     },
 
+    openFilePicker () {
+      this.$refs.upload.openFilePicker()
+    },
+
     onInputSubmit (e) {
       // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
       const { message, meta } = e
@@ -101,11 +116,23 @@ export default {
         this.$ws.sendReply(this.repliesTo, message)
       }
     },
+
+    setEditMessage (msg = {}) {
+      console.warn('Message editing disabled until fixed', msg)
+      // let { message, ID } = msg || {}
+      // this.$refs.channelInput.setValue(message, { ID })
+    },
+
+    editLastMessage () {
+      // Ask history component about last editable message
+      // @todo
+    },
   },
 
   components: {
     ChannelInput,
     Message,
+    ChannelUpload,
   },
 
   mixins: [

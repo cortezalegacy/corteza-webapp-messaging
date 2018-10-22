@@ -22,7 +22,7 @@
         <div class="actions">
           <i class="action icon-message-circle-left-speak"></i>
           <i class="action icon-bubbles3"
-            v-if="!message.replyTo"
+            v-if="!message.replyTo && !hideActionOpenThread"
             @click="$emit('openThread', { repliesTo: message.ID })"
           ></i>
         </div>
@@ -51,11 +51,24 @@ import Contents from './Contents'
 import Avatar from '@/components/Avatar'
 
 export default {
-  props: [
-    'message',
-    'continued',
-    'currentUser',
-  ],
+  props: {
+    message: {
+      type: Object,
+      required: true,
+    },
+    continued: {
+      type: Boolean,
+      required: false,
+    },
+    currentUser: {
+      type: Object,
+      required: true,
+    },
+    hideActionOpenThread: {
+      type: Boolean,
+      required: false,
+    },
+  },
 
   data () {
     return {

@@ -52,7 +52,10 @@ import Lightbox from '@/components/Lightbox'
 export default {
   name: 'channel-upload',
 
-  props: ['channelID'],
+  props: {
+    channelID: { type: String, required: true },
+    replyTo: { type: String, required: false },
+  },
 
   data () {
     return {
@@ -92,6 +95,7 @@ export default {
         url: () => {
           return `${this.$rest.baseURL()}/channels/${this.channelID}/attach`
         },
+        params: { replyTo: this.replyTo },
         thumbnailWidth: 150,
         withCredentials: true,
         autoProcessQueue: false,

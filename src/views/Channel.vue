@@ -6,8 +6,10 @@
     :class="[ { 'with-right-panel':isUserPanelOpen, 'unread-messages': unread(channelID) } ]"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
-    <channel-upload
-      :channelID="channelID" v-if="ch" ref="upload"></channel-upload>
+
+    <channel-upload v-if="ch"
+                    :channelID="ch.ID" ref="upload"></channel-upload>
+
     <channel-header
       :channel="ch"
       v-if="ch"></channel-header>
