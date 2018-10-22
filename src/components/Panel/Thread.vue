@@ -106,11 +106,9 @@ export default {
           this.$ws.exec(this.channelID, command, {}, input)
         }
       } else if (meta.ID && message.length === 0) {
-        console.debug('Delete message [DISABLED UNTIL FIXED!]', { ID: meta.ID })
-        // this.$ws.deleteMessage(meta.ID)
+        this.$ws.deleteMessage(meta.ID)
       } else if (meta.ID) {
-        console.debug('Sending message update [DISABLED UNTIL FIXED!]', { message, ID: meta.ID })
-        // this.$ws.updateMessage(meta.ID, message)
+        this.$ws.updateMessage(meta.ID, message)
       } else {
         console.debug('Sending new message', { message, repliesTo: this.repliesTo })
         this.$ws.sendReply(this.repliesTo, message)

@@ -3,11 +3,14 @@ const state = {
   set: [],
 }
 
+// Basic message filtering
+const isValid = (msg) => msg.deletedAt === null
+
 // getters
 const getters = {
-  getByID: (state) => (ID) => state.set.find(m => m.ID === ID),
-  getByChannelID: (state) => (channelID) => state.set.filter(m => m.replyTo === 0 && m.channelID === channelID),
-  getRepliesByID: (state) => (replyTo) => state.set.filter(m => m.replyTo === replyTo),
+  getByID: (state) => (ID) => state.set.find(m => isValid(m) && m.ID === ID),
+  getByChannelID: (state) => (channelID) => state.set.filter(m => isValid(m) && m.replyTo === 0 && m.channelID === channelID),
+  getRepliesByID: (state) => (replyTo) => state.set.filter(m => isValid(m) && m.replyTo === replyTo),
 }
 
 // actions

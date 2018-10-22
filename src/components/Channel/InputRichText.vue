@@ -457,7 +457,7 @@ export default {
 
         if (node.dataset.triggered && this.isTriggerValid(suggestions)) {
           this.addNodeTrigger(node, suggestions[0])
-        } else {
+        } else if (node.dataset.triggered) {
           this.removeNodeTrigger(node)
         }
 

@@ -115,9 +115,20 @@ export default {
 
       // # Handles strings from API
 
-      // Prepares input node structure from api
+      // Gives nodes per line
       getNodes (message) {
+        let wrapper = document.createElement('div')
+        for (let m of message.split('\n')) {
+          wrapper.append(this.getLineNodes(m))
+        }
+
+        return wrapper.innerHTML
+      },
+
+      // Processes message to DOM node structure
+      getLineNodes (message) {
         let lists = { '@': this.userByID, '#': this.channelByID }
+
         /**
          * m[0] - entire match
          * m[1] - trigger
@@ -133,45 +144,43 @@ export default {
 
         let match
         let lastProcessed = 0
-        let wrapper = document.createElement('div')
+        let wrapper = document.createElement('p')
+        let unprocessedMsg = message
         while ((match = regex.exec(message)) !== null) {
           // Get index of matched chunk
           let [ entire, trigger, id ] = match
-          let triggeredIndex = message.indexOf(entire)
+          let triggeredIndex = unprocessedMsg.indexOf(entire)
 
           // Get normal and triggered chunks
-          let normalChunk = message.substring(lastProcessed, triggeredIndex)
-          let triggeredChunk = message.substring(triggeredIndex, triggeredIndex + entire.length)
+          let normalChunk = unprocessedMsg.substring(0, triggeredIndex)
+          let triggeredChunk = unprocessedMsg.substring(triggeredIndex, triggeredIndex + entire.length)
 
           // Create normal node
           addNormalChunk(normalChunk, wrapper)
 
           // Get node's text...
-          let triggeredText = ''
-          for (let object of lists[trigger] || []) {
-            if (object.ID === id) {
-              triggeredText = object.name || object.username
-            }
-          }
+          let object = (lists[trigger](id)) || {}
+          let triggeredText = object.name || object.username
 
           // Create a triggered node
           let triggeredNode = document.createElement('span')
-          if (this.$triggers.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
-            this.$triggers.addNodeTrigger(triggeredNode, trigger, { id })
+          if (this.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
+            this.addNodeTrigger(triggeredNode, trigger, { id })
           }
           wrapper.appendChild(triggeredNode)
 
           // Update lastProcessed index -- don't edit message it self because, regex is using it
           lastProcessed = triggeredIndex + triggeredChunk.length
+          unprocessedMsg = unprocessedMsg.substring(lastProcessed)
         }
 
         // Insert last normal chunk
-        message = message.substring(lastProcessed)
-        if (message) {
-          addNormalChunk(message, wrapper)
+
+        if (unprocessedMsg) {
+          addNormalChunk(unprocessedMsg, wrapper)
         }
 
-        return wrapper.innerHTML
+        return wrapper
       },
 
       // # Node trigger handlers

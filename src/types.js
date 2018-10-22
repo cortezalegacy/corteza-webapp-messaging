@@ -6,9 +6,9 @@ export function Channel (c) {
   this.topic = c.topic
   this.type = c.type
   this.createdAt = c.createdAt
-  this.updatedAt = c.updatedAt
-  this.deletedAt = c.deletedAt
-  this.archivedAt = c.archivedAt
+  this.updatedAt = c.updatedAt || null
+  this.deletedAt = c.deletedAt || null
+  this.archivedAt = c.archivedAt || null
 
   this.members = c.members || [] // []string
 }
@@ -25,6 +25,8 @@ export function Message (m) {
   this.replyTo = m.replyTo || 0
   this.replies = m.replies || 0
   this.createdAt = m.createdAt
+  this.updatedAt = m.updatedAt || null
+  this.deletedAt = m.deletedAt || null
 
   this.user = new User(m.user)
   this.attachment = m.att ? new Attachment(m.att) : null
@@ -60,6 +62,6 @@ export function Member (m) {
   this.user = new User(m.user)
   this.type = m.type
   this.channelID = m.channelID
-  this.createdAt = m.createdAt
-  this.updatedAt = m.updatedAt
+  this.createdAt = m.createdAt || null
+  this.updatedAt = m.updatedAt || null
 }
