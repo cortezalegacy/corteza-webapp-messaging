@@ -1,11 +1,4 @@
 import store from '@/store'
-import Auth from '@/views/Auth'
-import AuthSignIn from '@/views/Auth/SignIn'
-import AuthSignOut from '@/views/Auth/SignOut'
-import Messanger from '@/views/Messanger'
-import Channel from '@/views/Channel'
-import ChannelEditor from '@/views/ChannelEditor'
-import ChannelMembers from '@/views/ChannelMembers'
 import Vue from 'vue'
 import Router from 'vue-router'
 
@@ -23,22 +16,22 @@ export default new Router({
       path: '/messaging/',
       name: 'root',
       beforeEnter: protect,
-      component: Messanger,
+      component: view('Messenger'),
       children: [
-        { path: 'channel/new', name: 'new-channel', component: ChannelEditor, props: true },
-        { path: 'channel/:channelID', name: 'channel', component: Channel, props: true },
-        { path: 'channel/:channelID/editor', name: 'edit-channel', component: ChannelEditor, props: true },
-        { path: 'channel/:channelID/members', name: 'members', component: ChannelMembers, props: true },
+        { path: 'channel/new', name: 'new-channel', component: view('ChannelEditor'), props: true },
+        { path: 'channel/:channelID', name: 'channel', component: view('Channel'), props: true },
+        { path: 'channel/:channelID/editor', name: 'edit-channel', component: view('ChannelEditor'), props: true },
+        { path: 'channel/:channelID/members', name: 'members', component: view('ChannelMembers'), props: true },
       ],
     },
     {
       path: '/messaging/auth',
-      component: Auth,
+      component: view('Auth'),
       redirect: '/messaging/auth/signin',
 
       children: [
-        { path: 'signin', name: 'signin', component: AuthSignIn },
-        { path: 'signout', name: 'signout', component: AuthSignOut },
+        { path: 'signin', name: 'signin', component: view('Auth/SignIn') },
+        { path: 'signout', name: 'signout', component: view('Auth/SignOut') },
       ],
     },
     {
@@ -47,4 +40,10 @@ export default new Router({
     },
   ],
 })
+
+function view (name, resolve) {
+  return function (resolve) {
+    return require([`./views/${name}`], resolve)
+  }
+}
 

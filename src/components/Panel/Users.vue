@@ -25,7 +25,6 @@ import { mapActions, mapGetters } from 'vuex'
 import Avatar from '@/components/Avatar'
 
 export default {
-  name: 'panel-user',
   data () {
     return {}
   },

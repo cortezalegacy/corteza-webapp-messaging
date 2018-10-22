@@ -82,7 +82,6 @@ import { mapActions, mapGetters } from 'vuex'
 import { ChannelPanelItem } from '@/components/Channel'
 
 export default {
-  name: 'panel-channels',
   data () {
     return {
       shown: false,

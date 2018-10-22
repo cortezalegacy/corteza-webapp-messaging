@@ -1,7 +1,6 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './views/Index'
 import { sync } from 'vuex-router-sync'
 import store from './store'
 import router from './router'
@@ -22,9 +21,10 @@ if (window.CrustConfig === undefined) {
   const unsync = sync(store, router)
   /* eslint-disable no-new */
   new Vue({
+    name: 'crust-messenger',
     store,
     router,
-    render: h => h(App),
+    template: '<div id="crust-messenger" class="crust"><router-view/></div>',
   }).$mount('#app')
 
   unsync()

@@ -18,6 +18,7 @@
 
         <panel-thread
           @close="openThread = null"
+          :channel="ch"
           :repliesTo="openThread" />
     </main>
 </template>
@@ -40,7 +41,7 @@ export default {
 
   data () {
     return {
-      openThread: null,
+      openThread: '',
       showChannelCreator: false,
       wideWidth: 768,
       window: {
