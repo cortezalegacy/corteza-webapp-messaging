@@ -10,12 +10,16 @@
            aria-label="Close"><i class="icon-close"></i></label>
 
     <message ref="original"
+             @editMessage="onEditMessage"
+             @deleteMessage="onDeleteMessage"
              :message="originalMessage"
-             hide-action-open-thread="true"
+             :hide-action-open-thread="true"
              :current-user="user" />
 
     <message v-for="(msg, index) in replies"
              v-on="$listeners"
+             @editMessage="onEditMessage"
+             @deleteMessage="onDeleteMessage"
              ref="message"
              :message="msg"
              :continued="isContinued(replies, index)"
@@ -25,8 +29,8 @@
     <channel-input
       ref="replyInput"
       @submit="onInputSubmit"
-      @promptFilePicker="openFilePicker"
-      @editLast="editLastMessage" />
+      @promptFilePicker="onOpenFilePicker"
+      @editLastMessage="onEditLastMessage" />
   </aside>
 </template>
 <script>
@@ -84,8 +88,8 @@ export default {
       this.$ws.getReplies(this.repliesTo)
     },
 
-    openFilePicker () {
-      this.$refs.upload.openFilePicker()
+    setEditMessage ({ message, ID }) {
+      this.$refs.replyInput.setValue(message, { ID })
     },
 
     onInputSubmit (e) {
@@ -115,15 +119,30 @@ export default {
       }
     },
 
-    setEditMessage (msg = {}) {
-      console.warn('Message editing disabled until fixed', msg)
-      // let { message, ID } = msg || {}
-      // this.$refs.channelInput.setValue(message, { ID })
+    onDeleteMessage ({ message }) {
+      if (confirm('Delete this message?')) {
+        this.$ws.deleteMessage(message.ID)
+      }
     },
 
-    editLastMessage () {
+    onEditMessage ({ message }) {
+      this.setEditMessage(message)
+    },
+
+    // Find last editable message
+    onEditLastMessage (ev) {
+      const lastReply = [...this.replies].reverse().find(m => m.canEdit(this.user))
+
       // Ask history component about last editable message
-      // @todo
+      if (lastReply) {
+        this.setEditMessage(lastReply)
+      } else {
+        this.setEditMessage(this.originalMessage)
+      }
+    },
+
+    onOpenFilePicker () {
+      this.$refs.upload.openFilePicker()
     },
   },
 

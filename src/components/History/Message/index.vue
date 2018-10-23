@@ -19,13 +19,28 @@
           </span>
         <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
         <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
-        <div class="actions">
+        <div class="actions" v-if="!hideActions">
           <i class="action icon-message-circle-left-speak"></i>
           <i class="action icon-bubbles3"
             v-if="!message.replyTo && !hideActionOpenThread"
-            @click="$emit('openThread', { repliesTo: message.ID })"
+            @click="$emit('openThread', { message })"
           ></i>
+          <i class="action icon-chevron-down" @click="contextMenu=!contextMenu"></i>
         </div>
+        <ul class="context-menu" v-if="contextMenu">
+          <li v-if="message.canEdit(currentUser)"
+              @click="$emit('editMessage', { message })">edit message</li>
+          <li v-else
+              class="disabled">edit message</li>
+
+          <li v-if="message.canDelete(currentUser)"
+              @click="$emit('deleteMessage', { message })">delete message</li>
+          <li v-else
+              class="disabled">delete message</li>
+
+          <li v-if="!message.replyTo && !hideActionOpenThread"
+              @click="$emit('openThread', { message })">reply in thread</li>
+        </ul>
       </section>
       <div
         class="message"
@@ -41,7 +56,10 @@
           :id="message.ID"
           :chunks="getChunks(message.message)" />
       </div>
-      <div v-if="message.replies">{{message.replies}} replies</div>
+      <div>
+        <span v-if="message.replies">{{message.replies}} replies</span>
+        <span v-if="message.updatedAt">edited</span>
+      </div>
     </li>
 </template>
 <script>
@@ -64,6 +82,10 @@ export default {
       type: Object,
       required: true,
     },
+    hideActions: {
+      type: Boolean,
+      required: false,
+    },
     hideActionOpenThread: {
       type: Boolean,
       required: false,
@@ -77,6 +99,7 @@ export default {
       allowAutoScroll: true,
       scrollToRef: false,
       resetUnreadTimeout: null,
+      contextMenu: false,
     }
   },
 
@@ -246,9 +269,22 @@ export default {
       font-size:18px;
       text-align:center;
       box-shadow: 0 0 5px 0 rgba($appgrey,0.5);
+
     }
   }
 }
+
+.actions .context-menu {
+  background-color: rgba($appgrey,0.1);
+  box-shadow:       0 0 5px 0 rgba($appgrey,0.5);
+  border:           solid 1px rgba($appgrey,0.25);
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 150px;
+}
+
 .message-n-meta.continued:hover,
 .message-n-meta.continued:focus
 {

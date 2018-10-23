@@ -17,13 +17,14 @@
     <history
       ref="history"
       v-on="$listeners"
-      @editMessage="setEditMessage" />
+      @editMessage="onEditMessage"
+      @deleteMessage="onDeleteMessage" />
 
     <channel-input
       ref="channelInput"
       @submit="onInputSubmit"
-      @promptFilePicker="openFilePicker"
-      @editLast="editLastMessage" />
+      @promptFilePicker="onOpenFilePicker"
+      @editLastMessage="onEditLastMessage" />
 
   </section>
 </template>
@@ -86,18 +87,8 @@ export default {
       }
     },
 
-    openFilePicker () {
-      this.$refs.upload.openFilePicker()
-    },
-
-    setEditMessage (msg = {}) {
-      let { message, ID } = msg || {}
+    setEditMessage ({ message, ID }) {
       this.$refs.channelInput.setValue(message, { ID })
-    },
-
-    editLastMessage () {
-      // Ask history component about last editable message
-      this.setEditMessage(this.$refs.history.getLastEditable())
     },
 
     openUploadOverlay () {
@@ -105,7 +96,9 @@ export default {
     },
 
     closeUploadOverlay () {
-      this.$refs.upload.closeOverlay()
+      if (this.$refs.upload) {
+        this.$refs.upload.closeOverlay()
+      }
     },
 
     onInputSubmit (e) {
@@ -130,13 +123,32 @@ export default {
           this.$ws.exec(this.channelID, command, {}, input)
         }
       } else if (meta.ID && message.length === 0) {
-        this.$ws.deleteMessage(meta.ID)
+        this.onDeleteMessage({ message: { ID: meta.ID } })
       } else if (meta.ID) {
         this.$ws.updateMessage(meta.ID, message)
       } else if (message) {
         console.debug('Sending new message', { message, channelID: this.channelID })
         this.$ws.sendMessage(this.channelID, message)
       }
+    },
+
+    onDeleteMessage ({ message }) {
+      if (confirm('Delete this message?')) {
+        this.$ws.deleteMessage(message.ID)
+      }
+    },
+
+    onEditMessage ({ message }) {
+      this.setEditMessage(message)
+    },
+
+    onEditLastMessage (ev) {
+      // Ask history component about last editable message
+      this.setEditMessage(this.$refs.history.getLastEditable())
+    },
+
+    onOpenFilePicker () {
+      this.$refs.upload.openFilePicker()
     },
   },
 

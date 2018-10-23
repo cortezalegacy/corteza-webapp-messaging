@@ -15,7 +15,8 @@
         <panel-users
             v-if="isUserPanelOpen"
             @openDirectMessage="onOpenDirectChannel" />
-        <panel-thread
+
+      <panel-thread
           v-if="ch && openThread"
           @close="openThread = null"
           :channel="ch"
@@ -181,11 +182,11 @@ export default {
       this.toggleUserPanel(false)
     },
 
-    onOpenThread (e) {
+    onOpenThread ({ message }) {
       // Thread opened, set original message to openThread
       // so that <panel-thread> component picks it up and
       // opens itself...
-      this.openThread = e.repliesTo
+      this.openThread = message.ID
     },
   },
 }

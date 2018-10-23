@@ -11,11 +11,11 @@
         @navigateSuggestions="navigateSuggestions"
         @selectFocused="selectFocused"
         @submit="onSubmit"
-        @editLast="onEditLastPassthrough"
+        v-on="$listeners"
         class="message-input"
         ref="richTextInput" />
 
-      <button class="upload-button" @click="promptFilePicker">
+      <button class="upload-button" @click="onPromptFilePicker">
         <span>+</span>
       </button>
     </div>
@@ -74,12 +74,8 @@ export default {
       if (this.$refs.richTextInput.insertTriggeredNode(e)) this.$set(this, 'currentChunk', {})
     },
 
-    promptFilePicker () {
+    onPromptFilePicker () {
       this.$emit('promptFilePicker', {})
-    },
-
-    onEditLastPassthrough (e) {
-      this.$emit('editLast', e)
     },
 
     onSubmit (e) {

@@ -130,11 +130,6 @@ export default {
       this.allowAutoScroll = true
       this.scrollToRef = false
     },
-
-    onOpenThreadPassthrough (e) {
-      console.log('onOpenThreadPassthrough')
-      this.$emit('openThread', e)
-    },
   },
 
   watch: {

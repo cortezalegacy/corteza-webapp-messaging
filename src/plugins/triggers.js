@@ -116,7 +116,7 @@ export default {
       // # Handles strings from API
 
       // Gives nodes per line
-      getNodes (message) {
+      getNodes (message = 'undefined') {
         let wrapper = document.createElement('div')
         for (let m of message.split('\n')) {
           wrapper.append(this.getLineNodes(m))

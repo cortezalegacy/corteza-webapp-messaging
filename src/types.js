@@ -32,6 +32,14 @@ export function Message (m) {
   this.attachment = m.att ? new Attachment(m.att) : null
 }
 
+Message.prototype.canEdit = function (user) {
+  return this.user.ID === user.ID
+}
+
+Message.prototype.canDelete = function (user) {
+  return this.user.ID === user.ID
+}
+
 export function Attachment (a) {
   this.ID = a.ID || a.id // cover both cases (BC)
   this.userID = a.userID

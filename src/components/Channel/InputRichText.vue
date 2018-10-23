@@ -151,7 +151,7 @@ export default {
     updateValue (e) {
       // Pressed up key && no value is entered
       if (NAVIGATION_Y[e.which] === 'up' && !this.value.trim()) {
-        this.$emit('editLast', {})
+        this.$emit('editLastMessage', {})
         return
       }
 
