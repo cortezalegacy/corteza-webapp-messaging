@@ -4,7 +4,7 @@
       v-if="ch"
       @scroll="scrollHandler"
       ref="msgList">
-      <message v-for="(msg, index) in messages(ch.ID)"
+      <message v-for="(msg, index) in messages"
         ref="message"
         @dblckick="$emit('editMessage', msg)"
         v-on="$listeners"
@@ -41,8 +41,12 @@ export default {
       ch: 'channels/current',
       user: 'auth/user',
 
-      messages: 'history/getByChannelID',
+      channelHistory: 'history/getByChannelID',
     }),
+
+    messages () {
+      return this.channelHistory(this.ch.ID)
+    },
   },
 
   methods: {
