@@ -9,7 +9,7 @@
         <i class="icon-close" aria-label="close"></i>
     </label>
     <div class="layer-section-wrapper">
-      <div class="layer-item">
+      <div class="layer-item search-item">
         <span class="badge badge-block badge-pill badge-tall">
           <i class="icon-search"></i>
           <input type="text" placeholder="search" class="txt no-border search">
@@ -140,7 +140,10 @@ export default {
 {
   max-width:calc(100% - 40px);
 }
-
+.search-item
+{
+  padding-right:10%;
+}
 .channel-unfolder
 {
   float:right;
