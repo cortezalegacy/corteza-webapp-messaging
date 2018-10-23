@@ -95,7 +95,7 @@ export default {
             params[paramName] = m[2]
 
             parsed = {
-              chunk: `<mark><b>${m[1]}</b>${parsed}</mark>`,
+              chunk: `<mark class="${type}-mark"><b>${m[1]}</b>${parsed}</mark>`,
               meta: { tag: 'router-link' },
               props: { to: { name: type, params } },
               triggered: true,
