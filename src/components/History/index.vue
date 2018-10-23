@@ -58,7 +58,7 @@ export default {
     }),
 
     getLastEditable () {
-      return this.getLastMessageByUserID(this.messages(this.ch.ID), this.user.ID)
+      return this.getLastMessageByUserID(this.messages, this.user.ID)
     },
 
     isScrolledToTop (target) {

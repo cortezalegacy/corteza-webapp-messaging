@@ -7,11 +7,10 @@
 
     <div class="wrap">
       <input-rich-text
+        v-on="Object.assign({}, $listeners, {submit: onSubmit})"
         @nodeChunkChanged="nodeChunkChanged"
         @navigateSuggestions="navigateSuggestions"
         @selectFocused="selectFocused"
-        @submit="onSubmit"
-        v-on="$listeners"
         class="message-input"
         ref="richTextInput" />
 
@@ -23,10 +22,8 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import TriggerSuggestions from './TriggerSuggestions'
 import InputRichText from '@/components/Channel/InputRichText'
-
 
 export default {
   data () {
@@ -38,11 +35,6 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      'findByUsername': 'users/findByUsername',
-      'findByName': 'channels/findByName',
-    }),
-
     // Gives msg chung where commands are possible
     getCurrentMsgChunk () {
       return this.currentChunk || {}
@@ -78,8 +70,10 @@ export default {
       this.$emit('promptFilePicker', {})
     },
 
-    onSubmit (e) {
-      this.$emit('submit', { message: e.value, meta: this.submitMeta })
+    // Override original submit event and extend event
+    // data with submitMeta data.
+    onSubmit ({ value }) {
+      this.$emit('submit', { value, meta: this.submitMeta })
 
       // And reset meta data right after
       this.submitMeta = {}

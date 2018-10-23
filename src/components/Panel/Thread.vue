@@ -88,34 +88,32 @@ export default {
       this.$ws.getReplies(this.repliesTo)
     },
 
-    setEditMessage ({ message, ID }) {
-      this.$refs.replyInput.setValue(message, { ID })
+    setEditMessage (message) {
+      this.$refs.replyInput.setValue(message.message, message)
     },
 
-    onInputSubmit (e) {
+    onInputSubmit ({ value, meta }) {
       // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
-      const { message, meta } = e
 
-      if (message.length > 1 && message[0] === '/') {
-        if (!this.execLocal(message)) {
-          const i = message.indexOf(' ')
+      if (value.length > 1 && value[0] === '/') {
+        if (!this.execLocal(value)) {
+          const i = value.indexOf(' ')
           if (i < 1) {
             return
           }
 
-          const command = message.substr(1, i - 1)
-          const input = message.substr(i + 1)
+          const command = value.substr(1, i - 1)
+          const input = value.substr(i + 1)
 
           console.debug('Executing a command', { command, input })
           this.$ws.exec(this.channelID, command, {}, input)
         }
-      } else if (meta.ID && message.length === 0) {
+      } else if (meta && meta.ID && meta.length === 0) {
         this.$ws.deleteMessage(meta.ID)
-      } else if (meta.ID) {
-        this.$ws.updateMessage(meta.ID, message)
+      } else if (meta && meta.ID) {
+        this.$ws.updateMessage(meta.ID, value)
       } else {
-        console.debug('Sending new message', { message, repliesTo: this.repliesTo })
-        this.$ws.sendReply(this.repliesTo, message)
+        this.$ws.sendReply(this.repliesTo, value)
       }
     },
 
