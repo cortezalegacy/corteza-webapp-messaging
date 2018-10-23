@@ -6,7 +6,7 @@
               { 'force-on' : !ch },
               { 'open' : isChannelPanelOpen },
             ]" />
-
+        <div v-if="!ch" class="welcome"></div>
         <!-- no use in displaying messages if no channel -->
         <router-view
           @openThread="onOpenThread"
@@ -15,14 +15,12 @@
         <panel-users
             v-if="isUserPanelOpen"
             @openDirectMessage="onOpenDirectChannel" />
-
         <panel-thread
           v-if="ch && openThread"
           @close="openThread = null"
           :channel="ch"
           :repliesTo="openThread" />
-        <div v-else class="welcome"></div>
-    </main>
+     </main>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
