@@ -21,6 +21,7 @@
           @close="openThread = null"
           :channel="ch"
           :repliesTo="openThread" />
+        <div v-else class="welcome"></div>
     </main>
 </template>
 <script>
@@ -191,15 +192,24 @@ export default {
   },
 }
 </script>
+<style>
+.welcome
+{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  box-sizing: border-box;
+  background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #fafafa;
+}
+</style>
+
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 main
 {
   background-color : $mainbgcolor;
-}
-
-.thread {
-  width: 40%;
 }
 </style>
