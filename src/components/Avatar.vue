@@ -1,56 +1,56 @@
 <!-- template for the user avatar component -->
 <template>
-  <i v-if="user" class="u-avatar"
-     :title="title()"
-     :style="img()?'background-image:'+img():''">
-      <span aria-hidden="true">{{ initials()}}</span>
-  </i>
-  <i v-else
-     class="u-avatar coward">
-      <span aria-hidden="true">?</span>
+  <i class="u-avatar"
+     :title="title"
+     :class="{online: isOnline }"
+     :style="img?'background-image:'+img:''">
+      <span aria-hidden="true">{{ initials }}</span>
   </i>
 </template>
 
 <script>
-export default
-{
+import { mapGetters } from 'vuex'
+
+
+export default {
   name: 'avatar',
   // require user param
   props: {
-    'user': Object,
-    'required': true,
+    user: Object,
+    required: true,
   },
 
-  data () {
-    return {
-      img: () => {
-        if (!this.user) {
-          return ''
+
+  computed: {
+    ...mapGetters({ findByID: 'users/findByID' }),
+
+    stored () { return this.findByID(this.user.ID) || {} },
+
+    img () { return this.stored.avatar || 'N/A' },
+
+    initials () {
+      if (this.stored) {
+        if (this.stored.name) {
+          return this.stored.name[0]
         }
 
-        return this.user.avatar
-      },
-
-      initials: () => {
-        if (this.user) {
-          if (this.user.name) {
-            return this.user.name[0]
-          }
-
-          if (this.user.username) {
-            return this.user.username[0]
-          }
+        if (this.stored.username) {
+          return this.stored.username[0]
         }
-      },
+      }
 
-      title: () => {
-        if (!this.user) {
-          return ''
-        }
+      return '?'
+    },
 
-        return this.user.name || this.user.username
-      },
-    }
+    title () {
+      if (!this.stored) {
+        return this.stored.name || this.stored.username
+      }
+
+      return 'N/A'
+    },
+
+    isOnline () { return this.stored.connections > 0 },
   },
 }
 </script>
@@ -78,5 +78,14 @@ export default
 {
   background-color:rgba($appgrey,0.5);
   border-color:rgba($defaultlinecolor,0.15);
+}
+.online:before {
+  content: '●';
+  font-weight: bold;
+  color: $appgreen;
+  position: absolute;
+  font-size: 26px;
+  margin-top: -16px;
+  margin-left: 16px;
 }
 </style>
