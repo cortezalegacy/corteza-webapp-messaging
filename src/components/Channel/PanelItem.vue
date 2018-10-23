@@ -106,4 +106,15 @@ export default {
     opacity: 0;
   }
 }
+
+//webkit specific hack
+@media screen and (-webkit-min-device-pixel-ratio:0)
+{
+  // unread does not align correctly
+  .unread
+  {
+    font-size:9px;
+    line-height:22px;
+  }
+}
 </style>

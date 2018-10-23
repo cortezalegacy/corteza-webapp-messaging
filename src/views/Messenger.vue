@@ -199,7 +199,8 @@ export default {
   right:0;
   bottom:0;
   box-sizing: border-box;
-  background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #fafafa;
+  background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
+  opacity: 0.25;
 }
 </style>
 
