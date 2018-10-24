@@ -49,7 +49,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
       this.active = true
 
       if (this.queue.length > 0) {
-        console.debug('', 'Draining message queue', { length: this.queue.length })
+        console.debug(`Connected, draining message queue (l=${this.queue.length})`)
 
         while (this.active && this.queue.length > 0) {
           const msg = this.queue.shift()
@@ -83,7 +83,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
       if (this.connected()) {
         this.conn.send(msg)
       } else {
-        console.count('Offline, add message to queue')
+        console.count('Offline, add message to queue', msg)
         this.queue.push(msg)
       }
 
