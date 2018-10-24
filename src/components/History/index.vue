@@ -183,26 +183,26 @@ export default {
 
 <!-- this does not work in scoped... -->
 <!-- no clue why, in any case should not break anything -->
-<style>
+<style lang="scss">
+  @import '@/assets/sass/_0.commons.scss';
   img
   {
     max-width: 100% !important;
     width:auto;
     max-height: 180px !important;
   }
-
 </style>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-.discussion
-{
-  position:relative;
-  list-style:none;
-  max-height:100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding:0;
-  margin:0;
-}
+  @import '@/assets/sass/_0.commons.scss';
+  .discussion
+  {
+    position:relative;
+    list-style:none;
+    max-height:100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding:0;
+    margin:0;
+  }
 </style>

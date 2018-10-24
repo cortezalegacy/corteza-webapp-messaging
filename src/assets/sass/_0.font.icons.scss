@@ -5,6 +5,34 @@
 
 //paste the rest of icomoon here
 
+$icon-circle: "\e923";
+$icon-clipboard: "\e924";
+$icon-clock: "\e926";
+$icon-edit: "\e92b";
+$icon-edit-2: "\e927";
+$icon-edit-3: "\e92c";
+$icon-heart: "\e929";
+$icon-more-horizontal: "\e928";
+$icon-trash: "\e92a";
+$icon-align-justify: "\e903";
+$icon-bell2: "\e901";
+$icon-chevron-down: "\e904";
+$icon-chevron-left: "\e905";
+$icon-chevron-right: "\e906";
+$icon-chevron-up: "\e907";
+$icon-copy: "\e908";
+$icon-film: "\e909";
+$icon-git-commit: "\e90a";
+$icon-info: "\e90b";
+$icon-menu: "\e90c";
+$icon-message-circle: "\e90d";
+$icon-more-vertical: "\e90e";
+$icon-plus: "\e90f";
+$icon-plus-circle: "\e910";
+$icon-square: "\e911";
+$icon-terminal: "\e912";
+$icon-user2: "\e902";
+$icon-x: "\e913";
 $icon-grid-interface-close: "\e920";
 $icon-grid-interface-absent: "\e921";
 $icon-grid-interface-open: "\e922";
@@ -35,6 +63,8 @@ $icon-zoom: "\e986";
 $icon-lock: "\e98f";
 $icon-menu1: "\e9be";
 $icon-earth: "\e9ca";
+$icon-smile: "\e9e1";
+$icon-neutral: "\e9f7";
 $icon-cross: "\ea0f";
 $icon-checkmark: "\ea10";
 $icon-circle-up: "\ea41";
@@ -58,32 +88,13 @@ $icon-menu2: "\e9bd";
 $icon-info2: "\ea0c";
 $icon-play3: "\ea1c";
 $icon-indent-decrease: "\ea7c";
-$icon-align-justify: "\e903";
-$icon-bell2: "\e901";
-$icon-chevron-down: "\e904";
-$icon-chevron-left: "\e905";
-$icon-chevron-right: "\e906";
-$icon-chevron-up: "\e907";
-$icon-copy: "\e908";
-$icon-film: "\e909";
-$icon-git-commit: "\e90a";
-$icon-info: "\e90b";
-$icon-menu: "\e90c";
-$icon-message-circle: "\e90d";
-$icon-more-vertical: "\e90e";
-$icon-plus: "\e90f";
-$icon-plus-circle: "\e910";
-$icon-square: "\e911";
-$icon-terminal: "\e912";
-$icon-user2: "\e902";
-$icon-x: "\e913";
 
 @font-face {
   font-family: '#{$icomoon-font-family}';
   src:
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?yjnewp') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?yjnewp') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?yjnewp##{$icomoon-font-family}') format('svg');
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?6ef0ia') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?6ef0ia') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?6ef0ia##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -103,6 +114,146 @@ $icon-x: "\e913";
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-circle {
+  &:before {
+    content: $icon-circle;
+  }
+}
+.icon-clipboard {
+  &:before {
+    content: $icon-clipboard;
+  }
+}
+.icon-clock {
+  &:before {
+    content: $icon-clock;
+  }
+}
+.icon-edit {
+  &:before {
+    content: $icon-edit;
+  }
+}
+.icon-edit-2 {
+  &:before {
+    content: $icon-edit-2;
+  }
+}
+.icon-edit-3 {
+  &:before {
+    content: $icon-edit-3;
+  }
+}
+.icon-heart {
+  &:before {
+    content: $icon-heart;
+  }
+}
+.icon-more-horizontal {
+  &:before {
+    content: $icon-more-horizontal;
+  }
+}
+.icon-trash {
+  &:before {
+    content: $icon-trash;
+  }
+}
+.icon-align-justify {
+  &:before {
+    content: $icon-align-justify;
+  }
+}
+.icon-bell2 {
+  &:before {
+    content: $icon-bell2;
+  }
+}
+.icon-chevron-down {
+  &:before {
+    content: $icon-chevron-down;
+  }
+}
+.icon-chevron-left {
+  &:before {
+    content: $icon-chevron-left;
+  }
+}
+.icon-chevron-right {
+  &:before {
+    content: $icon-chevron-right;
+  }
+}
+.icon-chevron-up {
+  &:before {
+    content: $icon-chevron-up;
+  }
+}
+.icon-copy {
+  &:before {
+    content: $icon-copy;
+  }
+}
+.icon-film {
+  &:before {
+    content: $icon-film;
+  }
+}
+.icon-git-commit {
+  &:before {
+    content: $icon-git-commit;
+  }
+}
+.icon-info {
+  &:before {
+    content: $icon-info;
+  }
+}
+.icon-menu {
+  &:before {
+    content: $icon-menu;
+  }
+}
+.icon-message-circle {
+  &:before {
+    content: $icon-message-circle;
+  }
+}
+.icon-more-vertical {
+  &:before {
+    content: $icon-more-vertical;
+  }
+}
+.icon-plus {
+  &:before {
+    content: $icon-plus;
+  }
+}
+.icon-plus-circle {
+  &:before {
+    content: $icon-plus-circle;
+  }
+}
+.icon-square {
+  &:before {
+    content: $icon-square;
+  }
+}
+.icon-terminal {
+  &:before {
+    content: $icon-terminal;
+  }
+}
+.icon-user2 {
+  &:before {
+    content: $icon-user2;
+  }
+}
+.icon-x {
+  &:before {
+    content: $icon-x;
+  }
+}
 .icon-grid-interface-close {
   &:before {
     content: $icon-grid-interface-close;
@@ -253,6 +404,16 @@ $icon-x: "\e913";
     content: $icon-earth;
   }
 }
+.icon-smile {
+  &:before {
+    content: $icon-smile;
+  }
+}
+.icon-neutral {
+  &:before {
+    content: $icon-neutral;
+  }
+}
 .icon-cross {
   &:before {
     content: $icon-cross;
@@ -366,100 +527,5 @@ $icon-x: "\e913";
 .icon-indent-decrease {
   &:before {
     content: $icon-indent-decrease;
-  }
-}
-.icon-align-justify {
-  &:before {
-    content: $icon-align-justify;
-  }
-}
-.icon-bell2 {
-  &:before {
-    content: $icon-bell2;
-  }
-}
-.icon-chevron-down {
-  &:before {
-    content: $icon-chevron-down;
-  }
-}
-.icon-chevron-left {
-  &:before {
-    content: $icon-chevron-left;
-  }
-}
-.icon-chevron-right {
-  &:before {
-    content: $icon-chevron-right;
-  }
-}
-.icon-chevron-up {
-  &:before {
-    content: $icon-chevron-up;
-  }
-}
-.icon-copy {
-  &:before {
-    content: $icon-copy;
-  }
-}
-.icon-film {
-  &:before {
-    content: $icon-film;
-  }
-}
-.icon-git-commit {
-  &:before {
-    content: $icon-git-commit;
-  }
-}
-.icon-info {
-  &:before {
-    content: $icon-info;
-  }
-}
-.icon-menu {
-  &:before {
-    content: $icon-menu;
-  }
-}
-.icon-message-circle {
-  &:before {
-    content: $icon-message-circle;
-  }
-}
-.icon-more-vertical {
-  &:before {
-    content: $icon-more-vertical;
-  }
-}
-.icon-plus {
-  &:before {
-    content: $icon-plus;
-  }
-}
-.icon-plus-circle {
-  &:before {
-    content: $icon-plus-circle;
-  }
-}
-.icon-square {
-  &:before {
-    content: $icon-square;
-  }
-}
-.icon-terminal {
-  &:before {
-    content: $icon-terminal;
-  }
-}
-.icon-user2 {
-  &:before {
-    content: $icon-user2;
-  }
-}
-.icon-x {
-  &:before {
-    content: $icon-x;
   }
 }

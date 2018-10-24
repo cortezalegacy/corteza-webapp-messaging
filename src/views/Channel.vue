@@ -200,6 +200,7 @@ export default {
     top:52px;
     bottom:52px;
   }
+
   @media (min-width: $wideminwidth)
   {
     .channel

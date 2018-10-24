@@ -1,13 +1,12 @@
 <template>
   <span
     @dblclick="editMessage"
-    class="crust_iam_main__message__content-wrap">
+    class="message-content-wrap">
     <p
       v-if="!isEmbedded.src"
       v-for="(r, line) in chunks"
       :key="`${id}${line}`"
       class="line">
-
       <component
         :is="getChunkTag(c)"
         class="spaced"
@@ -15,7 +14,6 @@
         :key="`${id}${line}${i}`"
         v-bind="c.props"
         v-html="c.chunk" />
-
     </p>
 
     <embedded-box
@@ -80,12 +78,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
 .spaced {
   margin-left: 5px;
 }
 
-.crust_iam_main__message__content-wrap .line {
+.message-content-wrap .line {
   margin: 1px 0;
 }
 

@@ -82,10 +82,10 @@ export default {
 .online:before {
   content: '●';
   font-weight: bold;
-  color: $appgreen;
+  color: lighten($appgreen,0.55);
   position: absolute;
   font-size: 26px;
-  margin-top: -16px;
-  margin-left: 16px;
+  margin-top: -12px;
+  margin-left: 12px;
 }
 </style>
