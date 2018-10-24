@@ -173,7 +173,7 @@ export default {
     .channel-input
     {
       border:solid 15px $appwhite;
-      border-top:none;
+      border-top-width:0;
       border-bottom:none;
       padding-bottom:25px;
       border-color: $mainbgcolor;

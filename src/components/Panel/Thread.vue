@@ -4,28 +4,32 @@
     class="menu-layer right thread">
     <channel-upload v-if="channel"
       :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
-
     <label class="closer"
            @click="$emit('close')"
            aria-label="Close"><i class="icon-close"></i></label>
+    <div class="thread-title">
+      <strong class="panel-type">Thread</strong>
+      <p class="channel-name-wrap">in <channel-name class="channel-name" :channel="channel"></channel-name></p></div>
+      <ul class="thread-history">
+        <message ref="original"
+                class="in-thread"
+                @editMessage="onEditMessage"
+                @deleteMessage="onDeleteMessage"
+                :message="originalMessage"
+                :hide-action-open-thread="true"
+                :current-user="user" />
 
-    <message ref="original"
-             @editMessage="onEditMessage"
-             @deleteMessage="onDeleteMessage"
-             :message="originalMessage"
-             :hide-action-open-thread="true"
-             :current-user="user" />
-
-    <message v-for="(msg, index) in replies"
-             v-on="$listeners"
-             @editMessage="onEditMessage"
-             @deleteMessage="onDeleteMessage"
-             ref="message"
-             :message="msg"
-             :continued="isContinued(replies, index)"
-             :current-user="user"
-             :key="msg.ID" />
-
+        <message v-for="(msg, index) in replies"
+                class="in-thread"
+                v-on="$listeners"
+                @editMessage="onEditMessage"
+                @deleteMessage="onDeleteMessage"
+                ref="message"
+                :message="msg"
+                :continued="isContinued(replies, index)"
+                :current-user="user"
+                :key="msg.ID" />
+      </ul>
     <channel-input
       ref="replyInput"
       @submit="onInputSubmit"
@@ -166,4 +170,40 @@ export default {
   right: 20px;
   font-size: 20px;
 }
+
+.thread
+{
+  margin-top:0;
+  padding-top:0;
+  .channel-input
+  {
+    border-width: 5px 15px 5px 15px;
+    display:table;
+    padding-bottom:0;
+  }
+}
+.thread-title
+{
+  min-height:61px;
+  padding:15px;
+  background-color:$appcream;
+  border-bottom:dotted 1px rgba($appgrey,0.5);
+  margin-bottom:5px;
+}
+.channel-name-wrap
+{
+  white-space: nowrap;
+  max-width:calc(100% - 30px);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding:0;
+  margin:0;
+  .channel-name:before
+  {
+    content:'#';
+    display:inline-block;
+    margin-right:2px;
+  }
+}
+
 </style>

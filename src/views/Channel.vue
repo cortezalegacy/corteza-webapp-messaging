@@ -245,4 +245,14 @@ export default {
     left: 65px;
     bottom: 5px;
   }
+
+  @media (min-width: $confortableminwidth)
+  {
+    .channel.with-thread
+    {
+      margin-left:320px;
+      margin-right:400px;
+      max-width:calc(100vw - 720px);
+    }
+  }
 </style>

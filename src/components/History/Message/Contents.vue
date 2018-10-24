@@ -1,5 +1,5 @@
 <template>
-  <span
+  <div
     @dblclick="editMessage"
     class="message-content-wrap">
     <p
@@ -21,7 +21,7 @@
       :src="isEmbedded.src"
       :chunk="isEmbedded.chunk" />
 
-  </span>
+  </div>
 </template>
 
 <script>
@@ -82,7 +82,8 @@ export default {
 @import '@/assets/sass/_0.commons.scss';
 
 .message-content-wrap .line {
-  margin: 1px 0;
+  margin:0;
+  line-height:16px;
 }
 
 </style>

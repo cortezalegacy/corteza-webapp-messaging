@@ -192,3 +192,24 @@
     }
   }
 }
+
+
+@media (min-width: $confortableminwidth)
+{
+  .menu-layer
+  {
+    padding:60px 0;
+    max-width:400px;
+  }
+  .always-deployed-on-desktop
+  {
+    max-width:320px;
+    min-width:190px;
+    width:90vw;
+    margin-left:0;
+    .closer
+    {
+      visibility:hidden;
+    }
+  }
+}

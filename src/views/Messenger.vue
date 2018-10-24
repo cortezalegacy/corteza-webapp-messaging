@@ -1,20 +1,24 @@
 <template>
     <main>
-        <!-- if no channel selected channel list should be displayed -->
-        <panel-channels
-            :class="[
-              { 'force-on' : !ch },
-              { 'open' : isChannelPanelOpen },
-            ]" />
-        <div v-if="!ch" class="welcome"></div>
-        <!-- no use in displaying messages if no channel -->
-        <router-view
-          @openThread="onOpenThread"
-          />
+      <!-- if no channel selected channel list should be displayed -->
+      <panel-channels
+          :class="[
+            { 'force-on' : !ch },
+            { 'open' : isChannelPanelOpen },
+          ]" />
 
-        <panel-users
-            v-if="isUserPanelOpen"
-            @openDirectMessage="onOpenDirectChannel" />
+      <div v-if="!ch" class="welcome"></div>
+
+      <!-- no use in displaying messages if no channel -->
+      <router-view
+        @openThread="onOpenThread"
+        :class="[
+        { 'with-thread' : openThread !== null },
+        ]" />
+
+      <panel-users
+          v-if="isUserPanelOpen"
+          @openDirectMessage="onOpenDirectChannel" />
 
       <panel-thread
           v-if="ch && openThread"

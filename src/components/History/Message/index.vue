@@ -3,8 +3,11 @@
       class="message-n-meta"
       :class="{
         'continued': continued,
+        'first': !continued,
         'attachement' : message.attachment,
-        'valid' : message.attachment && message.attachment.size > 0
+        'valid' : message.attachment && message.attachment.size > 0,
+        'with-replies' : message.replies,
+        'edited' : message.updatedAt,
       }"
       ref="message"
       :key="message.ID">
@@ -78,9 +81,9 @@
           :id="message.ID"
           :chunks="getChunks(message.message)" />
       </div>
-      <div>
-        <span v-if="message.replies">{{message.replies}} replies</span>
-        <span v-if="message.updatedAt">edited</span>
+      <div class="message-infos">
+        <span class="info" v-if="message.replies">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</span>
+        <span class="info" v-if="message.updatedAt">edited</span>
       </div>
     </li>
 </template>
@@ -219,21 +222,40 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+.message-infos
+{
+  font-size:10px;
+  opacity:0.35;
+  .info
+  {
+    display:inline-block;
+    &:after
+    {
+      content: '●';
+      display:inlin-block;
+      margin:0 2px;
+    }
+    &:last-child:after
+    {
+      content:'';
+    }
+  }
+}
 .message-n-meta
 {
   position:relative;
   padding-left:50px;
   position:relative;
   padding:3px 23px 24px 65px;
-  min-height:75px;
+  min-height:73px;
   background:url(../../../assets/images/vertical-dots.svg) no-repeat 35px 58px;
   background-size: auto 15px;
   &.continued
   {
     padding:3px 23px 4px 65px;
-    margin-top:-20px;
+    margin-top:-18px;
     background:none;
-    min-height:65px;
+    min-height:63px;
     &.attachement
     {
       margin-bottom:20px; // because attachements are bigger than 65px;
@@ -244,6 +266,12 @@ export default {
     }
   }
 }
+
+.message-n-meta.first + .message-n-meta.continued
+{
+  margin-top:-22px;
+}
+
 .author, .date, .time, .day
 {
   font-style:normal;
@@ -261,7 +289,10 @@ export default {
 {
   display:inline-block;
   padding:2px 0.5em;
-  //margin:2px 0;
+}
+.author
+{
+  padding:2px 0.5em 2px 2px;
 }
 .time, .day
 {
@@ -407,7 +438,7 @@ export default {
   background-color:$messagebgcolor;
   word-wrap: break-word;
   border-radius:3px;
-  padding:10px;
+  padding:8px;
   margin-top:2px;
 
   // the little triangle on the left of message
@@ -439,7 +470,7 @@ export default {
 
   .message-content
   {
-    font-size:16px;
+    font-size:14px;
     pre
     {
       max-width:100%;
@@ -454,6 +485,13 @@ export default {
   .actions, .context-menu
   {
     transform: translateX(-50%);
+  }
+  .in-thread
+  {
+    .actions, .context-menu
+    {
+      transform: translateX(0%);
+    }
   }
 }
 </style>
