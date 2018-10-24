@@ -2,18 +2,27 @@ import ReconnectingWebSocket from 'reconnecting-websocket'
 import { Message } from '@/types'
 
 export default {
-  install (Vue) {
-    const ws = new Websocket()
+  install (Vue, { eventbus }) {
+    // Pass event bus to websocket handler so it can broadcast received messages to concerned parties.
+    if (eventbus === undefined || eventbus.$emit === undefined) {
+      throw Error('Expecting eventbus to be passed as an option to websocket plugin')
+    }
+
+    const ws = new Websocket({ eventbus })
+
     Vue.prototype.$ws = ws
+
+    // Expose $ws so we can access it from
+    // the browser console
     window.$ws = ws
   },
 }
 
-function Websocket () {
+function Websocket ({ eventbus }) {
   this.active = false
   this.conn = null
-  this.listeners = {}
   this.queue = []
+  this.$bus = eventbus
 }
 
 Websocket.prototype = Object.assign(Websocket.prototype, {
@@ -60,20 +69,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
       const payload = JSON.parse(ev.data)
 
       for (const type in payload) {
-        if (this.listeners[type] !== undefined) {
-          let ptr = this.listeners[type].length
-          while (ptr--) {
-            this.listeners[type][ptr].handler(payload[type])
-
-            if (this.listeners[type][ptr].once) {
-              this.listeners[type].splice(ptr, 1)
-            }
-          }
-        } else if (type === 'error') {
-          console.error('Received an error through websocket:', payload[type].m || 'No error message')
-        } else {
-          console.warn('Unhandled message type received', type, payload[type])
-        }
+        this.$bus.$emit(`$ws.${type}`, payload[type])
       }
     })
   },
@@ -141,21 +137,6 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
 
   async users () {
     return this.send({ getUsers: {} })
-  },
-
-  subscribe (type, handler, once = false) {
-    if (this.listeners[type] === undefined) {
-      this.listeners[type] = []
-    }
-
-    this.listeners[type].push({
-      handler: handler,
-      once: once,
-    })
-  },
-
-  once (type, handler) {
-    this.subscribe(type, handler, true)
   },
 
   close () {

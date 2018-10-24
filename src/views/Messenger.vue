@@ -59,7 +59,7 @@ export default {
   },
 
   beforeCreate () {
-    this.$ws.subscribe('channels', (channels) => {
+    this.$bus.$on('$ws.channels', (channels) => {
       let cc = []
       channels.forEach((c) => {
         cc.push(new Channel(c))
@@ -71,37 +71,37 @@ export default {
       this.resetChannels(cc)
     })
 
-    this.$ws.subscribe('channel', (channel) => {
+    this.$bus.$on('$ws.channel', (channel) => {
       this.updateChannels(new Channel(channel))
     })
 
-    this.$ws.subscribe('channelJoin', (join) => {
+    this.$bus.$on('$ws.channelJoin', (join) => {
       this.joinChannel(join)
     })
 
-    this.$ws.subscribe('channelPart', (part) => {
+    this.$bus.$on('$ws.channelPart', (part) => {
       this.partChannel(part)
     })
 
-    this.$ws.subscribe('channelActivity', (activity) => {
+    this.$bus.$on('$ws.channelActivity', (activity) => {
       console.log('activity', activity)
     })
 
     // Handle users payload when it gets back
-    this.$ws.subscribe('users', (users) => {
+    this.$bus.$on('$ws.users', (users) => {
       this.resetUsers(users)
     })
 
-    this.$ws.subscribe('clientConnected', (user) => {
+    this.$bus.$on('$ws.clientConnected', (user) => {
       this.userConnected(user.uid)
     })
 
-    this.$ws.subscribe('clientDisconnected', (user) => {
+    this.$bus.$on('$ws.clientDisconnected', (user) => {
       this.userDisconnected(user.uid)
     })
 
     // Handles single-message updates that gets from the backend
-    this.$ws.subscribe('message', (message) => {
+    this.$bus.$on('$ws.message', (message) => {
       const msg = new Message(message)
       const currentChannel = msg.channelID === (this.ch || {}).ID
       // const currentUser = this.user.ID === (msg.user || {}).ID
@@ -122,10 +122,10 @@ export default {
     })
 
     // This serves a sole purpose of handling callback to getMessage calls to $ws
-    this.$ws.subscribe('messages', messages => this.updateHistory(messages.map(message => new Message(message))))
+    this.$bus.$on('$ws.messages', messages => this.updateHistory(messages.map(message => new Message(message))))
 
 
-    this.$ws.subscribe('commands', (commands) => {
+    this.$bus.$on('$ws.commands', (commands) => {
       this.setCommands(commands)
     })
 
