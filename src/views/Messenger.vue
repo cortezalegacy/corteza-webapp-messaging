@@ -13,7 +13,7 @@
       <router-view
         @openThread="onOpenThread"
         :class="[
-        { 'with-thread' : openThread !== null },
+        { 'with-thread' : null !== openThread && ch },
         ]" />
 
       <panel-users
