@@ -6,7 +6,6 @@
       ref="msgList">
       <message v-for="(msg, index) in messages"
         ref="message"
-        @dblckick="$emit('editMessage', msg)"
         v-on="$listeners"
         :message="msg"
         :continued="isContinued(messages, index)"
@@ -133,6 +132,8 @@ export default {
       this.loadSuspended = false
       this.allowAutoScroll = true
       this.scrollToRef = false
+
+      this.resetUnreadAfterTimeout()
     },
   },
 
@@ -152,7 +153,6 @@ export default {
   updated () {
     this.$nextTick(() => {
       if (!this.hasScrollbar()) {
-        this.resetUnreadAfterTimeout()
         this.ignoreChannelUnreadCount(this.ch.ID)
       } else if (this.allowAutoScroll) {
         this.$refs.anchor.scrollIntoView()

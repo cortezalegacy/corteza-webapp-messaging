@@ -22,17 +22,22 @@
 
     <channel-input
       ref="channelInput"
+      @msgUpdate="onMessageUpdate"
       @submit="onInputSubmit"
       @promptFilePicker="onOpenFilePicker"
       @editLastMessage="onEditLastMessage" />
 
+    <activity :users="activeInChannel(channelID, 'typing')">typing</activity>
+
   </section>
 </template>
 <script>
+import _ from 'lodash'
 import commander from '@/plugins/commander'
 import { mapGetters, mapActions } from 'vuex'
 import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
 import History from '@/components/History'
+import Activity from '@/components/Activity'
 
 export default {
   props: ['channelID'],
@@ -43,6 +48,7 @@ export default {
       unread: 'unread/channel',
       isUserPanelOpen: 'ui/isUserPanelOpen',
       user: 'auth/user',
+      activeInChannel: 'users/activeInChannel',
     }),
   },
 
@@ -101,6 +107,13 @@ export default {
       }
     },
 
+    // Update channel activity once in a while while typing
+    onMessageUpdate: _.throttle(function ({ msg }) {
+      if (msg.length > 1) {
+        this.$ws.send({ channelActivity: { ID: this.ch.ID, kind: 'typing' } })
+      }
+    }, 2000),
+
     onInputSubmit ({ value, meta }) {
       // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
       if (!this.channelID) {
@@ -154,6 +167,7 @@ export default {
     ChannelInput,
     ChannelUpload,
     ChannelHeader,
+    Activity,
   },
 
   mixins: [
@@ -223,5 +237,12 @@ export default {
       top:62px;
       bottom:65px;
     }
+  }
+
+  section.activity {
+    color: $appgrey;
+    position: absolute;
+    left: 65px;
+    bottom: 5px;
   }
 </style>

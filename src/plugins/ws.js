@@ -21,6 +21,7 @@ export default {
 function Websocket ({ eventbus }) {
   this.active = false
   this.conn = null
+  this.echoMessages = false
   this.queue = []
   this.$bus = eventbus
 }
@@ -68,6 +69,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     this.conn.addEventListener('message', (ev) => {
       const payload = JSON.parse(ev.data)
 
+      if (this.echoMessages) {
+        console.debug('$ws.@message', payload)
+      }
+
       for (const type in payload) {
         this.$bus.$emit(`$ws.${type}`, payload[type])
       }
@@ -75,6 +80,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   },
 
   async send (msg) {
+    if (this.echoMessages) {
+      console.debug('$ws.send', msg)
+    }
+
     if (typeof msg !== 'string') {
       msg = JSON.stringify(msg)
     }

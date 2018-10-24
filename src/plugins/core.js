@@ -27,7 +27,11 @@ export default {
     })
 
     eventbus.$on('$ws.channelActivity', (activity) => {
-      console.log('activity', activity)
+      const currentUser = store.getters['auth/user']
+      if (currentUser.ID !== activity.userID) {
+        // Store activity only if someone else is active...
+        store.commit('users/active', activity)
+      }
     })
 
     // Handle users payload when it gets back
@@ -36,11 +40,11 @@ export default {
     })
 
     eventbus.$on('$ws.clientConnected', ({ uid }) => {
-      store.dispatch('users/connected', uid)
+      store.commit('users/connections', { ID: uid, delta: 1 })
     })
 
     eventbus.$on('$ws.clientDisconnected', ({ uid }) => {
-      store.dispatch('users/disconnected', uid)
+      store.commit('users/connections', { ID: uid, delta: -1 })
     })
 
     // Handles single-message updates that gets from the backend
@@ -48,6 +52,9 @@ export default {
       const msg = new Message(message)
       store.dispatch('unread/incChannel', msg.channelID)
       store.dispatch('history/update', [msg])
+
+      // Assume activity stoped
+      store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
 
       // @fixme needs additional attention and testing
       // if (!currentUser && (!currentChannel || !this.hasFocus)) {

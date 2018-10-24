@@ -54,7 +54,6 @@ export default {
 
   watch: {
     repliesTo (newRepliesTo, oldRepliesTo) {
-      console.log('repliesTo', newRepliesTo, oldRepliesTo)
       if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
         this.preload()
       }

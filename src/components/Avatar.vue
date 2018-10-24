@@ -22,7 +22,7 @@ export default {
 
 
   computed: {
-    ...mapGetters({ findByID: 'users/findByID' }),
+    ...mapGetters({ findByID: 'users/findByID', isPresent: 'users/isPresent' }),
 
     stored () { return this.findByID(this.user.ID) || {} },
 
@@ -50,7 +50,9 @@ export default {
       return 'N/A'
     },
 
-    isOnline () { return this.stored.connections > 0 },
+    isOnline () {
+      return !!this.isPresent(this.user.ID)
+    },
   },
 }
 </script>
