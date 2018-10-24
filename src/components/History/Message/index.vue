@@ -6,85 +6,88 @@
         'first': !continued,
         'attachement' : message.attachment,
         'valid' : message.attachment && message.attachment.size > 0,
+        'with-infos' : message.replies || message.updatedAt,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
       }"
       ref="message"
       :key="message.ID">
-      <section>
-        <em v-if="!continued" class="avatar">
-          <avatar :user="message.user" />
-        </em>
-        <em  v-if="!continued" class="author">{{ message.user | userLabel }}</em>
-        <span class="date">
-            {{ moment(message.createdAt).fromNow() }}
-            <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
-          </span>
-        <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
-        <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
-        <div class="actions" v-if="!hideActions">
-          <!-- i class="action icon-message-circle-left-speak"></i -->
-          <i class="action icon-message-circle-left-speak"
-            title="Reply in thread"
-            v-if="!message.replyTo && !hideActionOpenThread"
-            @click="$emit('openThread', { message })"
-          ></i>
-          <i v-if="!contextMenu"
-            class="action icon-plus" @click="contextMenu=!contextMenu"></i>
-          <i v-else
-            class="action icon-close" @click="contextMenu=!contextMenu"></i>
+        <section>
+          <em class="dot-dot-dot"></em>
+          <em v-if="!continued" class="avatar">
+            <avatar :user="message.user" />
+          </em>
+          <em  v-if="!continued" class="author">{{ message.user | userLabel }}</em>
+          <span class="date">
+              {{ moment(message.createdAt).fromNow() }}
+              <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
+            </span>
+          <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
+          <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
+
+          <div class="actions" v-if="!hideActions">
+            <!-- i class="action icon-message-circle-left-speak"></i -->
+            <i class="action icon-message-circle-left-speak"
+              title="Reply in thread"
+              v-if="!message.replyTo && !hideActionOpenThread"
+              @click="$emit('openThread', { message })"
+            ></i>
+            <i v-if="!contextMenu"
+              class="action icon-plus" @click="contextMenu=!contextMenu"></i>
+            <i v-else
+              class="action icon-close" @click="contextMenu=!contextMenu"></i>
+          </div>
+          <div class="context-menu" v-if="contextMenu">
+            <ul class="context-menu-list">
+              <li v-if="!message.replyTo && !hideActionOpenThread"
+                  class="extra-action"
+                  @click="$emit('openThread', { message })">
+                  <i class="icon icon-message-circle-left-speak"></i>
+                  <span>Reply in thread</span>
+              </li>
+              <li v-if="message.canEdit(currentUser)"
+                  class="extra-action"
+                  @click="$emit('editMessage', { message })">
+                  <i class="icon icon-edit"></i>
+                  <span>edit message</span>
+              </li>
+              <!-- no use having the action if you can't do it -->
+              <!-- li v-else
+                  class="disabled">
+                  edit message
+              </li -->
+              <li v-if="message.canDelete(currentUser)"
+                  class="extra-action"
+                  @click="$emit('deleteMessage', { message })">
+                  <i class="icon icon-trash"></i>
+                  <span>delete message</span>
+              </li>
+              <!-- no use having the action if you can't do it -->
+              <!-- li v-else
+                  class="disabled">
+                  delete message
+              </li -->
+            </ul>
+          </div>
+        </section>
+        <div
+          class="message"
+          :class="{ from_me: (message.user || {}).ID === currentUser.ID }">
+          <attachment
+            v-if="message.attachment"
+            class="message-content"
+            :attachment="message.attachment"
+            :inline="message.type === 'inlineImage'" />
+          <contents
+            v-else
+            class="message-content"
+            :id="message.ID"
+            :chunks="getChunks(message.message)" />
         </div>
-        <div class="context-menu" v-if="contextMenu">
-          <ul class="context-menu-list">
-            <li v-if="!message.replyTo && !hideActionOpenThread"
-                class="extra-action"
-                @click="$emit('openThread', { message })">
-                <i class="icon icon-message-circle-left-speak"></i>
-                <span>Reply in thread</span>
-            </li>
-            <li v-if="message.canEdit(currentUser)"
-                class="extra-action"
-                @click="$emit('editMessage', { message })">
-                <i class="icon icon-edit"></i>
-                <span>edit message</span>
-            </li>
-            <!-- no use having the action if you can't do it -->
-            <!-- li v-else
-                class="disabled">
-                edit message
-            </li -->
-            <li v-if="message.canDelete(currentUser)"
-                class="extra-action"
-                @click="$emit('deleteMessage', { message })">
-                <i class="icon icon-trash"></i>
-                <span>delete message</span>
-            </li>
-            <!-- no use having the action if you can't do it -->
-            <!-- li v-else
-                class="disabled">
-                delete message
-            </li -->
-          </ul>
+        <div class="message-infos">
+          <span class="info" v-if="message.replies">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</span>
+          <span class="info" v-if="message.updatedAt">edited</span>
         </div>
-      </section>
-      <div
-        class="message"
-        :class="{ from_me: (message.user || {}).ID === currentUser.ID }">
-        <attachment
-          v-if="message.attachment"
-          class="message-content"
-          :attachment="message.attachment"
-          :inline="message.type === 'inlineImage'" />
-        <contents
-          v-else
-          class="message-content"
-          :id="message.ID"
-          :chunks="getChunks(message.message)" />
-      </div>
-      <div class="message-infos">
-        <span class="info" v-if="message.replies">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</span>
-        <span class="info" v-if="message.updatedAt">edited</span>
-      </div>
     </li>
 </template>
 <script>
@@ -222,6 +225,7 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+
 .message-infos
 {
   font-size:10px;
@@ -241,21 +245,30 @@ export default {
     }
   }
 }
+.dot-dot-dot
+{
+  position:absolute;
+  left:35px;
+  top:55px;
+  float:left;
+  background:url(../../../assets/images/vertical-dots.svg) no-repeat;
+  background-size: auto 10px;
+  min-height:12px;
+  min-width:4px;
+}
 .message-n-meta
 {
+  margin-bottom:20px;
   position:relative;
-  padding-left:50px;
+  padding:5px 5px 5px 66px;
   position:relative;
-  padding:3px 23px 24px 65px;
-  min-height:73px;
-  background:url(../../../assets/images/vertical-dots.svg) no-repeat 35px 58px;
-  background-size: auto 15px;
   &.continued
   {
-    padding:3px 23px 4px 65px;
-    margin-top:-18px;
     background:none;
-    min-height:63px;
+    .dot-dot-dot
+    {
+      display:none;
+    }
     &.attachement
     {
       margin-bottom:20px; // because attachements are bigger than 65px;
@@ -267,9 +280,17 @@ export default {
   }
 }
 
+// all margins in one place
+.message-n-meta.continued
+{
+  margin-top:-28px;
+}
+// need spacing if has info
+.message-n-meta.continued.with-infos
+{
+}
 .message-n-meta.first + .message-n-meta.continued
 {
-  margin-top:-22px;
 }
 
 .author, .date, .time, .day
@@ -283,7 +304,6 @@ export default {
   display:inline-block;
   position:absolute;
   left:20px;
-  top:10px;
 }
 .author, .date
 {
@@ -298,17 +318,19 @@ export default {
 {
   position:absolute;
   left:20px;
-  top:45px;
+  top:40px;
 }
 .time
 {
   display:none;
+  font-size:10px;
 }
 .continued
 {
   .time
   {
-    top:18px;
+    left:22px;
+    top:15px;
   }
   .day
   {
@@ -356,7 +378,7 @@ export default {
     width:100%;
     left:0px;
     text-align: right;
-    top:-5px;
+    top:-15px;
     display:inline-block;
     padding:0 0.5em;
     z-index:5;
@@ -375,8 +397,13 @@ export default {
       cursor:pointer;
     }
   }
+  .actions
+  {
+    min-width:180px;
+  }
   .context-menu
   {
+    min-width:180px;
     left:-30px;
     z-index:6;
     &:hover
@@ -421,6 +448,10 @@ export default {
 .message-n-meta.continued:hover,
 .message-n-meta.continued:focus
 {
+ .actions, .context-menu
+  {
+    top:-15px;
+  }
   .date
   {
     display:none;
@@ -439,8 +470,7 @@ export default {
   word-wrap: break-word;
   border-radius:3px;
   padding:8px;
-  margin-top:2px;
-
+  min-width:180px;
   // the little triangle on the left of message
   &:before
   {
@@ -482,6 +512,7 @@ export default {
 
 @media (min-width: $wideminwidth)
 {
+  /*
   .actions, .context-menu
   {
     transform: translateX(-50%);
@@ -493,5 +524,6 @@ export default {
       transform: translateX(0%);
     }
   }
+  */
 }
 </style>
