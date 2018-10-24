@@ -83,6 +83,10 @@ export default {
       this.partChannel(part)
     })
 
+    this.$ws.subscribe('channelActivity', (activity) => {
+      console.log('activity', activity)
+    })
+
     // Handle users payload when it gets back
     this.$ws.subscribe('users', (users) => {
       this.resetUsers(users)
