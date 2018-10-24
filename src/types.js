@@ -54,7 +54,7 @@ export function User (u) {
   if (!u) {
     return {}
   }
-  
+
   this.ID = u.ID || u.id // cover both cases (BC)
   this.username = u.username
   this.handle = u.handle

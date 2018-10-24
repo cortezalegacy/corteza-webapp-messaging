@@ -1,5 +1,5 @@
 <template>
-  <li class="layer-item-wrap" :class="[channel.type]" @click="toggleChannelPanel()">
+  <li class="layer-item-wrap" :class="[channel.type, isGroupMemberOnline ? 'member-is-online' : null]" @click="toggleChannelPanel()">
     <router-link
             class="layer-item layer-selectable channel-name"
             v-bind:class="[
@@ -25,10 +25,16 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'channel-panel-item',
 
-  props: [
-    'channel',
-    'index',
-  ],
+  props: {
+    channel: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
+  },
 
   computed: {
     ...mapGetters({
@@ -38,6 +44,20 @@ export default {
       findUserByID: 'users/findByID',
       currentUser: 'auth/user',
     }),
+
+    isGroupMemberOnline () {
+      // We don't care about other types or multi-member groups...
+      if (this.channel.type !== 'group' || this.channel.members.length > 2) return false
+
+      let memberID = this.channel.members[0]
+
+      if (this.channel.members.length === 2) {
+        // Direct message to a single user, find this user and see if he's online
+        memberID = this.channel.members.find(ID => ID !== this.currentUser.ID) || {}
+      }
+
+      return (this.findUserByID(memberID) || {}).connections > 0
+    },
   },
   methods: {
     ...mapActions({
@@ -72,6 +92,11 @@ export default {
 .group .channel-name:before {
   content: '●';
   font-weight: bold;
+  color: $appgrey;
+}
+
+.group.member-is-online .channel-name:before {
+  color: $appgreen;
 }
 
 .unread
