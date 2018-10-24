@@ -193,6 +193,10 @@ export default {
   {
     background-color:rgba($appblue, 0.15);
   }
+  .command-mark
+  {
+    background-color:rgba($appgrey, 0.15);
+  }
   //if my own messages ligthen text to increase difference.
   .from_me
   {
@@ -206,6 +210,10 @@ export default {
       background-color:rgba($appblue, 0.75);
       color:white;
     }
+  }
+  .spaced:first-child mark
+  {
+    margin-left:0;
   }
 </style>
 

@@ -81,7 +81,7 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 .spaced {
-  margin-left: 5px;
+  // margin-left: 5px;
 }
 
 .message-content-wrap .line {
@@ -89,6 +89,6 @@ export default {
 }
 
 .content-wrap .spaced:first-child {
-  margin-left: 0;
+  // margin-left: 0;
 }
 </style>

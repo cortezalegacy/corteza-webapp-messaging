@@ -85,6 +85,7 @@ export default {
     margin-left:-20px;
     text-align:center;
     border:none;
+    padding-top:5px;
   }
 
   .channel-toolbox
@@ -93,6 +94,7 @@ export default {
     line-height:35px; // the folding breaks line height
     margin:0;
     padding:0;
+    margin-top:5px;
   }
 
   .tool
@@ -161,6 +163,7 @@ export default {
     }
     .channel-toolbox
     {
+      margin-top:0;
       line-height:5em; // the folding breaks line height
     }
   }
