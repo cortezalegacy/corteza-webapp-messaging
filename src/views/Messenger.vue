@@ -26,7 +26,6 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
-import { Channel, Message } from '@/types'
 
 export default {
   computed: {
@@ -59,76 +58,6 @@ export default {
   },
 
   beforeCreate () {
-    this.$bus.$on('$ws.channels', (channels) => {
-      let cc = []
-      channels.forEach((c) => {
-        cc.push(new Channel(c))
-
-        // Set unread state for all channels
-        this.setChannelUnreadCount({ ID: c.ID, count: (c.view || {}).newMessagesCount })
-      })
-
-      this.resetChannels(cc)
-    })
-
-    this.$bus.$on('$ws.channel', (channel) => {
-      this.updateChannels(new Channel(channel))
-    })
-
-    this.$bus.$on('$ws.channelJoin', (join) => {
-      this.joinChannel(join)
-    })
-
-    this.$bus.$on('$ws.channelPart', (part) => {
-      this.partChannel(part)
-    })
-
-    this.$bus.$on('$ws.channelActivity', (activity) => {
-      console.log('activity', activity)
-    })
-
-    // Handle users payload when it gets back
-    this.$bus.$on('$ws.users', (users) => {
-      this.resetUsers(users)
-    })
-
-    this.$bus.$on('$ws.clientConnected', (user) => {
-      this.userConnected(user.uid)
-    })
-
-    this.$bus.$on('$ws.clientDisconnected', (user) => {
-      this.userDisconnected(user.uid)
-    })
-
-    // Handles single-message updates that gets from the backend
-    this.$bus.$on('$ws.message', (message) => {
-      const msg = new Message(message)
-      const currentChannel = msg.channelID === (this.ch || {}).ID
-      // const currentUser = this.user.ID === (msg.user || {}).ID
-      this.incChannelUnreadCount(msg.channelID)
-
-      if (currentChannel) {
-        this.updateHistory([msg])
-      }
-
-      // @fixme needs additional attention and testing
-      // if (!currentUser && (!currentChannel || !this.hasFocus)) {
-      //   // Not in our current channel
-      //   // @todo need to check if window has focus as well
-      //   this.$notification.show(`New message in ${this.ch.name} | Crust`, {
-      //     body: msg.message.length > 200 ? msg.message.substring(0, 200) + '...' : msg.message,
-      //   }, {})
-      // }
-    })
-
-    // This serves a sole purpose of handling callback to getMessage calls to $ws
-    this.$bus.$on('$ws.messages', messages => this.updateHistory(messages.map(message => new Message(message))))
-
-
-    this.$bus.$on('$ws.commands', (commands) => {
-      this.setCommands(commands)
-    })
-
     this.$auth.check().then(() => {
       this.$ws.connect()
     }).catch((err) => {
@@ -161,20 +90,7 @@ export default {
 
   methods: {
     ...mapActions({
-      toggleUserPanel: 'ui/toggleUserPanel',
       toggleFocus: 'ui/toggleFocus',
-      resetUsers: 'users/resetList',
-      resetChannels: 'channels/resetList',
-      updateChannels: 'channels/updateList',
-      joinChannel: 'channels/join',
-      partChannel: 'channels/part',
-      removeFromChannels: 'channels/removeFromList',
-      userConnected: 'users/connected',
-      userDisconnected: 'users/disconnected',
-      incChannelUnreadCount: 'unread/incChannel',
-      setChannelUnreadCount: 'unread/setChannel',
-      updateHistory: 'history/update',
-      setCommands: 'suggestions/setCommands',
     }),
 
     handleResize () {
