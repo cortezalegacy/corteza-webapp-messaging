@@ -79,6 +79,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   },
 
   async send (msg) {
+    if (typeof msg !== 'string') {
+      msg = JSON.stringify(msg)
+    }
+
     return new Promise((resolve) => {
       if (this.connected()) {
         this.conn.send(msg)
@@ -92,51 +96,51 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
   },
 
   async getChannels () {
-    return this.send(JSON.stringify({ channels: {} }))
+    return this.send({ channels: {} })
   },
 
   async sendMessage (channelID, message) {
-    return this.send(JSON.stringify({ createMessage: { channelID, message } }))
+    return this.send({ createMessage: { channelID, message } })
   },
 
   async updateMessage (messageID, message) {
-    return this.send(JSON.stringify({ updateMessage: { messageID, message } }))
+    return this.send({ updateMessage: { messageID, message } })
   },
 
   async deleteMessage (messageID) {
-    return this.send(JSON.stringify({ deleteMessage: { messageID } }))
+    return this.send({ deleteMessage: { messageID } })
   },
 
   async sendReply (replyTo, message) {
-    return this.send(JSON.stringify({ createMessage: { replyTo, message } }))
+    return this.send({ createMessage: { replyTo, message } })
   },
 
   async exec (channelID, command, params, input) {
-    return this.send(JSON.stringify({ exec: { channelID, command, params, input } }))
+    return this.send({ exec: { channelID, command, params, input } })
   },
 
   async getMessages (channelID, untilID, fromID) {
-    return this.send(JSON.stringify({ messages: { channelID, untilID, fromID } }))
+    return this.send({ messages: { channelID, untilID, fromID } })
   },
 
   async getReplies (repliesTo) {
-    return this.send(JSON.stringify({ messages: { repliesTo } }))
+    return this.send({ messages: { repliesTo } })
   },
 
   async newerMessages (channelID, firstID) {
-    return this.send(JSON.stringify({ messages: { channelID, firstID } }))
+    return this.send({ messages: { channelID, firstID } })
   },
 
   async olderMessages (channelID, lastID) {
-    return this.send(JSON.stringify({ messages: { channelID, lastID } }))
+    return this.send({ messages: { channelID, lastID } })
   },
 
   async recordChannelView (channelID, lastMessageID) {
-    return this.send(JSON.stringify({ recordChannelView: { channelID, lastMessageID } }))
+    return this.send({ recordChannelView: { channelID, lastMessageID } })
   },
 
   async users () {
-    return this.send(JSON.stringify({ getUsers: {} }))
+    return this.send({ getUsers: {} })
   },
 
   subscribe (type, handler, once = false) {
