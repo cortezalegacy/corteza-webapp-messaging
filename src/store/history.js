@@ -13,7 +13,7 @@ const getters = {
   unreadInChannel: (state) =>
     (channelID, firstMessageID) =>
       state.set.filter(m => isValid(m) && m.replyTo === 0 && m.channelID === channelID && (firstMessageID || 0) <= m.ID),
-  getRepliesByID: (state) => (replyTo) => state.set.filter(m => isValid(m) && m.replyTo === replyTo),
+  getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
 }
 
 // actions

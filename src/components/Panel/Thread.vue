@@ -1,35 +1,28 @@
 <template>
   <aside
-    v-if="repliesTo && originalMessage"
+    v-if="repliesTo"
     class="menu-layer right thread">
     <channel-upload v-if="channel"
       :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
-    <label class="closer"
-           @click="$emit('close')"
-           aria-label="Close"><i class="icon-close"></i></label>
     <div class="thread-title">
       <strong class="panel-type">Thread</strong>
-      <p class="channel-name-wrap">in <channel-name class="channel-name" :channel="channel"></channel-name></p></div>
-      <ul class="thread-history">
-        <message ref="original"
-                class="in-thread"
-                @editMessage="onEditMessage"
-                @deleteMessage="onDeleteMessage"
-                :message="originalMessage"
-                :hide-action-open-thread="true"
-                :current-user="user" />
+      <p class="channel-name-wrap">in <channel-name class="channel-name" :channel="channel"></channel-name></p>
+      <label class="closer"
+             @click="$emit('close')"
+             aria-label="Close"><i class="icon-close"></i></label>
+    </div>
 
-        <message v-for="(msg, index) in replies"
-                class="in-thread"
-                v-on="$listeners"
-                @editMessage="onEditMessage"
-                @deleteMessage="onDeleteMessage"
-                ref="message"
-                :message="msg"
-                :continued="isContinued(replies, index)"
-                :current-user="user"
-                :key="msg.ID" />
-      </ul>
+    <messages
+      class="messages"
+      ref="messages"
+      :messages="messages"
+      :currentUser="currentUser"
+      :origin="channel"
+      :scrollable="true"
+      @editMessage="onEditMessage"
+      @deleteMessage="onDeleteMessage"
+      v-on="$listeners" />
+
     <channel-input
       ref="replyInput"
       @submit="onInputSubmit"
@@ -39,7 +32,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import Message from '@/components/History/Message'
+import Messages from '@/components/Messages'
 import { ChannelInput, ChannelUpload } from '@/components/Channel'
 import messages from '@/mixins/messages'
 
@@ -70,14 +63,14 @@ export default {
 
   computed: {
     ...mapGetters({
-      user: 'auth/user',
+      currentUser: 'auth/user',
       getMessageByID: 'history/getByID',
-      getRepliesByID: 'history/getRepliesByID',
-      isUserPanelOpen: 'ui/isUserPanelOpen',
+      getThread: 'history/getThread',
     }),
 
-    originalMessage () { return this.getMessageByID(this.repliesTo) },
-    replies () { return this.getRepliesByID(this.repliesTo) },
+    messages () {
+      return this.getThread(this.repliesTo)
+    },
   },
 
   methods: {
@@ -87,7 +80,6 @@ export default {
 
     // Preloads all thread data
     preload () {
-      console.debug('Loading new thread', { rt: this.repliesTo })
       this.$ws.getReplies(this.repliesTo)
     },
 
@@ -132,13 +124,11 @@ export default {
 
     // Find last editable message
     onEditLastMessage (ev) {
-      const lastReply = [...this.replies].reverse().find(m => m.canEdit(this.user))
+      const lastReply = [...this.messages].reverse().find(m => m.canEdit(this.currentUser))
 
       // Ask history component about last editable message
       if (lastReply) {
         this.setEditMessage(lastReply)
-      } else {
-        this.setEditMessage(this.originalMessage)
       }
     },
 
@@ -149,8 +139,8 @@ export default {
 
   components: {
     ChannelInput,
-    Message,
     ChannelUpload,
+    Messages,
   },
 
   mixins: [
@@ -165,32 +155,31 @@ export default {
 @import '@/assets/sass/menu-layer.scss';
 
 .closer {
-  position: fixed;
+  position: absolute;
   top: 5px;
   right: 20px;
   font-size: 20px;
   z-index: 9999;
 }
 
-.thread
-{
-  margin-top:0;
-  padding-top:0;
-  .channel-input
-  {
-    border-width: 5px 15px 5px 15px;
-    display:table;
-    padding-bottom:0;
-  }
-}
-.thread-title
-{
+/*.thread*/
+/*{*/
+  /*overflow: hidden;*/
+  /*margin-top:0;*/
+  /*padding-top:0;*/
+/*}*/
+
+.thread-title {
+  position: absolute;
   min-height:61px;
   padding:15px;
-  background-color:$appcream;
+  background-color: $appcream;
   border-bottom:dotted 1px rgba($appgrey,0.5);
   margin-bottom:5px;
+  top: 0px;
+  width: 100%;
 }
+
 .channel-name-wrap
 {
   white-space: nowrap;
@@ -199,12 +188,24 @@ export default {
   text-overflow:ellipsis;
   padding:0;
   margin:0;
+
   .channel-name:before
   {
     content:'#';
     display:inline-block;
     margin-right:2px;
   }
+}
+
+.messages {
+  top: 7px;
+  bottom: 19px;
+}
+.channel-input
+{
+  border-width: 5px 15px 5px 15px;
+  display:table;
+  bottom:0;
 }
 
 </style>

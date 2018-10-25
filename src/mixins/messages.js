@@ -7,11 +7,6 @@ export default {
   methods: {
     getFirstID: (set) => (set[0] || {}).ID,
     getLastID: (set, ID) => (set[set.length - 1] || {}).ID,
-    getLastMessageByUserID: (set, userID) => {
-      // eslint-disable-next-line
-      let rtr = [...set].reverse().find(m => m.user.ID == userID)
-      return rtr
-    },
 
     isContinued: (set, index = 0) => {
       // Leading message...

@@ -16,6 +16,7 @@
 
     <history
       ref="history"
+      :channel="ch"
       v-on="$listeners"
       @editMessage="onEditMessage"
       @deleteMessage="onDeleteMessage" />
@@ -36,7 +37,7 @@ import _ from 'lodash'
 import commander from '@/plugins/commander'
 import { mapGetters, mapActions } from 'vuex'
 import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
-import History from '@/components/History'
+import History from '@/components/Channel/History'
 import Activity from '@/components/Activity'
 
 export default {
@@ -83,8 +84,6 @@ export default {
 
     changeChannel (channelID) {
       this.setCurrentById(this.channelID)
-      this.clearHistory()
-      this.$ws.getMessages(this.channelID)
 
       if (this.ch) {
         document.title = `${this.ch.name} | Crust`

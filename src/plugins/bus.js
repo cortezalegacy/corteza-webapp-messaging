@@ -12,8 +12,9 @@
 // Rules to follow:
 //
 // Event name MUST be prefixed. Use name of the origin, ie:
-//  - $ws for websocket plugin,
-//  - Component/Path/And/Name
+//  - [plugins] $ws.message
+//  - [components] Component/Path/And/Name.eventName
+//  - [views] /ViewName.eventName
 
 export default {
   install (Vue, { eventbus }) {

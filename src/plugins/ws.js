@@ -125,20 +125,12 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send({ exec: { channelID, command, params, input } })
   },
 
-  async getMessages (channelID, untilID, fromID) {
-    return this.send({ messages: { channelID, untilID, fromID } })
+  async getMessages ({ channelID, firstID, lastID }) {
+    return this.send({ messages: { channelID, firstID, lastID } })
   },
 
   async getReplies (repliesTo) {
     return this.send({ messages: { repliesTo } })
-  },
-
-  async newerMessages (channelID, fromID) {
-    return this.send({ messages: { channelID, fromID } })
-  },
-
-  async olderMessages (channelID, untilID) {
-    return this.send({ messages: { channelID, untilID } })
   },
 
   async recordChannelView (channelID, lastMessageID) {

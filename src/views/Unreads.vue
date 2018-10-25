@@ -10,14 +10,13 @@
         <button @click="markAsRead(unread)">mark as read [@todo]</button>
       </header>
       <section>
-        <ul class="discussion">
-          <message v-for="(msg, index) in unreadInChannel(unread.ID, unread.lastMessageID)"
-                   ref="message"
-                   :message="msg"
-                   :continued="isContinued(unreadInChannel(unread.ID, unread.lastMessageID), index)"
-                   :current-user="user"
-                   :key="msg.ID" />
-        </ul>
+        <messages
+          ref="messages"
+          :messages="unreadInChannel(unread.ID, unread.lastMessageID)"
+          :currentUser="currentUser"
+          origin="unreads"
+          :scrollable="false"
+          v-on="$listeners" />
       </section>
       <hr/>
     </section>
@@ -29,14 +28,14 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import Message from '@/components/History/Message'
+import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
 import messages from '@/mixins/messages'
 
 export default {
   computed: {
     ...mapGetters({
-      user: 'auth/user',
+      currentUser: 'auth/user',
       unreadChannels: 'unread/channels',
       findChannelByID: 'channels/findByID',
       unreadInChannel: 'history/unreadInChannel',
@@ -61,9 +60,9 @@ export default {
     loadUnreadMessages () {
       this.unreadChannels.forEach(u => {
         if (u.lastMessageID) {
-          this.$ws.newerMessages(u.ID, u.lastMessageID)
+          this.$ws.getMessages({ channelID: u.ID, firstID: u.lastMessageID })
         } else {
-          this.$ws.getMessages(u.ID)
+          this.$ws.getMessages({ channelID: u.ID })
         }
       })
     },
@@ -87,7 +86,7 @@ export default {
   },
 
   components: {
-    Message,
+    Messages,
     Empty,
   },
 
