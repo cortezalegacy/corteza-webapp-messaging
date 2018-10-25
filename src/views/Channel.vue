@@ -1,25 +1,27 @@
 <template>
   <section
     class="channel"
-    v-if="ch"
+    v-if="channel"
     id="channelContainer"
     :class="[ { 'with-right-panel':isUserPanelOpen, 'unread-messages': unread(channelID) } ]"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
 
-    <channel-upload v-if="ch"
-                    :channelID="ch.ID" ref="upload"></channel-upload>
+    <channel-upload
+      :channelID="channel.ID" ref="upload" />
 
     <channel-header
-      :channel="ch"
-      v-if="ch"></channel-header>
+      :channel="channel"></channel-header>
 
-    <history
-      ref="history"
-      :channel="ch"
-      v-on="$listeners"
-      @editMessage="onEditMessage"
-      @deleteMessage="onDeleteMessage" />
+    <messages
+      ref="messages"
+      :messages="messages"
+      :currentUser="currentUser"
+      :origin="channel"
+      :scrollable="true"
+      @scrollTop="onScrollTop"
+      @scrollBottom="onScrollBottom"
+      v-on="$listeners" />
 
     <channel-input
       ref="channelInput"
@@ -34,66 +36,95 @@
 </template>
 <script>
 import _ from 'lodash'
+import messages from '@/mixins/messages'
 import commander from '@/plugins/commander'
 import { mapGetters, mapActions } from 'vuex'
 import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
-import History from '@/components/Channel/History'
+import Messages from '@/components/Messages'
 import Activity from '@/components/Activity'
 
 export default {
-  props: ['channelID'],
-
-  computed: {
-    ...mapGetters({
-      ch: 'channels/current',
-      unread: 'unread/channel',
-      isUserPanelOpen: 'ui/isUserPanelOpen',
-      user: 'auth/user',
-      activeInChannel: 'users/activeInChannel',
-    }),
-  },
-
-  watch: {
-    'channelID' (newChannelID, oldChannelId) {
-      if (newChannelID !== oldChannelId && newChannelID) {
-        this.changeChannel(newChannelID)
-      }
+  props: {
+    channelID: {
+      type: String,
+      required: true,
     },
   },
 
-  mounted () {
-    this.changeChannel(this.channelID)
+  computed: {
+    ...mapGetters({
+      channelByID: 'channels/findByID',
+      unread: 'unread/channel',
 
+      user: 'auth/user',
+      currentUser: 'auth/user',
+
+      activeInChannel: 'users/activeInChannel',
+
+      channelHistory: 'history/getByChannelID',
+
+      isUserPanelOpen: 'ui/isUserPanelOpen',
+    }),
+
+    messages () {
+      return this.channelHistory(this.channel.ID)
+    },
+  },
+
+  data () {
+    return {
+      resetUnreadTimeout: null,
+      channel: null,
+      previousFetchFirstMessageID: null,
+    }
+  },
+
+  watch: {
+    'channelID' () {
+      this.changeChannel(this.channelByID(this.channelID))
+    },
+  },
+
+  created () {
+    this.changeChannel(this.channelByID(this.channelID))
+  },
+
+  mounted () {
     window.addEventListener('keyup', (event) => {
       if (event.key === 'Escape') {
         // @todo fix this.
         this.closeUploadOverlay()
       }
     })
-
-    // Set initial channel on load
-    this.changeChannel(this.channelID)
   },
 
 
   methods: {
     ...mapActions({
-      setCurrentById: 'channels/setCurrentById',
       clearHistory: 'history/clear',
+      incChannelUnreadCount: 'unread/incChannel',
+      setChannelUnreadCount: 'unread/setChannel',
+      ignoreChannelUnreadCount: 'unread/ignoreChannel',
+      unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
 
-    changeChannel (channelID) {
-      this.setCurrentById(this.channelID)
+    changeChannel (channel) {
+      if (!channel) return
 
-      if (this.ch) {
-        document.title = `${this.ch.name} | Crust`
-      } else {
-        document.title = `Crust`
-      }
+      this.channel = channel
+
+      this.previousFetchFirstMessageID = null
+
+      this.ignoreChannelUnreadCount(this.channel.ID)
+
+      // Ask for new messages
+      this.$ws.getMessages({ channelID: this.channel.ID })
+
+      this.resetUnreadAfterTimeout()
     },
 
     setEditMessage (message) {
-      this.$refs.channelInput.setValue(message.message, message)
+      if (message) this.$refs.channelInput.setValue(message.message, message)
     },
 
     openUploadOverlay () {
@@ -106,10 +137,25 @@ export default {
       }
     },
 
+    resetUnreadAfterTimeout () {
+      this.clearUnreadTimeout()
+
+      this.resetUnreadTimeout = window.setTimeout(() => {
+        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0 })
+        this.$ws.recordChannelView(this.channel.ID, this.getLastID(this.messages))
+      }, 2000)
+    },
+
+    clearUnreadTimeout () {
+      if (this.resetUnreadTimeout !== null) {
+        window.clearTimeout(this.resetUnreadTimeout)
+      }
+    },
+
     // Update channel activity once in a while while typing
     onMessageUpdate: _.throttle(function ({ msg }) {
       if (msg.length > 1) {
-        this.$ws.send({ channelActivity: { ID: this.ch.ID, kind: 'typing' } })
+        this.$ws.send({ channelActivity: { ID: this.channel.ID, kind: 'typing' } })
       }
     }, 2000),
 
@@ -153,16 +199,33 @@ export default {
 
     onEditLastMessage (ev) {
       // Ask history component about last editable message
-      this.setEditMessage(this.$refs.history.getLastEditable())
+      this.setEditMessage(this.$refs.messages.getLastEditable())
     },
 
     onOpenFilePicker () {
       this.$refs.upload.openFilePicker()
     },
+
+    onScrollTop ({ messageID }) {
+      if (this.previousFetchFirstMessageID !== messageID) {
+        // Make sure we do not fetch for the same lastID
+        // over and over again...
+        this.previousFetchFirstMessageID = messageID
+
+        this.$ws.getMessages({
+          channelID: this.channel.ID,
+          lastID: messageID,
+        })
+      }
+    },
+
+    onScrollBottom ({ lastMessageID }) {
+      this.$ws.recordChannelView(this.channel.ID, lastMessageID)
+    },
   },
 
   components: {
-    History,
+    Messages,
     ChannelInput,
     ChannelUpload,
     ChannelHeader,
@@ -171,6 +234,7 @@ export default {
 
   mixins: [
     commander,
+    messages,
   ],
 }
 </script>
@@ -180,7 +244,7 @@ export default {
   //disposition of elements is done here:
   .header,
   .channel-input,
-  .history
+  .messages
   {
     position:absolute;
     width:100%;
@@ -208,7 +272,7 @@ export default {
       border-bottom: 5px solid red;
     }
   }
-  .history
+  .messages
   {
     top:52px;
     bottom:52px;
@@ -227,11 +291,11 @@ export default {
     }
     .header,
     .channel-input,
-    .history
+    .messages
     {
       right:0;
     }
-    .history
+    .messages
     {
       top:62px;
       bottom:65px;

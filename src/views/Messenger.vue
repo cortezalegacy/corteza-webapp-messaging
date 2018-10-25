@@ -3,17 +3,17 @@
       <!-- if no channel selected channel list should be displayed -->
       <panel-channels
           :class="[
-            { 'force-on' : !ch },
+            { 'force-on' : !currentChannel },
             { 'open' : isChannelPanelOpen },
           ]" />
 
-      <div v-if="!ch" class="welcome"></div>
+      <div v-if="!currentChannel" class="welcome"></div>
 
       <!-- no use in displaying messages if no channel -->
       <router-view
         @openThread="onOpenThread"
         :class="[
-        { 'with-thread' : null !== openThread && ch },
+        { 'with-thread' : null !== openThread && currentChannel },
         ]" />
 
       <panel-users
@@ -21,9 +21,9 @@
           @openDirectMessage="onOpenDirectChannel" />
 
       <panel-thread
-          v-if="ch && openThread"
+          v-if="currentChannel && openThread"
           @close="openThread = null"
-          :channel="ch"
+          :channel="currentChannel"
           :repliesTo="openThread" />
      </main>
 </template>
@@ -36,7 +36,7 @@ export default {
     ...mapGetters({
       isAuthenticated: 'auth/isAuthenticated',
       user: 'auth/user',
-      ch: 'channels/current',
+      currentChannel: 'channels/current',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       isUserPanelOpen: 'ui/isUserPanelOpen',
       hasFocus: 'ui/hasFocus',
@@ -88,6 +88,14 @@ export default {
         this.$ws.connect()
       } else if (!newval && oldval) {
         this.$ws.close()
+      }
+    },
+
+    'currentChannel' () {
+      if (this.currentChannel) {
+        document.title = `${this.currentChannel.name} | Crust`
+      } else {
+        document.title = `Crust`
       }
     },
   },

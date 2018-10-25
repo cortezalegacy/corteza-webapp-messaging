@@ -33,11 +33,15 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'channel-header',
 
-  props: [ 'channel' ],
+  props: {
+    channel: {
+      type: Object,
+      required: true,
+    },
+  },
 
   computed: {
     ...mapGetters({
-      ch: 'channels/current',
       usersCount: 'users/length',
     }),
   },

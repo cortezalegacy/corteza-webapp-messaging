@@ -12,7 +12,7 @@ const getters = {
     const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
     return ci < 0 ? 0 : state.lastMessages[ci].messageId
   },
-  current: (state) => state.list.find(ch => ch.ID === state.current),
+  current: (state) => state.current,
 
   // Return all but deleted
   list: (state) => state.list.filter(c => !c.deletedAt && !c.archivedAt),
@@ -51,8 +51,8 @@ const getters = {
 
 // actions
 const actions = {
-  setCurrentById ({ commit }, channelID) {
-    commit('setCurrent', channelID)
+  setCurrent ({ commit }, channel) {
+    commit('setCurrent', channel)
   },
 
   resetList ({ commit }, list) {
@@ -116,8 +116,8 @@ const actions = {
 
 // mutations
 const mutations = {
-  setCurrent (state, channelID) {
-    state.current = channelID
+  setCurrent (state, channel) {
+    state.current = channel
   },
 
   resetList (state, channels) {
