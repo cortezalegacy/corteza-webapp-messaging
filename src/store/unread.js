@@ -4,22 +4,24 @@ const state = {
   ignoreChannel: null,
 }
 
-function Unread (ID, count, ignore) {
+function Unread (ID, count, lastMessageID) {
   this.ID = ID
   this.count = count || 0
+  this.lastMessageID = lastMessageID || 0
 }
 
 // getters
 const getters = {
+  channels: (state) => state.channels.filter(c => c.count > 0),
   channel: (state) => (ID) => (state.channels.find(u => u.ID === ID) || new Unread(ID)).count,
   isChannelIgnored: (state) => (ID) => state.ignoreChannel === ID,
 }
 
 // actions
 const actions = {
-  setChannel ({ commit, getters }, { ID, count }) {
+  setChannel ({ commit, getters }, { ID, count, lastMessageID }) {
     if (!getters.isChannelIgnored(ID) || count === 0) {
-      commit('setChannel', new Unread(ID, count))
+      commit('setChannel', new Unread(ID, count, lastMessageID))
     }
   },
 

@@ -10,6 +10,13 @@
           <i class="icon-close" aria-label="close"></i>
       </label>
       <div class="layer-section-wrapper">
+        <section class="layer-section">
+          <ul>
+            <li><router-link :to="{name: 'threads'}">My threads</router-link></li>
+            <li><router-link :to="{name: 'unreads'}">All unreads</router-link></li>
+          </ul>
+        </section>
+
         <div class="layer-item search-item">
           <span class="badge badge-block badge-pill badge-tall">
             <i class="icon-search"></i>
@@ -19,13 +26,13 @@
         </div>
         <!-- one section per "board" (group of channels) -->
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="publicUnflod=!publicUnflod"><a>Public channels
+          <div class="layer-item layer-section-title" @click="publicUnfold=!publicUnfold"><a>Public channels
             <span v-if="publicChannels" class="channel-unfolder">
-              <i v-if="publicUnflod" class="icon-chevron-up"></i>
+              <i v-if="publicUnfold" class="icon-chevron-up"></i>
               <i v-else class="icon-chevron-down"></i>
             </span>
             </a></div>
-          <ul v-if="publicChannels && publicUnflod">
+          <ul v-if="publicChannels && publicUnfold">
             <channel-panel-item
                     v-for="(ch, index) in publicChannels"
                     :key="ch.ID"
@@ -43,13 +50,13 @@
         </div>
 
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="privateUnflod=!privateUnflod"><a>Private channels
+          <div class="layer-item layer-section-title" @click="privateUnfold=!privateUnfold"><a>Private channels
             <span v-if="privateChannels" class="channel-unfolder">
-              <i v-if="privateUnflod" class="icon-chevron-up"></i>
+              <i v-if="privateUnfold" class="icon-chevron-up"></i>
               <i v-else class="icon-chevron-down"></i>
             </span>
             </a></div>
-          <ul v-if="privateChannels && privateUnflod">
+          <ul v-if="privateChannels && privateUnfold">
             <channel-panel-item
                     v-for="(ch, index) in privateChannels"
                     :key="ch.ID"
@@ -67,13 +74,13 @@
         </div>
 
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="groupUnflod=!groupUnflod"><a>Groups and direct messages
+          <div class="layer-item layer-section-title" @click="groupUnfold=!groupUnfold"><a>Groups and direct messages
             <span v-if="groupChannels" class="channel-unfolder">
-              <i v-if="groupUnflod" class="icon-chevron-up"></i>
+              <i v-if="groupUnfold" class="icon-chevron-up"></i>
               <i v-else class="icon-chevron-down"></i>
             </span>
             </a></div>
-          <ul v-if="groupChannels && groupUnflod">
+          <ul v-if="groupChannels && groupUnfold">
             <channel-panel-item
               v-for="(ch, index) in groupChannels"
               :key="ch.ID"
@@ -102,9 +109,9 @@ export default {
   data () {
     return {
       shown: false,
-      groupUnflod: true,
-      privateUnflod: true,
-      publicUnflod: true,
+      groupUnfold: true,
+      privateUnfold: true,
+      publicUnfold: true,
     }
   },
 

@@ -14,6 +14,7 @@ export default {
 
     // Expose $ws so we can access it from
     // the browser console
+    // @todo disable this when not in debug mode
     window.$ws = ws
   },
 }
@@ -132,12 +133,12 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send({ messages: { repliesTo } })
   },
 
-  async newerMessages (channelID, firstID) {
-    return this.send({ messages: { channelID, firstID } })
+  async newerMessages (channelID, fromID) {
+    return this.send({ messages: { channelID, fromID } })
   },
 
-  async olderMessages (channelID, lastID) {
-    return this.send({ messages: { channelID, lastID } })
+  async olderMessages (channelID, untilID) {
+    return this.send({ messages: { channelID, untilID } })
   },
 
   async recordChannelView (channelID, lastMessageID) {

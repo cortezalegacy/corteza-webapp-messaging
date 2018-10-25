@@ -8,7 +8,11 @@ export default {
         cc.push(new Channel(c))
 
         // Set unread state for all channels
-        store.dispatch('unread/setChannel', { ID: c.ID, count: (c.view || {}).newMessagesCount })
+        store.dispatch('unread/setChannel', {
+          ID: c.ID,
+          count: (c.view || {}).newMessagesCount,
+          lastMessageID: (c.view || {}).lastMessageID,
+        })
       })
 
       store.dispatch('channels/resetList', cc)

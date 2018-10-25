@@ -10,6 +10,9 @@ const isValid = (msg) => msg.deletedAt === null
 const getters = {
   getByID: (state) => (ID) => state.set.find(m => isValid(m) && m.ID === ID),
   getByChannelID: (state) => (channelID) => state.set.filter(m => isValid(m) && m.replyTo === 0 && m.channelID === channelID),
+  unreadInChannel: (state) =>
+    (channelID, firstMessageID) =>
+      state.set.filter(m => isValid(m) && m.replyTo === 0 && m.channelID === channelID && (firstMessageID || 0) <= m.ID),
   getRepliesByID: (state) => (replyTo) => state.set.filter(m => isValid(m) && m.replyTo === replyTo),
 }
 
