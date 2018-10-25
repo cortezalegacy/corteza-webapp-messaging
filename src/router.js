@@ -29,7 +29,7 @@ export default new Router({
     },
     {
       path: '/messaging/auth',
-      component: view('Auth'),
+      component: view('Auth/Index'),
       redirect: '/messaging/auth/signin',
 
       children: [
@@ -46,7 +46,7 @@ export default new Router({
 
 function view (name, resolve) {
   return function (resolve) {
-    return require([`./views/${name}`], resolve)
+    return require([`./views/${name}.vue`], resolve)
   }
 }
 

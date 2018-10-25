@@ -25,16 +25,16 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated',
-    }),
+    ...mapGetters('auth', [
+      'isAuthenticated',
+    ]),
   },
 
   methods: {
-    ...mapActions({
-      setUser: 'auth/setUser',
-      clear: 'auth/clear',
-    }),
+    ...mapActions('auth', [
+      'setUser',
+      'clear',
+    ]),
   },
 
   mounted () {

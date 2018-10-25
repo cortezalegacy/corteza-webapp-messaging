@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
@@ -24,15 +24,15 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated',
-    }),
+    ...mapGetters('auth', [
+      'isAuthenticated',
+    ]),
   },
 
   methods: {
-    ...mapGetters({
-      clear: 'auth/clear',
-    }),
+    ...mapActions('auth', [
+      'clear',
+    ]),
   },
 
   mounted () {
