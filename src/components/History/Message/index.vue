@@ -79,7 +79,6 @@
             :attachment="message.attachment"
             :inline="message.type === 'inlineImage'" />
           <contents
-            v-else
             class="message-content"
             :id="message.ID"
             :chunks="getChunks(message.message)" />
