@@ -205,4 +205,8 @@ export default {
     padding:0;
     margin:0;
   }
+  .discussion > *
+  {
+    min-height:10px;
+  }
 </style>
