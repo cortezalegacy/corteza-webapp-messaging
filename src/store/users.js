@@ -96,12 +96,6 @@ const mutations = {
   // note: if you pass undefined channel it purges all user's activity (presence)
   //       if you pass undefined kind, it purges all user's channel activity
   inactive (state, { userID, channelID, kind }) {
-    console.log(
-      userID, channelID, kind,
-      state.activity,
-      state.activity.filter((a) =>
-        !(a.userID === userID && a.channelID === channelID && a.kind === kind))
-    )
     state.activity = [...state.activity.filter((a) =>
       !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
   },
