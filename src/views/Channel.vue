@@ -14,6 +14,7 @@
       :channel="channel"></channel-header>
 
     <messages
+      class="messages"
       ref="messages"
       :messages="messages"
       :currentUser="currentUser"
@@ -102,6 +103,7 @@ export default {
   methods: {
     ...mapActions({
       clearHistory: 'history/clear',
+      setCurrentChannel: 'channels/setCurrent',
       incChannelUnreadCount: 'unread/incChannel',
       setChannelUnreadCount: 'unread/setChannel',
       ignoreChannelUnreadCount: 'unread/ignoreChannel',
@@ -112,6 +114,8 @@ export default {
       if (!channel) return
 
       this.channel = channel
+
+      this.setCurrentChannel(this.channel)
 
       this.previousFetchFirstMessageID = null
 
@@ -275,7 +279,6 @@ export default {
   .messages
   {
     top:52px;
-    bottom:52px;
   }
 
   @media (min-width: $wideminwidth)

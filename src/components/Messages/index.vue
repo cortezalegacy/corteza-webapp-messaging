@@ -122,6 +122,7 @@ export default {
 ul {
   padding:0;
   margin:0;
+  height: calc(100vh - 140px);
 
   &.scrollable {
     position:relative;

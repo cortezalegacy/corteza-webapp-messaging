@@ -162,16 +162,17 @@ export default {
   z-index: 9999;
 }
 
-/*.thread*/
-/*{*/
-  /*overflow: hidden;*/
-  /*margin-top:0;*/
-  /*padding-top:0;*/
-/*}*/
+.thread
+{
+  overflow: hidden;
+  margin-top:0;
+  padding-top:0;
+  height: 100vh;
+}
 
 .thread-title {
   position: absolute;
-  min-height:61px;
+  min-height:67px;
   padding:15px;
   background-color: $appcream;
   border-bottom:dotted 1px rgba($appgrey,0.5);
@@ -198,11 +199,13 @@ export default {
 }
 
 .messages {
-  top: 7px;
-  bottom: 19px;
+  position: absolute;
+  top: 72px;
+  height: calc(100vh - 147px);
 }
 .channel-input
 {
+  position: absolute;
   border-width: 5px 15px 5px 15px;
   display:table;
   bottom:0;
