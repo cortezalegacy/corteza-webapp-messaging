@@ -84,13 +84,11 @@ export default {
 
     onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 500),
     onScroll ({ target }) {
-      if (!target || this.scrollable) return
+      if (!target || !this.scrollable) return
 
       const atBottom = target.scrollHeight - target.scrollTop - target.clientHeight <= 0
       const atTop = target ? target.scrollTop <= 0 : true
       // const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
-
-      console.debug('onScroll', { atBottom, atTop })
 
       this.allowAutoScroll = atBottom
 
