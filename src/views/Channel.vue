@@ -176,10 +176,6 @@ export default {
 
     onInputSubmit ({ value, meta }) {
       // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
-      if (!this.channelID) {
-        return
-      }
-
       if (value.length > 1 && value[0] === '/') {
         if (!this.execLocal(value)) {
           const i = value.indexOf(' ')
@@ -198,6 +194,7 @@ export default {
       } else if (meta && meta.ID) {
         this.$ws.updateMessage(meta.ID, value)
       } else if (value) {
+        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
         this.$ws.sendMessage(this.channelID, value)
       }
     },
