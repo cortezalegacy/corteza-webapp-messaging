@@ -61,6 +61,20 @@
   a
   {
     color:$defaulttextcolor;
+    text-decoration:none;
+  }
+  .icon
+  {
+    display:inline-block;
+    color:rgba($defaulttextcolor, 0.75);
+    font-size:18px;
+    line-height: 14px;
+    vertical-align: sub;
+  }
+  .icon-left
+  {
+    margin-left:-0.5em;
+    margin-right:0.5em;
   }
 }
 
@@ -73,7 +87,7 @@
 {
   display:block;
   max-width: 100%;
-  padding:0.5em 7px 0.5em 10%;
+  padding:0.35em 7px 0.5em 10%;
   line-height:30px;
 }
 
@@ -82,7 +96,7 @@
   max-width: 100%;
   text-overflow: ellipsis;
   overflow:hidden;
-  padding:0.5em 10%;
+  padding:0.25em 10%;
   white-space: nowrap;
 }
 

@@ -102,7 +102,7 @@ export default {
 .unread
 {
   position:absolute;
-  top:7px;
+  top:3px;
   right:5px;
   background: #1397CB;
   color: white;

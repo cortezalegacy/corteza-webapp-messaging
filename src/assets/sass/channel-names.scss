@@ -35,3 +35,12 @@
     color:$appyellow;
   }
 }
+
+.private .channel-name
+{
+  &:before
+  {
+    content: "\e98f";
+    font-family: '#{$icomoon-font-family}';
+  }
+}

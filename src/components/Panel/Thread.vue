@@ -172,7 +172,7 @@ export default {
 
 .thread-title {
   position: absolute;
-  min-height:67px;
+  min-height:61px;
   padding:15px;
   background-color: $appcream;
   border-bottom:dotted 1px rgba($appgrey,0.5);
