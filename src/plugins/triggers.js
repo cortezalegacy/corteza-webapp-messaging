@@ -16,9 +16,14 @@ const TRIGGERS = {
   '#': { type: 'channel' },
 }
 
-function makeIdParserRegex () {
+function makeIdParserRegex (flags = '') {
+  /**
+   * m[0] - entire match
+   * m[1] - trigger
+   * m[2] - ID
+   */
   let r = Object.keys(TRIGGERS).join('')
-  return new RegExp(`[<]([${r}])(.*)[>]`)
+  return new RegExp(`<([${r}])(\\d+)>`, flags)
 }
 
 export default {
@@ -44,7 +49,7 @@ export default {
       // Checks trigger's constraints
       checkTriggerConstraints (chunk = '', msg = {}) {
         let trigger = this.isTriggered(chunk)
-        if (!trigger) return true
+        if (!trigger) return false
         let { constraints } = trigger
         if (!constraints) return true
 
@@ -53,100 +58,22 @@ export default {
         return true
       },
 
-      getChunks (text) {
-        let rows = text.trim().split(/[\n]/)
-        let rtr = []
-        for (let r of rows) {
-          rtr = [...rtr, this.getLineChunks(r.trim().split(/[ ]/))]
-        }
-        return rtr
-      },
-
-      // Prepares chunks for history
-      getLineChunks (chunks) {
-        let regex = makeIdParserRegex()
-        let buffer = []
-        let rtr = []
-
-        for (let chunk of chunks) {
-          /**
-           * m[0] - entire match
-           * m[1] - trigger
-           * m[2] - ID
-           */
-          let m = regex.exec(chunk)
-
-          // Is triggered...
-          if (m) {
-            let parsed = buffer.join(' ')
-            rtr.push({ chunk: parsed, meta: {}, props: {}, triggered: false })
-            buffer = []
-
-            let { type } = this.isTriggered(m[1])
-            parsed = type === 'user'
-              ? (this.userByID(m[2]) || {}).username
-              : (this.channelByID(m[2]) || {}).name
-
-            let paramName = type === 'user'
-              ? 'userId'
-              : 'channelID'
-
-            let params = {}
-            params[paramName] = m[2]
-
-            parsed = {
-              chunk: `<mark class="${type}-mark"><b>${m[1]}</b>${parsed}</mark>`,
-              meta: { tag: 'router-link' },
-              props: { to: { name: type, params } },
-              triggered: true,
-            }
-
-            rtr.push(parsed)
-          } else {
-            buffer.push(chunk)
-          }
-        }
-
-        if (buffer.length) {
-          rtr.push({ chunk: buffer.join(' '), meta: {}, props: {}, triggered: false })
-        }
-        return rtr
-      },
-
-      // # Handles strings from API
-
-      // Gives nodes per line
-      getNodes (message = 'undefined') {
-        let wrapper = document.createElement('div')
-        for (let m of message.split('\n')) {
-          wrapper.append(this.getLineNodes(m))
-        }
-
-        return wrapper.innerHTML
-      },
-
-      // Processes message to DOM node structure
-      getLineNodes (message) {
+      /**
+       * Goes through the given text with the given regex, and handles nodes based
+       * on callback functions
+       * @param {RegExp} regex
+       * @param {String} message
+       * @param {function} regular
+       * @param {function} triggered
+       * @param {*} wrapper Wrapper to contain processed data. Must be a ref
+       */
+      traverseMessage (regex, message, regularChunkHandler, triggeredChunkHandler, wrapper) {
         let lists = { '@': this.userByID, '#': this.channelByID }
-
-        /**
-         * m[0] - entire match
-         * m[1] - trigger
-         * m[2] - ID
-         */
-        let regex = /<([#@])(\d+)>/g
-
-        let addNormalChunk = (message, wrapper) => {
-          let normalNode = document.createElement('span')
-          normalNode.appendChild(document.createTextNode(message))
-          wrapper.appendChild(normalNode)
-        }
 
         let match
         let lastProcessed = 0
-        let wrapper = document.createElement('p')
         let unprocessedMsg = message
-        while ((match = regex.exec(message)) !== null) {
+        while ((match = regex.exec(message))) {
           // Get index of matched chunk
           let [ entire, trigger, id ] = match
           let triggeredIndex = unprocessedMsg.indexOf(entire)
@@ -155,19 +82,15 @@ export default {
           let normalChunk = unprocessedMsg.substring(0, triggeredIndex)
           let triggeredChunk = unprocessedMsg.substring(triggeredIndex, triggeredIndex + entire.length)
 
-          // Create normal node
-          addNormalChunk(normalChunk, wrapper)
+          // Handle regular chunk
+          if (normalChunk) regularChunkHandler(normalChunk, wrapper)
 
-          // Get node's text...
+          // Get triggered node's text
           let object = (lists[trigger](id)) || {}
           let triggeredText = object.name || object.username
 
-          // Create a triggered node
-          let triggeredNode = document.createElement('span')
-          if (this.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
-            this.addNodeTrigger(triggeredNode, trigger, { id })
-          }
-          wrapper.appendChild(triggeredNode)
+          // Handle triggered chunk
+          triggeredChunkHandler(wrapper, trigger, triggeredText, { id })
 
           // Update lastProcessed index -- don't edit message it self because, regex is using it
           lastProcessed = triggeredIndex + triggeredChunk.length
@@ -175,9 +98,109 @@ export default {
         }
 
         // Insert last normal chunk
-
         if (unprocessedMsg) {
-          addNormalChunk(unprocessedMsg, wrapper)
+          regularChunkHandler(unprocessedMsg, wrapper)
+        }
+      },
+
+      getChunks (text) {
+        let rows = text.trim().split(/[\n]/)
+        let rtr = []
+        if (!text.trim()) return []
+        for (let r of rows) {
+          rtr = [...rtr, this.getLineChunks(r)]
+        }
+        return rtr
+      },
+
+      // Prepares chunks for history
+      getLineChunks (message) {
+        // Regex
+        let regex = makeIdParserRegex('g')
+
+        // Triggered handler
+        let triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => {
+          let { type } = this.isTriggered(triggeredText)
+
+          let paramName = type === 'user'
+            ? 'userId'
+            : 'channelID'
+
+          let params = {}
+          params[paramName] = meta.id
+
+          triggeredText = {
+            chunk: `<mark><b>${trigger}</b>${triggeredText}</mark>`,
+            meta: { tag: 'router-link' },
+            props: { to: { name: type, params } },
+            triggered: true,
+          }
+
+          wrapper.push(triggeredText)
+        }
+
+        // Regular handler
+        let regularChunkHandler = (message, wrapper) => {
+          wrapper.push({ chunk: message, meta: {}, props: {}, triggered: false })
+        }
+
+        // Wrapper
+        let wrapper = []
+
+        // Traverse
+        if (message) {
+          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+        } else {
+          regularChunkHandler('<br>', wrapper)
+        }
+        return wrapper
+      },
+
+
+      // # Handles strings from API
+
+      // Gives nodes per line
+      getNodes (message) {
+        let wrapper = document.createElement('div')
+
+        if (!message) return wrapper
+
+        for (let m of message.split('\n')) {
+          wrapper.appendChild(this.getLineNodes(m))
+        }
+
+        return wrapper
+      },
+
+      // Processes message to DOM node structure
+      getLineNodes (message) {
+        // Regex
+        let regex = makeIdParserRegex('g')
+
+        // Triggered handler
+        let triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => {
+          // Create a triggered node
+          let triggeredNode = document.createElement('span')
+          if (this.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
+            this.addNodeTrigger(triggeredNode, trigger, meta)
+          }
+          wrapper.appendChild(triggeredNode)
+        }
+
+        // Regular handler
+        let regularChunkHandler = (message, wrapper) => {
+          let normalNode = document.createElement('span')
+          normalNode.appendChild(document.createTextNode(message))
+          wrapper.appendChild(normalNode)
+        }
+
+        let wrapper = document.createElement('p')
+        if (message) {
+          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+        } else {
+          let buffer = document.createElement('span')
+          buffer.appendChild(document.createElement('br'))
+          wrapper.appendChild(buffer)
         }
 
         return wrapper

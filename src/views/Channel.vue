@@ -70,6 +70,10 @@ export default {
     messages () {
       return this.channelHistory(this.channel.ID)
     },
+
+    currentChannel () {
+      return this.channelByID(this.channelID)
+    },
   },
 
   data () {
@@ -81,13 +85,19 @@ export default {
   },
 
   watch: {
-    'channelID' () {
-      this.changeChannel(this.channelByID(this.channelID))
+    currentChannel: {
+      handler: function () {
+        this.changeChannel(this.currentChannel)
+      },
+      deep: true,
     },
   },
 
   created () {
-    this.changeChannel(this.channelByID(this.channelID))
+    let c = this.currentChannel
+    if (!c) return
+
+    this.changeChannel(c)
   },
 
   mounted () {

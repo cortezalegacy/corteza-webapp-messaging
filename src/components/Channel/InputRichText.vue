@@ -1,16 +1,13 @@
 <template>
   <div class="input-wrapper">
     <div
+      class="richInput"
       @keydown="handleKeyDown"
       @keyup="handleKeyUp"
       @focus="updateFocus(true)"
       @blur="updateFocus(false)"
-
-      @focusout="fOut"
-      @focusin="fIn"
-
-      id="richInput"
-      ref="richInput"
+      :id="inputName"
+      :ref="inputName"
       data-nodetype="root"
       contenteditable>
       <p>
@@ -30,8 +27,6 @@
 </template>
 
 <script>
-import { Selection } from '@/libs/selection'
-import { mapGetters } from 'vuex'
 
 const NAVIGATION_X = {
   37: 'left',
@@ -52,7 +47,15 @@ const IGNORED_KEYCODES = Object.assign({}, NAVIGATION_KEYS, {
 })
 const SUBMIT_KEYCODES = { 13: true }
 
-const INITIAL_INPUT_DOM = '<p><span><br/></span></p>'
+/**
+ * Takes all nodes right of the right node & prepands them to the target node
+ * in reverse order
+ */
+function recursiveNodeInsert (node, targetNode) {
+  let { nextSibling } = node
+  if (nextSibling) recursiveNodeInsert(nextSibling, targetNode)
+  targetNode.prepend(node)
+}
 
 export default {
   data () {
@@ -62,35 +65,29 @@ export default {
       focused: false,
       // When user selects from trigger suggestions - ignore submit
       ignoreNextSubmit: false,
+      // No longer required - will keep for easier unit testing
       lastNode: null,
-      isEditing: false,
     }
   },
 
   methods: {
-    editingMessage (editing = true) {
-      this.isEditing = editing
-    },
-
-    fOut () {
-      this.$set(this, 'lastNode', this.getCurentNode())
-    },
-
-    fIn () {
-      this.$set(this, 'lastNode', null)
-    },
-
     updateFocus (focused) {
       this.focused = focused
     },
 
     textAreaRef () {
-      return this.$refs.richInput
+      return this.$refs[this.inputName]
     },
 
     resetInput () {
-      // Reset input to initial state
-      this.textAreaRef().innerHTML = INITIAL_INPUT_DOM
+      // Reset node structure
+      let { wrapper, blankNode } = this.getInitialDom()
+      let root = this.textAreaRef()
+      root.innerHTML = ''
+      root.appendChild(wrapper)
+      this.pushToStart(blankNode)
+
+      // Reset input & emit change
       this.$set(this, 'value', '')
       this.$emit('nodeChunkChanged', { chunk: {} })
     },
@@ -116,20 +113,45 @@ export default {
     handleLines (e) {
       if (e.which === 13 && e.shiftKey) {
         e.preventDefault()
+
+        // Current node and it's caret position
+        let node = this.getCurentNode()
+        let nodeCaretIndex = this.getCaretPositionRelative()
+        if (node.dataset.triggered) {
+          nodeCaretIndex = 0
+        }
+
+        // Split current node into 2 chunks
+        let left, right, text
+        text = node.textContent
+
+        /// / Clone chunks so they are both the same
+        left = document.createElement('span')
+        right = node.cloneNode(true)
+
+        /// / Default to <br>, so if there is no text for a node, it has an empty space
+        left.innerHTML = text.substring(0, nodeCaretIndex) || '<br>'
+        right.innerHTML = text.substring(nodeCaretIndex) || '<br>'
+
+        /// / Keep left node where it should be....
+        this.insertAfter(node, right)
+        this.insertAfter(node, left)
+        node.parentNode.removeChild(node)
+
+        // Move right chunks to new line
         let line = document.createElement('p')
-        let empty = document.createElement('span')
-        let tNode = document.createElement('br')
-        empty.appendChild(tNode)
-        line.appendChild(empty)
+        recursiveNodeInsert(right, line)
 
         // Insert new line after current line.
         let nodeWalker = this.getCurentNode()
-        while (nodeWalker.tagName !== 'P') {
+        while (nodeWalker && nodeWalker.tagName !== 'P') {
           nodeWalker = nodeWalker.parentNode
         }
-        nodeWalker.parentNode.insertBefore(line, nodeWalker.nextSibling)
 
-        this.pushToEnd(line)
+        this.insertAfter(nodeWalker, line)
+
+        // Focus the first node of new line
+        this.pushToStart(line.firstChild)
       }
     },
 
@@ -152,48 +174,43 @@ export default {
       // Pressed up key && no value is entered
       if (NAVIGATION_Y[e.which] === 'up' && !this.value.trim()) {
         this.$emit('editLastMessage', {})
-        return
+        return 'EDIT_LAST'
       }
 
       // On submit
       if (SUBMIT_KEYCODES[e.which]) {
         if (this.ignoreNextSubmit) {
           this.ignoreNextSubmit = false
-          return
+          return 'IGNORED'
         }
 
-        if (this.suggestionsOpened) return
+        if (this.suggestionsOpened) return 'SUGGESTIONS_OPENED'
 
         // Shift key allows new line
         if (!e.shiftKey) {
           this.$emit('submit', { value: this.value.trim() })
           this.resetInput()
-          return
+          return 'SUBMIT'
         }
       }
 
       // User deleted it all...
-      if (!this.textAreaRef().textContent) {
+      if (!this.textAreaRef().textContent && !SUBMIT_KEYCODES[e.which]) {
         this.resetInput()
-        return
+        return 'DELETED'
       }
 
       let isChanged = this.lastRawValue !== this.textAreaRef().textContent
       if (!IGNORED_KEYCODES[e.which] && isChanged) {
-        // Save selection state
-        let selection = new Selection(this.textAreaRef())
-        selection.saveCurrentSelection()
-
         // Process given node
-        let { chunk } = this.processText(selection)
+        let node = this.getCurentNode()
+        let nodeCaretIndex = this.getCaretPositionRelative()
 
-        // Restore selection state
-        selection.restoreSelection()
-
+        let { chunk } = this.processNodes(node, nodeCaretIndex)
         this.$emit('nodeChunkChanged', { chunk })
 
         // Pre process text for api
-        this.processTriggeredText()
+        this.processTriggeredText(this.textAreaRef())
       }
 
       this.lastRawValue = this.textAreaRef().textContent
@@ -248,14 +265,40 @@ export default {
     },
 
     // To set input value from the outside
-    setValue (value) {
+    setValue (value = '') {
+      // No value -- keep it reset
+      if (!value) {
+        this.resetInput()
+        return
+      }
+
+      // Need to clear out the input; insert new nodes; push to end of last node
+      // There will always be atleas 1 row, because there is some text available.
+      let root = this.textAreaRef()
+      root.innerHTML = ''
+      let lastNode
+
+      let newNodesWrapper = this.$triggers.getNodes(value)
+      while (newNodesWrapper.childNodes.length) {
+        let [ row ] = newNodesWrapper.childNodes
+        root.appendChild(row)
+        lastNode = row.lastChild
+      }
+
       this.value = value
-      this.$refs.richInput.innerHTML = this.$triggers.getNodes(value) || INITIAL_INPUT_DOM
-      this.pushToEnd(this.textAreaRef())
+      this.pushToEnd(lastNode)
     },
 
     // Ref: https://stackoverflow.com/a/3866442
     pushToEnd (el) {
+      this.pushCaret(el, false)
+    },
+
+    pushToStart (el) {
+      this.pushCaret(el, true)
+    },
+
+    pushCaret (el, start = false) {
       let range, selection
       // Firefox, Chrome, Opera, Safari, IE 9+
       if (document.createRange) {
@@ -264,7 +307,7 @@ export default {
         // Select the entire contents of the element with the range
         range.selectNodeContents(el)
         // collapse the range to the end point. false means collapse to end rather than the start
-        range.collapse(false)
+        range.collapse(start)
         // get the selection object (allows you to change selection)
         selection = window.getSelection()
         // remove any selections already made
@@ -278,24 +321,48 @@ export default {
         // Select the entire contents of the element with the range
         range.moveToElementText(el)
         // collapse the range to the end point. false means collapse to end rather than the start
-        range.collapse(false)
+        range.collapse(start)
         // Select the range (make it the visible selection
         range.select()
       }
     },
 
+    extractSuggestion (suggestion = {}) {
+      let { prefix, command: commandObj } = suggestion
+      let { meta = {}, command } = commandObj || {}
+
+      return { prefix, meta, command }
+    },
+
     // Parent callable - creates and inserts triggered node
     insertTriggeredNode (suggestion) {
+      if (!suggestion) return false
+
+      let currentNode = this.getCurentNode()
+
+      // Prepare triggered node...
       let node = document.createElement('span')
-      let { prefix, command: { command } } = suggestion
-      if (this.$triggers.prepareTriggeredNode(node, prefix, command).trigger) {
+      let { prefix, command } = this.extractSuggestion(suggestion)
+      if
+      (this.$triggers.prepareTriggeredNode(node, prefix, command).trigger) {
         this.addNodeTrigger(node, suggestion)
       }
+      this.insertBefore(currentNode, node)
 
-      // Insert new node before this node; remove this node afterwords
-      this.getCurentNode().insertAdjacentHTML('beforebegin', node.outerHTML)
-      this.getCurentNode().insertAdjacentHTML('beforebegin', '<span> </span>')
-      this.getCurentNode().parentNode.removeChild(this.getCurentNode())
+      // If needed, create a new blank node
+      let { nextSibling } = currentNode
+      let blankNode
+      if (!nextSibling) {
+        blankNode = document.createElement('span')
+        blankNode.appendChild(document.createTextNode(' '))
+        this.insertBefore(currentNode, blankNode)
+        this.pushToEnd(blankNode)
+      } else {
+        this.pushToStart(nextSibling)
+      }
+
+      currentNode.parentNode.removeChild(currentNode)
+
       return true
     },
 
@@ -306,12 +373,23 @@ export default {
     },
 
     addNodeTrigger (node, suggestion) {
-      let { prefix, command: { meta = {} } } = suggestion
+      if (!suggestion) return false
+
+      let { prefix, meta } = this.extractSuggestion(suggestion)
       this.$triggers.addNodeTrigger(node, prefix, meta)
     },
 
-    removeNodeTrigger (node) {
-      this.$triggers.removeNodeTrigger(node)
+    insertAfter (ref, node) {
+      ref.parentNode.insertBefore(node, ref.nextSibling)
+    },
+
+    insertBefore (ref, node) {
+      ref.parentNode.insertBefore(node, ref)
+    },
+
+    // Gives node's text node
+    getTextNode (node) {
+      return Array.from(node.childNodes).find(n => n.nodeType === Node.TEXT_NODE)
     },
 
     /**
@@ -320,22 +398,50 @@ export default {
      * special triggered node. With this approach we are able to process current chunk
      * relative to given node.
      */
-    processText (selection) {
+    processNodes (node, nodeCaretIndex) {
       // Get current node
-      let node = this.getCurentNode()
-      let nodeCaretIndex = this.getCaretPositionRelative()
       let msg = node.textContent
-      if (nodeCaretIndex < 0 || !msg) return
+
+      // If node has no content it should be deleted -- in case if browser does not
+      // do it by it's self...
+      if (!msg) {
+        let tmpNode, toStart
+
+        // If no previous sibling available, use next sibling
+        tmpNode = node.previousSibling
+        toStart = false
+        if (!tmpNode) {
+          tmpNode = node.nextSibling
+          toStart = true
+        }
+
+        // If next sibling is not available, this is the only one
+        if (tmpNode) {
+          node.parentNode.removeChild(node)
+          // If tag is at the start
+          this.pushCaret(tmpNode, toStart)
+          node = tmpNode
+          msg = node.textContent
+        } else {
+          this.pushToStart(node)
+        }
+      }
+
+      if (nodeCaretIndex < 0 || !msg) return false
 
       let chunk = this.getCurentChunk(msg, nodeCaretIndex)
       let trigger = this.getInvokingTrigger(chunk)
 
       // Previous chunk is triggered; folowed by blank & just one suggestion -- make a new element
       if (node.dataset.triggered && !this.allowSpace && node.textContent.slice(-1) === ' ') {
-        node.insertAdjacentHTML('afterend', `<span> </span>`)
+        // New blank node with a space -- add to end and set caret to end of node
+        let blankNode = document.createElement('span')
+        blankNode.appendChild(document.createTextNode(' '))
+        this.insertAfter(node, blankNode)
 
-        // Curent node is still focused, next node is focused after cursor adjustment
+        // Trim triggered node's text
         node.innerHTML = node.innerHTML.trim()
+        this.pushToEnd(blankNode)
         return { chunk }
       }
 
@@ -343,9 +449,29 @@ export default {
       // If this node is not triggered and next one is neither, join them together
       let nextNode = node.nextElementSibling || undefined
       if (nextNode && !node.dataset.triggered && (nextNode && !nextNode.dataset.triggered)) {
-        let concat = node.innerHTML + nextNode.innerHTML
-        let newNode = `<span>${concat}</span>`
-        node.outerHTML = newNode
+        // Will have to update caret's position - place it to end of previous text node
+        let range = document.createRange()
+        let nodeCaretIndex = node.textContent.length
+
+        // Create a concated content
+        let concat = node.textContent + nextNode.textContent
+        node.innerHTML = concat
+
+        /**
+         * Update caret to new text node's position
+         *  - set a start selection on new text node, based on prev. text node
+         *  - collapse to that selection
+         *  - make selection visible
+         */
+        let textNode = this.getTextNode(node)
+        range.setStart(textNode, nodeCaretIndex)
+        range.collapse(true)
+
+        let selection = window.getSelection()
+        selection.removeAllRanges()
+        selection.addRange(range)
+
+        // Remove unneded next sibling node
         nextNode.parentNode.removeChild(nextNode)
       }
 
@@ -359,7 +485,11 @@ export default {
           if (leftChunk) node.insertAdjacentHTML('beforebegin', `<span>${leftChunk}</span>`)
           if (rightChunk) node.insertAdjacentHTML('afterend', `<span>${rightChunk}</span>`)
           if (triggeredChunk) {
-            node.outerHTML = `<span class="triggered" data-triggered="true" data-invalid="true">${triggeredChunk}</span>`
+            node.innerHTML = triggeredChunk
+            node.dataset.triggered = true
+            node.dataset.invalid = true
+            node.classList.add('triggered')
+            this.pushToEnd(node)
           }
         }
       }
@@ -394,9 +524,9 @@ export default {
       return -1
     },
 
-    processTriggeredText () {
+    processTriggeredText (inptRef) {
       let rtr = ''
-      for (let r of this.textAreaRef().children) {
+      for (let r of inptRef.children) {
         for (let c of r.children) {
           let data = c.dataset
           if (data.triggered && !data.invalid) {
@@ -412,15 +542,26 @@ export default {
       this.$set(this, 'value', rtr)
       this.$emit('msgUpdate', { msg: this.value })
     },
+
+    // Treat it as an object factory
+    getInitialDom () {
+      let blankNode = document.createElement('span')
+      blankNode.appendChild(document.createElement('br'))
+
+      let wrapper = document.createElement('p')
+      wrapper.appendChild(blankNode)
+      return { wrapper, blankNode }
+    },
   },
 
   computed: {
-    ...mapGetters({
-      getSuggestions: 'suggestions/getSuggestions',
-      suggestionsOpened: 'suggestions/isOpened',
-      channelList: 'channels/list',
-      userList: 'users/list',
-    }),
+    getSuggestions () {
+      return this.tsMeta.suggestions || []
+    },
+
+    suggestionsOpened () {
+      return !!this.tsMeta.opened
+    },
 
     placeholderShown () {
       return !this.focused && !this.value
@@ -437,13 +578,12 @@ export default {
       if (!spaces) return false
 
       // Check matching
-      let trigger = this.getSuggestions[0]
+      let [ trigger ] = this.getSuggestions
       trigger = trigger.command.command.trim().toLowerCase()
       let entered = this.getCurentNode().textContent.toLowerCase().trim().substring(1)
 
-      // If entered value is substring of trigger & entered !== trigger
-      if (trigger.indexOf(entered) > -1 && trigger !== entered) return true
-      return false
+      // If entered is equal to suggestion don't allow space, so the param finishes
+      return trigger !== entered
     },
   },
 
@@ -458,10 +598,10 @@ export default {
         if (node.dataset.triggered && this.isTriggerValid(suggestions)) {
           this.addNodeTrigger(node, suggestions[0])
         } else if (node.dataset.triggered) {
-          this.removeNodeTrigger(node)
+          this.$triggers.removeNodeTrigger(node)
         }
 
-        this.processTriggeredText()
+        this.processTriggeredText(this.textAreaRef())
       },
       deep: true,
     },
@@ -472,6 +612,16 @@ export default {
       type: String,
       required: false,
       default: '<strong>Write</strong> a Message',
+    },
+    tsMeta: {
+      type: Object,
+      required: false,
+      default: () => { return {} },
+    },
+    inputName: {
+      type: String,
+      required: true,
+      default: 'richInput',
     },
   },
 }
@@ -504,14 +654,15 @@ export default {
   display:inline-block;
   line-height:40px;
 }
-#richInput {
+.richInput {
+  pointer-events: none;
   -moz-appearance: textfield-multiline;
   -webkit-appearance: textarea;
   overflow: auto;
   white-space: pre-wrap;
   border:none;
 }
-#richInput:focus {
+.richInput:focus {
   border: none;
   outline: none!important;
 }
@@ -526,20 +677,21 @@ export default {
 
 <style>
 
-#richInput span {
+.richInput span {
   /*margin-right: 5px;*/
   margin: 0;
 }
 
-#richInput p {
+.richInput p {
   margin: 0;
+  pointer-events: all;
 }
 
-#richInput span.triggered {
+.richInput span.triggered {
   background-color: rgba(255, 68, 0, 0.336);
 }
 
-#richInput span.triggered.valid {
+.richInput span.triggered.valid {
   background-color: rgba(68, 255, 100, 0.336);
 }
 

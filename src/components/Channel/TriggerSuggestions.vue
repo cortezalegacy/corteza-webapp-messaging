@@ -3,7 +3,8 @@
     v-if="pannelOpened"
     ref="triggerSuggestions"
     class="suggestions-pannel"
-    @keyup.enter="selectFocused">
+    @keyup.enter="selectFocused"
+    @mousedown="preventFocusChange">
 
     <div class="header">
       header
@@ -34,7 +35,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -54,10 +55,14 @@ export default {
   name: 'sugestions-pannel',
 
   methods: {
-    ...mapActions({
-      updateList: 'suggestions/updateList',
-      setState: 'suggestions/setState',
-    }),
+    preventFocusChange (e) {
+      e.stopImmediatePropagation()
+      e.preventDefault()
+    },
+
+    updateTSMeta (meta) {
+      this.$emit('updateMeta', { meta })
+    },
 
     selectFocused () {
       this.selectSuggestion(this.getSuggestions[this.curentSelected])
@@ -182,7 +187,7 @@ export default {
   watch: {
     pannelOpened: {
       handler: function (opened) {
-        this.setState(opened)
+        this.updateTSMeta({ opened })
       },
     },
 
@@ -202,7 +207,7 @@ export default {
             prefix: this.getInvokingTrigger,
           })
         }
-        this.updateList(processed)
+        this.updateTSMeta({ suggestions: processed })
       },
       deep: true,
     },

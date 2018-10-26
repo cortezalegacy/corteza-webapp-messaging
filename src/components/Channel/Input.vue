@@ -3,6 +3,7 @@
     <trigger-suggestions
       ref="triggerSuggestions"
       @selectSuggestion="selectSuggestion"
+      @updateMeta="updateTSMeta"
       :msg="getCurrentMsgChunk" />
 
     <div class="wrap">
@@ -11,6 +12,8 @@
         @nodeChunkChanged="nodeChunkChanged"
         @navigateSuggestions="navigateSuggestions"
         @selectFocused="selectFocused"
+        :tsMeta="tsMeta"
+        inputName="richInput"
         class="message-input"
         ref="richTextInput" />
 
@@ -31,6 +34,7 @@ export default {
       cursorIndex: -1,
       currentChunk: {},
       submitMeta: {},
+      tsMeta: {},
     }
   },
 
@@ -42,6 +46,13 @@ export default {
   },
 
   methods: {
+    updateTSMeta (e) {
+      let { meta } = e
+      for (let [key, value] of Object.entries(meta)) {
+        this.$set(this.tsMeta, key, value)
+      }
+    },
+
     nodeChunkChanged (e) {
       this.$set(this, 'currentChunk', e.chunk)
     },

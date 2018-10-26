@@ -13,14 +13,6 @@ const getters = {
 
 // actions
 const actions = {
-  updateList ({ commit }, suggestions) {
-    commit('setSuggestions', suggestions)
-  },
-
-  setState ({ commit }, state) {
-    commit('setState', state)
-  },
-
   setCommands ({ commit }, commands) {
     commit('setCommands', commands)
   },
@@ -28,14 +20,6 @@ const actions = {
 
 // mutations
 const mutations = {
-  setSuggestions (state, suggestions) {
-    state.suggestions = suggestions
-  },
-
-  setState (state, suggestionsOpened) {
-    state.suggestionsOpened = suggestionsOpened
-  },
-
   setCommands (state, commands) {
     state.slashCommands = commands
   },
