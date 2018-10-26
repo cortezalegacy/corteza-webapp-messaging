@@ -183,6 +183,7 @@ export default {
     left:0;
     width:320px;
     background-color:$appwhite;
+    z-index:2;
   }
 }
 

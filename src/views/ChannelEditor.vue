@@ -4,13 +4,15 @@
       <div class="modal-content">
         <div class="modal-header">
           <a @click="$router.back()" class="close"><i class="icon-close"></i></a>
-          <h1 v-if="ch.type === 'group'">Group editor</h1>
-          <h1 v-else>Channel editor</h1>
+          <h1 class="modal-title" v-if="ch.type === 'group'">Group editor</h1>
+          <h1 class="modal-title" v-else>Channel editor</h1>
         </div>
-        <form class="editor" @submit.prevent="submit">
-          <div v-if="ch.type !== 'group'">
-            <label>Channel name</label>
+
+        <form class="editor big-form" @submit.prevent="submit">
+          <div v-if="ch.type !== 'group'" class="input-wrap">
+            <label class="label-block">Channel name</label>
             <input
+              class="input-txt input-block"
               name="name"
               v-model.trim="ch.name"
               required
@@ -18,20 +20,28 @@
               placeholder="Make it short, make it sweet">
           </div>
 
-          <div v-if="ch.type !== 'group'">
-            <label>Topic</label>
+          <div v-if="ch.type !== 'group'" class="input-wrap">
+            <label class="label-block">Topic</label>
             <input
+              class="input-txt input-block"
               name="topic"
               v-model.trim="ch.topic"
               autocomplete="channel-topic"
               placeholder="Things we talk about">
           </div>
-          <div v-if="ch.type !== 'group'">
-            <label>
-              <input type="checkbox" v-model="ch.type" true-value="private" false-value="public">
+
+          <div v-if="ch.type !== 'group'" class="input-wrap">
+            <label class="label-with-chk-in block">
+              <input
+                class="input-chk"
+                type="checkbox"
+                v-model="ch.type"
+                true-value="private"
+                false-value="public">
               Make this channel private
             </label>
           </div>
+
           <ul v-if="!ch.ID">
             <li v-for="u in users" :key="u.ID">
               <label>
@@ -41,12 +51,14 @@
           </ul>
 
           <div class="modal-footer">
-            <button class="btn btn-success" v-if="ch.ID">Update</button>
-            <button class="btn btn-success" v-else>Create</button>
-            <button class="btn btn-danger"  v-if="ch.ID" @click.prevent="deleteChannel">Delete</button>
-            <button
-              class="btn btn-info"
-              @click.prevent="$router.back()">Cancel</button>
+            <div class="actions input-wrap">
+              <button class="btn btn-success" v-if="ch.ID">Update</button>
+              <button class="btn btn-success" v-else>Create</button>
+              <button class="btn btn-danger"  v-if="ch.ID" @click.prevent="deleteChannel">Delete</button>
+              <button
+                class="btn btn-info"
+                @click.prevent="$router.back()">Cancel</button>
+            </div>
           </div>
         </form>
       </div>

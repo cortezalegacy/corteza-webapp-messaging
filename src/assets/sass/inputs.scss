@@ -1,20 +1,88 @@
 @import './_0.declare';
 
 input,
+.input-txt,
 input[type=text],
 {
   outline:none;
   padding:0.25em;
   margin:-0.2e 0.1em;
   border:solid 1px $defaultlinecolor;
+  border-radius:3px;
+
+  &.input-block
+  {
+    display:block;
+    width:100%;
+  }
+
   &:focus
   {
-    background-color:rgba($defaulttextcolor,0.1);
     color:$defaulttextcolor;
+  }
+
+  &::-webkit-input-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:-moz-placeholder {
+    color: $gris-bleu;
+  }
+
+  &::-moz-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:-ms-input-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:focus, &.focus {
+      border-color: $bleu;
+      outline: none;
+  }
+
+  &:disabled {
+      opacity: 0.5;
   }
 }
 
 input[type=text].no-border
 {
   border:none;
+}
+
+label,
+.label-input,
+{
+  &.label-block
+  {
+    padding-top:0.5em;
+    display:block;
+    width:100%;
+    color:$appgrey;
+    text-transform: uppercase;
+    padding-bottom:0;
+    margin-bottom:0;
+  }
+}
+
+.big-form
+{
+  font-size:16px;
+  input, .input-txt
+  {
+    line-height:40px;
+    font-size:16px;
+    padding:0 0.5em;
+  }
+  label,
+  .label-input,
+  {
+  }
+}
+
+.input-wrap
+{
+  margin:0.5em 0;
 }
