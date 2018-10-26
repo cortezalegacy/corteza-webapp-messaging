@@ -51,7 +51,7 @@ export default {
 
   computed: {
     isEmbedded () {
-      if (this.chunks.length > 1) return false
+      if (this.chunks.length !== 1) return false
       let [ c = {} ] = this.chunks[0]
       c = c.chunk
 
