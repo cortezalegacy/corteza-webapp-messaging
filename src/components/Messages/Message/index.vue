@@ -35,9 +35,9 @@
               @click="$emit('openThread', { message })"
             ></i>
             <i v-if="!contextMenu"
-              class="action icon-plus" @click="contextMenu=!contextMenu"></i>
+              class="action icon-plus" @click="onContextMenuOpen()"></i>
             <i v-else
-              class="action icon-close" @click="contextMenu=!contextMenu"></i>
+              class="action icon-close" @click="contextMenu=false"></i>
           </div>
           <div class="context-menu" v-if="contextMenu">
             <ul class="context-menu-list">
@@ -53,22 +53,12 @@
                   <i class="icon icon-edit"></i>
                   <span>edit message</span>
               </li>
-              <!-- no use having the action if you can't do it -->
-              <!-- li v-else
-                  class="disabled">
-                  edit message
-              </li -->
               <li v-if="message.canDelete(currentUser)"
                   class="extra-action"
                   @click="$emit('deleteMessage', { message })">
                   <i class="icon icon-trash"></i>
                   <span>delete message</span>
               </li>
-              <!-- no use having the action if you can't do it -->
-              <!-- li v-else
-                  class="disabled">
-                  delete message
-              </li -->
             </ul>
           </div>
         </section>
@@ -160,6 +150,13 @@ export default {
 
     getChunks (text) {
       return this.$triggers.getChunks(text)
+    },
+
+    onContextMenuOpen () {
+      const evName = 'Messages/Message.contextMenuOpen'
+      this.$bus.$emit(evName)
+      this.$bus.$once(evName, () => { this.contextMenu = false })
+      this.contextMenu = true
     },
   },
 
