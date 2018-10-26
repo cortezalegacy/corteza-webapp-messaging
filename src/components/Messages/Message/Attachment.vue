@@ -8,15 +8,15 @@
                :src="prefixAttachmentUrl(attachment.previewUrl)">
         </a>
       </div>
-      <!-- @todo : added file has no size so probably error, maybe other possible errors -->
-      <span class="missing" v-else-if="!attachment.size">
-        <i>Oups...<br/>{{attachment.name}} <br />is no longer here...</i>
-      </span>
       <!-- file has size but not image -->
-      <pre v-else-if="attachment">
-        <a v-bind:href="attachment.download">Download {{attachment.name}}</a> ({{attachment.mimetype}}, size: {{ numeral(attachment.size).format('0b') }} )
+      <pre v-else-if="attachment.meta.original">
+        <a v-bind:href="attachment.downloadUrl">Download {{attachment.name}}</a> ({{attachment.meta.original.mimetype}}, size: {{ numeral(attachment.meta.original.size).format('0b') }} )
         <!--<i>@todo preview; if not available, we need to get appropriate image/icon from font-awesome (file-*)</i>-->
       </pre>
+      <!-- @todo : added file has no size so probably error, maybe other possible errors -->
+      <span class="missing" v-else>
+        <i>Oups...<br/>{{attachment.name}} <br />is no longer here...</i>
+      </span>
   </div>
 </template>
 <script>
