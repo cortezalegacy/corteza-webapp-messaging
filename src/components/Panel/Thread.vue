@@ -1,7 +1,7 @@
 <template>
   <aside
     v-if="repliesTo"
-    class="menu-layer right thread">
+    class="menu-layer right thread noborder">
     <channel-upload v-if="channel"
       :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
     <div class="thread-title">
@@ -172,10 +172,9 @@ export default {
 
 .thread-title {
   position: absolute;
-  min-height:61px;
+  min-height:60px;
   padding:15px;
-  background-color: $appcream;
-  border-bottom:dotted 1px rgba($appgrey,0.5);
+  box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
   margin-bottom:5px;
   top: 0px;
   width: 100%;
@@ -202,6 +201,7 @@ export default {
   position: absolute;
   top: 72px;
   height: calc(100vh - 147px);
+  padding-top:20px;
 }
 .channel-input
 {
@@ -209,6 +209,8 @@ export default {
   border-width: 5px 15px 5px 15px;
   display:table;
   bottom:0;
+  background-color:$appwhite;
+  border-color:$appwhite;
 }
 
 </style>

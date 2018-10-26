@@ -29,6 +29,11 @@
     border-left: solid 1px $defaultlinecolor;
   }
 
+  &.noborder
+  {
+    border:none;
+  }
+
   &.left
   {
     border-right: solid 1px $defaultlinecolor;

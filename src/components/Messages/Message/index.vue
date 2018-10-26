@@ -254,10 +254,11 @@ export default {
   background-size: auto 10px;
   min-height:12px;
   min-width:4px;
+  z-index:4;
 }
 .message-n-meta
 {
-  margin-bottom:20px;
+  margin-bottom:10px;
   position:relative;
   padding:5px 5px 5px 66px;
   position:relative;
@@ -270,7 +271,7 @@ export default {
     }
     &.attachement
     {
-      margin-bottom:20px; // because attachements are bigger than 65px;
+      margin-bottom:10px; // because attachements are bigger than 65px;
     }
     .message:before
     {
@@ -282,10 +283,13 @@ export default {
 // all margins in one place
 .message-n-meta.continued
 {
-  margin-top:-28px;
+  margin-top:-18px;
 }
 // need spacing if has info
 .message-n-meta.continued.with-infos
+{
+}
+.message-n-meta.first
 {
 }
 .message-n-meta.first + .message-n-meta.continued
@@ -458,6 +462,8 @@ export default {
   .time
   {
     display:block;
+    background-color:lighten($appgrey,30);
+    z-index:5;
   }
 }
 
@@ -468,7 +474,7 @@ export default {
   background-color:$messagebgcolor;
   word-wrap: break-word;
   border-radius:3px;
-  padding:8px;
+  padding:6px;
   min-width:180px;
   // the little triangle on the left of message
   &:before
