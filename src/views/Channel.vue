@@ -123,8 +123,6 @@ export default {
 
       // Ask for new messages
       this.$ws.getMessages({ channelID: this.channel.ID })
-
-      this.resetUnreadAfterTimeout()
     },
 
     setEditMessage (message) {
@@ -141,12 +139,12 @@ export default {
       }
     },
 
-    resetUnreadAfterTimeout () {
+    resetUnreadAfterTimeout (lastMessageID) {
       this.clearUnreadTimeout()
 
       this.resetUnreadTimeout = window.setTimeout(() => {
-        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0 })
-        this.$ws.recordChannelView(this.channel.ID, this.getLastID(this.messages))
+        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID })
+        this.$ws.recordChannelView(this.channel.ID, lastMessageID)
       }, 2000)
     },
 
@@ -223,8 +221,8 @@ export default {
       }
     },
 
-    onScrollBottom ({ lastMessageID }) {
-      this.$ws.recordChannelView(this.channel.ID, lastMessageID)
+    onScrollBottom ({ messageID }) {
+      this.resetUnreadAfterTimeout(messageID)
     },
   },
 

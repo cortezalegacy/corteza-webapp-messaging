@@ -82,13 +82,12 @@ export default {
       return this.getLastMessageByUserID(this.messages, this.currentUser.ID)
     },
 
-    onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 500),
+    onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 1500),
     onScroll ({ target }) {
       if (!target || !this.scrollable) return
 
       const atBottom = target.scrollHeight - target.scrollTop - target.clientHeight <= 0
       const atTop = target ? target.scrollTop <= 0 : true
-      // const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
 
       this.allowAutoScroll = atBottom
 
