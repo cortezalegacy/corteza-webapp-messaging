@@ -14,6 +14,7 @@ function Unread (ID, count, lastMessageID) {
 const getters = {
   channels: (state) => state.channels.filter(c => c.count > 0),
   channel: (state) => (ID) => (state.channels.find(u => u.ID === ID) || new Unread(ID)).count,
+  lastMessageInChannel: (state) => (ID) => (state.channels.find(u => u.ID === ID) || new Unread(ID)).lastMessageID,
   isChannelIgnored: (state) => (ID) => state.ignoreChannel === ID,
 }
 

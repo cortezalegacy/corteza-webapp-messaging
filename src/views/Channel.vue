@@ -20,6 +20,7 @@
       :currentUser="currentUser"
       :origin="channel"
       :scrollable="true"
+      :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
       @scrollTop="onScrollTop"
       @scrollBottom="onScrollBottom"
       v-on="$listeners" />
@@ -55,7 +56,9 @@ export default {
   computed: {
     ...mapGetters({
       channelByID: 'channels/findByID',
+
       unread: 'unread/channel',
+      lastUnreadMessageInChannel: 'unread/lastMessageInChannel',
 
       user: 'auth/user',
       currentUser: 'auth/user',
@@ -279,10 +282,6 @@ export default {
     height:100vh;
     // this does not work in some browsers
     // overflow:hidden auto;
-
-    &.unread-messages {
-      border-bottom: 5px solid red;
-    }
   }
   .messages
   {

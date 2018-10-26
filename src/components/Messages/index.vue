@@ -6,6 +6,10 @@
       :continued="isContinued(messages, index)"
       :currentUser="currentUser"
       :key="msg.ID"
+      :isUnread="lastReadMessageID <= msg.ID"
+      :isFirstUnread="lastReadMessageID == msg.ID"
+      :isFirst="index === 0"
+      :isLast="index === messages.length - 1"
       v-on="$listeners" />
     <li ref="anchor"></li>
   </ul>
@@ -32,6 +36,11 @@ export default {
     origin: { required: true },
 
     scrollable: { type: Boolean, value: true },
+
+    // This will help us mark new messages
+    lastReadMessageID: {
+      type: String,
+    },
   },
 
   data () {

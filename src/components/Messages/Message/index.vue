@@ -9,6 +9,8 @@
         'with-infos' : message.replies || message.updatedAt,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
+        'first-unread': isFirstUnread && !isFirst && !isLast,
+        'unread': isUnread,
       }"
       ref="message"
       :key="message.ID">
@@ -117,6 +119,11 @@ export default {
       type: Boolean,
       required: false,
     },
+
+    isUnread: Boolean,
+    isFirstUnread: Boolean,
+    isFirst: Boolean,
+    isLast: Boolean,
   },
 
   data () {
@@ -513,6 +520,14 @@ export default {
       font-size:12px;
     }
   }
+}
+
+.unread {
+  /*background: red;*/
+}
+
+.first-unread {
+  border-bottom: 2px solid $appred;
 }
 
 @media (min-width: $wideminwidth)
