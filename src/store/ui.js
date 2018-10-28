@@ -2,14 +2,12 @@
 const state = {
   channelPanelOpen: false,
   userPanelOpen: false,
-  hasFocus: false,
 }
 
 // getters
 const getters = {
   isChannelPanelOpen: (state) => state.channelPanelOpen,
   isUserPanelOpen: (state) => state.userPanelOpen,
-  hasFocus: (state) => state.hasFocus,
 }
 
 // actions
@@ -21,10 +19,6 @@ const actions = {
   toggleUserPanel ({ commit }, open) {
     commit('userPanel', open !== undefined ? open : !state.userPanelOpen)
   },
-
-  toggleFocus ({ commit }, hasFocus) {
-    commit('focus', hasFocus !== undefined ? hasFocus : !state.hasFocus)
-  },
 }
 
 // mutations
@@ -35,10 +29,6 @@ const mutations = {
 
   userPanel (state, isOpen) {
     state.userPanelOpen = isOpen
-  },
-
-  focus (state, hasFocus) {
-    state.hasFocus = hasFocus
   },
 }
 

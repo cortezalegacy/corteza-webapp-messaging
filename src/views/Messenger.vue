@@ -35,11 +35,11 @@ export default {
   computed: {
     ...mapGetters({
       isAuthenticated: 'auth/isAuthenticated',
-      user: 'auth/user',
+      currentUser: 'auth/user',
       currentChannel: 'channels/current',
+      findChannelByID: 'channels/findByID',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       isUserPanelOpen: 'ui/isUserPanelOpen',
-      hasFocus: 'ui/hasFocus',
     }),
   },
 
@@ -68,14 +68,29 @@ export default {
       console.error(err)
       this.$router.push({ name: 'signin' })
     })
-
-    window.onfocus = () => this.toggleFocus(true)
-    window.onblur = () => this.toggleFocus(false)
   },
 
   created () {
     window.addEventListener('resize', this.handleResize)
     this.handleResize()
+
+    this.$bus.$on('$core.newMessage', ({ message }) => {
+      const isCurrentChannel = (this.currentChannel || {}).ID === message.channelID
+      const isCurrentUser = (this.currentUser || {}).ID === (message.user || {}).ID
+
+      if (!isCurrentUser && (!isCurrentChannel || !document.hasFocus())) {
+        const body = message.message
+        const msgChannel = this.findChannelByID(message.channelID)
+
+        this.$notification.show(`New message in ${msgChannel.name} | Crust`, {
+          body: body.length > 200 ? body.substring(0, 200) + '...' : body,
+        }, {
+          onclick: () => {
+            this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
+          },
+        })
+      }
+    })
   },
 
   destroyed () {

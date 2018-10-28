@@ -58,20 +58,13 @@ export default {
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
         // Count only new mesages, no updates
         store.dispatch('unread/incChannel', msg.channelID)
+
+        eventbus.$emit('$core.newMessage', { message })
       }
       store.dispatch('history/update', [msg])
 
       // Assume activity stoped
       store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
-
-      // @fixme needs additional attention and testing
-      // if (!currentUser && (!currentChannel || !this.hasFocus)) {
-      //   // Not in our current channel
-      //   // @todo need to check if window has focus as well
-      //   this.$notification.show(`New message in ${this.ch.name} | Crust`, {
-      //     body: msg.message.length > 200 ? msg.message.substring(0, 200) + '...' : msg.message,
-      //   }, {})
-      // }
     })
 
     // This serves a sole purpose of handling callback to getMessage calls to $ws

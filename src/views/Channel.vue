@@ -233,7 +233,7 @@ export default {
     },
 
     onScrollBottom ({ messageID }) {
-      this.resetUnreadAfterTimeout(messageID)
+      if (document.hasFocus()) this.resetUnreadAfterTimeout(messageID)
     },
   },
 

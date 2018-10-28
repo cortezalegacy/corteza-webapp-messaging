@@ -7,7 +7,7 @@ const state = {
 function Unread (ID, count, lastMessageID) {
   this.ID = ID
   this.count = count || 0
-  this.lastMessageID = lastMessageID || 0
+  this.lastMessageID = lastMessageID || ''
 }
 
 // getters
