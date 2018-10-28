@@ -23,6 +23,8 @@
       :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
       @scrollTop="onScrollTop"
       @scrollBottom="onScrollBottom"
+      @editMessage="onEditMessage"
+      @deleteMessage="onDeleteMessage"
       v-on="$listeners" />
 
     <channel-input
