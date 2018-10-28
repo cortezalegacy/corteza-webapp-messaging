@@ -119,7 +119,6 @@ export default {
     ...mapActions({
       clearHistory: 'history/clear',
       setCurrentChannel: 'channels/setCurrent',
-      incChannelUnreadCount: 'unread/incChannel',
       setChannelUnreadCount: 'unread/setChannel',
       ignoreChannelUnreadCount: 'unread/ignoreChannel',
       unignoreChannelUnreadCount: 'unread/unignoreChannel',

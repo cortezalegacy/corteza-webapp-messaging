@@ -54,7 +54,11 @@ export default {
     // Handles single-message updates that gets from the backend
     eventbus.$on('$ws.message', (message) => {
       const msg = new Message(message)
-      store.dispatch('unread/incChannel', msg.channelID)
+
+      if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
+        // Count only new mesages, no updates
+        store.dispatch('unread/incChannel', msg.channelID)
+      }
       store.dispatch('history/update', [msg])
 
       // Assume activity stoped
