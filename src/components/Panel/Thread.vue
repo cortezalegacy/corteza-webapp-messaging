@@ -19,6 +19,7 @@
       :currentUser="currentUser"
       :origin="channel"
       :scrollable="true"
+      :hideActionOpenThread="true"
       @editMessage="onEditMessage"
       @deleteMessage="onDeleteMessage"
       v-on="$listeners" />

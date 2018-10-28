@@ -31,7 +31,7 @@
             <!-- i class="action icon-message-circle-left-speak"></i -->
             <i class="action icon-message-circle-left-speak"
               title="Reply in thread"
-              v-if="!message.replyTo && !hideActionOpenThread"
+              v-if="!hideActionOpenThread"
               @click="$emit('openThread', { message })"
             ></i>
             <i v-if="!contextMenu"
@@ -41,7 +41,7 @@
           </div>
           <div class="context-menu" v-if="contextMenu">
             <ul class="context-menu-list">
-              <li v-if="!message.replyTo && !hideActionOpenThread"
+              <li v-if="!hideActionOpenThread"
                   class="extra-action"
                   @click="$emit('openThread', { message })">
                   <i class="icon icon-message-circle-left-speak"></i>

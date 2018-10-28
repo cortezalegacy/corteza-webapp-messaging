@@ -6,6 +6,7 @@
       :continued="isContinued(messages, index)"
       :currentUser="currentUser"
       :key="msg.ID"
+      :hideActionOpenThread="hideActionOpenThread"
       :isUnread="lastReadMessageID <= msg.ID"
       :isFirstUnread="lastReadMessageID == msg.ID"
       :isFirst="index === 0"
@@ -40,6 +41,10 @@ export default {
     // This will help us mark new messages
     lastReadMessageID: {
       type: String,
+    },
+
+    hideActionOpenThread: {
+      type: Boolean,
     },
   },
 
