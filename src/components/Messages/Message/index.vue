@@ -76,7 +76,7 @@
             :chunks="getChunks(message.message)" />
         </div>
         <div class="message-infos">
-          <span class="info" v-if="message.replies">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</span>
+          <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
           <span class="info" v-if="message.updatedAt">edited</span>
         </div>
     </li>
@@ -246,6 +246,10 @@ export default {
     {
       content:'';
     }
+  }
+
+  a {
+    cursor: pointer;
   }
 }
 .dot-dot-dot
