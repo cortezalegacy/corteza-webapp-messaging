@@ -125,7 +125,7 @@ export default {
 
     // Find last editable message
     onEditLastMessage (ev) {
-      const lastReply = [...this.messages].reverse().find(m => m.canEdit(this.currentUser))
+      const lastReply = [...this.messages].reverse().find(m => m.canEdit)
 
       // Ask history component about last editable message
       if (lastReply) {

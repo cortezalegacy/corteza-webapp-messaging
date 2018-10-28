@@ -31,29 +31,29 @@
             <!-- i class="action icon-message-circle-left-speak"></i -->
             <i class="action icon-message-circle-left-speak"
               title="Reply in thread"
-              v-if="!hideActionOpenThread"
+              v-if="message.canReply && !hideActionOpenThread"
               @click="$emit('openThread', { message })"
             ></i>
-            <i v-if="!contextMenu"
+            <i v-if="!isContextMenuOpen && isContextMenuEnabled"
               class="action icon-plus" @click="onContextMenuOpen()"></i>
-            <i v-else
-              class="action icon-close" @click="contextMenu=false"></i>
+            <i v-else-if="isContextMenuEnabled"
+              class="action icon-close" @click="isContextMenuOpen=false"></i>
           </div>
-          <div class="context-menu" v-if="contextMenu">
+          <div class="context-menu" v-if="isContextMenuOpen && isContextMenuEnabled">
             <ul class="context-menu-list">
-              <li v-if="!hideActionOpenThread"
+              <li v-if="message.canReply && !hideActionOpenThread"
                   class="extra-action"
                   @click="$emit('openThread', { message })">
                   <i class="icon icon-message-circle-left-speak"></i>
                   <span>Reply in thread</span>
               </li>
-              <li v-if="message.canEdit(currentUser)"
+              <li v-if="message.canEdit"
                   class="extra-action"
                   @click="$emit('editMessage', { message })">
                   <i class="icon icon-edit"></i>
                   <span>edit message</span>
               </li>
-              <li v-if="message.canDelete(currentUser)"
+              <li v-if="message.canDelete"
                   class="extra-action"
                   @click="$emit('deleteMessage', { message })">
                   <i class="icon icon-trash"></i>
@@ -123,8 +123,14 @@ export default {
       allowAutoScroll: true,
       scrollToRef: false,
       resetUnreadTimeout: null,
-      contextMenu: false,
+      isContextMenuOpen: false,
     }
+  },
+
+  computed: {
+    isContextMenuEnabled: function () {
+      return ((this.message.canReply && !this.hideActionOpenThread) || this.message.canEdit || this.message.canDelete)
+    },
   },
 
   methods: {
@@ -155,8 +161,8 @@ export default {
     onContextMenuOpen () {
       const evName = 'Messages/Message.contextMenuOpen'
       this.$bus.$emit(evName)
-      this.$bus.$once(evName, () => { this.contextMenu = false })
-      this.contextMenu = true
+      this.$bus.$once(evName, () => { this.isContextMenuOpen = false })
+      this.isContextMenuOpen = true
     },
   },
 

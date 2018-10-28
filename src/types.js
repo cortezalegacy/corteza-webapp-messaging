@@ -28,16 +28,12 @@ export function Message (m) {
   this.updatedAt = m.updatedAt || null
   this.deletedAt = m.deletedAt || null
 
+  this.canReply = !!m.canReply
+  this.canEdit = !!m.canEdit
+  this.canDelete = !!m.canDelete
+
   this.user = new User(m.user)
   this.attachment = m.att ? new Attachment(m.att) : null
-}
-
-Message.prototype.canEdit = function (user) {
-  return this.user.ID === user.ID
-}
-
-Message.prototype.canDelete = function (user) {
-  return this.user.ID === user.ID
 }
 
 export function Attachment (a) {
