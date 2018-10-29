@@ -135,9 +135,9 @@ export default {
 ul {
   padding:0;
   margin:0;
-  height: calc(100vh - 140px);
 
   &.scrollable {
+    height: calc(100vh - 140px);
     position:relative;
     max-height:100%;
     overflow-x: hidden;

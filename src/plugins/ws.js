@@ -133,6 +133,10 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send({ messages: { repliesTo } })
   },
 
+  async getThreads ({ channelID } = {}) {
+    return this.send({ messageThreads: { channelID } })
+  },
+
   async recordChannelView (channelID, lastMessageID) {
     return this.send({ recordChannelView: { channelID, lastMessageID } })
   },

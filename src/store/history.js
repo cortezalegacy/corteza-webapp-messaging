@@ -14,6 +14,9 @@ const getters = {
     (channelID, firstMessageID) =>
       state.set.filter(m => isValid(m) && m.replyTo === 0 && m.channelID === channelID && (firstMessageID || 0) <= m.ID),
   getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
+
+  getThreads: (state) =>
+    state.set.filter(m => isValid(m) && m.replyTo === 0 && m.replies > 0),
 }
 
 // actions
