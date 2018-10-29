@@ -23,7 +23,6 @@
       <panel-thread
           v-if="currentChannel && openThread"
           @close="openThread = null"
-          :channel="currentChannel"
           :repliesTo="openThread" />
      </main>
 </template>

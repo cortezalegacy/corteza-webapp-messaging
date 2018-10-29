@@ -4,6 +4,7 @@
     class="menu-layer right thread noborder">
     <channel-upload v-if="channel"
       :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
+
     <div class="thread-title">
       <strong class="panel-type">Thread</strong>
       <p class="channel-name-wrap">in <channel-name class="channel-name" :channel="channel"></channel-name></p>
@@ -43,11 +44,6 @@ export default {
       type: String,
       required: true,
     },
-
-    channel: {
-      type: Object,
-      required: true,
-    },
   },
 
   watch: {
@@ -67,7 +63,12 @@ export default {
       currentUser: 'auth/user',
       getMessageByID: 'history/getByID',
       getThread: 'history/getThread',
+      getChannelByID: 'channels/findByID',
     }),
+
+    channel () {
+      return this.getChannelByID((this.getMessageByID(this.repliesTo) || {}).channelID) || {}
+    },
 
     messages () {
       return this.getThread(this.repliesTo)
