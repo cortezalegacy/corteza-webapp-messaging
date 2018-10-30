@@ -43,10 +43,10 @@ export default {
                 // make sure this is reflected in the state
                 reject(new Error('Not authenticated'))
               } else {
-                // Authentication successful, update state
-                // and notify the caller
-                console.debug('AuthCheck:', data.response.user)
-                resolve(new User(data.response.user))
+                // Authentication successful
+                const user = new User(data.response.user)
+                console.debug('User authenticated', user)
+                resolve(user)
               }
             })
             .catch(error => {

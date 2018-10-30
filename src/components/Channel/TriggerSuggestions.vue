@@ -36,6 +36,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { User } from '@/types'
 
 export default {
   data () {
@@ -118,19 +119,22 @@ export default {
 
   computed: {
     ...mapGetters({
-      channelList: 'channels/list',
-      userList: 'users/list',
+      channels: 'channels/list',
+      users: 'users/list',
       getCommands: 'suggestions/getCommands',
     }),
 
     availableSlashCommands () {
-      let rtr = {}
-      rtr['channel'] = this.channelList.map(c => { return { command: c.name, meta: { id: c.ID }, params: [] } })
-      rtr['user'] = this.userList.map(u => { return { command: u.username, meta: { id: u.ID }, params: [] } })
-
-      rtr['command'] = this.getCommands
-
-      return rtr[this.getCommandType] || []
+      switch (this.getCommandType) {
+        case 'channel':
+          return this.channels.map(c => { return { command: c.name || c.ID, meta: { id: c.ID }, params: [] } })
+        case 'user':
+          return this.users.map(u => { return { command: (new User(u)).username, meta: { id: u.ID }, params: [] } })
+        case 'command':
+          return this.getCommands
+        default:
+          return []
+      }
     },
 
     getMsg () {
@@ -194,8 +198,9 @@ export default {
   },
 }
 </script>
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
 
-<style scoped>
 .suggestions-pannel {
   top: 0;
   max-height: 300px;
@@ -219,16 +224,10 @@ export default {
   cursor: pointer;
 }
 
-.suggestions-pannel .body .command.focused {
-  background-color: orange;
-}
-
-.suggestions-pannel .body .command:hover {
-  background-color: #1E1E1E15;
-}
-
+.suggestions-pannel .body .command.focused,
+.suggestions-pannel .body .command:hover,
 .suggestions-pannel .body .command.focused:hover {
-  background-color: rgba(255, 166, 0, 0.463);
+  background-color: $appcream;
 }
 
 </style>

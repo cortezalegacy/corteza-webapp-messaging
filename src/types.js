@@ -50,7 +50,7 @@ export class User {
   constructor (u) {
     u = u || {}
 
-    this.ID = this.ID || this.id || '' // cover both cases (BC)
+    this.ID = u.ID || u.id || '' // cover both cases (BC)
     this.username = u.username || ''
     this.handle = u.handle || ''
     this.name = u.name || ''

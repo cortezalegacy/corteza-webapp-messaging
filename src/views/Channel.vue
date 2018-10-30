@@ -179,7 +179,7 @@ export default {
         const { currentMessage } = meta
 
         if (currentMessage.ID && value.length === 0) {
-          this.onDeleteMessage(meta)
+          this.onDeleteMessage(currentMessage)
         } else if (currentMessage.ID) {
           this.$rest.updateMessage(currentMessage.channelID, currentMessage.ID, value)
         }
