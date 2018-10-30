@@ -2,7 +2,7 @@
 
 input,
 .input-txt,
-input[type=text],
+input[type=text]
 {
   outline:none;
   padding:0.25em;
@@ -53,7 +53,7 @@ input[type=text].no-border
 }
 
 label,
-.label-input,
+.label-input
 {
   &.label-block
   {
@@ -77,7 +77,7 @@ label,
     padding:0 0.5em;
   }
   label,
-  .label-input,
+  .label-input
   {
   }
 }
