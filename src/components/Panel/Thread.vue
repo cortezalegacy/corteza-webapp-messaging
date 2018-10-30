@@ -66,8 +66,12 @@ export default {
       getChannelByID: 'channels/findByID',
     }),
 
+    channelID () {
+      return (this.getMessageByID(this.repliesTo) || {}).channelID
+    },
+
     channel () {
-      return this.getChannelByID((this.getMessageByID(this.repliesTo) || {}).channelID) || {}
+      return this.getChannelByID(this.channelID) || {}
     },
 
     messages () {
@@ -85,38 +89,42 @@ export default {
       this.$ws.getReplies(this.repliesTo)
     },
 
-    setEditMessage (message) {
-      this.$refs.replyInput.setValue(message.message, message)
+    setEditMessage (currentMessage) {
+      if (currentMessage) this.$refs.replyInput.setValue(currentMessage.message, { currentMessage })
     },
 
     onInputSubmit ({ value, meta }) {
-      // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
+      if (meta && meta.currentMessage) {
+        // Copy values from currentMessage in meta
+        const cm = meta.currentMessage
 
-      if (value.length > 1 && value[0] === '/') {
-        if (!this.execLocal(value)) {
-          const i = value.indexOf(' ')
-          if (i < 1) {
-            return
-          }
-
-          const command = value.substr(1, i - 1)
-          const input = value.substr(i + 1)
-
-          console.debug('Executing a command', { command, input })
-          this.$ws.exec(this.channelID, command, {}, input)
+        if (value.length === 0) {
+          this.onDeleteMessage(cm)
+        } else {
+          this.$rest.updateMessage(cm.channelID, cm.ID, value)
         }
-      } else if (meta && meta.ID && meta.length === 0) {
-        this.$ws.deleteMessage(meta.ID)
-      } else if (meta && meta.ID) {
-        this.$ws.updateMessage(meta.ID, value)
       } else {
-        this.$ws.sendReply(this.repliesTo, value)
+        if (value.length > 1 && value[0] === '/') {
+          if (!this.execLocal(value)) {
+            const i = value.indexOf(' ')
+            if (i < 1) {
+              return
+            }
+
+            const command = value.substr(1, i - 1)
+            const input = value.substr(i + 1)
+
+            this.$ws.exec(this.channelID, command, {}, input)
+          }
+        } else {
+          this.$rest.sendReply(this.channelID, this.repliesTo, value)
+        }
       }
     },
 
-    onDeleteMessage ({ message }) {
+    onDeleteMessage ({ channelID, ID }) {
       if (confirm('Delete this message?')) {
-        this.$ws.deleteMessage(message.ID)
+        this.$rest.deleteMessage(channelID, ID)
       }
     },
 

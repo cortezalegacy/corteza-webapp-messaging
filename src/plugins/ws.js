@@ -105,22 +105,6 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send({ channels: {} })
   },
 
-  async sendMessage (channelID, message) {
-    return this.send({ createMessage: { channelID, message } })
-  },
-
-  async updateMessage (messageID, message) {
-    return this.send({ updateMessage: { messageID, message } })
-  },
-
-  async deleteMessage (messageID) {
-    return this.send({ deleteMessage: { messageID } })
-  },
-
-  async sendReply (replyTo, message) {
-    return this.send({ createMessage: { replyTo, message } })
-  },
-
   async exec (channelID, command, params, input) {
     return this.send({ exec: { channelID, command, params, input } })
   },

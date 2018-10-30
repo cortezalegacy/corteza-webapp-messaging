@@ -9,6 +9,10 @@
         </div>
 
         <form class="editor big-form" @submit.prevent="submit">
+          <div v-if="error" class="error">
+            {{error}}
+          </div>
+
           <div v-if="ch.type !== 'group'" class="input-wrap">
             <label class="label-block">Channel name</label>
             <input
@@ -81,6 +85,7 @@ export default {
 
     return {
       ch: ch,
+      error: null,
     }
   },
 
@@ -92,8 +97,6 @@ export default {
 
 
   mounted () {
-    // @todo is this a group or pub/prv?
-
     if (this.channelID !== undefined) {
       this.$rest.getChannel(this.channelID).then((ch) => {
         this.ch = ch
@@ -114,7 +117,6 @@ export default {
 
   methods: {
     ...mapActions({
-      updateChannelList: 'channels/updateList',
       removeChannelFromList: 'channels/removeFromList',
     }),
 
@@ -125,16 +127,15 @@ export default {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
-          console.error('Failed to store channel update', { error })
+          this.error = error.message
         })
       } else {
         console.debug('Creating channel', this.ch)
         this.$rest.createChannel(this.ch).then((ch) => {
           console.debug('Channel created', ch)
-
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
-        }).catch((error) => {
-          console.error('Failed to store channel update', { error })
+        }).catch(({ error }) => {
+          this.error = error
         })
       }
     },
@@ -147,7 +148,6 @@ export default {
 
         console.debug('Deleting channel', this.ch)
         this.$rest.deleteChannel(this.ch).then(() => {
-          console.debug('Channel delete')
           this.removeChannelFromList(this.ch)
           this.$router.push({ name: 'root' })
         })
@@ -157,7 +157,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-  @import '@/assets/sass/_0.commons.scss';
-  @import '@/assets/sass/modals.scss';
-  @import '@/assets/sass/inputs.scss';
+@import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/modals.scss';
+@import '@/assets/sass/inputs.scss';
+
+div.error {
+  color: $appred;
+}
 </style>

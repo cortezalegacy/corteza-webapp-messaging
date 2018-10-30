@@ -139,8 +139,8 @@ export default {
       this.$ws.getMessages({ channelID: this.channel.ID })
     },
 
-    setEditMessage (message) {
-      if (message) this.$refs.channelInput.setValue(message.message, message)
+    setEditMessage (currentMessage) {
+      if (currentMessage) this.$refs.channelInput.setValue(currentMessage.message, { currentMessage })
     },
 
     openUploadOverlay () {
@@ -177,7 +177,15 @@ export default {
 
     onInputSubmit ({ value, meta }) {
       // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
-      if (value.length > 1 && value[0] === '/') {
+      if (meta && meta.currentMessage) {
+        const { currentMessage } = meta
+
+        if (currentMessage.ID && value.length === 0) {
+          this.onDeleteMessage(meta)
+        } else if (currentMessage.ID) {
+          this.$rest.updateMessage(currentMessage.channelID, currentMessage.ID, value)
+        }
+      } else if (value.length > 1 && value[0] === '/') {
         if (!this.execLocal(value)) {
           const i = value.indexOf(' ')
           if (i < 1) {
@@ -187,22 +195,18 @@ export default {
           const command = value.substr(1, i - 1)
           const input = value.substr(i + 1)
 
-          console.debug('Executing a command', { command, input })
           this.$ws.exec(this.channelID, command, {}, input)
         }
-      } else if (meta && meta.ID && value.length === 0) {
-        this.onDeleteMessage({ message: { ID: meta.ID } })
-      } else if (meta && meta.ID) {
-        this.$ws.updateMessage(meta.ID, value)
       } else if (value) {
-        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
-        this.$ws.sendMessage(this.channelID, value)
+        // Using current channel info here.
+        this.setChannelUnreadCount({ ID: this.channelID, count: 0, lastMessageID: 0 })
+        this.$rest.sendMessage(this.channelID, value)
       }
     },
 
-    onDeleteMessage ({ message }) {
+    onDeleteMessage ({ ID, channelID }) {
       if (confirm('Delete this message?')) {
-        this.$ws.deleteMessage(message.ID)
+        this.$rest.deleteMessage(channelID, ID)
       }
     },
 

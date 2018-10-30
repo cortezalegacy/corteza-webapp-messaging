@@ -15,6 +15,14 @@ export default {
       }
     }
 
+    const stdMessageResolve = (resolve, reject) => (response) => {
+      if (response.data.error) {
+        reject(response.data.error)
+      } else {
+        resolve(new Message(response.data.response))
+      }
+    }
+
     const stdMemberResolve = (resolve, reject) => (response) => {
       if (response.data.error) {
         reject(response.data.error)
@@ -53,47 +61,29 @@ export default {
         })
       },
 
-      async updateChannel (ch) {
+      async updateChannel ({ ID, name, topic, type }) {
         return new Promise((resolve, reject) => {
           this.api().put(
-            `/channels/${ch.ID}`,
-            { topic: ch.topic, name: ch.name, type: ch.type }
+            `/channels/${ID}`,
+            { topic, name, type }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
 
-      async createChannel (ch) {
+      async createChannel ({ ID, name, topic, type, members }) {
         return new Promise((resolve, reject) => {
           this.api().post(
             `/channels/`,
-            { topic: ch.topic, name: ch.name, type: ch.type, members: ch.members }
+            { topic, name, type, members }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
 
-      async deleteChannel (ch) {
+      async deleteChannel ({ ID }) {
         return new Promise((resolve, reject) => {
           this.api().delete(
-            `/channels/${ch.ID}`,
+            `/channels/${ID}`,
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
-        })
-      },
-
-      async sendDirectMessage (userId, message) {
-        return new Promise((resolve, reject) => {
-          this.api().post(
-            `/users/${userId}/message`,
-            { message }
-          ).then(response => {
-            if (response.data.error) {
-              reject(response.data.error)
-              return
-            }
-
-            const msg = response.data.response
-
-            resolve(new Message(msg))
-          }, stdRejection(reject))
         })
       },
 
@@ -124,6 +114,47 @@ export default {
             }
 
             resolve(response.data.response)
+          }, stdRejection(reject))
+        })
+      },
+
+      async sendMessage (channelID, message) {
+        return new Promise((resolve, reject) => {
+          this.api().post(
+            `/channels/${channelID}/messages`,
+            { message }
+          ).then(stdMessageResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async sendReply (channelID, replyTo, message) {
+        return new Promise((resolve, reject) => {
+          this.api().post(
+            `/channels/${channelID}/messages/${replyTo}/replies`,
+            { message }
+          ).then(stdMessageResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async updateMessage (channelID, messageID, message) {
+        return new Promise((resolve, reject) => {
+          this.api().put(
+            `/channels/${channelID}/messages/${messageID}`,
+            { message }
+          ).then(stdMessageResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async deleteMessage (channelID, messageID) {
+        return new Promise((resolve, reject) => {
+          this.api().delete(
+            `/channels/${channelID}/messages/${messageID}`,
+          ).then((response) => {
+            if (response.data.error) {
+              reject(response.data.error)
+            } else {
+              resolve()
+            }
           }, stdRejection(reject))
         })
       },
