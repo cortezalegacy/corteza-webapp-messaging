@@ -1,30 +1,28 @@
 <template>
-    <main>
-      <!-- if no channel selected channel list should be displayed -->
-      <panel-channels
-          :class="[
-            { 'force-on' : !currentChannel },
-            { 'open' : isChannelPanelOpen },
-          ]" />
+    <section :class="{
+            'left-panel-open': isChannelPanelOpen,
+            'right-panel-open': null !== openThread && currentChannel,
+          }">
+        <!-- if no channel selected channel list should be displayed -->
+        <panel-channels
+            :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
 
-      <div v-if="!currentChannel" class="welcome"></div>
+        <div v-if="!currentChannel" class="welcome"></div>
 
-      <!-- no use in displaying messages if no channel -->
-      <router-view
-        @openThread="onOpenThread"
-        :class="[
-        { 'with-thread' : null !== openThread && currentChannel },
-        ]" />
+        <!-- no use in displaying messages if no channel -->
+        <router-view
+          @openThread="onOpenThread"
+          class="channel-container" />
 
-      <panel-users
-          v-if="isUserPanelOpen"
-          @openDirectMessage="onOpenDirectChannel" />
+        <panel-users
+            v-if="isUserPanelOpen"
+            @openDirectMessage="onOpenDirectChannel" />
 
-      <panel-thread
-          v-if="currentChannel && openThread"
-          @close="openThread = null"
-          :repliesTo="openThread" />
-     </main>
+        <panel-thread
+            v-if="currentChannel && openThread"
+            @close="openThread = null"
+            :repliesTo="openThread" />
+     </section>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -147,12 +145,26 @@ export default {
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
-main
-{
+
+section {
   background-color : $mainbgcolor;
 }
-.welcome
-{
+
+.channel-container {
+  position:relative;
+  margin:0;
+  height:100vh;
+}
+
+.left-panel-open .channel-container {
+  margin-left:320px;
+}
+
+.right-panel-open .channel-container {
+  margin-right:400px;
+}
+
+.welcome {
   position:absolute;
   top:0;
   left:0;
@@ -162,4 +174,12 @@ main
   background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
   opacity: 0.25;
 }
+
+@media (min-width: $wideminwidth) {
+  .channel-container {
+    margin-left:320px;
+    max-width:calc(100vw - 320px);
+  }
+}
+
 </style>

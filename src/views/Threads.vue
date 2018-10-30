@@ -45,16 +45,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  main {
-    position:absolute;
-    width: 100%;
-    height: 100vh;
-    left: 320px;
-  }
-  .discussion
-  {
-    list-style:none;
-    padding:0;
-    margin:0;
-  }
+.discussion
+{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
 </style>

@@ -1,9 +1,7 @@
 <template>
   <section
-    class="channel"
     v-if="channel"
-    id="channelContainer"
-    :class="[ { 'with-right-panel':isUserPanelOpen, 'unread-messages': unread(channelID) } ]"
+    :class="{ 'unread-messages': unread(channelID) }"
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
 
@@ -244,77 +242,49 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/assets/sass/_0.commons.scss';
-  //disposition of elements is done here:
+@import '@/assets/sass/_0.commons.scss';
+//disposition of elements is done here:
+.header,
+.channel-input,
+.messages
+{
+  position:absolute;
+  width:100%;
+  max-width:100vw;
+  left:0;
+}
+.header
+{
+  top:0;
+}
+.channel-input
+{
+  bottom:0;
+}
+.messages
+{
+  top:52px;
+}
+
+@media (min-width: $wideminwidth)
+{
   .header,
   .channel-input,
   .messages
   {
-    position:absolute;
-    width:100%;
-    max-width:100vw;
-    left:0;
-  }
-  .header
-  {
-    top:0;
-  }
-  .channel-input
-  {
-    bottom:0;
-  }
-  .channel
-  {
-    position:relative;
-    margin:0;
-    max-width:100vw;
-    height:100vh;
-    // this does not work in some browsers
-    // overflow:hidden auto;
+    right:0;
   }
   .messages
   {
-    top:52px;
+    top:62px;
+    bottom:65px;
   }
+}
 
-  @media (min-width: $wideminwidth)
-  {
-    .channel
-    {
-      margin-left:320px;
-      max-width:calc(100vw - 320px);
-    }
-    .with-right-panel
-    {
-      margin-right:320px;
-    }
-    .header,
-    .channel-input,
-    .messages
-    {
-      right:0;
-    }
-    .messages
-    {
-      top:62px;
-      bottom:65px;
-    }
-  }
-
-  section.activity {
-    color: $appgrey;
-    position: absolute;
-    left: 65px;
-    bottom: 5px;
-  }
-
-  @media (min-width: $confortableminwidth)
-  {
-    .channel.with-thread
-    {
-      margin-left:320px;
-      margin-right:400px;
-      max-width:calc(100vw - 720px);
-    }
-  }
+section.activity {
+  color: $appgrey;
+  position: absolute;
+  left: 65px;
+  bottom: 5px;
+}
 </style>

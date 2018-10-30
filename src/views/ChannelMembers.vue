@@ -73,21 +73,4 @@ label {
   text-align: right
 }
 
-@media (min-width: $wideminwidth) {
-  section.members {
-    margin-left:320px;
-    max-width:calc(100vw - 320px);
-
-  .history {
-    top:62px;
-  }
-}
-}
-
-section.members {
-  position:fixed;
-  width:100%;
-  max-width:100vw;
-  left:0;
-}
 </style>

@@ -1,6 +1,5 @@
 <template>
-  <section class="modal">
-    <div class="modal-dialog" role="document">
+  <section>
       <div class="modal-content">
         <div class="modal-header">
           <a @click="$router.back()" class="close"><i class="icon-close"></i></a>
@@ -66,7 +65,6 @@
           </div>
         </form>
       </div>
-    </div>
   </section>
 </template>
 <script>
