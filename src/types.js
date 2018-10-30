@@ -47,12 +47,14 @@ export function Attachment (a) {
 }
 
 export class User {
-  constructor (u = {}) {
-    this.ID = this.ID || this.id // cover both cases (BC)
-    this.username = u.username
-    this.handle = u.handle
-    this.name = u.name
-    this.email = u.email
+  constructor (u) {
+    u = u || {}
+
+    this.ID = this.ID || this.id || '' // cover both cases (BC)
+    this.username = u.username || ''
+    this.handle = u.handle || ''
+    this.name = u.name || ''
+    this.email = u.email || ''
     this.connections = u.connections || 0
   }
 

@@ -1,15 +1,3 @@
-const LOCAL_COMMANDS = {
-  'join': {
-    local: true,
-    handler: (vm, [ channelID ]) => {
-      channelID = makeIdParserRegex().exec(channelID)
-      if (channelID) {
-        vm.$router.push({ name: 'channel', params: { channelID: channelID[2] } })
-      }
-    },
-  },
-}
-
 const TRIGGERS = {
   '/': { type: 'command', constraints: { index: 0 } },
   '@': { type: 'user' },
@@ -31,10 +19,6 @@ export default {
     Vue.prototype.$triggers = {
       userByID: options.userByID,
       channelByID: options.channelByID,
-
-      isLocalCommand (command) {
-        return LOCAL_COMMANDS[command] || {}
-      },
 
       // Checks if chunk is triggered and if so, gives the trigger
       isTriggered (chunk = '') {

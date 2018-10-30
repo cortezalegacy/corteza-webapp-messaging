@@ -6,6 +6,7 @@ import users from './users'
 import history from './history'
 import unread from './unread'
 import ui from './ui'
+import settings from './settings'
 import suggestions from './suggestions'
 
 Vue.use(Vuex)
@@ -17,6 +18,7 @@ const store = new Vuex.Store({
     users,
     ui,
     auth,
+    settings,
     suggestions,
     unread,
   },

@@ -41,7 +41,6 @@
 <script>
 import _ from 'lodash'
 import messages from '@/mixins/messages'
-import commander from '@/plugins/commander'
 import { mapGetters, mapActions } from 'vuex'
 import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
 import Messages from '@/components/Messages'
@@ -176,7 +175,6 @@ export default {
     }, 2000),
 
     onInputSubmit ({ value, meta }) {
-      // @todo this is standard submit handling... move it to a common place (plugin, mixin...)
       if (meta && meta.currentMessage) {
         const { currentMessage } = meta
 
@@ -185,18 +183,8 @@ export default {
         } else if (currentMessage.ID) {
           this.$rest.updateMessage(currentMessage.channelID, currentMessage.ID, value)
         }
-      } else if (value.length > 1 && value[0] === '/') {
-        if (!this.execLocal(value)) {
-          const i = value.indexOf(' ')
-          if (i < 1) {
-            return
-          }
-
-          const command = value.substr(1, i - 1)
-          const input = value.substr(i + 1)
-
-          this.$ws.exec(this.channelID, command, {}, input)
-        }
+      } else if (this.$commands.test(value)) {
+        this.$commands.exec(this, value, { channel: this.channel })
       } else if (value) {
         // Using current channel info here.
         this.setChannelUnreadCount({ ID: this.channelID, count: 0, lastMessageID: 0 })
@@ -250,7 +238,6 @@ export default {
   },
 
   mixins: [
-    commander,
     messages,
   ],
 }

@@ -103,22 +103,10 @@ export default {
         } else {
           this.$rest.updateMessage(cm.channelID, cm.ID, value)
         }
+      } else if (this.$commands.test(value)) {
+        this.$commands.exec(this, value, { channel: this.channel })
       } else {
-        if (value.length > 1 && value[0] === '/') {
-          if (!this.execLocal(value)) {
-            const i = value.indexOf(' ')
-            if (i < 1) {
-              return
-            }
-
-            const command = value.substr(1, i - 1)
-            const input = value.substr(i + 1)
-
-            this.$ws.exec(this.channelID, command, {}, input)
-          }
-        } else {
-          this.$rest.sendReply(this.channelID, this.repliesTo, value)
-        }
+        this.$rest.sendReply(this.channelID, this.repliesTo, value)
       }
     },
 

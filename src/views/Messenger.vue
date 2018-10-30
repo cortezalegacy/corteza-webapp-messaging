@@ -41,6 +41,7 @@ export default {
       findUserByID: 'users/findByID',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       isUserPanelOpen: 'ui/isUserPanelOpen',
+      getSettings: 'settings/get',
     }),
   },
 
@@ -80,6 +81,11 @@ export default {
       const isCurrentUser = (this.currentUser || {}).ID === (message.user || {}).ID
 
       if (!isCurrentUser && (!isCurrentChannel || !document.hasFocus())) {
+        if (this.getSettings('mute.all')) {
+          console.debug('Suppressing notification due to user settings', { message })
+          return
+        }
+
         const body = message.message
         const msgChannel = this.findChannelByID(message.channelID)
 

@@ -90,15 +90,16 @@ export default {
       return (this.getSuggestions[this.curentSelected] || {}).command === c.command
     },
 
-    getCommandParams (command) {
-      let { params } = command
-      let paramString = '<span>'
+    getCommandParams ({ params }) {
+      if (params) {
+        let paramString = '<span>'
 
-      for (let param of params) {
-        if (!param.required) paramString += ` [${param.key}]`
-        else paramString += ` ${param.key}`
+        for (let param of params) {
+          if (!param.required) paramString += ` [${param.key}]`
+          else paramString += ` ${param.key}`
+        }
+        return paramString.trim()
       }
-      return paramString.trim()
     },
 
     selectSuggestion (command) {
@@ -119,36 +120,15 @@ export default {
     ...mapGetters({
       channelList: 'channels/list',
       userList: 'users/list',
-      getSlashCommands: 'suggestions/getSlashCommands',
+      getCommands: 'suggestions/getCommands',
     }),
 
     availableSlashCommands () {
       let rtr = {}
       rtr['channel'] = this.channelList.map(c => { return { command: c.name, meta: { id: c.ID }, params: [] } })
       rtr['user'] = this.userList.map(u => { return { command: u.username, meta: { id: u.ID }, params: [] } })
-      // This part is still mocked!
 
-      rtr['command'] = this.getSlashCommands.map(c => { return { command: c.name, params: [], description: c.description, meta: {} } })
-      /* [
-        {
-          command: 'join',
-          params: [ { key: 'channel', required: true } ],
-          description: 'Join channel',
-          meta: {},
-        },
-        {
-          command: 'echo',
-          params: [ { key: 'user', required: true }, { key: 'msg', required: false } ],
-          description: 'Make an echo',
-          meta: {},
-        },
-        {
-          command: 'shrug',
-          params: [ { key: 'channel', required: true } ],
-          description: 'Make a shrug',
-          meta: {},
-        },
-      ] */
+      rtr['command'] = this.getCommands
 
       return rtr[this.getCommandType] || []
     },

@@ -1,4 +1,5 @@
 import { Channel, Message } from '@/types'
+import localCommands from '@/commands'
 
 export default {
   install (Vue, { eventbus, store }) {
@@ -71,7 +72,17 @@ export default {
     eventbus.$on('$ws.messages', messages => store.dispatch('history/update', messages.map(message => new Message(message))))
 
     eventbus.$on('$ws.commands', (commands) => {
-      store.dispatch('suggestions/setCommands', commands)
+      store.commit('suggestions/setCommands', commands.map(c => {
+        return {
+          command: c.name,
+          description: c.description,
+          params: [],
+          meta: {},
+          handler: (vm, { channel, params, input }) => {
+            vm.$ws.exec(channel.ID, c.name, {}, input)
+          },
+        }
+      }).concat(localCommands))
     })
   },
 }

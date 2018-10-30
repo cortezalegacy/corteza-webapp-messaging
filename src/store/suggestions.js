@@ -1,27 +1,25 @@
 const state = {
   suggestions: [],
   suggestionsOpened: false,
-  slashCommands: [],
+  commands: [],
 }
 
 // getters
 const getters = {
   getSuggestions: (state) => state.suggestions,
   isOpened: (state) => state.suggestionsOpened,
-  getSlashCommands: (state) => state.slashCommands,
+
+  getCommands: (state) => state.commands,
+  getCommand: (state) => (command) => state.commands.find(c => c.command === command),
 }
 
 // actions
-const actions = {
-  setCommands ({ commit }, commands) {
-    commit('setCommands', commands)
-  },
-}
+const actions = {}
 
 // mutations
 const mutations = {
   setCommands (state, commands) {
-    state.slashCommands = commands
+    state.commands = commands
   },
 }
 

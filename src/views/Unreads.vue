@@ -69,7 +69,6 @@ export default {
 
     markAsRead ({ ID, lastMessageID }) {
       const messages = this.unreadInChannel(ID, lastMessageID)
-      console.log(ID, lastMessageID, messages)
       if (messages.length === 0) {
         return
       }
