@@ -145,7 +145,12 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
+main
+{
+  background-color : $mainbgcolor;
+}
 .welcome
 {
   position:absolute;
@@ -156,14 +161,5 @@ export default {
   box-sizing: border-box;
   background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
   opacity: 0.25;
-}
-</style>
-
-
-<style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-main
-{
-  background-color : $mainbgcolor;
 }
 </style>
