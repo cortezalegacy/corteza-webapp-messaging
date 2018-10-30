@@ -29,6 +29,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
+import { User } from '@/types'
 
 export default {
   computed: {
@@ -37,6 +38,7 @@ export default {
       currentUser: 'auth/user',
       currentChannel: 'channels/current',
       findChannelByID: 'channels/findByID',
+      findUserByID: 'users/findByID',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
@@ -81,7 +83,7 @@ export default {
         const body = message.message
         const msgChannel = this.findChannelByID(message.channelID)
 
-        this.$notification.show(`New message in ${msgChannel.name} | Crust`, {
+        this.$notification.show(`New message from ${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
           body: body.length > 200 ? body.substring(0, 200) + '...' : body,
         }, {
           onclick: () => {

@@ -46,17 +46,23 @@ export function Attachment (a) {
   this.downloadUrl = this.url + '?download=1'
 }
 
-export function User (u) {
-  if (!u) {
-    return {}
+export class User {
+  constructor (u = {}) {
+    this.ID = this.ID || this.id // cover both cases (BC)
+    this.username = u.username
+    this.handle = u.handle
+    this.name = u.name
+    this.email = u.email
+    this.connections = u.connections || 0
   }
 
-  this.ID = u.ID || u.id // cover both cases (BC)
-  this.username = u.username
-  this.handle = u.handle
-  this.name = u.name
-  this.connections = u.connections || 0
+  Label () {
+    return this.name || this.username || this.handle || this.email || this.ID || 'N/A'
+  }
 }
+
+
+
 
 export function Member (m) {
   if (!m) {
