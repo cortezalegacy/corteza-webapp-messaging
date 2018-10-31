@@ -18,14 +18,14 @@ Colored notifications use the same "info icon".
 Or by type : `notification-info`, `alert-info`, `notification-error`, ...
 Available types are : info, error/danger, success, warning
 For notifications you can also add the qualifier without prefix.
-So class="notification-info" is the same as class="notification info".
+So `class="notification-info"` is the same as `class="notification info"`.
 
 All notifications/alerts comme with an external margin of 10px.
-use no-margin class to remove
+Use no-margin class to remove :)
 
 #### Sample usages
 
-#### All those variations should produce the same result (the last two having different icons)
+### All those variations should produce the same result (the last two having different icons)
 ```
 <div class="alert error">
     <p><strong>OH SNAP !</strong> Change a few things up ands try submitting again.</p>
@@ -84,6 +84,7 @@ use no-margin class to remove
     <span class="close"></span>
 </div>
 ```
+
 ## Form elements / inputs
 Class references for inputs are from <https://getbootstrap.com/docs/4.1/components/forms/>
 
