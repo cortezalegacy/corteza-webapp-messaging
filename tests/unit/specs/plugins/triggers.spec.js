@@ -23,22 +23,30 @@ describe('triggers.js', () => {
   })
 
   it('Should be able to traverse stings', () => {
-    let regex, message, regularChunkHandler, triggeredChunkHandler, wrapper, expected
+    let regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper, expected
     regex = /<([#@])(.{3})>/g
     message = ''
     regularChunkHandler = (normalChunk, wrapper) => { wrapper.push(normalChunk) }
     triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => { wrapper.push(meta.id) }
+    matchDestructor = (match) => {
+      let [ entire, trigger, id ] = match
+      return { entire, trigger, id }
+    }
+    triggeredTextGetter = (match) => {
+      let { id } = match
+      return { triggeredText: id }
+    }
 
     // Empty string
     wrapper = []
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(0)
 
     // Some text
     wrapper = []
     expected = ['hehe']
     message = 'hehe'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
 
@@ -46,7 +54,7 @@ describe('triggers.js', () => {
     wrapper = []
     expected = ['hehe hoho\nnano']
     message = 'hehe hoho\nnano'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
 
@@ -54,7 +62,7 @@ describe('triggers.js', () => {
     wrapper = []
     expected = ['123']
     message = '<@123>'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
 
@@ -62,31 +70,23 @@ describe('triggers.js', () => {
     wrapper = []
     expected = ['123', ' ', '321']
     message = '<@123> <#321>'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
 
     wrapper = []
     expected = ['123', '321']
     message = '<@123><#321>'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
 
     wrapper = []
     expected = ['123', 'hehe', '321', '\n haha']
     message = '<@123>hehe<#321>\n haha'
-    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+    $triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
     expect(wrapper).to.have.length(expected.length)
     expect(wrapper).to.deep.equal(expected)
-  })
-
-  it('Should be able to what commands are locally executable', () => {
-    expect($triggers.isLocalCommand('command')).to.deep.equal({})
-    expect($triggers.isLocalCommand('command')).to.deep.equal({})
-
-    expect($triggers.isLocalCommand('join')).to.not.deep.equal({})
-    expect($triggers.isLocalCommand('join')).to.not.deep.equal({})
   })
 
   it('Should be able to tell if chunk is triggered', () => {
@@ -156,29 +156,23 @@ describe('triggers.js', () => {
 
     // Empty string
     message = ''
-    expect($triggers.getLineChunks(message)).to.have.length(1)
-    expect($triggers.getLineChunks(message)).to.have.length(1)
+    expect($triggers.getLineChunks(message).message).to.eq('')
+    expect($triggers.getLineChunks(message).message).to.eq('')
 
     // Just normal words
     message = 'hello there humans'
     buffer = $triggers.getLineChunks(message)
-    expect(buffer).to.have.length(1)
-    expect(countRegulars(buffer)).to.equal(1)
-    expect(countTriggered(buffer)).to.equal(0)
+    expect(buffer).to.not.eq('')
 
     // Just triggered words
     message = '<@123><#321><#333>'
     buffer = $triggers.getLineChunks(message)
-    expect(buffer).to.have.length(3)
-    expect(countRegulars(buffer)).to.equal(0)
-    expect(countTriggered(buffer)).to.equal(3)
+    expect(buffer).to.not.eq('')
 
     // Mixed
     message = '<@123> <#321> do <#333> be'
     buffer = $triggers.getLineChunks(message)
-    expect(buffer).to.have.length(6)
-    expect(countRegulars(buffer)).to.equal(3)
-    expect(countTriggered(buffer)).to.equal(3)
+    expect(buffer).to.not.eq('')
   })
 
   it('Should be able to get chunk lines', () => {
@@ -186,31 +180,31 @@ describe('triggers.js', () => {
 
     // Nothing
     message = ''
-    expect($triggers.getChunks(message)).to.have.length(0)
-    expect($triggers.getChunks(message)).to.have.length(0)
+    expect($triggers.getChunks(message).message).to.eq('')
+    expect($triggers.getChunks(message).message).to.eq('')
 
     // Some regular text
     message = 'hello'
-    expect($triggers.getChunks(message)).to.have.length(1)
-    expect($triggers.getChunks(message)).to.have.length(1)
+    expect($triggers.getChunks(message)).to.not.eq('')
+    expect($triggers.getChunks(message)).to.not.eq('')
 
     message = 'hello humans'
-    expect($triggers.getChunks(message)).to.have.length(1)
-    expect($triggers.getChunks(message)).to.have.length(1)
+    expect($triggers.getChunks(message)).to.not.eq('')
+    expect($triggers.getChunks(message)).to.not.eq('')
 
     // Some regular text - multi lined
     message = 'hello\ndd'
-    expect($triggers.getChunks(message)).to.have.length(2)
-    expect($triggers.getChunks(message)).to.have.length(2)
+    expect($triggers.getChunks(message)).to.not.eq('')
+    expect($triggers.getChunks(message)).to.not.eq('')
 
     message = 'hello\ndd\n\n'
-    expect($triggers.getChunks(message)).to.have.length(2)
-    expect($triggers.getChunks(message)).to.have.length(2)
+    expect($triggers.getChunks(message)).to.not.eq('')
+    expect($triggers.getChunks(message)).to.not.eq('')
 
     // Some triggered text
     message = 'hello <@123> of <#333> where is this'
-    expect($triggers.getChunks(message)).to.have.length(1)
-    expect($triggers.getChunks(message)).to.have.length(1)
+    expect($triggers.getChunks(message)).to.not.eq('')
+    expect($triggers.getChunks(message)).to.not.eq('')
   })
 
   it('Should be able to get input line nodes', () => {

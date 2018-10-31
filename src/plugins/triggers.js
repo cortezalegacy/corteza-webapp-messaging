@@ -32,6 +32,8 @@ export default {
     Vue.prototype.$triggers = {
       userByID: options.userByID,
       channelByID: options.channelByID,
+      userList: options.userList,
+      channelList: options.channelList,
 
       // Checks if chunk is triggered and if so, gives the trigger
       isTriggered (chunk = '') {
@@ -62,17 +64,17 @@ export default {
        * @param {String} message
        * @param {function} regular
        * @param {function} triggered
+       * @param {function} triggeredTextGetter -- determines how text for the triggered node is generated
        * @param {*} wrapper Wrapper to contain processed data. Must be a ref
        */
-      traverseMessage (regex, message, regularChunkHandler, triggeredChunkHandler, wrapper) {
-        let lists = { '@': this.userByID, '#': this.channelByID }
-
+      traverseMessage (regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper) {
         let match
         let lastProcessed = 0
         let unprocessedMsg = message
         while ((match = regex.exec(message))) {
           // Get index of matched chunk
-          let [ entire, trigger, id ] = match
+          match = matchDestructor(match)
+          let { entire, trigger, id } = match
           let triggeredIndex = unprocessedMsg.indexOf(entire)
 
           // Get normal and triggered chunks
@@ -83,8 +85,7 @@ export default {
           if (normalChunk) regularChunkHandler(normalChunk, wrapper)
 
           // Get triggered node's text
-          let object = (lists[trigger](id)) || {}
-          let triggeredText = object.name || object.username
+          let { triggeredText } = triggeredTextGetter(match)
 
           // Handle triggered chunk
           triggeredChunkHandler(wrapper, trigger, triggeredText, { id })
@@ -149,11 +150,26 @@ export default {
           wrapper.message += message
         }
 
+
+        let lists = { '@': this.userByID, '#': this.channelByID }
+        let triggeredTextGetter = (match) => {
+          let { trigger, id } = match
+
+          let object = (lists[trigger](id)) || {}
+          let triggeredText = object.name || object.username
+          return { triggeredText }
+        }
+
+        let matchDestructor = (match) => {
+          let [ entire, trigger, id ] = match
+          return { entire, trigger, id }
+        }
+
         // Wrapper
         let wrapper = { message: `` }
 
         // Traverse
-        this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+        this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
         return wrapper
       },
 
@@ -194,9 +210,23 @@ export default {
           wrapper.appendChild(normalNode)
         }
 
+        let lists = { '@': this.userByID, '#': this.channelByID }
+        let triggeredTextGetter = (match) => {
+          let { trigger, id } = match
+
+          let object = (lists[trigger](id)) || {}
+          let triggeredText = object.name || object.username
+          return { triggeredText }
+        }
+
+        let matchDestructor = (match) => {
+          let [ entire, trigger, id ] = match
+          return { entire, trigger, id }
+        }
+
         let wrapper = document.createElement('p')
         if (message) {
-          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
+          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
         } else {
           let buffer = document.createElement('span')
           buffer.appendChild(document.createElement('br'))

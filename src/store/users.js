@@ -30,6 +30,7 @@ class Activity {
 // getters
 const getters = {
   list: (state) => state.list,
+  listOnDemand: (state) => () => state.list,
   length: (state) => state.list.length,
   findByID: (state) => (ID) => state.list.find(u => ID === u.ID),
   findByUsername: (state) => (username) => {

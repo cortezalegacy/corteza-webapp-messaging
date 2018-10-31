@@ -180,7 +180,6 @@ export default {
 
     updateChannelState (state) {
       this.$rest.updateChannelState(this.ch.ID, state).then((ch) => {
-        console.log(ch)
         this.ch = ch
       }).catch(({ message }) => {
         this.error = message

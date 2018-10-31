@@ -1,11 +1,20 @@
 <template>
   <div class="input-wrapper">
     <div
+      class="dummy-node"
+      ref="tmpNode"
+      contenteditable="true"
+      tabindex="-1" />
+
+    <div
       class="richInput"
       @keydown="handleKeyDown"
       @keyup="handleKeyUp"
       @focus="updateFocus(true)"
       @blur="updateFocus(false)"
+
+      @paste="handlePaste"
+
       :id="inputName"
       :ref="inputName"
       data-nodetype="root"
@@ -71,6 +80,153 @@ export default {
   },
 
   methods: {
+    pasteContent (content = '') {
+      window.document.execCommand('insertText', false, content)
+    },
+
+    getClipboardContent (e, type = 'text/plain') {
+      return (e.originalEvent || e).clipboardData.getData(type)
+    },
+
+    preProcessLines (node) {
+      let rtr = []
+      let { regex, indexedLists } = this.textToTriggerRegex
+      let message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper
+
+      regularChunkHandler = (message, wrapper) => {
+        let normalNode = document.createElement('span')
+        normalNode.appendChild(document.createTextNode(message))
+        wrapper.appendChild(normalNode)
+      }
+
+      triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => {
+        // Create a triggered node
+        let triggeredNode = document.createElement('span')
+        if (this.$triggers.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
+          this.$triggers.addNodeTrigger(triggeredNode, trigger, meta)
+        }
+        wrapper.appendChild(triggeredNode)
+      }
+
+      matchDestructor = (match) => {
+        let entire, trigger, id, name
+        entire = match[0]
+        trigger = entire[0]
+        name = match[2] || match[3]
+        id = name
+        id = indexedLists[trigger][id].ID
+        return { entire, trigger, id, name }
+      }
+
+      triggeredTextGetter = (match) => {
+        return { triggeredText: match.name }
+      }
+
+      for (let l of node.childNodes) {
+        message = l.textContent
+        wrapper = document.createElement('p')
+        this.$triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
+        rtr.push(wrapper)
+      }
+      return rtr
+    },
+
+    neitherTriggered (n1, n2) {
+      return !(n1.dataset.triggered || n2.dataset.triggered)
+    },
+
+    handlePaste (e) {
+      let range = document.createRange()
+      let tmpNode = this.$refs.tmpNode
+
+      // Prevent default paste event
+      e.preventDefault()
+
+      // Trigger paste with empty string -- to clear out selection (if any)
+      this.pasteContent()
+      if (!this.textAreaRef().textContent) this.resetInput()
+
+      // Remember the node and caret index
+      let pNode, pCaretIndex
+      pNode = this.getCurentNode()
+      pCaretIndex = this.getCaretPositionRelative()
+
+      // Get plain text from clipbord
+      const text = this.getClipboardContent(e)
+
+      // Focus dummy node & trigger paste with plain text
+      this.pushToEnd(tmpNode)
+      this.pasteContent(text)
+
+      // Pre process temp node's lines
+      let pLines
+      pLines = this.preProcessLines(tmpNode)
+
+      // Insert new lines to input
+      /// / Split curent node at caret index into 2 span's
+      let pNodeLeft, pNodeRight, pNodeContent
+
+      pNodeContent = pNode.textContent
+      pNodeLeft = document.createElement('span')
+      pNodeLeft.appendChild(document.createTextNode(pNodeContent.substring(0, pCaretIndex)))
+
+      pNodeRight = document.createElement('span')
+      pNodeRight.appendChild(document.createTextNode(pNodeContent.substring(pCaretIndex)))
+
+      /// / Replace targeted node wit left node, followed by right node
+      this.insertBefore(pNode, pNodeLeft)
+      this.insertAfter(pNodeLeft, pNodeRight)
+      this.removeNode(pNode)
+
+      /// / Update current node & current caret index
+      pNode = pLines[pLines.length - 1].lastChild
+      pCaretIndex = pNode.textContent.length
+
+      /// / Take all right nodes and add them to the end of last pasted row
+      let rNode
+
+      let lastRow = pLines[pLines.length - 1]
+      let lastChild = lastRow.lastChild
+      rNode = pNodeLeft
+      while ((rNode = rNode.nextSibling)) {
+        this.insertAfter(lastRow.lastChild, rNode)
+      }
+      if (lastChild.nextSibling && this.neitherTriggered(lastChild, lastChild.nextSibling)) {
+        this.mergeNodes(lastChild, lastChild.nextSibling)
+      }
+
+
+      /// / Insert all nodes from first pasted line after left node
+      let firstRow = pLines[0]
+      rNode = null
+      while ((rNode = firstRow.lastChild)) {
+        this.insertAfter(pNodeLeft, rNode)
+      }
+      if (pNodeLeft.nextSibling && this.neitherTriggered(pNodeLeft, pNodeLeft.nextSibling)) {
+        // eslint-disable-next-line
+        if (pNodeLeft.nextSibling == lastChild) {
+          lastChild = pNodeLeft
+          pCaretIndex += pNodeLeft.textContent.length
+        }
+        this.mergeNodes(pNodeLeft, pNodeLeft.nextSibling)
+      }
+
+      /// / Insert other rows
+      // i ge of 0; because line 0 is already inserted
+      for (let i = pLines.length - 1; i > 0; i--) {
+        let line = pLines[i]
+        this.insertAfter(pNodeLeft.parentNode, line)
+      }
+
+      // Clear up dummy node
+      tmpNode.innerHTML = ''
+
+      // Tmp reset caret to end of input
+      pNode = this.textAreaRef().lastChild.lastChild
+      lastChild.focus()
+      this.pushCaretToIndex(lastChild, pCaretIndex, range)
+    },
+
     updateFocus (focused) {
       this.focused = focused
     },
@@ -326,6 +482,16 @@ export default {
       }
     },
 
+    pushCaretToIndex (node, index, range) {
+      let textNode = this.getTextNode(node)
+      range.setStart(textNode, index)
+      range.collapse(true)
+
+      let selection = window.getSelection()
+      selection.removeAllRanges()
+      selection.addRange(range)
+    },
+
     extractSuggestion (suggestion = {}) {
       let { prefix, command: commandObj } = suggestion
       let { meta = {}, command } = commandObj || {}
@@ -382,6 +548,20 @@ export default {
 
     insertBefore (ref, node) {
       ref.parentNode.insertBefore(node, ref)
+    },
+
+    removeNode (ref) {
+      ref.parentNode.removeChild(ref)
+    },
+
+    // Update's left's content with merged content
+    mergeNodes (left, right) {
+      // Create a concated content
+      let concat = left.textContent + right.textContent
+      left.innerHTML = concat
+
+      // Remove unneded next sibling node
+      this.removeNode(right)
     },
 
     // Gives node's text node
@@ -447,12 +627,9 @@ export default {
       let nextNode = node.nextElementSibling || undefined
       if (nextNode && !node.dataset.triggered && (nextNode && !nextNode.dataset.triggered)) {
         // Will have to update caret's position - place it to end of previous text node
-        let range = document.createRange()
         let nodeCaretIndex = node.textContent.length
 
-        // Create a concated content
-        let concat = node.textContent + nextNode.textContent
-        node.innerHTML = concat
+        this.mergeNodes(node, nextNode)
 
         /**
          * Update caret to new text node's position
@@ -460,16 +637,7 @@ export default {
          *  - collapse to that selection
          *  - make selection visible
          */
-        let textNode = this.getTextNode(node)
-        range.setStart(textNode, nodeCaretIndex)
-        range.collapse(true)
-
-        let selection = window.getSelection()
-        selection.removeAllRanges()
-        selection.addRange(range)
-
-        // Remove unneded next sibling node
-        nextNode.parentNode.removeChild(nextNode)
+        this.pushCaretToIndex(node, nodeCaretIndex)
       }
 
       if (trigger && trigger !== '/') {
@@ -559,7 +727,6 @@ export default {
         // Within each line check for single line safezones
         regex = /([^`]|)((`)[^`]+?\3)\1/
         this.markSafezones(r.textContent, safezones, regex, currentIndex)
-        console.log(safezones)
 
         for (let c of r.children) {
           let data = c.dataset
@@ -599,6 +766,44 @@ export default {
   },
 
   computed: {
+    textToTriggerRegex () {
+      let lists = { '@': this.$triggers.userList(), '#': this.$triggers.channelList() }
+      let indexedLists = {}
+      let rtr = '('
+
+      let getTag = (obj) => {
+        return obj.name || obj.username || obj.ID || ''
+      }
+
+      let indexList = (list) => {
+        let rtr = {}
+        for (let l of list) {
+          rtr[getTag(l)] = l
+        }
+        return rtr
+      }
+
+      for (let t in lists) {
+        indexedLists[t] = indexList(lists[t])
+        rtr = `${rtr}${t}(`
+        let tags = ''
+        // Sort by length
+        let list = [...lists[t]].sort((a, b) => {
+          return getTag(b).length - getTag(a).length
+        })
+
+        for (let g of list) {
+          let tag = getTag(g)
+          if (tag) {
+            tags = `${tags}${tag}|`
+          }
+        }
+
+        tags = tags.substring(0, tags.length - 1)
+        rtr = `${rtr}${tags})|`
+      }
+      return { regex: new RegExp(`${rtr.substring(0, rtr.length - 1)})`, 'g'), indexedLists }
+    },
 
     getSuggestions () {
       return this.tsMeta.suggestions || []
@@ -710,6 +915,13 @@ export default {
 .richInput:focus {
   border: none;
   outline: none!important;
+}
+
+.dummy-node {
+  // display: none;
+  position: absolute;
+  top: 1000px;
+  pointer-events: none;
 }
 
 @media (min-width: $wideminwidth)

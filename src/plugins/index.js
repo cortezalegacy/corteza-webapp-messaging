@@ -18,5 +18,7 @@ Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
 Vue.use(triggers, {
   userByID: store.getters['users/findByID'],
+  userList: store.getters['users/listOnDemand'],
   channelByID: store.getters['channels/findByID'],
+  channelList: store.getters['channels/listOnDemand'],
 })
