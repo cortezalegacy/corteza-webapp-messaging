@@ -15,10 +15,6 @@ const actions = {
     commit('clean')
     commit('flush')
   },
-
-  setUser ({ commit }, user) {
-    commit('setUser', user)
-  },
 }
 
 // mutations

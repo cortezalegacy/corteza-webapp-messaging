@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -25,26 +25,13 @@ export default {
   },
 
   computed: {
-    ...mapGetters('auth', [
-      'isAuthenticated',
-    ]),
-  },
-
-  methods: {
-    ...mapActions('auth', [
-      'setUser',
-      'clear',
-    ]),
+    ...mapGetters('auth', ['isAuthenticated']),
   },
 
   mounted () {
-    this.$auth.check().then((user) => {
-      this.setUser(user)
+    if (this.isAuthenticated) {
       this.$router.push({ name: 'root' })
-    }).catch((error) => {
-      this.clear()
-      console.error(error)
-    })
+    }
   },
 }
 </script>

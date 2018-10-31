@@ -29,13 +29,15 @@ function Websocket ({ eventbus }) {
 
 Websocket.prototype = Object.assign(Websocket.prototype, {
   connected () {
-    return this.active && this.conn !== null
+    return this.active
   },
 
   connect () {
+    // check if already connected
+    if (this.connected()) return
+
     const baseUrl = window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
 
-    console.debug('Connecting to Crust Messaging Websocket')
     const url = baseUrl.replace(/^http/, 'ws') + '/websocket/'
 
     this.conn = new ReconnectingWebSocket(url)
@@ -48,6 +50,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     })
 
     this.conn.addEventListener('open', () => {
+      console.debug('Connected to Crust Messaging Websocket', this.active)
       this.active = true
 
       if (this.queue.length > 0) {

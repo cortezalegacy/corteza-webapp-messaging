@@ -1,12 +1,7 @@
-import store from '@/store'
 import Vue from 'vue'
 import Router from 'vue-router'
 
 Vue.use(Router)
-
-function protect (to, from, next) {
-  next(store.getters['auth/isAuthenticated'] ? true : '/messaging/auth/signin')
-}
 
 export default new Router({
   mode: 'history',
@@ -15,7 +10,6 @@ export default new Router({
     {
       path: '/messaging/',
       name: 'root',
-      beforeEnter: protect,
       component: view('Messenger'),
       children: [
         { path: 'channel/new/:type', name: 'new-channel', component: view('ChannelEditor'), props: true },

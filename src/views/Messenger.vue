@@ -1,8 +1,10 @@
 <template>
-    <section class="messenger" :class="{
+    <section class="messenger"
+        v-if="isAuthenticated"
+        :class="{
             'left-panel-open': isChannelPanelOpen,
             'right-panel-open': null !== openThread && currentChannel,
-          }">
+        }">
         <!-- if no channel selected channel list should be displayed -->
         <panel-channels
             :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
@@ -62,9 +64,10 @@ export default {
   },
 
   beforeCreate () {
-    this.$auth.check().then(() => {
-      this.$ws.connect()
+    this.$auth.check().then((user) => {
+      this.$store.commit('auth/setUser', user)
     }).catch((err) => {
+      this.$store.commit('auth/clean')
       console.error(err)
       this.$router.push({ name: 'signin' })
     })
@@ -103,11 +106,9 @@ export default {
   },
 
   watch: {
-    'isAuthenticated' (newval, oldval) {
-      if (newval && !oldval) {
+    'isAuthenticated' (isAuthenticated) {
+      if (isAuthenticated) {
         this.$ws.connect()
-      } else if (!newval && oldval) {
-        this.$ws.close()
       }
     },
 
