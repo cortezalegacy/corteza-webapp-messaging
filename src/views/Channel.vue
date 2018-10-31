@@ -223,7 +223,15 @@ export default {
     },
 
     onScrollBottom ({ messageID }) {
-      if (document.hasFocus()) this.resetUnreadAfterTimeout(messageID)
+      if (document.hasFocus()) {
+        this.resetUnreadAfterTimeout(messageID)
+      } else {
+        const resetUnreadAfterTimeoutOnFocus = () => {
+          this.resetUnreadAfterTimeout(messageID)
+          window.removeEventListener('focus', resetUnreadAfterTimeoutOnFocus)
+        }
+        window.addEventListener('focus', resetUnreadAfterTimeoutOnFocus)
+      }
     },
   },
 

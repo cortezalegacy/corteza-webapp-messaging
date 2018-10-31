@@ -76,8 +76,17 @@ export default {
     const isOwnerOfLastMessage = lastMessage && lastMessage.user.ID === this.currentUser.ID
 
     this.$nextTick(() => {
-      if (this.scrollable && (this.allowAutoScroll || (isNewMessage && isOwnerOfLastMessage))) {
-        this.$refs.anchor.scrollIntoView()
+      if (this.scrollable) {
+        // When we're scrollable, we need to emit scroll* events
+        if (this.allowAutoScroll || (isNewMessage && isOwnerOfLastMessage)) {
+          this.$refs.anchor.scrollIntoView()
+        }
+
+        const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
+        if (!hasScrollBar) {
+          // Emit scrollTo bottom when there is no scrollbar on message update...
+          this.$emit('scrollBottom', { messageID: this.getLastID(this.messages) })
+        }
       }
     })
 
