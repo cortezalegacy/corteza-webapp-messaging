@@ -33,7 +33,7 @@
               placeholder="Things we talk about">
           </div>
 
-          <div class="form-toggle" v-if="ch.type !== 'group'">
+          <div class="form-check" v-if="ch.type !== 'group'">
             <input
               class="input-chk"
               type="checkbox"
