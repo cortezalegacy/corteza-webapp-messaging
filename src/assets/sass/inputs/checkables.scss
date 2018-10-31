@@ -139,7 +139,7 @@ $form-toggle-height:20px;
   [type="radio"]:not(:checked) + label,
   [type="radio"]:checked + label {
     padding-left: $form-toggle-height*2 +10px;
-    padding-top: 5px;
+    padding-top: 3px;
     display: inline-block;
   }
 
@@ -169,7 +169,7 @@ $form-toggle-height:20px;
         transition: .4s;
         border-radius: 50%;
         opacity: 1;
-        top: -1px;
+        top: -2px;
         box-shadow: 0 0 $form-toggle-height rgba(40, 47, 60, 0.05), 0 $form-toggle-height/2 $form-toggle-height/2 rgba(40, 47, 60, 0.05), 0 3px 4px rgba(40, 47, 60, 0.05);
   }
 
