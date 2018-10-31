@@ -654,7 +654,6 @@ describe('InputRichText.vue', () => {
 
     // Breaks at first return, due to invalid params
     node = {}
-
     expect(wrapper.vm.processNodes(node, nodeCaretIndex)).to.eq(false)
     expect(wrapper.vm.processNodes(node, nodeCaretIndex)).to.eq(false)
 
@@ -730,112 +729,112 @@ describe('InputRichText.vue', () => {
   it('processNodes - Should join regular nodes', () => {
     // Doesn't support createRange
     return
-    let selection, lastNode, nextSibling, nodeCaretIndex, parent, expected
-    nodeCaretIndex = 0
+    // let selection, lastNode, nextSibling, nodeCaretIndex, parent, expected
+    // nodeCaretIndex = 0
 
-    // Just 2 nodes - no spaces
-    parent = document.createElement('div')
-    lastNode = document.createElement('span')
-    lastNode.appendChild(document.createTextNode('pt1'))
-    parent.appendChild(lastNode)
+    // // Just 2 nodes - no spaces
+    // parent = document.createElement('div')
+    // lastNode = document.createElement('span')
+    // lastNode.appendChild(document.createTextNode('pt1'))
+    // parent.appendChild(lastNode)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt2'))
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt2'))
+    // parent.appendChild(nextSibling)
 
-    wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
-    expect(parent.childNodes.length).to.eq(2)
+    // wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
+    // expect(parent.childNodes.length).to.eq(2)
 
-    wrapper.vm.processNodes(lastNode, nodeCaretIndex)
-    expect(parent.childNodes.length).to.eq(1)
+    // wrapper.vm.processNodes(lastNode, nodeCaretIndex)
+    // expect(parent.childNodes.length).to.eq(1)
 
-    expected = 'pt1pt2'
-    expect(lastNode.textContent).to.eq(expected)
+    // expected = 'pt1pt2'
+    // expect(lastNode.textContent).to.eq(expected)
 
-    // Just 2 nodes - with spaces
-    parent = document.createElement('div')
-    lastNode = document.createElement('span')
-    lastNode.appendChild(document.createTextNode('pt 1  '))
-    parent.appendChild(lastNode)
+    // // Just 2 nodes - with spaces
+    // parent = document.createElement('div')
+    // lastNode = document.createElement('span')
+    // lastNode.appendChild(document.createTextNode('pt 1  '))
+    // parent.appendChild(lastNode)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('p t2 '))
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('p t2 '))
+    // parent.appendChild(nextSibling)
 
-    wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
-    expect(parent.childNodes.length).to.eq(2)
+    // wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
+    // expect(parent.childNodes.length).to.eq(2)
 
-    wrapper.vm.processNodes(lastNode, nodeCaretIndex)
-    expect(parent.childNodes.length).to.eq(1)
+    // wrapper.vm.processNodes(lastNode, nodeCaretIndex)
+    // expect(parent.childNodes.length).to.eq(1)
 
-    expected = 'pt 1  p t2 '
-    expect(lastNode.textContent).to.eq(expected)
+    // expected = 'pt 1  p t2 '
+    // expect(lastNode.textContent).to.eq(expected)
 
-    // Some nodes -- mixed with triggered ones - no merges
-    parent = document.createElement('div')
-    lastNode = document.createElement('span')
-    lastNode.appendChild(document.createTextNode('pt1'))
-    parent.appendChild(lastNode)
+    // // Some nodes -- mixed with triggered ones - no merges
+    // parent = document.createElement('div')
+    // lastNode = document.createElement('span')
+    // lastNode.appendChild(document.createTextNode('pt1'))
+    // parent.appendChild(lastNode)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt2t'))
-    nextSibling.dataset.triggered = true
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt2t'))
+    // nextSibling.dataset.triggered = true
+    // parent.appendChild(nextSibling)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt3'))
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt3'))
+    // parent.appendChild(nextSibling)
 
-    wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
-    expect(parent.childNodes.length).to.eq(3)
+    // wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
+    // expect(parent.childNodes.length).to.eq(3)
 
-    wrapper.vm.processNodes(lastNode, nodeCaretIndex)
-    expect(parent.childNodes.length).to.eq(3)
+    // wrapper.vm.processNodes(lastNode, nodeCaretIndex)
+    // expect(parent.childNodes.length).to.eq(3)
 
-    expected = 'pt1'
-    expect(lastNode.textContent).to.eq(expected)
+    // expected = 'pt1'
+    // expect(lastNode.textContent).to.eq(expected)
 
-    expected = 'pt2t'
-    expect(lastNode.nextElementSibling.textContent).to.eq(expected)
-    expect(lastNode.nextElementSibling.dataset.triggered).to.eq('true')
+    // expected = 'pt2t'
+    // expect(lastNode.nextElementSibling.textContent).to.eq(expected)
+    // expect(lastNode.nextElementSibling.dataset.triggered).to.eq('true')
 
-    expected = 'pt3'
-    expect(lastNode.nextElementSibling.nextElementSibling.textContent).to.eq(expected)
+    // expected = 'pt3'
+    // expect(lastNode.nextElementSibling.nextElementSibling.textContent).to.eq(expected)
 
-    // Some nodes -- mixed with triggered ones - last 2 merge
-    parent = document.createElement('div')
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt1'))
-    parent.appendChild(nextSibling)
+    // // Some nodes -- mixed with triggered ones - last 2 merge
+    // parent = document.createElement('div')
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt1'))
+    // parent.appendChild(nextSibling)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt2t'))
-    nextSibling.dataset.triggered = true
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt2t'))
+    // nextSibling.dataset.triggered = true
+    // parent.appendChild(nextSibling)
 
-    lastNode = document.createElement('span')
-    lastNode.appendChild(document.createTextNode('pt3'))
-    parent.appendChild(lastNode)
+    // lastNode = document.createElement('span')
+    // lastNode.appendChild(document.createTextNode('pt3'))
+    // parent.appendChild(lastNode)
 
-    nextSibling = document.createElement('span')
-    nextSibling.appendChild(document.createTextNode('pt4'))
-    parent.appendChild(nextSibling)
+    // nextSibling = document.createElement('span')
+    // nextSibling.appendChild(document.createTextNode('pt4'))
+    // parent.appendChild(nextSibling)
 
-    wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
-    expect(parent.childNodes.length).to.eq(4)
+    // wrapper.vm.$set(wrapper.vm, 'lastNode', lastNode)
+    // expect(parent.childNodes.length).to.eq(4)
 
-    wrapper.vm.processNodes(lastNode, nodeCaretIndex)
-    expect(parent.childNodes.length).to.eq(3)
+    // wrapper.vm.processNodes(lastNode, nodeCaretIndex)
+    // expect(parent.childNodes.length).to.eq(3)
 
-    expected = 'pt1'
-    expect(parent.firstChild.textContent).to.eq(expected)
+    // expected = 'pt1'
+    // expect(parent.firstChild.textContent).to.eq(expected)
 
-    expected = 'pt2t'
-    expect(parent.firstChild.nextElementSibling.textContent).to.eq(expected)
-    expect(parent.firstChild.nextElementSibling.dataset.triggered).to.eq('true')
+    // expected = 'pt2t'
+    // expect(parent.firstChild.nextElementSibling.textContent).to.eq(expected)
+    // expect(parent.firstChild.nextElementSibling.dataset.triggered).to.eq('true')
 
-    expected = 'pt3pt4'
-    expect(lastNode.textContent).to.eq(expected)
+    // expected = 'pt3pt4'
+    // expect(lastNode.textContent).to.eq(expected)
   })
 
   it('processNodes - Should split up nodes to create triggers', () => {

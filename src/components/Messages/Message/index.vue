@@ -70,10 +70,12 @@
             class="message-content"
             :attachment="message.attachment"
             :inline="message.type === 'inlineImage'" />
+
           <contents
             class="message-content"
             :id="message.ID"
-            :chunks="getChunks(message.message)" />
+            :content="getChunks(message.message)" />
+
         </div>
         <div class="message-infos">
           <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>

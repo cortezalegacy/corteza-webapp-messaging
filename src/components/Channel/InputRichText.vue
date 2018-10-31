@@ -205,7 +205,6 @@ export default {
         // Process given node
         let node = this.getCurentNode()
         let nodeCaretIndex = this.getCaretPositionRelative()
-
         let { chunk } = this.processNodes(node, nodeCaretIndex)
         this.$emit('nodeChunkChanged', { chunk })
 
@@ -337,14 +336,12 @@ export default {
     // Parent callable - creates and inserts triggered node
     insertTriggeredNode (suggestion) {
       if (!suggestion) return false
-
       let currentNode = this.getCurentNode()
 
       // Prepare triggered node...
       let node = document.createElement('span')
       let { prefix, command } = this.extractSuggestion(suggestion)
-      if
-      (this.$triggers.prepareTriggeredNode(node, prefix, command).trigger) {
+      if (this.$triggers.prepareTriggeredNode(node, prefix, command).trigger) {
         this.addNodeTrigger(node, suggestion)
       }
       this.insertBefore(currentNode, node)
@@ -524,17 +521,64 @@ export default {
       return -1
     },
 
+    markSafezones (text, safezones, regex, currentIndex = 0) {
+      // Loop will break when no more matches are available
+      while (true) {
+        let match = regex.exec(text)
+        if (!match) return
+
+        let index, matched
+        matched = match[0]
+        index = currentIndex + match.index
+
+        // Update text
+        text = text.substring(index + matched.length)
+
+        // Update safezones
+        safezones.push({ from: index, to: index + matched.length })
+      }
+    },
+
+    isInSafezone (range, safezones) {
+      // Check if trFrom and trTo are included as [] within known safe zones from and to
+      let { from: trFrom, to: trTo } = range
+      return !!(safezones.find(({ from, to }) => from <= trFrom && trTo <= to))
+    },
+
     processTriggeredText (inptRef) {
-      let rtr = ''
+      let rtr, safezones, regex
+      safezones = []
+      rtr = ''
+
+      // Check multiline safezones
+      regex = /(([`]{3}).*?\2)/
+      this.markSafezones(inptRef.textContent, safezones, regex)
+
+      let currentIndex = 0
       for (let r of inptRef.children) {
+        // Within each line check for single line safezones
+        regex = /([^`]|)((`)[^`]+?\3)\1/
+        this.markSafezones(r.textContent, safezones, regex, currentIndex)
+        console.log(safezones)
+
         for (let c of r.children) {
           let data = c.dataset
+
           if (data.triggered && !data.invalid) {
-            let meta = JSON.parse(data.meta || '{}')
-            rtr += `<${data.prefix}${meta.id}>`
+            // Check if trigger is within safezone
+            let range = { from: currentIndex, to: currentIndex + c.textContent.length }
+
+            if (!this.isInSafezone(range, safezones)) {
+              let meta = JSON.parse(data.meta || '{}')
+              rtr += `<${data.prefix}${meta.id}>`
+            } else {
+              rtr += c.textContent
+            }
           } else {
             rtr += c.textContent
           }
+
+          currentIndex += c.textContent.length
         }
         rtr += '\n'
       }
@@ -555,6 +599,7 @@ export default {
   },
 
   computed: {
+
     getSuggestions () {
       return this.tsMeta.suggestions || []
     },

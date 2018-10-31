@@ -4,6 +4,19 @@ const TRIGGERS = {
   '#': { type: 'channel' },
 }
 
+const ROUTES = {
+  user: {
+    params: [ { userId: 'id' } ],
+    // Todo:
+    route: undefined,
+  },
+  channel: {
+    params: [ { channelID: 'id' } ],
+    // Todo:
+    route: 'channel',
+  },
+}
+
 function makeIdParserRegex (flags = '') {
   /**
    * m[0] - entire match
@@ -88,13 +101,7 @@ export default {
       },
 
       getChunks (text) {
-        let rows = text.trim().split(/[\n]/)
-        let rtr = []
-        if (!text.trim()) return []
-        for (let r of rows) {
-          rtr = [...rtr, this.getLineChunks(r)]
-        }
-        return rtr
+        return this.getLineChunks(text)
       },
 
       // Prepares chunks for history
@@ -104,39 +111,49 @@ export default {
 
         // Triggered handler
         let triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => {
-          let { type } = this.isTriggered(triggeredText)
+          let content, params, node
+          // , href
 
-          let paramName = type === 'user'
-            ? 'userId'
-            : 'channelID'
+          // Link
+          node = document.createElement('a')
 
-          let params = {}
-          params[paramName] = meta.id
+          /// / Text node
+          content = `${trigger}${triggeredText}`
+          node.appendChild(document.createTextNode(content))
 
-          triggeredText = {
-            chunk: `<mark><b>${trigger}</b>${triggeredText}</mark>`,
-            meta: { tag: 'router-link' },
-            props: { to: { name: type, params } },
-            triggered: true,
+          /// / Params
+          let { type } = this.isTriggered(trigger)
+          let { params: paramsDef, route } = ROUTES[type] || {}
+
+          params = {}
+          // Collect required params
+          for (let p of paramsDef) {
+            let [ param, raw ] = Object.entries(p)[0]
+            params[param] = meta[raw]
           }
+          node.dataset.params = JSON.stringify(params)
 
-          wrapper.push(triggeredText)
+          /// / Route name
+          node.dataset.route = route
+
+          /// / Href - TODO -- need $router instance
+          // href = this.$router.resolve({ name: route, params })
+          // node.href = href
+          node.href = '#'
+
+          wrapper.message += node.outerHTML
         }
 
         // Regular handler
         let regularChunkHandler = (message, wrapper) => {
-          wrapper.push({ chunk: message, meta: {}, props: {}, triggered: false })
+          wrapper.message += message
         }
 
         // Wrapper
-        let wrapper = []
+        let wrapper = { message: `` }
 
         // Traverse
-        if (message) {
-          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
-        } else {
-          regularChunkHandler('<br>', wrapper)
-        }
+        this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, wrapper)
         return wrapper
       },
 
@@ -146,7 +163,6 @@ export default {
       // Gives nodes per line
       getNodes (message) {
         let wrapper = document.createElement('div')
-
         if (!message) return wrapper
 
         for (let m of message.split('\n')) {
@@ -186,7 +202,6 @@ export default {
           buffer.appendChild(document.createElement('br'))
           wrapper.appendChild(buffer)
         }
-
         return wrapper
       },
 
