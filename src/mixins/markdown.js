@@ -16,6 +16,8 @@ const md = require('markdown-it')({
   },
 })
 
+md.use(require('markdown-it-emoji'))
+
 const linkRenderer = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options)
 }
