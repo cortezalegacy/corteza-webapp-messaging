@@ -128,6 +128,15 @@ export default {
         this.$triggers.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
         rtr.push(wrapper)
       }
+
+      for (let l of rtr) {
+        if (!l.childNodes.length) {
+          let insert = document.createElement('span')
+          insert.appendChild(document.createElement('br'))
+          l.appendChild(insert)
+        }
+      }
+
       return rtr
     },
 
@@ -224,7 +233,11 @@ export default {
       // Tmp reset caret to end of input
       pNode = this.textAreaRef().lastChild.lastChild
       lastChild.focus()
-      this.pushCaretToIndex(lastChild, pCaretIndex, range)
+      if (lastChild.textContent) {
+        this.pushCaretToIndex(lastChild, pCaretIndex, range)
+      } else {
+        this.pushToStart(lastChild)
+      }
     },
 
     updateFocus (focused) {
@@ -558,7 +571,7 @@ export default {
     mergeNodes (left, right) {
       // Create a concated content
       let concat = left.textContent + right.textContent
-      left.innerHTML = concat
+      left.innerHTML = concat || '<br>'
 
       // Remove unneded next sibling node
       this.removeNode(right)
