@@ -1,5 +1,5 @@
 <template>
-    <section :class="{
+    <section class="messenger" :class="{
             'left-panel-open': isChannelPanelOpen,
             'right-panel-open': null !== openThread && currentChannel,
           }">
@@ -146,6 +146,11 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
+
+.messenger
+{
+  overflow-y: hidden;
+}
 section {
   background-color : $mainbgcolor;
 }

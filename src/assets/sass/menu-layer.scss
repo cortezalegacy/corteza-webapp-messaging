@@ -174,7 +174,8 @@
     .menu-layer-inner
     {
       width:90vw;
-      margin-left:-100%;
+      //margin-left:-100%;
+      max-width:320px;
       bottom:0;
       overflow-x: hidden;
       overflow-y: auto;
@@ -195,10 +196,6 @@
 
 @media (min-width: $wideminwidth)
 {
-  .menu-layer
-  {
-    padding:60px 0;
-  }
   .always-deployed-on-desktop
   {
     max-width:320px;
@@ -217,7 +214,6 @@
 {
   .menu-layer
   {
-    padding:60px 0;
     max-width:400px;
   }
   .always-deployed-on-desktop

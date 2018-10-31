@@ -132,20 +132,28 @@ export default {
 
 </script>
 <style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
 ul {
   padding:0;
   margin:0;
-
-  &.scrollable {
-    height: calc(100vh - 140px);
-    position:relative;
-    max-height:100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-  }
 }
 
 li {
   list-style: none;
+}
+
+.scrollable {
+  height: calc(100vh - 105px);
+  position:relative;
+  max-height:100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (min-width: $wideminwidth)
+{
+  .scrollable {
+    height: calc(100vh - 140px);
+  }
 }
 </style>

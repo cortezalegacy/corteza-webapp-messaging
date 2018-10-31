@@ -146,17 +146,6 @@ export default {
 @import '@/assets/sass/inputs.scss';
 @import '@/assets/sass/badges.scss';
 
-// problem with input ... only on FF59 ubuntu
-.search
-{
-  max-width:calc(100% - 40px);
-  padding-right:0;
-}
-.search-item
-{
-  padding-right:10%;
-  padding-left:5%;
-}
 .channel-unfolder
 {
   float:right;
@@ -173,8 +162,64 @@ export default {
     line-height: 28px;
   }
 }
+
+// search area is somewhat different.
+// 1st correct a problem with input ... only happens on FF59 ubuntu
+.search
+{
+  max-width:calc(100% - 40px);
+  padding-right:0;
+}
+// fix search area at the top of the layer
+.search-item
+{
+  padding-right:10%;
+  padding-left:5%;
+}
+// add space at the beginning of the menu layer after search
+.menu-layer-inner
+{
+  margin-top:45px;
+  padding-top:5px;
+}
+//since search is now fixed we have to have it follow the same rules as the container
+// but specifcally.
+.menu-layer.display,
+.menu-layer.force-on,
+.menu-layer.open
+{
+  .search-section
+  {
+    position:fixed;
+    top:0;
+    background-color:$appwhite;
+    z-index:2;
+    width:90vw;
+    max-width:320px;
+    min-width:120px;
+    .search-item
+    {
+      border-right:3px;
+    }
+  }
+  // move closer to right of search
+  .closer
+  {
+    position: absolute;
+    top: -5px;
+    z-index: 3;
+    right: calc(10vw + 5px);
+  }
+}
+
 @media (min-width: $wideminwidth)
 {
+  .menu-layer-inner
+  {
+    margin-top:55px;
+    padding-top:5px;
+  }
+
   .search-section
   {
     position:fixed;
