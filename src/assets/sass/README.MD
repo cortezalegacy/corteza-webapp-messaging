@@ -3,6 +3,8 @@
 most of the classes are close to the ones of bootstrap way of defining things.
 some useless elements on unused styling options are unimplemented, ask for extras to be added ;)
 
+Class references for inputs are from <https://getbootstrap.com/docs/4.1/components/forms/>
+
 ## Form elements / inputs
 
 ### checkables.scss
