@@ -182,12 +182,6 @@ export default {
 <style lang="scss">
   @import '@/assets/sass/_0.commons.scss';
   // @todo put those in generic file or resets ?
-  img
-  {
-    max-width: 100% !important;
-    width:auto;
-    max-height: 180px !important;
-  }
 
   /* reset mark styles */
   // marks do not work in scope either

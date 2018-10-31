@@ -1,10 +1,11 @@
 <template>
   <div>
       <div v-if="inline && attachment.meta.preview">
-        <a class="attachment-wrap" :href="prefixAttachmentUrl(attachment.downloadUrl)">
+        <a class="attachment-wrap" @click.prevent="onClick" :href="prefixAttachmentUrl(attachment.downloadUrl)">
           <img :width="(attachment.meta.preview.image || {}).width || 320"
                :height="(attachment.meta.preview.image || {}).height || 180"
                @error.once="reloadBrokenImage"
+
                :src="prefixAttachmentUrl(attachment.previewUrl)">
         </a>
       </div>
@@ -30,6 +31,10 @@ export default {
       return this.$rest.baseURL() + url
     },
 
+    onClick () {
+      this.$bus.$emit('$message.previewAttachment', this.attachment)
+    },
+
     reloadBrokenImage (ev) {
       window.setTimeout(() => {
         ev.target.src = ev.target.src
@@ -42,11 +47,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .missing {
-    color: #ccc;
-  }
-  .attachment-wrap
-  {
-    min-height:180px;
-  }
+.missing {
+  color: #ccc;
+}
+.attachment-wrap
+{
+  min-height:180px;
+}
+
+img {
+  max-width: 100% !important;
+  width:auto;
+  max-height: 180px !important;
+}
 </style>

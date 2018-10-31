@@ -24,11 +24,17 @@
             v-if="currentChannel && openThread"
             @close="openThread = null"
             :repliesTo="openThread" />
+
+        <preview
+          v-if="preview"
+          @close="preview=null"
+          :src="preview.src">lkdsjflks</preview>
      </section>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
+import Preview from '../components/Preview'
 import { User } from '@/types'
 
 export default {
@@ -47,6 +53,7 @@ export default {
 
   data () {
     return {
+      preview: null,
       openThread: null,
       showChannelCreator: false,
       wideWidth: 768,
@@ -61,6 +68,7 @@ export default {
     PanelChannels,
     PanelUsers,
     PanelThread,
+    Preview,
   },
 
   beforeCreate () {
@@ -97,6 +105,13 @@ export default {
             this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
           },
         })
+      }
+    })
+
+    this.$bus.$on('$message.previewAttachment', (attachment) => {
+      this.preview = {
+        src: this.$rest.baseURL() + attachment.url,
+        caption: attachment.name,
       }
     })
   },
