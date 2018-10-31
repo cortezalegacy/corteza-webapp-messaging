@@ -33,15 +33,18 @@
               placeholder="Things we talk about">
           </div>
 
-          <label v-if="ch.type !== 'group'" class="block">
-              <input
-                class="input-chk"
-                type="checkbox"
-                v-model="ch.type"
-                true-value="private"
-                false-value="public">
-              Make this channel private
-          </label>
+          <div class="form-toggle" v-if="ch.type !== 'group'">
+            <input
+              class="input-chk"
+              type="checkbox"
+              id="channel-type"
+              v-model="ch.type"
+              true-value="private"
+              false-value="public">
+            <label for="channel-type">
+                Make this channel private
+            </label>
+          </div>
 
           <ul v-if="!ch.ID">
             <li v-for="u in users" :key="u.ID">
