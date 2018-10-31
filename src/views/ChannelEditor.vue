@@ -175,20 +175,6 @@ export default {
       }
     },
 
-    deleteChannel () {
-      if (this.ch) {
-        if (!confirm('Are you sure to delete this channel?')) {
-          return
-        }
-
-        console.debug('Deleting channel', this.ch)
-        this.$rest.deleteChannel(this.ch).then(() => {
-          this.removeChannelFromList(this.ch)
-          this.$router.push({ name: 'root' })
-        })
-      }
-    },
-
     updateChannelState (state) {
       this.$rest.updateChannelState(this.ch.ID, state).then((ch) => {
         console.log(ch)

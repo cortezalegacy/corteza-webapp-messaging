@@ -1,7 +1,7 @@
 import moment from 'moment'
 
 // Time window for continued messages in seconds
-const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 60
+const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 3 * 60
 
 export default {
   methods: {

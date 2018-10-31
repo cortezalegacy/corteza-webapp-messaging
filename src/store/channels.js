@@ -15,7 +15,7 @@ const getters = {
   current: (state) => state.current,
 
   // Return all but deleted
-  list: (state) => state.list.filter(c => !c.deletedAt && !c.archivedAt),
+  list: (state) => state.list.filter(c => !c.deletedAt),
 
   // Return private & public channels
   byType: (state, getters) => (type) => getters.list.filter(c => c.type === type),

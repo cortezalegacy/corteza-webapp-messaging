@@ -57,14 +57,14 @@ export default {
       const msg = new Message(message)
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
-        // Count only new mesages, no updates
+        // Count only new mesages, no updates, no replies
         store.dispatch('unread/incChannel', msg.channelID)
 
         eventbus.$emit('$core.newMessage', { message })
       }
       store.dispatch('history/update', [msg])
 
-      // Assume activity stoped
+      // Assume activity stopped
       store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
     })
 
