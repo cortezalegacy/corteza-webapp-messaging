@@ -12,6 +12,11 @@
             {{error}}
           </div>
 
+          <div class="notification info no-margin">
+              <p>Notifications ready to use ! Check assets/sass/README.MD for more info</p>
+              <span class="close"></span>
+          </div>
+
           <div v-if="ch.type !== 'group'" class="input-wrap">
             <label class="label-block">Channel name</label>
             <input
@@ -197,6 +202,7 @@ export default {
 @import '@/assets/sass/headers.scss';
 @import '@/assets/sass/inputs.scss';
 @import '@/assets/sass/btns.scss';
+@import '@/assets/sass/notifications.scss';
 
 div.error {
   color: $appred;
