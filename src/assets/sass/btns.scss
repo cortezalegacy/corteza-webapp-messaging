@@ -159,3 +159,12 @@ button structure :
     }
   }
 }
+
+.btn-disabled {
+  cursor: default;
+
+  &:hover {
+    color: $appgrey;
+    background-color:transparent;
+  }
+}

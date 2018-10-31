@@ -1,13 +1,13 @@
 <template>
   <section>
-      <div class="modal-content">
-        <div class="modal-header">
-          <a @click="$router.back()" class="close"><i class="icon-close"></i></a>
-          <h1 class="modal-title" v-if="ch.type === 'group'">Group editor</h1>
-          <h1 class="modal-title" v-else>Channel editor</h1>
-        </div>
-
-        <form class="editor big-form" @submit.prevent="submit">
+      <header class="header sub-header">
+          <h2 v-if="ch.type === 'group' && ch.ID">Edit group</h2>
+          <h2 v-else-if="ch.type === 'group'">Create new group</h2>
+          <h2 v-else-if="ch.ID">Channel editor</h2>
+          <h2 v-else>Create new channel</h2>
+      </header>
+      <main class="container">
+        <form class="editor big-form" @submit.prevent="submit" v-if="ch.type !== 'group' && !ch.ID">
           <div v-if="error" class="error">
             {{error}}
           </div>
@@ -15,7 +15,7 @@
           <div v-if="ch.type !== 'group'" class="input-wrap">
             <label class="label-block">Channel name</label>
             <input
-              class="input-txt input-block"
+              class="input-txt input-block name"
               name="name"
               v-model.trim="ch.name"
               required
@@ -33,8 +33,7 @@
               placeholder="Things we talk about">
           </div>
 
-          <div v-if="ch.type !== 'group'" class="input-wrap">
-            <label class="label-with-chk-in block">
+          <label v-if="ch.type !== 'group'" class="block">
               <input
                 class="input-chk"
                 type="checkbox"
@@ -42,8 +41,7 @@
                 true-value="private"
                 false-value="public">
               Make this channel private
-            </label>
-          </div>
+          </label>
 
           <ul v-if="!ch.ID">
             <li v-for="u in users" :key="u.ID">
@@ -53,36 +51,57 @@
             </li>
           </ul>
 
-          <div class="modal-footer">
-            <div class="actions input-wrap">
-              <button class="btn btn-success" v-if="ch.ID">Update</button>
-              <button class="btn btn-success" v-else>Create</button>
-              <button class="btn btn-danger"  v-if="ch.ID" @click.prevent="deleteChannel">Delete</button>
-              <button
-                class="btn btn-info"
-                @click.prevent="$router.back()">Cancel</button>
-            </div>
+          <div class="actions">
+            <button class="btn btn-green" v-if="ch.ID">Update</button>
+            <button class="btn btn-green" v-else>Create</button>
+            <button class="btn" @click.prevent="$router.back()">Close</button>
           </div>
         </form>
-      </div>
+
+        <div v-if="ch.ID">
+          <confirmation-row
+            v-if="!ch.archivedAt"
+            @confirmed="updateChannelState('archive')"
+            cta="Archive">
+            Archive this channel?
+          </confirmation-row>
+
+          <confirmation-row
+            v-if="ch.archivedAt"
+            @confirmed="updateChannelState('unarchive')"
+            cta="Unarchive" ctaClass="info">
+            Unarchive this channel?
+          </confirmation-row>
+
+          <confirmation-row
+            v-if="!ch.deletedAt"
+            @confirmed="updateChannelState('delete')"
+            cta="Delete">
+            Delete this channel?
+          </confirmation-row>
+
+          <confirmation-row
+            v-if="ch.deletedAt"
+            @confirmed="updateChannelState('undelete')"
+            cta="Undelete" ctaClass="info">
+            Undelete this channel?
+          </confirmation-row>
+        </div>
+      </main>
   </section>
 </template>
 <script>
 import { Channel } from '@/types'
 import { mapGetters, mapActions } from 'vuex'
+import ConfirmationRow from '@/components/Form/ConfirmationRow'
 
 export default {
   name: 'channel-editor',
   props: ['channelID', 'type'],
 
   data () {
-    let ch = new Channel()
-    if (this.type) {
-      ch.type = this.type
-    }
-
     return {
-      ch: ch,
+      ch: new Channel(),
       error: null,
     }
   },
@@ -93,30 +112,48 @@ export default {
     }),
   },
 
+  watch: {
+    'channelID' (newID) {
+      this.load(newID)
+    },
+
+    'type' (newType) {
+      if (!this.ch.ID) this.ch.type = newType
+    },
+  },
 
   mounted () {
-    if (this.channelID !== undefined) {
-      this.$rest.getChannel(this.channelID).then((ch) => {
-        this.ch = ch
-
-        this.$rest.getMembers(this.channelID).then((members) => {
-          console.debug('Chanel member info loaded into editor', members)
-          this.ch.members = members.map((m) => {
-            return m.user.ID
-          })
-        })
-      }).catch((error) => {
-        console.error('Failed to load channel info', { error })
-      }).finally(() => {
-        // this.disabled = false
-      })
-    }
+    this.load(this.channelID)
   },
 
   methods: {
     ...mapActions({
       removeChannelFromList: 'channels/removeFromList',
     }),
+
+    load (channelID) {
+      if (channelID) {
+        this.$rest.getChannel(channelID).then((ch) => {
+          this.ch = ch
+
+          this.$rest.getMembers(channelID).then((members) => {
+            console.debug('Chanel member info loaded into editor', members)
+            this.ch.members = members.map((m) => {
+              return m.user.ID
+            })
+          })
+        }).catch((error) => {
+          console.error('Failed to load channel info', { error })
+        }).finally(() => {
+          // this.disabled = false
+        })
+      } else {
+        this.ch = new Channel()
+        if (this.type) {
+          this.ch.type = this.type
+        }
+      }
+    },
 
     submit () {
       if (this.ch.ID) {
@@ -151,15 +188,41 @@ export default {
         })
       }
     },
+
+    updateChannelState (state) {
+      this.$rest.updateChannelState(this.ch.ID, state).then((ch) => {
+        console.log(ch)
+        this.ch = ch
+      }).catch(({ message }) => {
+        this.error = message
+      })
+    },
+  },
+
+  components: {
+    ConfirmationRow,
   },
 }
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/modals.scss';
+@import '@/assets/sass/headers.scss';
 @import '@/assets/sass/inputs.scss';
+@import '@/assets/sass/btns.scss';
 
 div.error {
   color: $appred;
 }
+
+form, main > section {
+  padding: 10px;
+  margin: 20px;
+}
+
+form {
+  .actions {
+    text-align: right;
+  }
+}
+
 </style>

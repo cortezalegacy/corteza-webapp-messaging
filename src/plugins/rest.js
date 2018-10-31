@@ -79,10 +79,11 @@ export default {
         })
       },
 
-      async deleteChannel ({ ID }) {
+      async updateChannelState (ID, state) {
         return new Promise((resolve, reject) => {
-          this.api().delete(
-            `/channels/${ID}`,
+          this.api().put(
+            `/channels/${ID}/state`,
+            { state }
           ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
         })
       },
