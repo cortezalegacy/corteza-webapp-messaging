@@ -146,30 +146,35 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-
 .messenger
 {
   overflow-y: hidden;
 }
-section {
+
+section
+{
   background-color : $mainbgcolor;
 }
 
-.channel-container {
+.channel-container
+{
   position:relative;
   margin:0;
   height:100vh;
 }
 
-.left-panel-open .channel-container {
+.left-panel-open .channel-container
+{
   margin-left:320px;
 }
 
-.right-panel-open .channel-container {
+.right-panel-open .channel-container
+{
   margin-right:400px;
 }
 
-.welcome {
+.welcome
+{
   position:absolute;
   top:0;
   left:0;
@@ -180,8 +185,10 @@ section {
   opacity: 0.25;
 }
 
-@media (min-width: $wideminwidth) {
-  .channel-container {
+@media (min-width: $wideminwidth)
+{
+  .channel-container
+  {
     margin-left:320px;
     max-width:calc(100vw - 320px);
   }
