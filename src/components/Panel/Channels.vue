@@ -34,7 +34,7 @@
             </a></div>
           <ul v-if="publicChannels && publicUnfold">
             <channel-panel-item
-                    v-for="(ch, index) in publicChannels"
+                    v-for="(ch, index) in sort(publicChannels)"
                     :key="ch.ID"
                     :channel="ch"
                     :index="index"
@@ -59,7 +59,7 @@
             </a></div>
           <ul v-if="privateChannels && privateUnfold">
             <channel-panel-item
-                    v-for="(ch, index) in privateChannels"
+                    v-for="(ch, index) in sort(privateChannels)"
                     :key="ch.ID"
                     :channel="ch"
                     :index="index"
@@ -84,7 +84,7 @@
             </a></div>
           <ul v-if="groupChannels && groupUnfold">
             <channel-panel-item
-              v-for="(ch, index) in groupChannels"
+              v-for="(ch, index) in sort(groupChannels)"
               :key="ch.ID"
               :channel="ch"
               :index="index"
@@ -106,6 +106,19 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { ChannelPanelItem } from '@/components/Channel'
+
+function sortChannels (a, b) {
+  if (a.archivedAt && !b.archivedAt) return 1
+  if (!a.archivedAt && b.archivedAt) return -1
+  // if (!a.deletedAt || !b.deletedAt) return !a.deletedAt - !b.deletedAt
+  // if (!a.archivedAt || !b.archivedAt) return !a.archivedAt - !b.archivedAt
+
+  // Make sure named channels are on the top
+  if (!a.name) return 1
+  if (!b.name) return -1
+
+  return b.name.toLocaleLowerCase() - a.name.toLocaleLowerCase()
+}
 
 export default {
   data () {
@@ -130,6 +143,10 @@ export default {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
     }),
+
+    sort (cc) {
+      return cc.sort(sortChannels)
+    },
   },
 
   components: {
