@@ -6,7 +6,7 @@
 
     <span
       v-if="!isEmbedded.src"
-      class="line" v-html="getContent(content.message)" />
+      class="line" v-html="renderMarkdown(content.message)" />
 
     <embedded-box
       v-if="isEmbedded.src"
@@ -18,30 +18,10 @@
 
 <script>
 import EmbeddedBox from './EmbeddedBox'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/xcode.css'
-
-const MD = require('markdown-it')({
-  html: true,
-  breaks: true,
-  linkify: true,
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        return hljs.highlight(lang, str).value
-      } catch (__) {}
-    }
-
-    return '' // use external default escaping
-  },
-})
+import markdown from '@/mixins/markdown'
 
 export default {
   methods: {
-    getContent (message) {
-      return MD.render(message)
-    },
-
     // Ref: https://dennisreimann.de/articles/delegating-html-links-to-vue-router.html
     handleLinks ($event) {
       const { target } = $event
@@ -54,6 +34,7 @@ export default {
 
         // don't handle when preventDefault called
         if (defaultPrevented) return
+
 
         // don't handle right clicks
         if (button !== undefined && button !== 0) return
@@ -121,6 +102,10 @@ export default {
   components: {
     EmbeddedBox,
   },
+
+  mixins: [
+    markdown,
+  ],
 }
 </script>
 
