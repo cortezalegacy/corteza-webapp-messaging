@@ -1,0 +1,61 @@
+
+.input-txt,
+input[type=text]
+{
+  outline:none;
+  padding:0.25em;
+  border:solid 1px $defaultlinecolor;
+  border-radius:3px;
+
+  &.input-block
+  {
+    display:block;
+    width:100%;
+  }
+
+  &:focus
+  {
+    color:$defaulttextcolor;
+  }
+
+  &::-webkit-input-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:-moz-placeholder {
+    color: $gris-bleu;
+  }
+
+  &::-moz-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:-ms-input-placeholder {
+    color: $gris-bleu;
+  }
+
+  &:focus, &.focus {
+      border-color: $bleu;
+      outline: none;
+  }
+
+  &:disabled {
+      opacity: 0.5;
+  }
+}
+
+input[type=text].no-border
+{
+  border:none;
+}
+
+.big-form
+{
+  input, .input-txt
+  {
+    font-size:16px;
+    line-height:40px;
+    font-size:16px;
+    padding:0 0.5em;
+  }
+}
