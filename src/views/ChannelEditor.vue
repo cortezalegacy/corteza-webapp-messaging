@@ -7,7 +7,7 @@
           <h2 v-else>Create new channel</h2>
       </header>
       <main class="container">
-        <form class="editor big-form" @submit.prevent="submit" v-if="ch.type !== 'group' && !ch.ID">
+        <form class="editor big-form" @submit.prevent="submit" v-if="!ch.ID || ch.type !== 'group'">
           <div v-if="error" class="error">
             {{error}}
           </div>
