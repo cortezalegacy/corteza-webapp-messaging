@@ -11,16 +11,16 @@ Class references for alerts and notifications are from <https://getbootstrap.com
 
 Not all colors / styles have added or are deemed necessary for now.
 
-Alert styles can be chosen via colors : `alert-green`, `alert-red`, ...
-Available colors are : `grey` (default), `green`, `yellow`, `red`, `blue`, `teal`, ...
+Alert styles can be chosen via colors : `alert-green`, `alert-red`, ...\
+Available colors are : `grey` (default), `green`, `yellow`, `red`, `blue`, `teal`.\
 Colored notifications use the same "info icon".
 
-Or by type : `notification-info`, `alert-info`, `notification-error`, ...
-Available types are : info, error/danger, success, warning
+Or by type : `notification-info`, `alert-info`, `notification-error`, ...\
+Available types are : info, error/danger, success, warning. \
 For notifications you can also add the qualifier without prefix.
 So `class="notification-info"` is the same as `class="notification info"`.
 
-All notifications/alerts comme with an external margin of 10px.
+All notifications/alerts comme with an external margin of 10px. \
 Use no-margin class to remove :)
 
 #### Sample usages
@@ -28,7 +28,10 @@ Use no-margin class to remove :)
 ### All those variations should produce the same result (the last two having different icons)
 ```
 <div class="alert error">
-    <p><strong>OH SNAP !</strong> Change a few things up ands try submitting again.</p>
+    <p>
+      <strong>OH SNAP !</strong>
+      Change a few things up ands try submitting again.
+    </p>
     <span class="close"></span>
 </div>
 
@@ -88,10 +91,9 @@ Use no-margin class to remove :)
 ## Form elements / inputs
 Class references for inputs are from <https://getbootstrap.com/docs/4.1/components/forms/>
 
-### checkables.scss
-### Radio and checkcboxes + toggle !
+### checkables.scss : Radio and checkcboxes + toggle !
 
-Basic usage : form-check class
+Basic usage : form-check class \
 **NB:** `for="<input id>"` is required in label
 ```
 <div class="form-check">
