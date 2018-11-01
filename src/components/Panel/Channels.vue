@@ -3,13 +3,8 @@
     class="menu-layer mobile-modal always-deployed-on-desktop"
     :class="current?'':'no-current'">
     <div class="layer-section-wrapper search-section">
-      <div class="layer-item search-item">
-        <span class="badge badge-block badge-pill badge-tall">
-          <i class="icon-search"></i>
-          <input type="text" placeholder="search" class="txt no-border search">
-          <i class="icon-settings-horizontal float-right"></i>
-        </span>
-      </div>
+      <search-input
+        v-on="$listeners" />
     </div>
     <div class="menu-layer-inner">
       <!-- cant close this if no channel selected-->
@@ -106,6 +101,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import { ChannelPanelItem } from '@/components/Channel'
+import SearchInput from '@/components/SearchInput'
 
 function sortChannels (a, b) {
   if (a.archivedAt && !b.archivedAt) return 1
@@ -121,6 +117,13 @@ function sortChannels (a, b) {
 }
 
 export default {
+  props: {
+    searchQuery: {
+      type: String,
+      required: false,
+    },
+  },
+
   data () {
     return {
       shown: false,
@@ -151,6 +154,7 @@ export default {
 
   components: {
     ChannelPanelItem,
+    SearchInput,
   },
 }
 </script>
@@ -180,19 +184,10 @@ export default {
   }
 }
 
-// search area is somewhat different.
-// 1st correct a problem with input ... only happens on FF59 ubuntu
-.search
-{
-  max-width:calc(100% - 40px);
-  padding-right:0;
+.search-section {
+  padding: 0 20px 0 15px;
 }
-// fix search area at the top of the layer
-.search-item
-{
-  padding-right:10%;
-  padding-left:5%;
-}
+
 // add space at the beginning of the menu layer after search
 .menu-layer-inner
 {
@@ -214,10 +209,6 @@ export default {
     width:90vw;
     max-width:320px;
     min-width:120px;
-    .search-item
-    {
-      border-right:3px;
-    }
   }
   // move closer to right of search
   .closer

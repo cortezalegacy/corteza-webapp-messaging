@@ -159,6 +159,21 @@ export default {
           }, stdRejection(reject))
         })
       },
+
+      async searchMessages (query) {
+        return new Promise((resolve, reject) => {
+          this.api().get(
+            `/channels/50533802077847659/messages`,
+            { query }
+          ).then((r) => {
+            if (r.data.error) {
+              reject(r.data.error)
+            } else {
+              resolve(r.data.response.map(message => new Message(message)))
+            }
+          }, stdRejection(reject))
+        })
+      },
     }
   },
 }

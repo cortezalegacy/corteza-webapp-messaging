@@ -7,6 +7,7 @@
         }">
         <!-- if no channel selected channel list should be displayed -->
         <panel-channels
+            @searchSubmit="onPanelSearchSubmit"
             :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
 
         <div v-if="!currentChannel" class="welcome"></div>
@@ -25,16 +26,23 @@
             @close="openThread = null"
             :repliesTo="openThread" />
 
+        <search-results
+          v-if="searchQuery"
+          @close="searchQuery=null"
+          :searchQuery="searchQuery" />
+
         <preview
           v-if="preview"
           @close="preview=null"
           :src="preview.src" />
+
      </section>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
 import Preview from '../components/Lightboxed/Preview'
+import SearchResults from '../components/Lightboxed/SearchResults'
 import { User } from '@/types'
 
 export default {
@@ -55,6 +63,7 @@ export default {
     return {
       preview: null,
       openThread: null,
+      searchQuery: null,
       showChannelCreator: false,
       wideWidth: 768,
       window: {
@@ -69,6 +78,7 @@ export default {
     PanelUsers,
     PanelThread,
     Preview,
+    SearchResults,
   },
 
   beforeCreate () {
@@ -155,6 +165,12 @@ export default {
       // so that <panel-thread> component picks it up and
       // opens itself...
       this.openThread = message.ID
+    },
+
+    onPanelSearchSubmit ({ query }) {
+      // Take query we received from panel search input box
+      // and push it to search result component
+      this.searchQuery = query
     },
   },
 }
