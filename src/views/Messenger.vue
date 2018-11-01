@@ -28,7 +28,7 @@
         <preview
           v-if="preview"
           @close="preview=null"
-          :src="preview.src">lkdsjflks</preview>
+          :src="preview.src" />
      </section>
 </template>
 <script>
