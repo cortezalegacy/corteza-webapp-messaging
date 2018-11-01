@@ -20,7 +20,7 @@ export default {
 
       if (!pm || !cm) return false
 
-      if (pm.channelID !== cm.user.channelID) {
+      if (pm.channelID !== cm.channelID) {
         // Different channel, this happens in search results only...
         return false
       }
