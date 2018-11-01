@@ -81,8 +81,8 @@ main {
   width: 100vw;
 
   img {
-    max-width: 90vw !important;
-    max-height: 90vh !important;
+    max-width: 90vw;
+    max-height: 90vh;
     margin: 0 auto;
     border: 20px solid $appcream;
     background-color: $appcream;
@@ -94,7 +94,15 @@ footer {
   width: 100vw;
 }
 
-
+@media (max-width: $wideminwidth) {
+  main {
+    img {
+      max-width: 95vw;
+      max-height: 95vh;
+      border-width: 5px;
+    }
+  }
+}
 
 
 </style>
