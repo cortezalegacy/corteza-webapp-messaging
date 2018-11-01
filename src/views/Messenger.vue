@@ -108,7 +108,7 @@ export default {
         const body = message.message
         const msgChannel = this.findChannelByID(message.channelID)
 
-        this.$notification.show(`New message from ${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
+        this.$notification.show(`${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
           body: body.length > 200 ? body.substring(0, 200) + '...' : body,
         }, {
           onclick: () => {

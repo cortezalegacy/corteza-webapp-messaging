@@ -20,10 +20,18 @@ export default {
 
       if (!pm || !cm) return false
 
-      // Checks -- user ID and timestamp
-      let sameUser = (pm.user || {}).ID === (cm.user || {}).ID
-      let timeSpanCheck = moment(cm.createdAt).diff(moment(pm.createdAt), 'seconds') <= continuedMessagesTimeWindow
-      return sameUser && timeSpanCheck
+      if (pm.channelID !== cm.user.channelID) {
+        // Different channel, this happens in search results only...
+        return false
+      }
+
+      if ((pm.user || {}).ID !== (cm.user || {}).ID) {
+        // Different user
+        return false
+      }
+
+      // Time span check
+      return moment(cm.createdAt).diff(moment(pm.createdAt), 'seconds') <= continuedMessagesTimeWindow
     },
   },
 }
