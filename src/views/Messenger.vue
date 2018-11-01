@@ -34,7 +34,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
-import Preview from '../components/Preview'
+import Preview from '../components/Lightboxed/Preview'
 import { User } from '@/types'
 
 export default {

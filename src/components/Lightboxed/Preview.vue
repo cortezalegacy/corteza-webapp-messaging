@@ -11,7 +11,8 @@
 </template>
 
 <script>
-import Lightbox from '../components/Lightbox'
+import Lightbox from './index.vue'
+import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
 export default {
   props: {
@@ -25,24 +26,9 @@ export default {
     },
   },
 
-  created () {
-    window.addEventListener('keyup', this.onKeyup)
-  },
-
-
-  destroyed () {
-    window.removeEventListener('keyup', this.onKeyup)
-  },
-
   methods: {
     onClose () {
       this.$emit('close')
-    },
-
-    onKeyup (ev) {
-      if (event.key === 'Escape') {
-        this.$emit('close')
-      }
     },
 
     noop () {},
@@ -51,6 +37,10 @@ export default {
   components: {
     Lightbox,
   },
+
+  mixins: [
+    emitCloseOnEscape,
+  ],
 }
 </script>
 
@@ -70,6 +60,7 @@ header {
     top: 10px;
     right: 30px;
     cursor: pointer;
+    line-height: 30px;
   }
 }
 

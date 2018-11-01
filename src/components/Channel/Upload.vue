@@ -47,7 +47,7 @@
 import { mapGetters } from 'vuex'
 import vueDropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import Lightbox from '@/components/Lightbox'
+import Lightbox from '@/components/Lightboxed'
 
 export default {
   name: 'channel-upload',
