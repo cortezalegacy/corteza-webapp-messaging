@@ -30,9 +30,14 @@
           <div class="actions" v-if="!hideActions">
             <!-- i class="action icon-message-circle-left-speak"></i -->
             <i class="action icon-message-circle-left-speak"
-              title="Reply in thread"
-              v-if="message.canReply && !hideActionOpenThread"
-              @click="$emit('openThread', { message })"
+               title="Reply in thread"
+               v-if="message.canReply && !hideActionOpenThread"
+               @click="$emit('openThread', { message })"
+            ></i>
+            <i class="action icon-circle-right"
+               title="Go to mesage"
+               v-if="!hideActionGoToMessage"
+               @click="$emit('goToMessage', { message })"
             ></i>
             <i v-if="!isContextMenuOpen && isContextMenuEnabled"
               class="action icon-plus" @click="onContextMenuOpen()"></i>
@@ -103,14 +108,11 @@ export default {
       type: Object,
       required: true,
     },
-    hideActions: {
-      type: Boolean,
-      required: false,
-    },
-    hideActionOpenThread: {
-      type: Boolean,
-      required: false,
-    },
+
+    hideActions: Boolean,
+    hideActionGoToMessage: { type: Boolean, value: true },
+    hideActionOpenThread: Boolean,
+    hideActionsMenu: Boolean,
 
     isUnread: Boolean,
     isFirstUnread: Boolean,
@@ -131,7 +133,10 @@ export default {
 
   computed: {
     isContextMenuEnabled: function () {
-      return ((this.message.canReply && !this.hideActionOpenThread) || this.message.canEdit || this.message.canDelete)
+      return !this.hideActionsMenu &&
+        ((this.message.canReply && !this.hideActionOpenThread) ||
+          this.message.canEdit ||
+          this.message.canDelete)
     },
   },
 

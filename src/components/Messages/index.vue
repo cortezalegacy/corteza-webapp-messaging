@@ -6,10 +6,13 @@
       :continued="isContinued(messages, index)"
       :currentUser="currentUser"
       :key="msg.ID"
-      :hideActionOpenThread="hideActionOpenThread"
       :isUnread="lastReadMessageID <= msg.ID"
       :isFirstUnread="lastReadMessageID == msg.ID"
       :isFirst="index === 0"
+      :hideActions="hideActions"
+      :hideActionGoToMessage="hideActionGoToMessage"
+      :hideActionOpenThread="hideActionOpenThread"
+      :hideActionsMenu="hideActionsMenu"
       :isLast="index === messages.length - 1"
       v-on="$listeners" />
     <li ref="anchor"></li>
@@ -43,9 +46,10 @@ export default {
       type: String,
     },
 
-    hideActionOpenThread: {
-      type: Boolean,
-    },
+    hideActions: Boolean,
+    hideActionGoToMessage: Boolean,
+    hideActionOpenThread: Boolean,
+    hideActionsMenu: Boolean,
   },
 
   data () {

@@ -15,8 +15,12 @@
                   ref="messages"
                   :messages="r.messages"
                   :currentUser="currentUser"
+                  :hideActionGoToMessage="false"
+                  :hideActionOpenThread="true"
+                  :hideActionsMenu="true"
                   origin="search"
-                  :scrollable="false" />
+                  :scrollable="false"
+                  v-on="$listeners"/>
             </section>
       </main>
       <footer></footer>

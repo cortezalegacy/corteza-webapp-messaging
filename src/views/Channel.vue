@@ -50,6 +50,11 @@ export default {
       type: String,
       required: true,
     },
+
+    messageID: {
+      // go-to-message will fill this prop.
+      type: String,
+    },
   },
 
   computed: {
@@ -132,8 +137,10 @@ export default {
 
       this.ignoreChannelUnreadCount(this.channel.ID)
 
-      // Ask for new messages
-      this.$ws.getMessages({ channelID: this.channel.ID })
+      // @todo <fromID> does not work as expected
+      // need to rewire message fetching via rest and react
+      // after response is actually received
+      this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
     },
 
     setEditMessage (currentMessage) {

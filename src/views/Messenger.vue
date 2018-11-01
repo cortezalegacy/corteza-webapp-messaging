@@ -29,6 +29,7 @@
         <search-results
           v-if="searchQuery"
           @close="searchQuery=null"
+          @goToMessage="onGoToMessage"
           :searchQuery="searchQuery" />
 
         <preview
@@ -171,6 +172,16 @@ export default {
       // Take query we received from panel search input box
       // and push it to search result component
       this.searchQuery = query
+    },
+
+    onGoToMessage ({ message }) {
+      // Handling go-to-message request
+
+      // close search
+      this.searchQuery = null
+
+      // go to channel
+      this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.ID } })
     },
   },
 }

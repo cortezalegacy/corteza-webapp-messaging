@@ -8,6 +8,7 @@
             type="text"
             v-model="query"
             placeholder="Search"
+            autocomplete="true"
             class="txt no-border">
         <i class="icon-settings-horizontal float-right"></i>
       </span>
