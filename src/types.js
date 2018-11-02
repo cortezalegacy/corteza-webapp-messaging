@@ -13,31 +13,66 @@ export function Channel (c) {
   this.members = c.members || [] // []string
 }
 
-export function Message (m) {
-  if (!m) {
-    return
+export class Message {
+  constructor (m) {
+    if (!m) {
+      return
+    }
+
+    this.ID = m.ID || m.id // cover both cases (BC)
+    this.message = m.message
+    this.type = m.type
+    this.channelID = m.channelID
+    this.replyTo = m.replyTo || 0
+    this.replies = m.replies || 0
+    this.createdAt = m.createdAt
+    this.updatedAt = m.updatedAt || null
+    this.deletedAt = m.deletedAt || null
+
+    this.isPinned = !!m.isPinned
+    this.isBookmarked = !!m.isBookmarked
+    this.reactions = (m.reactions || []).map(r => new MessageReaction(r))
+
+    this.canReply = !!m.canReply
+    this.canEdit = !!m.canEdit
+    this.canDelete = !!m.canDelete
+
+    this.user = new User(m.user)
+    this.attachment = m.att ? new Attachment(m.att) : null
   }
 
-  this.ID = m.ID || m.id // cover both cases (BC)
-  this.message = m.message
-  this.type = m.type
-  this.channelID = m.channelID
-  this.replyTo = m.replyTo || 0
-  this.replies = m.replies || 0
-  this.createdAt = m.createdAt
-  this.updatedAt = m.updatedAt || null
-  this.deletedAt = m.deletedAt || null
+  addReaction ({ reaction, userID }) {
+    const i = this.reactions.findIndex(r => r.reaction === reaction)
 
-  this.isPinned = !!m.isPinned
-  this.isBookmarked = !!m.isBookmarked
-  this.reactions = (m.reactions || []).map(r => new MessageReaction(r))
+    if (i === -1) {
+      this.reactions.push(new MessageReaction({ reaction, userIDs: [userID], count: 1 }))
+    } else {
+      let r = this.reactions[i]
 
-  this.canReply = !!m.canReply
-  this.canEdit = !!m.canEdit
-  this.canDelete = !!m.canDelete
+      if (r.userIDs.indexOf(userID) === -1) {
+        r.userIDs.push(userID)
+        r.count = r.userIDs.length
+      }
+    }
 
-  this.user = new User(m.user)
-  this.attachment = m.att ? new Attachment(m.att) : null
+    console.log(reaction, userID)
+    console.log(this.reactions, new MessageReaction({ reaction, userIDs: [userID], count: 1 }))
+  }
+
+  removeReaction ({ reaction, userID }) {
+    const i = this.reactions.findIndex(r => r.reaction === reaction)
+
+    if (i !== -1) {
+      let r = this.reactions[i]
+      r.userIDs = r.userIDs.filter(ID => ID !== userID)
+      r.count = r.userIDs.length
+    }
+
+    // Filter out all invalid reactions
+    this.reactions = this.reactions.filter(r => r.count > 0)
+
+    console.log(this.reactions)
+  }
 }
 
 class MessageReaction {

@@ -45,13 +45,13 @@
                v-if="!hidePinning"
                :class="{pinned:message.isPinned}"
                title="Pin message for everyone to see"
-               @click="onPin"
+               @click="$bus.$emit('message.pin', { message })"
             ></i>
             <i class="action icon-smile"
                v-if="!hideBookmarking"
                :class="{bookmarked:message.isBookmarked}"
                title="Bookmark message for personal reference"
-               @click="onBookmark"
+               @click="$bus.$emit('message.bookmark', { message })"
             ></i>
             <i v-if="!isContextMenuOpen && isContextMenuEnabled"
               class="action icon-plus" @click="onContextMenuOpen()"></i>
@@ -100,8 +100,8 @@
       <reactions
         v-if="!hideReactions && message.type !== 'channelEvent'"
         class="reactions"
-        :class="{'no-reactions': message.reactions.length === 0}"
         @reaction="onReaction"
+        :class="{'no-reactions': message.reactions.length === 0}"
         :reactions="message.reactions" />
 
       <div class="message-infos">
@@ -199,19 +199,9 @@ export default {
       this.isContextMenuOpen = true
     },
 
-    onPin () {
-      this.$rest.pinMessage(this.message.channelID, this.message.ID, this.message.isPinned)
-    },
-
-    onBookmark () {
-      this.$rest.bookmarkMessage(this.message.channelID, this.message.ID, this.message.isBookmarked)
-    },
-
+    // Wrapper that append message info to event
     onReaction ({ reaction }) {
-      const existing = this.message.reactions.find(r => r.reaction === reaction)
-      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.currentUser.ID) !== -1
-      console.log('onReaction', { reaction, existing, ours })
-      this.$rest.reactionToMessage(this.message.channelID, this.message.ID, reaction, existing && ours)
+      this.$bus.$emit('message.reaction', { message: this.message, reaction })
     },
   },
 

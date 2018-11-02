@@ -4,6 +4,7 @@ import Vue from 'vue'
 import { sync } from 'vuex-router-sync'
 import store from './store'
 import router from './router'
+import core from './mixins/core'
 
 import './global'
 import './plugins'
@@ -29,6 +30,7 @@ if (window.CrustConfig === undefined) {
     store,
     router,
     template: '<div id="crust-messenger" class="crust"><router-view/></div>',
+    mixins: [ core ],
   }).$mount('#app')
 
   unsync()

@@ -1,6 +1,7 @@
 <template>
   <ul :class="{'has-reactions':reactions.length > 0}">
     <li v-for="(r) in reactions"
+        v-if="r.reaction"
         @click="$emit('reaction', { reaction: r.reaction })"
         :key="r.reaction">{{parse(r.reaction)}}<sup>{{r.count}}</sup></li>
 
