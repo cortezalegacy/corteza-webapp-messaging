@@ -73,7 +73,6 @@ export default {
 
 
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
-      console.log('$ws.messageReaction', { userID, messageID, reaction })
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
         msg.addReaction({ userID, reaction })
@@ -82,7 +81,6 @@ export default {
     })
 
     this.$bus.$on('$ws.messageReactionRemoved', ({ userID, messageID, reaction }) => {
-      console.log('$ws.messageReactionRemoved', { userID, messageID, reaction })
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
         msg.removeReaction({ userID, reaction })
@@ -90,8 +88,7 @@ export default {
       }
     })
 
-    this.$bus.$on('$ws.messagePin', ({ userID, messageID}) => {
-      console.log('$ws.messagePin', { userID, messageID })
+    this.$bus.$on('$ws.messagePin', ({ userID, messageID }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
         msg.isPinned = true
@@ -100,7 +97,6 @@ export default {
     })
 
     this.$bus.$on('$ws.messagePinRemoved', ({ userID, messageID }) => {
-      console.log('$ws.messagePinRemoved', { userID, messageID})
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
         msg.isPinned = false

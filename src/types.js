@@ -54,9 +54,6 @@ export class Message {
         r.count = r.userIDs.length
       }
     }
-
-    console.log(reaction, userID)
-    console.log(this.reactions, new MessageReaction({ reaction, userIDs: [userID], count: 1 }))
   }
 
   removeReaction ({ reaction, userID }) {
@@ -70,8 +67,6 @@ export class Message {
 
     // Filter out all invalid reactions
     this.reactions = this.reactions.filter(r => r.count > 0)
-
-    console.log(this.reactions)
   }
 }
 
