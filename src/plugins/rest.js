@@ -160,6 +160,37 @@ export default {
         })
       },
 
+      async bookmarkMessage (channelID, messageID, remove = false) {
+        return this.flag({ channelID, messageID, type: 'bookmark', remove })
+      },
+
+      async pinMessage (channelID, messageID, remove = false) {
+        return this.flag({ channelID, messageID, type: 'pin', remove })
+      },
+
+      async reactionToMessage (channelID, messageID, reaction, remove = false) {
+        return this.flag({ channelID, messageID, type: 'reaction', reaction, remove })
+      },
+
+      async flag ({ channelID, messageID, type, reaction = null, remove = false }) {
+        if (type === 'reaction') {
+          type += `/${reaction}`
+        }
+
+        return new Promise((resolve, reject) => {
+          this.api().request({
+            method: remove ? 'DELETE' : 'POST',
+            url: `/channels/${channelID}/messages/${messageID}/${type}`,
+          }).then((response) => {
+            if (response.data.error) {
+              reject(response.data.error)
+            } else {
+              resolve()
+            }
+          }, stdRejection(reject))
+        })
+      },
+
       async searchMessages (query, { inChannel, fromUser, firstID, lastID } = {}) {
         return new Promise((resolve, reject) => {
           this.api().get(

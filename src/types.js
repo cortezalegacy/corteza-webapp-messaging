@@ -28,12 +28,24 @@ export function Message (m) {
   this.updatedAt = m.updatedAt || null
   this.deletedAt = m.deletedAt || null
 
+  this.isPinned = !!m.isPinned
+  this.isBookmarked = !!m.isBookmarked
+  this.reactions = (m.reactions || []).map(r => new MessageReaction(r))
+
   this.canReply = !!m.canReply
   this.canEdit = !!m.canEdit
   this.canDelete = !!m.canDelete
 
   this.user = new User(m.user)
   this.attachment = m.att ? new Attachment(m.att) : null
+}
+
+class MessageReaction {
+  constructor ({ reaction, userIDs, count }) {
+    this.reaction = reaction
+    this.userIDs = userIDs
+    this.count = count
+  }
 }
 
 export function Attachment (a) {

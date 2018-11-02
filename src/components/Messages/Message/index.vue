@@ -9,6 +9,8 @@
         'with-infos' : message.replies || message.updatedAt,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
+        'pinned' : message.isPinned,
+        'bookmarked' : message.isBookmarked,
         'first-unread': isFirstUnread && !isFirst && !isLast,
         'unread': isUnread,
       }"
@@ -38,6 +40,18 @@
                title="Go to mesage"
                v-if="!hideActionGoToMessage"
                @click="$emit('goToMessage', { message })"
+            ></i>
+            <i class="action icon-clipboard"
+               :class="{pinned:message.isPinned}"
+               title="Pin message for everyone to see"
+               v-if="!hideActionGoToMessage"
+               @click="onPin"
+            ></i>
+            <i class="action icon-smile"
+               :class="{bookmarked:message.isBookmarked}"
+               title="Bookmark message for personal reference"
+               v-if="!hideActionGoToMessage"
+               @click="onBookmark"
             ></i>
             <i v-if="!isContextMenuOpen && isContextMenuEnabled"
               class="action icon-plus" @click="onContextMenuOpen()"></i>
@@ -82,6 +96,10 @@
             :content="getChunks(message.message)" />
 
         </div>
+        <reactions
+          v-if="message.reactions.length"
+          @reaction="onReaction"
+          :reactions="message.reactions" />
         <div class="message-infos">
           <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
           <span class="info" v-if="message.updatedAt">edited</span>
@@ -92,6 +110,7 @@
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
+import Reactions from './Reactions'
 import Avatar from '@/components/Avatar'
 
 export default {
@@ -171,12 +190,28 @@ export default {
       this.$bus.$once(evName, () => { this.isContextMenuOpen = false })
       this.isContextMenuOpen = true
     },
+
+    onPin () {
+      this.$rest.pinMessage(this.message.channelID, this.message.ID, this.message.isPinned)
+    },
+
+    onBookmark () {
+      this.$rest.bookmarkMessage(this.message.channelID, this.message.ID, this.message.isBookmarked)
+    },
+
+    onReaction ({ reaction }) {
+      const existing = this.message.reactions.find(r => r.reaction === reaction)
+      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.currentUser.ID) !== -1
+      console.log('onReaction', { reaction, existing, ours })
+      this.$rest.reactionToMessage(this.message.channelID, this.message.ID, reaction, existing && ours)
+    },
   },
 
   components: {
     Attachment,
     Contents,
     Avatar,
+    Reactions,
   },
 }
 
@@ -246,7 +281,7 @@ export default {
     &:after
     {
       content: '●';
-      display:inlin-block;
+      display:inline-block;
       margin:0 2px;
     }
     &:last-child:after
@@ -382,6 +417,13 @@ export default {
   position:absolute;
   display:none;
 }
+
+.actions {
+  .bookmarked, .pinned {
+    color: $appyellow;
+  }
+}
+
 .message-n-meta:hover,
 .message-n-meta:focus
 {
