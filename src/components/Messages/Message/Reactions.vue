@@ -1,9 +1,8 @@
 <template>
-  <ul>
+  <ul :class="{'has-reactions':reactions.length > 0}">
     <li v-for="(r) in reactions"
         @click="$emit('reaction', { reaction: r.reaction })"
         :key="r.reaction">{{r.reaction}} {{r.count}}</li>
-
 
     <li v-for="(reaction) in defaults"
         class="defaults"
@@ -30,7 +29,7 @@ export default {
   props: {
     reactions: {
       type: Array,
-      required: true,
+      value: [],
     },
   },
 
@@ -53,19 +52,11 @@ ul {
   padding: 0;
   margin: 5px 0 0 0;
   list-style-type: none;
-  cursor: pointer;
-
-  li.defaults {
-    display: none;
-  }
-
-  &:hover > li.defaults {
-    display: inline;
-  }
 
   li {
+    cursor: pointer;
     margin-right: 2px;
-    padding: 2px;
+    padding: 4px 2px;
     display: inline;
     border: 1px solid $appyellow;
     border-radius: 2px;
@@ -76,6 +67,18 @@ ul {
       background-color: lighten($appyellow, 20%);
     }
   }
+
+  .defaults {
+    float: right;
+  }
+
+  &:hover > li.defaults {
+    display: inline;
+  }
+}
+
+ul.has-reactions .defaults {
+  display: none;
 }
 
 

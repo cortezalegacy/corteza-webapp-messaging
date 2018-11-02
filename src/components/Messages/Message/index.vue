@@ -96,10 +96,14 @@
             :content="getChunks(message.message)" />
 
         </div>
+
         <reactions
-          v-if="message.reactions.length"
+          v-if="message.type !== 'channelEvent'"
+          class="reactions"
+          :class="{'no-reactions': message.reactions.length === 0}"
           @reaction="onReaction"
           :reactions="message.reactions" />
+
         <div class="message-infos">
           <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
           <span class="info" v-if="message.updatedAt">edited</span>
@@ -328,6 +332,17 @@ export default {
       display: none !important;
     }
   }
+
+  .reactions.no-reactions {
+    position: absolute;
+    display: none;
+    margin-top: -5px;
+    margin-left: -10px;
+    padding: 5px 10px 0px 10px;
+    border: 1px solid red;
+    width: 100%;
+    z-index: 2;
+  }
 }
 
 // all margins in one place
@@ -503,6 +518,11 @@ export default {
       }
     }
   }
+
+  .reactions.no-reactions {
+    display: block;
+    right: 0px;
+  }
 }
 
 .message-n-meta.continued:hover,
@@ -579,6 +599,7 @@ export default {
 .first-unread {
   border-bottom: 2px solid $appred;
 }
+
 
 @media (min-width: $wideminwidth)
 {
