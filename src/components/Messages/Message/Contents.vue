@@ -125,6 +125,13 @@ p {
   margin: 0;
 }
 
+img.emoji {
+  height: 1em;
+  width: 1em;
+  margin: 0 .05em 0 .1em;
+  vertical-align: -0.1em;
+}
+
 blockquote {
   margin: 5px 20px 5px 5px;
   padding-left: 5px;

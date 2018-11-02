@@ -50,7 +50,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     })
 
     this.conn.addEventListener('open', () => {
-      console.debug('Connected to Crust Messaging Websocket', this.active)
+      console.debug('Connected to Crust Messaging Websocket')
       this.active = true
 
       if (this.queue.length > 0) {

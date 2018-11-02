@@ -2,23 +2,25 @@
   <ul :class="{'has-reactions':reactions.length > 0}">
     <li v-for="(r) in reactions"
         @click="$emit('reaction', { reaction: r.reaction })"
-        :key="r.reaction">{{r.reaction}} {{r.count}}</li>
+        :key="r.reaction">{{parse(r.reaction)}}<sup>{{r.count}}</sup></li>
 
-    <li v-for="(reaction) in defaults"
+    <li v-for="(reaction) in defaultReactions"
         class="defaults"
         @click="$emit('reaction', { reaction })"
-        :key="reaction">{{reaction}}</li>
+        :key="reaction">{{parse(reaction)}}</li>
   </ul>
 </template>
 <script>
-// import { MessageReaction } from '@/types'
+import EmojiConvertor from 'emoji-js'
 
-const defaults = [
+const emoji = new EmojiConvertor()
+
+const defaultReactions = [
   ':thumbsup:',
   ':thumbsdown:',
   ':heart:',
   ':smile:',
-  ':sad:',
+  ':disappointed:',
   ':rage:',
   ':cry:',
   ':muscle:',
@@ -34,15 +36,25 @@ export default {
   },
 
   computed: {
-    defaults () {
+    defaultReactions () {
       if (!this.reactions) {
-        return defaults
+        return defaultReactions
       }
 
       const reacted = this.reactions.map(r => r.reaction)
-      return defaults.filter(d => reacted.indexOf(d) === -1)
+      return defaultReactions.filter(d => reacted.indexOf(d) === -1)
     },
   },
+
+  methods: {
+    parse (str) {
+      return emoji.replace_colons(str)
+    },
+  },
+
+  mixins: [
+    // emojis,
+  ],
 }
 </script>
 <style scoped lang="scss">
@@ -56,12 +68,17 @@ ul {
   li {
     cursor: pointer;
     margin-right: 2px;
-    padding: 4px 2px;
+    padding: 1px 3px;
     display: inline;
     border: 1px solid $appyellow;
     border-radius: 2px;
     background-color: lighten($appyellow, 30%);
-    font-size: 10px;
+    font-size: 14px;
+    letter-spacing: -2px;
+
+    sup {
+      font-size: 60%;
+    }
 
     &:hover {
       background-color: lighten($appyellow, 20%);

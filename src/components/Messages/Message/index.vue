@@ -97,17 +97,17 @@
 
         </div>
 
-        <reactions
-          v-if="!hideReactions && message.type !== 'channelEvent'"
-          class="reactions"
-          :class="{'no-reactions': message.reactions.length === 0}"
-          @reaction="onReaction"
-          :reactions="message.reactions" />
+      <reactions
+        v-if="!hideReactions && message.type !== 'channelEvent'"
+        class="reactions"
+        :class="{'no-reactions': message.reactions.length === 0}"
+        @reaction="onReaction"
+        :reactions="message.reactions" />
 
-        <div class="message-infos">
-          <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
-          <span class="info" v-if="message.updatedAt">edited</span>
-        </div>
+      <div class="message-infos">
+        <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
+        <span class="info" v-if="message.updatedAt">edited</span>
+      </div>
     </li>
 </template>
 <script>

@@ -1,5 +1,8 @@
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
+import EmojiConvertor from 'emoji-js'
+
+const emoji = new EmojiConvertor()
 
 const md = require('markdown-it')({
   html: true,
@@ -16,7 +19,7 @@ const md = require('markdown-it')({
   },
 })
 
-md.use(require('markdown-it-emoji'))
+// md.use(require('markdown-it-emoji'))
 
 const linkRenderer = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options)
@@ -37,6 +40,16 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   // pass token to default renderer.
   return linkRenderer(tokens, idx, options, env, self)
 }
+
+
+const textRenderer = md.renderer.rules.text || function (tokens, idx, options, env, self) {
+  return self.renderToken(tokens, idx, options)
+}
+
+md.renderer.rules.text = function (tokens, idx, options, env, self) {
+  return emoji.replace_emoticons(emoji.replace_colons(textRenderer(tokens, idx, options, env, self)))
+}
+
 
 export default {
   methods: {
