@@ -18,6 +18,9 @@
                   :hideActionGoToMessage="false"
                   :hideActionOpenThread="true"
                   :hideActionsMenu="true"
+                  :hideReactions="true"
+                  :hidePinning="true"
+                  :hideBookmarking="true"
                   origin="search"
                   :scrollable="false"
                   v-on="$listeners"/>

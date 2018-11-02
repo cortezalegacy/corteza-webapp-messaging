@@ -10,6 +10,9 @@
       :isFirstUnread="lastReadMessageID == msg.ID"
       :isFirst="index === 0"
       :hideActions="hideActions"
+      :hideReactions="hideReactions"
+      :hidePinning="hidePinning"
+      :hideBookmarking="hideBookmarking"
       :hideActionGoToMessage="hideActionGoToMessage"
       :hideActionOpenThread="hideActionOpenThread"
       :hideActionsMenu="hideActionsMenu"
@@ -47,7 +50,10 @@ export default {
     },
 
     hideActions: Boolean,
-    hideActionGoToMessage: Boolean,
+    hideReactions: Boolean,
+    hidePinning: Boolean,
+    hideBookmarking: Boolean,
+    hideActionGoToMessage: { type: Boolean, default: true },
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
   },

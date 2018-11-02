@@ -42,15 +42,15 @@
                @click="$emit('goToMessage', { message })"
             ></i>
             <i class="action icon-clipboard"
+               v-if="!hidePinning"
                :class="{pinned:message.isPinned}"
                title="Pin message for everyone to see"
-               v-if="!hideActionGoToMessage"
                @click="onPin"
             ></i>
             <i class="action icon-smile"
+               v-if="!hideBookmarking"
                :class="{bookmarked:message.isBookmarked}"
                title="Bookmark message for personal reference"
-               v-if="!hideActionGoToMessage"
                @click="onBookmark"
             ></i>
             <i v-if="!isContextMenuOpen && isContextMenuEnabled"
@@ -98,7 +98,7 @@
         </div>
 
         <reactions
-          v-if="message.type !== 'channelEvent'"
+          v-if="!hideReactions && message.type !== 'channelEvent'"
           class="reactions"
           :class="{'no-reactions': message.reactions.length === 0}"
           @reaction="onReaction"
@@ -132,8 +132,12 @@ export default {
       required: true,
     },
 
+
     hideActions: Boolean,
-    hideActionGoToMessage: { type: Boolean, value: true },
+    hideReactions: Boolean,
+    hidePinning: Boolean,
+    hideBookmarking: Boolean,
+    hideActionGoToMessage: { type: Boolean, default: true },
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
 
@@ -339,7 +343,6 @@ export default {
     margin-top: -5px;
     margin-left: -10px;
     padding: 5px 10px 0px 10px;
-    border: 1px solid red;
     width: 100%;
     z-index: 2;
   }
