@@ -23,7 +23,7 @@ export default new Router({
     },
     {
       path: '/messaging/auth',
-      component: view('Auth/Index'),
+      component: view('IndexNested'),
       redirect: '/messaging/auth/signin',
 
       children: [
