@@ -116,7 +116,6 @@ export default {
     })
   },
 
-
   methods: {
     ...mapActions({
       clearHistory: 'history/clear',

@@ -39,7 +39,6 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   return linkRenderer(tokens, idx, options, env, self)
 }
 
-
 const textRenderer = md.renderer.rules.text || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options)
 }
@@ -47,7 +46,6 @@ const textRenderer = md.renderer.rules.text || function (tokens, idx, options, e
 md.renderer.rules.text = function (tokens, idx, options, env, self) {
   return emoji.replace_emoticons(emoji.replace_colons(textRenderer(tokens, idx, options, env, self)))
 }
-
 
 export default {
   methods: {

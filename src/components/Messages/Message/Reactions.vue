@@ -99,5 +99,4 @@ ul.has-reactions .defaults {
   display: none;
 }
 
-
 </style>

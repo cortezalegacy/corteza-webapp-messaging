@@ -43,4 +43,3 @@ function view (name, resolve) {
     return require([`./views/${name}.vue`], resolve)
   }
 }
-

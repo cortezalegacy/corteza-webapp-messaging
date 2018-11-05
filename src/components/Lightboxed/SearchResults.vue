@@ -37,7 +37,6 @@ import SearchInput from '@/components/SearchInput'
 import Messages from '@/components/Messages'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
-
 export default {
   props: {
     searchQuery: {
@@ -52,7 +51,6 @@ export default {
       findChannelByID: 'channels/findByID',
     }),
   },
-
 
   data () {
     return {
@@ -158,6 +156,5 @@ main {
     border-bottom: 2px solid $appgrey;
   }
 }
-
 
 </style>

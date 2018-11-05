@@ -105,9 +105,6 @@ export class User {
   }
 }
 
-
-
-
 export function Member (m) {
   if (!m) {
     return

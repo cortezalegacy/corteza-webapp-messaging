@@ -35,7 +35,6 @@ export default {
         // don't handle when preventDefault called
         if (defaultPrevented) return
 
-
         // don't handle right clicks
         if (button !== undefined && button !== 0) return
 
@@ -145,4 +144,3 @@ blockquote {
   border-radius: 5px;
 }
 </style>
-

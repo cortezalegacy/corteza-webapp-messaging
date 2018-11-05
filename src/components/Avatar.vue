@@ -11,7 +11,6 @@
 <script>
 import { mapGetters } from 'vuex'
 
-
 export default {
   name: 'avatar',
   // require user param
@@ -19,7 +18,6 @@ export default {
     user: Object,
     required: true,
   },
-
 
   computed: {
     ...mapGetters({ findByID: 'users/findByID', isPresent: 'users/isPresent' }),

@@ -10,8 +10,6 @@ Vue.config.productionTip = false
 
 Vue.use(VueNativeNotification)
 
-
 Vue.filter('userLabel', (u) => (new User(u)).Label())
-
 
 Vue.component('channel-name', ChannelName)

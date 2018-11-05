@@ -132,7 +132,6 @@ export default {
       required: true,
     },
 
-
     hideActions: Boolean,
     hideReactions: Boolean,
     hidePinning: Boolean,
@@ -592,7 +591,6 @@ export default {
 .first-unread {
   border-bottom: 2px solid $appred;
 }
-
 
 @media (min-width: $wideminwidth)
 {

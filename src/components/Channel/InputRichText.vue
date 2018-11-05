@@ -204,7 +204,6 @@ export default {
         this.mergeNodes(lastChild, lastChild.nextSibling)
       }
 
-
       /// / Insert all nodes from first pasted line after left node
       let firstRow = pLines[0]
       rNode = null
@@ -385,8 +384,7 @@ export default {
     },
 
     getCurentChunk (msg, cursorIndex) {
-      if (this.getCurentNode().dataset.nodetype === 'root')
-      { return { index: 0, first: 0, last: 0, msg: '' } }
+      if (this.getCurentNode().dataset.nodetype === 'root') { return { index: 0, first: 0, last: 0, msg: '' } }
 
       // If node is triggered get entire content
       if (this.getCurentNode().dataset.triggered) {
@@ -691,9 +689,7 @@ export default {
           if (childNodes[i] === selectedObj.anchorNode) {
             break
           }
-          if (childNodes[i].outerHTML)
-          { rangeCount += childNodes[i].outerHTML.length }
-          else if (childNodes[i].nodeType === 3) {
+          if (childNodes[i].outerHTML) { rangeCount += childNodes[i].outerHTML.length } else if (childNodes[i].nodeType === 3) {
             rangeCount += childNodes[i].textContent.length
           }
         }
@@ -941,7 +937,6 @@ export default {
 {
   line-height:45px;
 }
-
 
 </style>
 

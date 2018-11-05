@@ -71,7 +71,6 @@ export default {
     // This serves a sole purpose of handling callback to getMessage calls to $ws
     this.$bus.$on('$ws.messages', messages => this.$store.dispatch('history/update', messages.map(message => new Message(message))))
 
-
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
