@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { User } from '@/types'
 
-
 // Handles basic auth comm + state management
 export default {
   install (Vue) {

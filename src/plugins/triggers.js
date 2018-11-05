@@ -150,7 +150,6 @@ export default {
           wrapper.message += message
         }
 
-
         let lists = { '@': this.userByID, '#': this.channelByID }
         let triggeredTextGetter = (match) => {
           let { trigger, id } = match
@@ -172,7 +171,6 @@ export default {
         this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
         return wrapper
       },
-
 
       // # Handles strings from API
 
