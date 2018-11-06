@@ -1,9 +1,17 @@
 <template>
   <aside
     v-if="repliesTo"
-    class="menu-layer right thread noborder">
-    <upload v-if="channel && showUploadArea"
-      :channelID="channel.ID" :replyTo="repliesTo" ref="upload" />
+    class="menu-layer right thread noborder"
+
+    @dragover="showUploadArea=true"
+    @dragenter="showUploadArea=true">
+
+    <upload v-show="channel && showUploadArea"
+      @close="showUploadArea=false"
+      @show="showUploadArea=true"
+      :channelID="channel.ID"
+      :replyTo="repliesTo"
+      ref="upload" />
 
     <div class="thread-title">
       <strong class="panel-type">Thread</strong>
@@ -27,7 +35,6 @@
 
     <message-input
       :replyTo="message"
-      @submit="onInputSubmit"
       @promptFilePicker="onOpenFilePicker"
       @editLastMessage="editLastMessage=true" />
   </aside>
@@ -90,7 +97,7 @@ export default {
       // should be have editing enabled or not
       editLastMessage: false,
 
-      showUploadArea: true,
+      showUploadArea: false,
     }
   },
 
@@ -106,6 +113,11 @@ export default {
 
     onOpenFilePicker () {
       this.$refs.upload.openFilePicker()
+    },
+
+    xxxx () {
+      console.log('XXXX')
+      this.showUploadArea = true
     },
   },
 

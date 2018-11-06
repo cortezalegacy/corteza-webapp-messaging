@@ -104,9 +104,6 @@
             :id="message.ID"
             :content="message.message" />
 
-            <!-- @msgUpdate="onMessageUpdate"
-            @promptFilePicker="onOpenFilePicker" -->
-
           <embedded-box
             v-if="embeded"
             :src="embeded.src" />

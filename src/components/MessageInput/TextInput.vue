@@ -126,7 +126,6 @@ export default {
   methods: {
     onQuillReady (quill) {
       window.quill = quill
-      console.log('quill ready')
       quill.root.addEventListener('keydown', ev => {
         // on arrow-up but only on empty input!
         if (ev.key === 'ArrowUp' && quill.getText().trim().length === 0) {

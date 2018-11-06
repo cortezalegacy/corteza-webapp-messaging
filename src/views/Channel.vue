@@ -6,8 +6,11 @@
     @dragenter="showUploadArea=true">
 
     <upload
-      v-if="showUploadArea"
-      :channelID="channel.ID" ref="upload" />
+      v-show="showUploadArea"
+      @close="showUploadArea=false"
+      @show="showUploadArea=true"
+      :channelID="channel.ID"
+      ref="upload" />
 
     <channel-header
       :channel="channel"></channel-header>
@@ -85,7 +88,8 @@ export default {
 
   data () {
     return {
-      showUploadArea: true,
+      showUploadArea: false,
+
       resetUnreadTimeout: null,
       channel: null,
 
@@ -114,15 +118,6 @@ export default {
     this.changeChannel(c)
   },
 
-  mounted () {
-    window.addEventListener('keyup', (event) => {
-      if (event.key === 'Escape') {
-        // @todo fix this.
-        this.closeUploadOverlay()
-      }
-    })
-  },
-
   methods: {
     ...mapActions({
       clearHistory: 'history/clear',
@@ -147,10 +142,6 @@ export default {
       // need to rewire message fetching via rest and react
       // after response is actually received
       this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
-    },
-
-    openUploadOverlay () {
-      this.$refs.upload.openOverlay()
     },
 
     resetUnreadAfterTimeout (lastMessageID) {
