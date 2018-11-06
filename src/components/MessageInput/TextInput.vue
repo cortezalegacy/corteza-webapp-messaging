@@ -18,7 +18,7 @@ export default {
     value: String,
     placeholder: {
       type: String,
-      default: 'Here be placeholder',
+      default: 'Write a message',
     },
 
     channels: {
