@@ -159,7 +159,7 @@ export default {
   height: 100vh;
   height: calc(100vh - 60px);
   top: 60px;
-  background: rgba(0,0,0,.4);
+  background: rgba(0,0,0,.8);
   position: relative;
   z-index: 5;
 }
@@ -185,7 +185,7 @@ export default {
   z-index: 100;
   width: 100%;
   height: calc(100vh - 60px);
-  background: rgba(255,255,255,.4);
+  background: rgba(255,255,255,.1);
   &.dz-started{
     max-width: 800px;
     height: auto;
@@ -203,6 +203,7 @@ export default {
 }
 .dz-message{
   h2{
+    color: $appwhite;
     font-size: 26px;
   }
 }
