@@ -23,13 +23,6 @@ export default {
       oidc: this.$system.baseURL() + '/oidc',
     }
   },
-
-  computed: {
-    ...mapGetters('auth', [
-      'isAuthenticated',
-    ]),
-  },
-
   mounted () {
     this.$system.authCheck().then((check) => {
       this.$store.commit('auth/setUser', check.user)

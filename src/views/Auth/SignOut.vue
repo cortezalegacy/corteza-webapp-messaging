@@ -22,22 +22,13 @@ export default {
       oidc: this.$system.baseURL() + '/oidc',
     }
   },
-
-  computed: {
-    ...mapGetters('auth', [
-      'isAuthenticated',
-    ]),
-  },
-
   mounted () {
     this.$system.authLogout().catch((err) => {
       console.error(err)
     }).finally(() => {
       this.$store.commit('clean')
     })
-
     this.$router.push({ name: 'signin' })
   },
 }
 </script>
-F
