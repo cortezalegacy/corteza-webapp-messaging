@@ -15,23 +15,36 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   data () {
     return {
-      oidc: this.$auth.baseURL() + '/oidc',
+      oidc: this.$system.baseURL() + '/oidc',
     }
   },
 
   computed: {
-    ...mapGetters('auth', ['isAuthenticated']),
+    ...mapGetters('auth', [
+      'isAuthenticated',
+    ]),
+  },
+
+  methods: {
+    ...mapActions('auth', [
+      'setUser',
+      'clear',
+    ]),
   },
 
   mounted () {
-    if (this.isAuthenticated) {
+    this.$system.authCheck().then((user) => {
+      this.setUser(user)
       this.$router.push({ name: 'root' })
-    }
+    }).catch((error) => {
+      this.clear()
+      console.error(error)
+    })
   },
 }
 </script>
