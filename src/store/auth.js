@@ -10,12 +10,7 @@ const getters = {
 }
 
 // actions
-const actions = {
-  clear ({ commit }) {
-    commit('clean')
-    commit('flush')
-  },
-}
+const actions = {}
 
 // mutations
 const mutations = {

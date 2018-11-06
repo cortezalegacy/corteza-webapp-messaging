@@ -83,8 +83,8 @@ export default {
   },
 
   beforeCreate () {
-    this.$auth.check().then((user) => {
-      this.$store.commit('auth/setUser', user)
+    this.$system.authCheck().then((check) => {
+      this.$store.commit('auth/setUser', check.user)
     }).catch((err) => {
       this.$store.commit('auth/clean')
       console.error(err)

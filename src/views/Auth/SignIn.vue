@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -30,19 +30,12 @@ export default {
     ]),
   },
 
-  methods: {
-    ...mapActions('auth', [
-      'setUser',
-      'clear',
-    ]),
-  },
-
   mounted () {
-    this.$system.authCheck().then((user) => {
-      this.setUser(user)
+    this.$system.authCheck().then((check) => {
+      this.$store.commit('auth/setUser', check.user)
       this.$router.push({ name: 'root' })
     }).catch((error) => {
-      this.clear()
+      this.$store.commit('clear')
       console.error(error)
     })
   },
