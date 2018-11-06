@@ -47,8 +47,8 @@ class CRM {
     })
   }
 
-  async fieldType ({ id }) {
-    const endpoint = `${this.baseLink}/field/${id}`
+  async fieldType ({ typeID }) {
+    const endpoint = `${this.baseLink}/field/${typeID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -98,8 +98,8 @@ class CRM {
     })
   }
 
-  async pageRead ({ id }) {
-    const endpoint = `${this.baseLink}/page/${id}`
+  async pageRead ({ pageID }) {
+    const endpoint = `${this.baseLink}/page/${pageID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -112,8 +112,8 @@ class CRM {
     })
   }
 
-  async pageEdit ({ id, selfID, moduleID, title, description, visible, blocks }) {
-    const endpoint = `${this.baseLink}/page/${id}`
+  async pageEdit ({ pageID, selfID, moduleID, title, description, visible, blocks }) {
+    const endpoint = `${this.baseLink}/page/${pageID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -149,8 +149,8 @@ class CRM {
     })
   }
 
-  async pageDelete ({ id }) {
-    const endpoint = `${this.baseLink}/page/${id}`
+  async pageDelete ({ pageID }) {
+    const endpoint = `${this.baseLink}/page/${pageID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
@@ -196,8 +196,8 @@ class CRM {
     })
   }
 
-  async moduleRead ({ id }) {
-    const endpoint = `${this.baseLink}/module/${id}`
+  async moduleRead ({ moduleID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -210,8 +210,8 @@ class CRM {
     })
   }
 
-  async moduleEdit ({ id, name, fields }) {
-    const endpoint = `${this.baseLink}/module/${id}`
+  async moduleEdit ({ moduleID, name, fields }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -227,8 +227,8 @@ class CRM {
     })
   }
 
-  async moduleDelete ({ id }) {
-    const endpoint = `${this.baseLink}/module/${id}`
+  async moduleDelete ({ moduleID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
@@ -274,8 +274,8 @@ class CRM {
     })
   }
 
-  async moduleContentRead ({ moduleID, id }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${id}`
+  async moduleContentRead ({ moduleID, contentID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -288,8 +288,8 @@ class CRM {
     })
   }
 
-  async moduleContentEdit ({ moduleID, id, fields }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${id}`
+  async moduleContentEdit ({ moduleID, contentID, fields }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -304,8 +304,8 @@ class CRM {
     })
   }
 
-  async moduleContentDelete ({ moduleID, id }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${id}`
+  async moduleContentDelete ({ moduleID, contentID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
