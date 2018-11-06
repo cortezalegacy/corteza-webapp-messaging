@@ -1,7 +1,9 @@
 <template>
   <ul @scroll="onScrollThrottled" ref="list" :class="{scrollable:scrollable}">
-    <message v-for="(msg, index) in messages"
+    <message
+      v-for="(msg, index) in messages"
       ref="message"
+      @cancelEditing="$emit('cancelEditing')"
       :message="msg"
       :continued="isContinued(messages, index)"
       :currentUser="currentUser"
@@ -9,6 +11,7 @@
       :isUnread="lastReadMessageID <= msg.ID"
       :isFirstUnread="lastReadMessageID == msg.ID"
       :isFirst="index === 0"
+      :showEditor="showEditor(msg)"
       :hideActions="hideActions"
       :hideReactions="hideReactions"
       :hidePinning="hidePinning"
@@ -56,6 +59,19 @@ export default {
     hideActionGoToMessage: { type: Boolean, default: true },
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
+
+    // Set to true to enable edit mode for last message from currentUser
+    editLastMessage: Boolean,
+  },
+
+  computed: {
+    getLastEditable () {
+      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.ID)
+    },
+
+    showEditor () {
+      return (message) => this.getLastEditable && this.getLastEditable.ID === message.ID
+    },
   },
 
   data () {
@@ -109,10 +125,6 @@ export default {
   methods: {
     originChanged () {
       this.allowAutoScroll = true
-    },
-
-    getLastEditable () {
-      return this.getLastMessageByUserID(this.messages, this.currentUser.ID)
     },
 
     onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 1500),

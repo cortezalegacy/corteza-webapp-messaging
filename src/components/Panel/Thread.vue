@@ -2,8 +2,8 @@
   <aside
     v-if="repliesTo"
     class="menu-layer right thread noborder">
-    <channel-upload v-if="channel"
-      :channelID="channel.ID" :replyTo="repliesTo" ref="upload"></channel-upload>
+    <upload v-if="channel"
+      :channelID="channel.ID" :replyTo="repliesTo" ref="upload" />
 
     <div class="thread-title">
       <strong class="panel-type">Thread</strong>
@@ -21,21 +21,22 @@
       :origin="channel"
       :scrollable="true"
       :hideActionOpenThread="true"
-      @editMessage="onEditMessage"
-      @deleteMessage="onDeleteMessage"
+      :editLastMessage="editLastMessage"
+      @cancelEditing="editLastMessage=false"
       v-on="$listeners" />
 
-    <channel-input
-      ref="replyInput"
+    <message-input
+      :replyTo="message"
       @submit="onInputSubmit"
       @promptFilePicker="onOpenFilePicker"
-      @editLastMessage="onEditLastMessage" />
+      @editLastMessage="editLastMessage=true" />
   </aside>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Messages from '@/components/Messages'
-import { ChannelInput, ChannelUpload } from '@/components/Channel'
+import MessageInput from '@/components/MessageInput'
+import Upload from '@/components/MessageInput/Upload'
 import messages from '@/mixins/messages'
 
 export default {
@@ -66,8 +67,12 @@ export default {
       getChannelByID: 'channels/findByID',
     }),
 
+    message () {
+      return this.getMessageByID(this.repliesTo)
+    },
+
     channelID () {
-      return (this.getMessageByID(this.repliesTo) || {}).channelID
+      return this.message.channelID
     },
 
     channel () {
@@ -77,6 +82,14 @@ export default {
     messages () {
       return this.getThread(this.repliesTo)
     },
+  },
+
+  data () {
+    return {
+      // Controls if last message in the list
+      // should be have editing enabled or not
+      editLastMessage: false,
+    }
   },
 
   methods: {
@@ -89,55 +102,14 @@ export default {
       this.$ws.getReplies(this.repliesTo)
     },
 
-    setEditMessage (currentMessage) {
-      if (currentMessage) this.$refs.replyInput.setValue(currentMessage.message, { currentMessage })
-    },
-
-    onInputSubmit ({ value, meta }) {
-      if (meta && meta.currentMessage) {
-        // Copy values from currentMessage in meta
-        const cm = meta.currentMessage
-
-        if (value.length === 0) {
-          this.onDeleteMessage(cm)
-        } else {
-          this.$rest.updateMessage(cm.channelID, cm.ID, value)
-        }
-      } else if (this.$commands.test(value)) {
-        this.$commands.exec(this, value, { channel: this.channel })
-      } else {
-        this.$rest.sendReply(this.channelID, this.repliesTo, value)
-      }
-    },
-
-    onDeleteMessage ({ channelID, ID }) {
-      if (confirm('Delete this message?')) {
-        this.$rest.deleteMessage(channelID, ID)
-      }
-    },
-
-    onEditMessage ({ message }) {
-      this.setEditMessage(message)
-    },
-
-    // Find last editable message
-    onEditLastMessage (ev) {
-      const lastReply = [...this.messages].reverse().find(m => m.canEdit)
-
-      // Ask history component about last editable message
-      if (lastReply) {
-        this.setEditMessage(lastReply)
-      }
-    },
-
     onOpenFilePicker () {
       this.$refs.upload.openFilePicker()
     },
   },
 
   components: {
-    ChannelInput,
-    ChannelUpload,
+    MessageInput,
+    Upload,
     Messages,
   },
 

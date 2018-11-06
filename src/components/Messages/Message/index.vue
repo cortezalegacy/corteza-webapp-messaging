@@ -16,6 +16,7 @@
       }"
       ref="message"
       :key="message.ID">
+
         <section>
           <em class="dot-dot-dot"></em>
           <em v-if="!continued" class="avatar">
@@ -68,7 +69,7 @@
               </li>
               <li v-if="message.canEdit"
                   class="extra-action"
-                  @click="$emit('editMessage', { message })">
+                  @click="inEditing=true">
                   <i class="icon icon-edit"></i>
                   <span>edit message</span>
               </li>
@@ -90,10 +91,25 @@
             :attachment="message.attachment"
             :inline="message.type === 'inlineImage'" />
 
+          <message-input
+            v-if="inEditing"
+            :message="message"
+            @submit="onInputSubmit"
+            @cancel="inEditing=false"
+            ref="channelInput" />
+
           <contents
+            v-if="!inEditing"
             class="message-content"
             :id="message.ID"
-            :content="getChunks(message.message)" />
+            :content="message.message" />
+
+            <!-- @msgUpdate="onMessageUpdate"
+            @promptFilePicker="onOpenFilePicker" -->
+
+          <embedded-box
+            v-if="embeded"
+            :src="embeded.src" />
 
         </div>
 
@@ -115,7 +131,9 @@ import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
 import Reactions from './Reactions'
+import EmbeddedBox from './EmbeddedBox'
 import Avatar from '@/components/Avatar'
+import MessageInput from '@/components/MessageInput'
 
 export default {
   props: {
@@ -144,6 +162,8 @@ export default {
     isFirstUnread: Boolean,
     isFirst: Boolean,
     isLast: Boolean,
+
+    showEditor: Boolean,
   },
 
   data () {
@@ -154,6 +174,7 @@ export default {
       scrollToRef: false,
       resetUnreadTimeout: null,
       isContextMenuOpen: false,
+      showEditorInternal: false,
     }
   },
 
@@ -164,11 +185,34 @@ export default {
           this.message.canEdit ||
           this.message.canDelete)
     },
+
+    embeded () {
+      if (this.message) {
+        let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
+        let match = this.message.message.match(regExp)
+        if (match && match[2].length === 11) {
+          return { src: `https://www.youtube.com/embed/${match[2]}?autoplay=0&enablejsapi=1` }
+        }
+        return false
+      }
+    },
+
+    inEditing: {
+      get () {
+        return this.showEditor || this.showEditorInternal
+      },
+      set (value) {
+        this.showEditorInternal = value
+        if (!value) {
+          this.$emit('cancelEditing')
+        }
+      },
+    },
   },
 
   methods: {
-    isCurrentUser () {
-      return (this.message.user || {}).ID === this.currentUser.ID
+    onInputSubmit ({ value }) {
+      this.showEditor = false
     },
 
     moment: function (timeString) {
@@ -209,6 +253,8 @@ export default {
     Contents,
     Avatar,
     Reactions,
+    MessageInput,
+    EmbeddedBox,
   },
 }
 

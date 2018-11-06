@@ -1,23 +1,28 @@
+'use strict'
+
 import hljs from 'highlight.js'
 import 'highlight.js/styles/xcode.css'
-import EmojiConvertor from 'emoji-js'
+import MarkdownIt from 'markdown-it'
+import MarkdownItV from 'markdown-it-v'
+import internalLinks from './internal-links'
 
-const emoji = new EmojiConvertor()
-
-const md = require('markdown-it')({
-  html: true,
+const md = MarkdownIt({
+  html: false,
   breaks: true,
   linkify: true,
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return hljs.highlight(lang, str).value
+        return hljs.highlight(lang, str)
       } catch (__) {}
     }
 
-    return '' // use external default escaping
+    return str // use external default escaping
   },
 })
+
+md.use(MarkdownItV)
+md.use(internalLinks)
 
 const linkRenderer = md.renderer.rules.link_open || function (tokens, idx, options, env, self) {
   return self.renderToken(tokens, idx, options)
@@ -39,16 +44,4 @@ md.renderer.rules.link_open = function (tokens, idx, options, env, self) {
   return linkRenderer(tokens, idx, options, env, self)
 }
 
-const textRenderer = md.renderer.rules.text || function (tokens, idx, options, env, self) {
-  return self.renderToken(tokens, idx, options)
-}
-
-md.renderer.rules.text = function (tokens, idx, options, env, self) {
-  return emoji.replace_emoticons(emoji.replace_colons(textRenderer(tokens, idx, options, env, self)))
-}
-
-export default {
-  methods: {
-    renderMarkdown (string) { return md.render(string) },
-  },
-}
+export default (markdownText) => md.render(markdownText)

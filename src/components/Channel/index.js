@@ -1,6 +1,3 @@
 export { default as ChannelHeader } from './Header'
-export { default as ChannelInput } from './Input'
-export { default as ChannelUpload } from './Upload'
 export { default as ChannelName } from './Name'
 export { default as ChannelPanelItem } from './PanelItem'
-export { default as TriggerSuggestions } from './TriggerSuggestions'

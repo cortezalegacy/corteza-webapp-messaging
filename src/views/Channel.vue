@@ -5,7 +5,7 @@
     @dragover="openUploadOverlay"
     @dragenter="openUploadOverlay">
 
-    <channel-upload
+    <upload
       :channelID="channel.ID" ref="upload" />
 
     <channel-header
@@ -19,28 +19,27 @@
       :origin="channel"
       :scrollable="true"
       :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
+      :editLastMessage="editLastMessage"
+      @cancelEditing="editLastMessage=false"
       @scrollTop="onScrollTop"
       @scrollBottom="onScrollBottom"
-      @editMessage="onEditMessage"
-      @deleteMessage="onDeleteMessage"
       v-on="$listeners" />
 
-    <channel-input
-      ref="channelInput"
-      @msgUpdate="onMessageUpdate"
-      @submit="onInputSubmit"
+    <message-input
+      :channel="channel"
       @promptFilePicker="onOpenFilePicker"
-      @editLastMessage="onEditLastMessage" />
+      @editLastMessage="editLastMessage=true" />
 
     <activity :users="activeInChannel(channelID, 'typing')">typing</activity>
 
   </section>
 </template>
 <script>
-import _ from 'lodash'
 import messages from '@/mixins/messages'
 import { mapGetters, mapActions } from 'vuex'
-import { ChannelInput, ChannelHeader, ChannelUpload } from '@/components/Channel'
+import { ChannelHeader } from '@/components/Channel'
+import MessageInput from '@/components/MessageInput'
+import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
 import Activity from '@/components/Activity'
 
@@ -87,7 +86,13 @@ export default {
     return {
       resetUnreadTimeout: null,
       channel: null,
+
+      // Assists with on-scroll loading
       previousFetchFirstMessageID: null,
+
+      // Controls if last message in the list
+      // should be have editing enabled or not
+      editLastMessage: false,
     }
   },
 
@@ -142,10 +147,6 @@ export default {
       this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
     },
 
-    setEditMessage (currentMessage) {
-      if (currentMessage) this.$refs.channelInput.setValue(currentMessage.message, { currentMessage })
-    },
-
     openUploadOverlay () {
       this.$refs.upload.openOverlay()
     },
@@ -169,46 +170,6 @@ export default {
       if (this.resetUnreadTimeout !== null) {
         window.clearTimeout(this.resetUnreadTimeout)
       }
-    },
-
-    // Update channel activity once in a while while typing
-    onMessageUpdate: _.throttle(function ({ msg }) {
-      if (msg.length > 1) {
-        this.$ws.send({ channelActivity: { ID: this.channel.ID, kind: 'typing' } })
-      }
-    }, 2000),
-
-    onInputSubmit ({ value, meta }) {
-      if (meta && meta.currentMessage) {
-        const { currentMessage } = meta
-
-        if (currentMessage.ID && value.length === 0) {
-          this.onDeleteMessage(currentMessage)
-        } else if (currentMessage.ID) {
-          this.$rest.updateMessage(currentMessage.channelID, currentMessage.ID, value)
-        }
-      } else if (this.$commands.test(value)) {
-        this.$commands.exec(this, value, { channel: this.channel })
-      } else if (value) {
-        // Using current channel info here.
-        this.setChannelUnreadCount({ ID: this.channelID, count: 0, lastMessageID: 0 })
-        this.$rest.sendMessage(this.channelID, value)
-      }
-    },
-
-    onDeleteMessage ({ ID, channelID }) {
-      if (confirm('Delete this message?')) {
-        this.$rest.deleteMessage(channelID, ID)
-      }
-    },
-
-    onEditMessage ({ message }) {
-      this.setEditMessage(message)
-    },
-
-    onEditLastMessage (ev) {
-      // Ask history component about last editable message
-      this.setEditMessage(this.$refs.messages.getLastEditable())
     },
 
     onOpenFilePicker () {
@@ -243,8 +204,8 @@ export default {
 
   components: {
     Messages,
-    ChannelInput,
-    ChannelUpload,
+    MessageInput,
+    Upload,
     ChannelHeader,
     Activity,
   },

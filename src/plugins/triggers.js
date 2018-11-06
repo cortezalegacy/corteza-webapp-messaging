@@ -175,37 +175,30 @@ export default {
       // # Handles strings from API
 
       // Gives nodes per line
-      getNodes (message) {
-        let wrapper = document.createElement('div')
-        if (!message) return wrapper
+      getDelta (message) {
+        let delta = []
+        if (!message) return delta
 
         for (let m of message.split('\n')) {
-          wrapper.appendChild(this.getLineNodes(m))
+          delta = delta.concat(this.getLineDelta(m))
         }
 
-        return wrapper
+        return delta
       },
 
       // Processes message to DOM node structure
-      getLineNodes (message) {
+      getLineDelta (message) {
         // Regex
         let regex = makeIdParserRegex('g')
 
         // Triggered handler
         let triggeredChunkHandler = (wrapper, trigger, triggeredText, meta) => {
-          // Create a triggered node
-          let triggeredNode = document.createElement('span')
-          if (this.prepareTriggeredNode(triggeredNode, trigger, triggeredText).trigger) {
-            this.addNodeTrigger(triggeredNode, trigger, meta)
-          }
-          wrapper.appendChild(triggeredNode)
+          wrapper.push({ insert: { mention: { label: triggeredText, trigger, meta: JSON.stringify(meta) } } })
         }
 
         // Regular handler
         let regularChunkHandler = (message, wrapper) => {
-          let normalNode = document.createElement('span')
-          normalNode.appendChild(document.createTextNode(message))
-          wrapper.appendChild(normalNode)
+          wrapper.push({ insert: message })
         }
 
         let lists = { '@': this.userByID, '#': this.channelByID }
@@ -222,14 +215,8 @@ export default {
           return { entire, trigger, id }
         }
 
-        let wrapper = document.createElement('p')
-        if (message) {
-          this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
-        } else {
-          let buffer = document.createElement('span')
-          buffer.appendChild(document.createElement('br'))
-          wrapper.appendChild(buffer)
-        }
+        let wrapper = []
+        this.traverseMessage(regex, message, regularChunkHandler, triggeredChunkHandler, matchDestructor, triggeredTextGetter, wrapper)
         return wrapper
       },
 

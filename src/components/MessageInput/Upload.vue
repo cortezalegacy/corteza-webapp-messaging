@@ -25,11 +25,6 @@
       </vue-dropzone>
 
       <div v-if="!dropzoneOverlayed" class="message-confirm">
-        <!--<textarea-autosize :min-height="30" :max-height="300"-->
-                           <!--class="message-input"-->
-                           <!--createImageThumbnails="false"-->
-                           <!--rows="1"-->
-                           <!--placeholder="Write a message..."></textarea-autosize>-->
         <div class="button-group">
           <button class="btn fill" @click="uploadFile">
             Send
