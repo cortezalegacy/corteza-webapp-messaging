@@ -1,40 +1,49 @@
 <template>
   <div
+    class="droparea"
     @dragleave="closeOverlay"
     @dragend="closeOverlay"
-    @drop="closeOverlay"
-    ref="lightbox" class="lightbox"
-    v-show="lightboxShown">
+    @drop="closeOverlay">
 
-    <lightbox>
-      <div class="overlay" v-if="showDndOverlay">
-        <img src="/static/pics/target.png">
+<!--       <div class="overlay">
+        <img src="src="/static/pics/target.png">
         <h2>Drop files here to upload</h2>
-      </div>
+      </div> -->
 
-      <vue-dropzone
-        ref="dropzone"
-        id="dropzone"
-        :class="{'overlayed': dropzoneOverlayed}"
-        @vdropzone-file-added="fileAdded"
-        @vdropzone-complete="fileUploaded"
-        :disabled="true"
-        :useCustomSlot=true
-        :options="options">
-        <h2>Upload file</h2>
-      </vue-dropzone>
+      <div class="message-confirm">
+          <vue-dropzone
+            ref="dropzone"
+            id="dropzone"
+            :class="{'overlayed': dropzoneOverlayed}"
+            @vdropzone-file-added="fileAdded"
+            @vdropzone-complete="fileUploaded"
+            :disabled="true"
+            :useCustomSlot=true
+            :options="options">
 
-      <div v-if="!dropzoneOverlayed" class="message-confirm">
-        <div class="button-group">
-          <button class="btn fill" @click="uploadFile">
-            Send
-          </button>
-          <button class="btn" @click="resetUpload">
-            Cancel
-          </button>
-        </div>
+            <!-- <img src="/../assets/images/crust-logo-with-tagline.png"> -->
+            <h2>Drop files to upload to<br>
+              <span v-if="replyTo">thread</span>
+              <span v-else>#{{ channel.name || channel.ID }}</span>
+            </h2>
+            <span v-if="dz-started">test</span>
+          </vue-dropzone>
+
+          <div class="button-group" v-if="fileDropped">
+            <h3>Your file is going to be uploaded to
+              <span v-if="replyTo">thread</span>
+              <span v-else>#{{ channel.name || channel.ID }}.<br>
+                You can switch the channel on your left.
+              </span>
+            </h3>
+            <button class="btn fill" @click="uploadFile">
+              Send
+            </button>
+            <button class="btn" @click="resetUpload">
+              Cancel
+            </button>
+          </div>
       </div>
-    </lightbox>
   </div>
 </template>
 
@@ -42,7 +51,7 @@
 import { mapGetters } from 'vuex'
 import vueDropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import Lightbox from '@/components/Lightboxed'
+import '@/assets/sass/file-upload.scss'
 
 export default {
   name: 'channel-upload',
@@ -54,17 +63,23 @@ export default {
 
   data () {
     return {
-      fileUpload: null,
-      dndOverlay: false,
-      dropzoneOverlayed: true,
-      disabled: false,
+      fileDropped: false,
+      // fileUpload: null,
+      // dndOverlay: true,
+      // dropzoneOverlayed: true,
+      // disabled: false,
     }
   },
 
   computed: {
     ...mapGetters({
       lastMessage: 'channels/lastMessage',
+      findChannelByID: 'channels/findByID',
     }),
+
+    channel () {
+      return this.findChannelByID(this.channelID)
+    },
 
     dropzoneHasFile () {
       return !!this.fileUpload
@@ -78,10 +93,6 @@ export default {
       return this.showLightbox || this.dndOverlay
     },
 
-    showDndOverlay () {
-      return this.dndOverlay && !this.dropzoneHasFile
-    },
-
     options () {
       return {
         paramName: 'upload',
@@ -91,10 +102,15 @@ export default {
           return `${this.$rest.baseURL()}/channels/${this.channelID}/attach`
         },
         params: { replyTo: this.replyTo },
-        thumbnailWidth: 150,
+        thumbnailMethod: 'contain',
+        thumbnailWidth: 350,
+        thumbnailHeight: 400,
         withCredentials: true,
         autoProcessQueue: false,
         maxFiles: 1,
+        addRemoveLinks: false,
+        disablePreview: true,
+        dictRemoveFile: 'Remove',
         headers: {
           // https://github.com/enyo/dropzone/issues/1154
           'Cache-Control': '',
@@ -129,7 +145,7 @@ export default {
 
     fileAdded (file) {
       console.debug('-->> fileAdded()')
-
+      this.fileDropped = true
       // When dropzone is disabled; remove any newly added file
       if (this.disabled) {
         this.getDropzone().removeFile(file)
@@ -164,22 +180,88 @@ export default {
   },
 
   components: {
-    Lightbox,
     vueDropzone,
   },
 }
 </script>
 
-<style scoped>
-  #dropzone.overlayed {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    background-color: transparent;
-    width: 75vw;
-    height:calc(100vh - 7rem);
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
+  .overlay{
 
+  }
+  .droparea,
+  .message-confirm{
+    /*display: none;*/
+  }
+  .droparea {
+    width: 100%;
+    height: 100vh;
+    height: calc(100vh - 60px);
+    top: 60px;
+    background: rgba(0,0,0,.4);
+    position: relative;
+    z-index: 5;
+  }
+
+  .message-confirm{
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    z-index: 10;
+  }
+
+  .vue-dropzone .dz-preview .dz-remove{
+    opacity: 1;
+    border: none;
+    margin-bottom: -40px;
+    color: black;
+  }
+  .dropzone{
+    position: relative;
+    z-index: 100;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background: white;
+    &.dz-started{
+      max-width: 800px;
+      height: auto;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .dz-preview{
+      .dz-image{
+        img{
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+ .dz-message{
+    h2{
+      font-size: 26px;
+    }
+  }
+  .vue-dropzone{
+    color: black;
+  }
+
+  #dropzone.overlayed {
+    margin-top: 62px;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 100vh;
+  }
+  .left-panel-open #dropzone.overlayed
+  {
+    margin-left:320px;
+  }
+
+  .right-panel-open #dropzone.overlayed
+  {
+    margin-right:400px;
   }
   #dropzone * {
     pointer-events: none;
@@ -196,13 +278,16 @@ export default {
   .message-input:focus{
     outline: none;
   }
-  .message-confirm{
-    background: white;
-    padding: 10px;
-  }
   .button-group{
     text-align: center;
-    margin-top: 10px;
+    padding: 20px;
+    background: white;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 20px 55px rgba(0,0,0,.35), 0 0 1px rgba(0,0,0,.15);
+    h3{
+      margin-bottom: 30px;
+    }
   }
   .btn {
     height: 40px;
@@ -213,15 +298,29 @@ export default {
     cursor: pointer;
     border-color: #1397CB;
     color: #1397CB;
+    &:hover{
+      border-color: #0f749c;
+    }
+    &:focus{
+      outline: none;
+    }
+    &.fill{
+      background: #1397CB;
+      color: white;
+      margin-right: 10px;
+      &:hover{
+        background: #0f749c;
+      }
+    }
   }
-  .btn:hover{
-    border-color: #0f749c;
+
+@media (min-width: $wideminwidth)
+{
+  #dropzone.overlayed
+  {
+    margin-left:320px;
+    max-width:calc(100vw - 320px);
   }
-  .btn.fill{
-    background: #1397CB;
-    color: white;
-  }
-  .btn.fill:hover{
-    background: #0f749c;
-  }
+}
+
 </style>

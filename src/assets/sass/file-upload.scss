@@ -1,0 +1,26 @@
+.dz-message{
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.dz-details,
+.dz-progress{
+	display: none;
+}
+.dz-image{
+	img{
+		margin: 0 auto;
+	}
+}
+.dropzone .dz-started{
+	opacity: 1;
+}
+.vue-dropzone .dz-preview .dz-remove{
+	color: black;
+	opacity: 1;
+	border: none;
+	width: 100%;
+	margin-bottom: -40px;
+}

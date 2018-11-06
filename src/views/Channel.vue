@@ -2,10 +2,11 @@
   <section
     v-if="channel"
     :class="{ 'unread-messages': unread(channelID) }"
-    @dragover="openUploadOverlay"
-    @dragenter="openUploadOverlay">
+    @dragover="showUploadArea=true"
+    @dragenter="showUploadArea=true">
 
     <upload
+      v-if="showUploadArea"
       :channelID="channel.ID" ref="upload" />
 
     <channel-header
@@ -84,6 +85,7 @@ export default {
 
   data () {
     return {
+      showUploadArea: true,
       resetUnreadTimeout: null,
       channel: null,
 
@@ -149,12 +151,6 @@ export default {
 
     openUploadOverlay () {
       this.$refs.upload.openOverlay()
-    },
-
-    closeUploadOverlay () {
-      if (this.$refs.upload) {
-        this.$refs.upload.closeOverlay()
-      }
     },
 
     resetUnreadAfterTimeout (lastMessageID) {

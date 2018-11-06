@@ -2,7 +2,7 @@
   <aside
     v-if="repliesTo"
     class="menu-layer right thread noborder">
-    <upload v-if="channel"
+    <upload v-if="channel && showUploadArea"
       :channelID="channel.ID" :replyTo="repliesTo" ref="upload" />
 
     <div class="thread-title">
@@ -89,6 +89,8 @@ export default {
       // Controls if last message in the list
       // should be have editing enabled or not
       editLastMessage: false,
+
+      showUploadArea: true,
     }
   },
 
@@ -143,7 +145,7 @@ export default {
 .thread-title {
   position: absolute;
   min-height:60px;
-  padding:15px;
+  padding:10px;
   box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
   margin-bottom:5px;
   top: 0px;
