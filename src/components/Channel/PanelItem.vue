@@ -82,6 +82,7 @@ export default {
 {
   text-decoration:none;
   line-height:20px;
+  font-weight: 400;
   &:hover
   {
     background-color:rgba($appgrey,0.15);
