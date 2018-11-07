@@ -303,9 +303,9 @@ mark {
     display: none;
     margin-top: -5px;
     margin-left: -10px;
-    padding: 5px 10px 0px 10px;
     z-index: 2;
     float: right;
+
   }
 
 }

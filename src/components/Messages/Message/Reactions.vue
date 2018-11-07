@@ -66,14 +66,17 @@ ul {
   margin: 5px 0 0 0;
   list-style-type: none;
 
+  .reactions.no-reactions{
+    border: 1px solid $appyellow;
+    border-radius: 2px;
+    background-color: lighten($appyellow, 30%);
+
+  }
   li {
     cursor: pointer;
     margin-right: 2px;
     padding: 1px 3px;
     display: inline;
-    border: 1px solid $appyellow;
-    border-radius: 2px;
-    background-color: lighten($appyellow, 30%);
     font-size: 14px;
     letter-spacing: -2px;
 
