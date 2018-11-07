@@ -29,19 +29,27 @@
       @scrollBottom="onScrollBottom"
       v-on="$listeners" />
 
+    <observer-footer
+      v-if="!isMember"
+      :channel="channel" />
+
     <message-input
       :channel="channel"
+      v-if="isMember"
       @promptFilePicker="onOpenFilePicker"
       @editLastMessage="editLastMessage=true" />
 
-    <activity :users="activeInChannel(channelID, 'typing')">typing</activity>
+    <activity
+      v-if="isMember"
+      :users="activeInChannel(channelID, 'typing')">typing</activity>
 
   </section>
 </template>
 <script>
 import messages from '@/mixins/messages'
 import { mapGetters, mapActions } from 'vuex'
-import { ChannelHeader } from '@/components/Channel'
+import ChannelHeader from '@/components/Channel/Header'
+import ObserverFooter from '@/components/Channel/ObserverFooter'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
@@ -83,6 +91,10 @@ export default {
 
     currentChannel () {
       return this.channelByID(this.channelID)
+    },
+
+    isMember () {
+      return this.channel.isMember(this.user.ID)
     },
   },
 
@@ -195,6 +207,7 @@ export default {
     Upload,
     ChannelHeader,
     Activity,
+    ObserverFooter,
   },
 
   mixins: [
@@ -210,7 +223,7 @@ export default {
 .channel-input,
 .messages
 {
-  position:absolute;
+  position: absolute;
   width:100%;
   max-width:100vw;
   left:0;
@@ -241,6 +254,11 @@ export default {
     top:62px;
     bottom:65px;
   }
+}
+
+footer {
+  bottom: 0px;
+  position: absolute;
 }
 
 section.activity {
