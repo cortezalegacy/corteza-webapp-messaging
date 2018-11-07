@@ -304,8 +304,8 @@ mark {
     margin-top: -5px;
     margin-left: -10px;
     padding: 5px 10px 0px 10px;
-    width: 100%;
     z-index: 2;
+    float: right;
   }
 
 }
