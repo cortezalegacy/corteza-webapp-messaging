@@ -32,6 +32,7 @@ export class Message {
     this.isPinned = !!m.isPinned
     this.isBookmarked = !!m.isBookmarked
     this.reactions = (m.reactions || []).map(r => new MessageReaction(r))
+    this.mentions = m.mentions || []
 
     this.canReply = !!m.canReply
     this.canEdit = !!m.canEdit
@@ -39,6 +40,11 @@ export class Message {
 
     this.user = new User(m.user)
     this.attachment = m.att ? new Attachment(m.att) : null
+  }
+
+  isMentioned (userID) {
+    console.log(this.mentions, userID)
+    return this.mentions.indexOf(userID) !== -1
   }
 
   addReaction ({ reaction, userID }) {

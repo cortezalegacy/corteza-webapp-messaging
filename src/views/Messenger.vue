@@ -97,26 +97,43 @@ export default {
     this.handleResize()
 
     this.$bus.$on('$core.newMessage', ({ message }) => {
-      const isCurrentChannel = (this.currentChannel || {}).ID === message.channelID
-      const isCurrentUser = (this.currentUser || {}).ID === (message.user || {}).ID
-
-      if (!isCurrentUser && (!isCurrentChannel || !document.hasFocus())) {
-        if (this.getSettings('mute.all')) {
-          console.debug('Suppressing notification due to user settings', { message })
-          return
-        }
-
-        const body = message.message
-        const msgChannel = this.findChannelByID(message.channelID)
-
-        this.$notification.show(`${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
-          body: body.length > 200 ? body.substring(0, 200) + '...' : body,
-        }, {
-          onclick: () => {
-            this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
-          },
-        })
+      if (!this.currentUser || this.currentUser.ID === (message.user || {}).ID) {
+        console.debug('Not notifying, same user')
+        // Ignore messages we've authored
+        return
       }
+
+      if (this.currentChannel.ID === message.channelID && document.hasFocus()) {
+        console.debug('Not notifying, in channel, focused')
+        // We're already paying atention
+        return
+      }
+
+      if (!message.isMentioned(this.currentUser.ID)) {
+        console.debug('Not notifying, not mentioned')
+        // User is not mentioned.
+        // @todo this needs to be a bit more intelegent, take user's settings into account etc...
+        return
+      }
+
+      if (this.getSettings('mute.all')) {
+        console.debug('Suppressing notification due to user settings', { message })
+        return
+      }
+
+      const body = message.message
+      const msgChannel = this.findChannelByID(message.channelID)
+
+      console.debug('Sending notification about new message', { message })
+
+      // Please note that this will not work on non secure domains. "http://localhost" is an exception.
+      this.$notification.show(`${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
+        body: body.length > 200 ? body.substring(0, 200) + '...' : body,
+      }, {
+        onclick: () => {
+          this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
+        },
+      })
     })
 
     this.$bus.$on('$message.previewAttachment', (attachment) => {

@@ -1,7 +1,7 @@
 'use strict'
 
-const internalLinkSplitRE = new RegExp(`(<[@#]\\d+\\s?.*?>)`)
-const internalLinkRE = new RegExp(`<([@#])(\\d+)((?:\\s)(.*))?>`)
+const internalLinkSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]+?>)`)
+const internalLinkRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
 
 export default (md, setup) => {
   md.core.ruler.push('internalLink', parser.bind(md))

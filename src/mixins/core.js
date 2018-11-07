@@ -60,7 +60,7 @@ export default {
         // Count only new mesages, no updates, no replies
         this.$store.dispatch('unread/incChannel', msg.channelID)
 
-        this.$bus.$emit('$core.newMessage', { message })
+        this.$bus.$emit('$core.newMessage', { message: msg })
       }
       this.$store.dispatch('history/update', [msg])
 
