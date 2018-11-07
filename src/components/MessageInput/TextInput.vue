@@ -70,6 +70,7 @@ export default {
           mention: {
             allowedChars: /^[A-Za-z\sÅÄÖåäöđšćčžĐŠĆČŽ\-_]*$/,
             offsetLeft: 0,
+            fixMentionsToQuill: true,
             mentionDenotationChars: ['@', '#'],
             source: function (searchTerm, renderList, mentionChar) {
               let values
@@ -145,11 +146,6 @@ export default {
 <style lang="scss">
 .q-editor .ql-editor {
   padding: 0;
-}
-.ql-mention-list-container{
-  width: 100%;
-  margin-top: -13px;
-  margin-left: -15px;
 }
 .ql-mention-list-item{
   font-size: 14px;
