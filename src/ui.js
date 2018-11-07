@@ -1,14 +1,17 @@
+import Vue from 'vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faAngleDown, faBell, faPlusCircle, faStar, faUser, faThumbtack, faEdit, faCog, faInfoCircle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+// import { faUserSecret } from '@fortawesome/free-regular-svg-icons'
+
+import { faMapPin, faThumbtack } from '@fortawesome/free-solid-svg-icons'
+import { faBookmark, faStar } from '@fortawesome/free-regular-svg-icons'
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 library.add(
-  faAngleDown,
-  faBell,
-  faPlusCircle,
+  faBookmark,
   faStar,
-  faUser,
-  faThumbtack,
-  faEdit,
-  faCog,
-  faInfoCircle
+  faMapPin,
+  faThumbtack
 )

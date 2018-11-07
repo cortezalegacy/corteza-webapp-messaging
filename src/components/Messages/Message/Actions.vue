@@ -12,18 +12,23 @@
          v-if="!hideActionGoToMessage"
          @click="$emit('goToMessage', { message })"
       ></i>
-      <i class="action icon-clipboard"
-         v-if="!hidePinning"
-         :class="{pinned:message.isPinned}"
-         title="Pin message for everyone to see"
-         @click="$bus.$emit('message.pin', { message })"
-      ></i>
-      <i class="action icon-smile"
-         v-if="!hideBookmarking"
-         :class="{bookmarked:message.isBookmarked}"
-         title="Bookmark message for personal reference"
-         @click="$bus.$emit('message.bookmark', { message })"
-      ></i>
+      <font-awesome-icon
+        class="action"
+        icon="thumbtack"
+        rotation="45"
+        v-if="!hidePinning"
+        :class="{pinned:message.isPinned}"
+        title="Pin message for everyone to see"
+        @click="$bus.$emit('message.pin', { message })"
+      ></font-awesome-icon>
+      <font-awesome-icon
+        class="action"
+        :icon="['far', 'bookmark']"
+        v-if="!hideBookmarking"
+        :class="{bookmarked:message.isBookmarked}"
+        title="Bookmark message for personal reference"
+        @click="$bus.$emit('message.bookmark', { message })"
+      ></font-awesome-icon>
       <i v-if="!isContextMenuOpen && isContextMenuEnabled"
         class="action icon-plus" @click="onContextMenuOpen()"></i>
       <i v-else-if="isContextMenuEnabled"
@@ -35,7 +40,7 @@
             class="extra-action"
             @click="$emit('openThread', { message })">
             <i class="icon icon-message-circle-left-speak"></i>
-            <span>Reply in thread</span>
+            <span>Reply in thread </span>
         </li>
         <li v-if="message.canEdit"
             class="extra-action"
@@ -121,6 +126,7 @@ export default {
     text-align: center;
     box-shadow: 0 0 5px 0 rgba($appgrey, 0.5);
     cursor: pointer;
+    color: $defaultlinecolor;
   }
 }
 
@@ -128,6 +134,12 @@ export default {
   min-width: 180px;
   .bookmarked, .pinned {
     color: $appyellow;
+  }
+  .svg-inline--fa{
+    padding: 7px;
+    width: 30px;
+    height: 32px;
+    margin-bottom: -6px;
   }
 }
 
