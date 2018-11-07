@@ -15,7 +15,6 @@
       <font-awesome-icon
         class="action"
         icon="thumbtack"
-        rotation="45"
         v-if="!hidePinning"
         :class="{pinned:message.isPinned}"
         title="Pin message for everyone to see"
