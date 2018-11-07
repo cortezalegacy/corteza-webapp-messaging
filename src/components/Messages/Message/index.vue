@@ -6,7 +6,6 @@
         'first': !continued,
         'attachement' : message.attachment,
         'valid' : message.attachment && message.attachment.size > 0,
-        'with-infos' : message.replies || message.updatedAt,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
         'pinned' : message.isPinned,
@@ -30,6 +29,7 @@
           <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
           <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
 
+          <!-- Actions -->
           <div class="actions" v-if="!hideActions">
             <!-- i class="action icon-message-circle-left-speak"></i -->
             <i class="action icon-message-circle-left-speak"
@@ -81,6 +81,7 @@
               </li>
             </ul>
           </div>
+          <!-- /Actions -->
         </section>
         <div
           class="message"
@@ -117,10 +118,9 @@
         :class="{'no-reactions': message.reactions.length === 0}"
         :reactions="message.reactions" />
 
-      <div class="message-infos">
-        <a class="info" v-if="message.replies" @click="$emit('openThread', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
-        <span class="info" v-if="message.updatedAt">edited</span>
-      </div>
+      <footnote
+        :message="message"
+        @openThread="$emit('openThread', $event)" />
     </li>
 </template>
 <script>
@@ -129,6 +129,7 @@ import Attachment from './Attachment'
 import Contents from './Contents'
 import Reactions from './Reactions'
 import EmbeddedBox from './EmbeddedBox'
+import Footnote from './Footnote'
 import Avatar from '@/components/Avatar'
 import MessageInput from '@/components/MessageInput'
 
@@ -252,6 +253,7 @@ export default {
     Reactions,
     MessageInput,
     EmbeddedBox,
+    Footnote,
   },
 }
 
@@ -311,29 +313,6 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-.message-infos
-{
-  font-size:10px;
-  opacity:0.35;
-  .info
-  {
-    display:inline-block;
-    &:after
-    {
-      content: '●';
-      display:inline-block;
-      margin:0 2px;
-    }
-    &:last-child:after
-    {
-      content:'';
-    }
-  }
-
-  a {
-    cursor: pointer;
-  }
-}
 .dot-dot-dot
 {
   position:absolute;
@@ -384,10 +363,6 @@ export default {
 .message-n-meta.continued
 {
   margin-top:-18px;
-}
-// need spacing if has info
-.message-n-meta.continued.with-infos
-{
 }
 .message-n-meta.first
 {
