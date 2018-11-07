@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="linkProps">{{ user | userLabel }}</router-link>
+  <router-link :to="linkProps" :class="{ 'current-user':ID===currentUser.ID }">{{ user | userLabel }}</router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -15,6 +15,7 @@ export default {
   computed: {
     ...mapGetters({
       findUserByID: 'users/findByID',
+      currentUser: 'auth/user',
     }),
 
     linkProps () {
@@ -27,3 +28,17 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
+a{
+  color: $defaulttextcolor;
+  font-weight: 900;
+  &.current-user{
+    color: $appred;
+  }
+  &:before {
+    content: "@";
+  }
+}
+</style>

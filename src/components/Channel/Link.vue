@@ -23,3 +23,17 @@ export default {
   },
 }
 </script>
+
+<style scoped lang="scss">
+@import '@/assets/sass/_0.commons.scss';
+a{
+  color: $defaulttextcolor;
+/*  color:$appyellow;
+  color:$appgreen;
+  color:$appblue;*/
+  font-weight: 900;
+  &:before {
+    content: "#";
+  }
+}
+</style>

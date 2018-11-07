@@ -257,6 +257,11 @@ mark {
   margin-left: 0;
 }
 
+a{
+  color: $defaulttextcolor;
+  font-weight: 900;
+}
+
 </style>
 
 <style scoped lang="scss">
