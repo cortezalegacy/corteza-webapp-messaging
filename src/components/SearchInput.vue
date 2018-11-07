@@ -4,10 +4,11 @@
       <span class="badge badge-block badge-pill badge-tall">
           <i class="icon-search"></i>
           <input
+            v-focus="focus"
             ref="input"
             type="text"
             v-model="query"
-            placeholder="Search"
+            :placeholder="placeholder"
             autocomplete="true"
             class="txt no-border">
         <i class="icon-settings-horizontal float-right"></i>
@@ -15,17 +16,29 @@
   </form>
 </template>
 <script>
+import { focus } from 'vue-focus'
+
 export default {
   props: {
+    value: String,
+    placeholder: { type: String, default: 'Search' },
+    focus: false,
     preset: {
       type: String,
     },
   },
 
-  data () {
-    return {
-      query: '',
-    }
+  computed: {
+    // making sure value goes from our parent to <input> and back properly...
+    query: {
+      get () {
+        return this.value
+      },
+
+      set (value) {
+        this.$emit('input', value)
+      },
+    },
   },
 
   mounted () {
@@ -36,6 +49,10 @@ export default {
     onSubmit (ev) {
       this.$emit('searchSubmit', { query: this.query })
     },
+  },
+
+  directives: {
+    focus,
   },
 }
 </script>

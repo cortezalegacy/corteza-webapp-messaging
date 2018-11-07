@@ -1,5 +1,8 @@
 <template>
-  <router-link :to="linkProps" :class="{ 'current-user':ID===currentUser.ID }">{{ user | userLabel }}</router-link>
+  <router-link
+    @click="$emit('click', $event)"
+    :to="linkProps" :class="{ 'current-user':ID===currentUser.ID }">
+    <slot>{{ user | userLabel }}</slot></router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'

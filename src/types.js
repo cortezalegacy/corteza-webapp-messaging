@@ -1,16 +1,24 @@
-export function Channel (c) {
-  c = c || {}
+export class Channel {
+  constructor (c) {
+    if (!c) {
+      return
+    }
 
-  this.ID = c.ID || c.id || undefined // cover both cases (BC)
-  this.name = c.name
-  this.topic = c.topic
-  this.type = c.type
-  this.createdAt = c.createdAt
-  this.updatedAt = c.updatedAt || null
-  this.deletedAt = c.deletedAt || null
-  this.archivedAt = c.archivedAt || null
+    this.ID = c.ID || c.id || undefined // cover both cases (BC)
+    this.name = c.name
+    this.topic = c.topic
+    this.type = c.type
+    this.createdAt = c.createdAt
+    this.updatedAt = c.updatedAt || null
+    this.deletedAt = c.deletedAt || null
+    this.archivedAt = c.archivedAt || null
 
-  this.members = c.members || [] // []string
+    this.members = c.members || [] // []string
+  }
+
+  isMember (userID) {
+    return this.members.indexOf(userID) !== -1
+  }
 }
 
 export class Message {
@@ -43,7 +51,6 @@ export class Message {
   }
 
   isMentioned (userID) {
-    console.log(this.mentions, userID)
     return this.mentions.indexOf(userID) !== -1
   }
 

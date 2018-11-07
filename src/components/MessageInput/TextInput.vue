@@ -1,6 +1,7 @@
 <template>
   <quill-editor
     ref="quill"
+    @created="$event.focus()"
     @ready="onQuillReady"
     v-model="internalValue"
     :options="options"/>

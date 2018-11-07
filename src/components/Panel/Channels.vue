@@ -22,14 +22,15 @@
         <section class="layer-section">
           <div class="layer-item layer-section-title" @click="publicUnfold=!publicUnfold"><a>
             <i class="icon icon-left icon-message-circle"></i>Public channels
-            <span v-if="publicChannels" class="channel-unfolder">
+            <span v-if="joinedPublicChannels" class="channel-unfolder">
               <i v-if="publicUnfold" class="icon-chevron-up"></i>
               <i v-else class="icon-chevron-down"></i>
             </span>
-            </a></div>
-          <ul v-if="publicChannels && publicUnfold">
+            </a>
+          </div>
+          <ul v-if="joinedPublicChannels && publicUnfold">
             <channel-panel-item
-                    v-for="(ch, index) in sort(publicChannels)"
+                    v-for="(ch, index) in sort(joinedPublicChannels)"
                     :key="ch.ID"
                     :channel="ch"
                     :index="index"
@@ -42,6 +43,11 @@
               <span class="btn btn-dark">
                 <i class="btn-i icon-plus"></i><span class="btn-txt">New Public Channel</span></span>
           </router-link>
+
+          <font-awesome-icon
+            icon="search"
+            @click="$emit('openQuickSearch')"
+          ></font-awesome-icon>
         </div>
 
         <section class="layer-section">
@@ -139,7 +145,20 @@ export default {
       publicChannels: 'channels/publicOnly',
       groupChannels: 'channels/groupsOnly',
       current: 'channels/current',
+      currentUser: 'auth/user',
+      unreadInChannel: 'unread/channel',
     }),
+
+    joinedPublicChannels () {
+      // channels/publicOnly returns all public channels,
+      // we need to filter out only the ones we're member of
+      return this.publicChannels.filter(c => {
+        return c && (
+          (this.current && this.current.ID === c.ID) ||
+          c.isMember(this.currentUser.ID) ||
+          this.unreadInChannel(c.ID) > 0)
+      })
+    },
   },
 
   methods: {

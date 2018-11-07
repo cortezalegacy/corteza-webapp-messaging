@@ -143,4 +143,12 @@ export default {
       this.$rest.reactionToMessage(message.channelID, message.ID, reaction, existing && ours)
     })
   },
+
+  // created () {
+  //   window.addEventListener('keydown', globalShortcuts)
+  // },
+  //
+  // destroyed () {
+  //   window.removeEventListener('keydown', globalShortcuts)
+  // },
 }

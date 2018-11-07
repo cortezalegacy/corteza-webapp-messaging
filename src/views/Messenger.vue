@@ -7,6 +7,7 @@
         }">
         <!-- if no channel selected channel list should be displayed -->
         <panel-channels
+            @openQuickSearch="quickSearch=true"
             @searchSubmit="onPanelSearchSubmit"
             :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
 
@@ -37,12 +38,20 @@
           @close="preview=null"
           :src="preview.src" />
 
-     </section>
+        <quick-search
+          v-if="quickSearch"
+          @close="quickSearch=false"></quick-search>
+
+        <global-events
+          @keydown.meta.k.exact="quickSearch=!quickSearch" />
+
+    </section>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
 import Preview from '../components/Lightboxed/Preview'
+import QuickSearch from '../components/Lightboxed/QuickSearch'
 import SearchResults from '../components/Lightboxed/SearchResults'
 import { User } from '@/types'
 
@@ -65,6 +74,7 @@ export default {
       preview: null,
       openThread: null,
       searchQuery: null,
+      quickSearch: false,
       showChannelCreator: false,
       wideWidth: 768,
       window: {
@@ -80,6 +90,7 @@ export default {
     PanelThread,
     Preview,
     SearchResults,
+    QuickSearch,
   },
 
   beforeCreate () {

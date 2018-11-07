@@ -5218,7 +5218,7 @@ loglevel@^1.4.1:
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.1.tgz#e0fc95133b6ef276cdc8887cdaf24aa6f156f8fa"
   integrity sha1-4PyVEztu8nbNyIh82vJKpvFW+Po=
 
-loose-envify@^1.0.0:
+loose-envify@^1.0.0, loose-envify@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   integrity sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==
@@ -8547,6 +8547,18 @@ vue-eslint-parser@^2.0.3:
     espree "^3.5.2"
     esquery "^1.0.0"
     lodash "^4.17.4"
+
+vue-focus@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vue-focus/-/vue-focus-2.1.0.tgz#7a0337ce9074d5ef03d15a4b5b862cf45e5e04e3"
+  integrity sha1-egM3zpB01e8D0VpLW4Ys9F5eBOM=
+  dependencies:
+    loose-envify "^1.2.0"
+
+vue-global-events@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vue-global-events/-/vue-global-events-1.0.3.tgz#2cead28584aa5e8d9ba93d70873d2ea9d7e0a48a"
+  integrity sha512-NrWRetkGsOEFJ+mb94gEhuhk4Fdi5WH/HzEdKXEPaADans1tUAW/AsjPvVIR1gFKQBUzqNpHb0Q+Ib08FYaEGQ==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.0"
