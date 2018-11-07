@@ -113,10 +113,7 @@ export default {
       }
 
       if (this.message && value.length === 0) {
-        if (confirm('Delete this message?')) {
-          // @todo a more slick, inline confirmation...
-          this.$rest.deleteMessage(this.message.channelID, this.message.ID).then(stdResponse)
-        }
+        this.$emit('deleteMessage')
       } else if (markdown.length === 0) {
         // nothing to do here...
         return false

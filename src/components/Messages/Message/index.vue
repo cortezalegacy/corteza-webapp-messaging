@@ -34,6 +34,7 @@
             v-if="!hideActions"
             v-bind="$props"
             @editMessage="inEditing=true"
+            @deleteMessage="onDeleteMessage"
             v-on="$listeners" />
         </section>
         <div
@@ -50,6 +51,7 @@
             :message="message"
             @submit="onInputSubmit"
             @cancel="inEditing=false"
+            @deleteMessage="onDeleteMessage"
             ref="channelInput" />
 
           <contents
@@ -180,6 +182,13 @@ export default {
     // Wrapper that append message info to event
     onReaction ({ reaction }) {
       this.$bus.$emit('message.reaction', { message: this.message, reaction })
+    },
+
+    onDeleteMessage () {
+      if (confirm('Delete this message?')) {
+        // @todo a more slick, inline confirmation...
+        this.$rest.deleteMessage(this.message.channelID, this.message.ID)
+      }
     },
   },
 
