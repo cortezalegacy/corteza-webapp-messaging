@@ -100,6 +100,12 @@ export default {
   color: $appgreen;
 }
 
+.member-is-online{
+  a{
+    color: $defaulttextcolor;
+  }
+}
+
 .unread
 {
   position:absolute;

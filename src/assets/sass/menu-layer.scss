@@ -64,10 +64,12 @@
   font-weight:600;
   color:$defaulttextcolor;
   padding:0 5px;
+  margin-top: 10px;
   a
   {
     color:$defaulttextcolor;
     text-decoration:none;
+    cursor: pointer;
   }
   .icon
   {
@@ -93,7 +95,7 @@
 {
   display:block;
   max-width: 100%;
-  padding:0.35em 7px 0.5em 10%;
+  padding:0.35em 0px 0px 15px;
   line-height:30px;
 }
 
@@ -102,8 +104,8 @@
   max-width: 100%;
   text-overflow: ellipsis;
   overflow:hidden;
-  padding:0.25em 10%;
   white-space: nowrap;
+  padding-bottom: 0.35em;
 }
 
 .layer-selectable
@@ -132,7 +134,7 @@
 .menu-layer.open
 {
   background-color:$menupanebgcolor;
-  max-width:300px;
+  max-width:260px;
   min-width:190px;
   margin-left:0;
   .menu-layer-section-wrapper
@@ -176,7 +178,7 @@
     {
       width:90vw;
       //margin-left:-100%;
-      max-width:300px;
+      max-width:260px;
       bottom:0;
       overflow-x: hidden;
       overflow-y: auto;
@@ -187,7 +189,7 @@
     {
       .menu-layer-inner
       {
-        max-width:300px;
+        max-width:260px;
         min-width:190px;
         margin-left:0;
       }
@@ -199,7 +201,7 @@
 {
   .always-deployed-on-desktop
   {
-    max-width:300px;
+    max-width:260px;
     min-width:190px;
     width:90vw;
     margin-left:0;
@@ -219,7 +221,7 @@
   }
   .always-deployed-on-desktop
   {
-    max-width:300px;
+    max-width:260px;
     min-width:190px;
     width:90vw;
     margin-left:0;

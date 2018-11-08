@@ -20,12 +20,16 @@
         </section>
         <!-- one section per "board" (group of channels) -->
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="publicUnfold=!publicUnfold"><a>
-            <i class="icon icon-left icon-message-circle"></i>Public channels
-            <span v-if="joinedPublicChannels" class="channel-unfolder">
-              <i v-if="publicUnfold" class="icon-chevron-up"></i>
-              <i v-else class="icon-chevron-down"></i>
-            </span>
+          <div class="layer-item layer-section-title">
+            <router-link :to="{name: 'new-channel', params: { type: 'public' } }">
+              <i class="icon icon-left icon-plus btn"></i>
+            </router-link>
+            <a @click="publicUnfold=!publicUnfold">
+              Public channels
+              <span v-if="joinedPublicChannels">
+                <i v-if="publicUnfold" class="icon-chevron-up"></i>
+                <i v-else class="icon-chevron-down"></i>
+              </span>
             </a>
           </div>
           <ul v-if="joinedPublicChannels && publicUnfold">
@@ -39,21 +43,17 @@
         </section>
 
         <div class="layer-item new-channel">
-          <router-link :to="{name: 'new-channel', params: { type: 'public' } }">
-              <span class="btn btn-dark">
-                <i class="btn-i icon-plus"></i><span class="btn-txt">New Public Channel</span></span>
-          </router-link>
-
-          <font-awesome-icon
-            icon="search"
-            @click="$emit('openQuickSearch')"
-          ></font-awesome-icon>
+          <a @click="$emit('openQuickSearch')">+ Browse all channels</a>
         </div>
 
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="privateUnfold=!privateUnfold"><a>
-            <i class="icon icon-left icon-fatlock"></i>Private channels
-            <span v-if="privateChannels" class="channel-unfolder">
+          <div class="layer-item layer-section-title">
+            <router-link :to="{name: 'new-channel', params: { type: 'private' }}">
+              <i class="icon icon-left icon-plus btn"></i>
+            </router-link>
+            <a @click="privateUnfold=!privateUnfold">
+            Private channels
+            <span v-if="privateChannels">
               <i v-if="privateUnfold" class="icon-chevron-up"></i>
               <i v-else class="icon-chevron-down"></i>
             </span>
@@ -68,21 +68,19 @@
           </ul>
         </section>
 
-        <div class="layer-item new-channel">
-          <router-link :to="{name: 'new-channel', params: { type: 'private' }}">
-              <span class="btn btn-dark">
-                <i class="btn-i icon-plus"></i><span class="btn-txt">New Private Channel</span></span>
-          </router-link>
-        </div>
-
         <section class="layer-section">
-          <div class="layer-item layer-section-title" @click="groupUnfold=!groupUnfold"><a>
-            <i class="icon icon-left icon-bubbles"></i>Groups and direct messages
-            <span v-if="groupChannels" class="channel-unfolder">
-              <i v-if="groupUnfold" class="icon-chevron-up"></i>
-              <i v-else class="icon-chevron-down"></i>
-            </span>
-            </a></div>
+          <div class="layer-item layer-section-title">
+            <router-link :to="{name: 'new-channel', params: { type: 'group' }}">
+              <i class="icon icon-left icon-plus btn"></i>
+            </router-link>
+            <a @click="groupUnfold=!groupUnfold">
+              Groups and direct messages
+              <span v-if="groupChannels">
+                <i v-if="groupUnfold" class="icon-chevron-up"></i>
+                <i v-else class="icon-chevron-down"></i>
+              </span>
+            </a>
+          </div>
           <ul v-if="groupChannels && groupUnfold">
             <channel-panel-item
               v-for="(ch, index) in sort(groupChannels)"
@@ -92,13 +90,6 @@
             ></channel-panel-item>
           </ul>
         </section>
-
-          <div class="layer-item new-channel">
-            <router-link :to="{name: 'new-channel', params: { type: 'group' }}">
-              <span class="btn btn-dark">
-                <i class="btn-i icon-plus"></i><span class="btn-txt">New Direct Message</span></span>
-            </router-link>
-          </div>
       </div>
     </div>
   </nav>
@@ -186,77 +177,88 @@ export default {
 @import '@/assets/sass/inputs.scss';
 @import '@/assets/sass/badges.scss';
 
-.channel-unfolder
-{
-  float:right;
-  font-size:18px;
-}
-
-.shortcuts
-{
-  .layer-item
-  {
+.shortcuts {
+  padding-bottom: 25px;
+  padding-left: 8px;
+  .layer-item {
     padding-top: 0;
     margin-top: 0;
     padding-bottom: 0;
     line-height: 28px;
   }
+
 }
 
 .search-section {
-  padding: 10px 20px 0 15px;
+  padding: 0.35em 10px 5px 10px;
 }
 
 // add space at the beginning of the menu layer after search
-.menu-layer-inner
-{
-  margin-top:45px;
-  padding-top:5px;
+.menu-layer-inner {
+  margin-top: 45px;
+  padding-top: 5px;
 }
+
 //since search is now fixed we have to have it follow the same rules as the container
 // but specifcally.
-.menu-layer.display,
-.menu-layer.force-on,
-.menu-layer.open
-{
-  .search-section
-  {
-    position:fixed;
-    top:0;
-    background-color:$appwhite;
-    z-index:2;
-    width:90vw;
-    max-width:300px;
-    min-width:120px;
+.menu-layer.display, .menu-layer.force-on, .menu-layer.open {
+  .search-section {
+    position: fixed;
+    top: 0;
+    background-color: $appwhite;
+    z-index: 2;
+    width: 90vw;
+    max-width: 260px;
+    min-width: 120px;
   }
+
   // move closer to right of search
-  .closer
-  {
+  .closer {
     position: absolute;
-    top: 35px;
+    top: 40px;
     z-index: 3;
-    left: 270px;
+    left: 230px;
+  }
+
+}
+
+.icon-plus {
+  &.btn {
+    padding: 1px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 6px;
+    font-size: 12px;
+    &:hover{
+      background-color: $appgrey;
+    }
   }
 }
 
-@media (min-width: $wideminwidth)
-{
-  .menu-layer-inner
-  {
-    margin-top:55px;
-    padding-top:5px;
+.new-channel{
+  padding-top: 0;
+  a{
+    font-weight: 300;
+    cursor: pointer;
+  }
+}
+
+@media (min-width:$wideminwidth) {
+  .menu-layer-inner {
+    margin-top: 55px;
+    padding-top: 5px;
   }
 
-  .search-section
-  {
-    position:fixed;
-    top:0;
-    padding-top:10px;
-    left:0;
-    width:300px;
-    background-color:$appwhite;
-    z-index:2;
+  .search-section {
+    position: fixed;
+    top: 0;
+    padding-top: 10px;
+    left: 0;
+    width: 260px;
+    background-color: $appwhite;
+    z-index: 2;
   }
+
 }
 
 </style>
