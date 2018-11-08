@@ -8,7 +8,7 @@
       <i class="action icon-message-circle-left-speak"
          title="Reply in thread"
          v-if="message.canReply && !hideActionOpenThread"
-         @click="$emit('openThread', { message })"
+         @click="$emit('openThreadPanel', { message })"
       ></i>
       <i class="action icon-circle-right"
          title="Go to mesage"
@@ -40,7 +40,7 @@
       <ul class="context-menu-list">
         <li v-if="message.canReply && !hideActionOpenThread"
             class="extra-action"
-            @click="$emit('openThread', { message })">
+            @click="$emit('openThreadPanel', { message })">
             <i class="icon icon-message-circle-left-speak"></i>
             <span>Reply in thread </span>
         </li>

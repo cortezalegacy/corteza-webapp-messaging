@@ -15,11 +15,11 @@
 
         <!-- no use in displaying messages if no channel -->
         <router-view
-          @panelThreadMessageID="panelThreadMessageID = $event.message.ID"
-          @panelMembersOpen="panelMembersOpen = !panelMembersOpen"
+          @openThreadPanel="onOpenThreadPanel"
+          @openMembersPanel="onOpenMemberPanel"
           class="channel-container" />
 
-        <users-panel
+        <members-panel
             v-if="panelMembersOpen"
             :channel="currentChannel"
             @close="panelMembersOpen = false"
@@ -63,7 +63,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import ChannelsPanel from '@/components/Panel/Channels'
-import UsersPanel from '@/components/Panel/Users'
+import MembersPanel from '@/components/Panel/Members'
 import ThreadPanel from '@/components/Panel/Thread'
 import GPanel from '@/components/Panel'
 import Preview from '@/components/Lightboxed/Preview'
@@ -228,11 +228,21 @@ export default {
       this.emojiPickerCallback(emoji)
       this.emojiPickerCallback = null
     },
+
+    onOpenThreadPanel ($event) {
+      this.panelMembersOpen = false
+      this.panelThreadMessageID = $event.message.ID
+    },
+
+    onOpenMemberPanel ($event) {
+      this.panelThreadMessageID = null
+      this.panelMembersOpen = !this.panelMembersOpen
+    },
   },
 
   components: {
     ChannelsPanel,
-    UsersPanel,
+    MembersPanel,
     ThreadPanel,
     GPanel,
     Preview,

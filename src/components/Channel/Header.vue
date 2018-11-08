@@ -13,7 +13,7 @@
     <div class="channel-toolbox">
       <label
         class="tool"
-        @click="$emit('panelMembersOpen')">
+        @click="$emit('openMembersPanel')">
         <sup class="count">{{ channel.members.length }}</sup>
         <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
       <label

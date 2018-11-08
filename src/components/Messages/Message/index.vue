@@ -74,7 +74,7 @@
 
       <footnote
         :message="message"
-        @openThread="$emit('openThread', $event)" />
+        @openThread="$emit('openThreadPanel', $event)" />
     </li>
 </template>
 <script>
