@@ -1,7 +1,7 @@
 <template>
   <div class="actions" >
     <div>
-      <i class="action icon-message-circle-left-speak"
+      <i class="action icon-smile"
          title="Reaction"
          @click="onReaction"
       ></i>
