@@ -30,7 +30,6 @@
 import { mapGetters, mapActions } from 'vuex'
 import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
-import messages from '@/mixins/messages'
 
 export default {
   computed: {
@@ -88,10 +87,6 @@ export default {
     Messages,
     Empty,
   },
-
-  mixins: [
-    messages,
-  ],
 }
 </script>
 

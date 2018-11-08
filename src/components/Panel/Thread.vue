@@ -39,7 +39,6 @@ import BasePanel from './'
 import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
-import messages from '@/mixins/messages'
 
 export default {
   props: {
@@ -117,10 +116,6 @@ export default {
     Messages,
     BasePanel,
   },
-
-  mixins: [
-    messages,
-  ],
 }
 </script>
 

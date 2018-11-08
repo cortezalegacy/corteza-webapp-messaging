@@ -47,7 +47,6 @@
   </section>
 </template>
 <script>
-import messages from '@/mixins/messages'
 import { mapGetters, mapActions } from 'vuex'
 import ChannelHeader from '@/components/Channel/Header'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
@@ -208,10 +207,6 @@ export default {
     Activity,
     ObserverFooter,
   },
-
-  mixins: [
-    messages,
-  ],
 }
 </script>
 

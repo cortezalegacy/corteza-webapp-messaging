@@ -5,7 +5,7 @@
       ref="message"
       @cancelEditing="$emit('cancelEditing')"
       :message="msg"
-      :continued="isContinued(messages, index)"
+      :consecutive="consecutive && isConsecutive(messages, index)"
       :currentUser="currentUser"
       :key="msg.ID"
       :isUnread="lastReadMessageID <= msg.ID"
@@ -27,7 +27,7 @@
 <script>
 import _ from 'lodash'
 import Message from './Message'
-import messages from '@/mixins/messages'
+import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
 
 export default {
   props: {
@@ -51,6 +51,11 @@ export default {
     lastReadMessageID: {
       type: String,
     },
+
+    // Is provided message list is consecutive
+    //
+    // When not, we do not calculate cont
+    consecutive: { type: Boolean, default: false },
 
     hideActions: Boolean,
     hideReactions: Boolean,
@@ -111,7 +116,7 @@ export default {
         const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
         if (!hasScrollBar) {
           // Emit scrollTo bottom when there is no scrollbar on message update...
-          this.$emit('scrollBottom', { messageID: this.getLastID(this.messages) })
+          this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
         }
       }
     })
@@ -123,6 +128,8 @@ export default {
   },
 
   methods: {
+    isConsecutive,
+
     originChanged () {
       this.allowAutoScroll = true
     },
@@ -139,11 +146,11 @@ export default {
       if (atTop && this.$refs.list) {
         // load more messages 'above'.
         this.$refs.list.scrollTop = 5
-        this.$emit('scrollTop', { messageID: this.getFirstID(this.messages) })
+        this.$emit('scrollTop', { messageID: getFirstID(this.messages) })
       }
 
       if (atBottom) {
-        this.$emit('scrollBottom', { messageID: this.getLastID(this.messages) })
+        this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
       }
     },
 
@@ -155,10 +162,6 @@ export default {
   components: {
     Message,
   },
-
-  mixins: [
-    messages,
-  ],
 }
 
 </script>
