@@ -204,7 +204,7 @@ export default {
 }
 
 .search-section {
-  padding: 0 20px 0 15px;
+  padding: 10px 20px 0 15px;
 }
 
 // add space at the beginning of the menu layer after search
@@ -226,16 +226,16 @@ export default {
     background-color:$appwhite;
     z-index:2;
     width:90vw;
-    max-width:320px;
+    max-width:300px;
     min-width:120px;
   }
   // move closer to right of search
   .closer
   {
     position: absolute;
-    top: -5px;
+    top: 35px;
     z-index: 3;
-    right: calc(10vw + 5px);
+    left: 260px;
   }
 }
 
@@ -253,7 +253,7 @@ export default {
     top:0;
     padding-top:10px;
     left:0;
-    width:320px;
+    width:300px;
     background-color:$appwhite;
     z-index:2;
   }

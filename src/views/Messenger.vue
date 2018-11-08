@@ -268,7 +268,7 @@ section
 
 .left-panel-open .channel-container
 {
-  margin-left:320px;
+  margin-left:300px;
 }
 
 .right-panel-open .channel-container
@@ -292,8 +292,8 @@ section
 {
   .channel-container
   {
-    margin-left:320px;
-    max-width:calc(100vw - 320px);
+    margin-left:300px;
+    max-width:calc(100vw - 300px);
   }
 }
 
