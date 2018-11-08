@@ -6,6 +6,9 @@ const state = {
   activity: [], // []Activity
 }
 
+// How much time (in seconds) should we keep the activity
+const activityTTL = 5
+
 const activityFinder = ({ userID, channelID, kind }) =>
   (a) => a.userID === userID && a.channelID === channelID && a.kind === kind
 
@@ -16,9 +19,9 @@ class Activity {
     this.update()
   }
 
-  validate (window = 60) {
+  isStale (ttl = activityTTL) {
     const now = (new Date()).getTime()
-    return now > this.updatedAt - window
+    return now - (ttl * 1000) > this.updatedAt
   }
 
   update () {
@@ -93,12 +96,14 @@ const mutations = {
   },
 
   // Removes all activities that match
-  //
-  // note: if you pass undefined channel it purges all user's activity (presence)
-  //       if you pass undefined kind, it purges all user's channel activity
   inactive (state, { userID, channelID, kind }) {
     state.activity = [...state.activity.filter((a) =>
       !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
+  },
+
+  // Removes all stale activity
+  cleanup (state, { ttl }) {
+    state.activity = state.activity.filter(a => a.isStale(ttl))
   },
 }
 

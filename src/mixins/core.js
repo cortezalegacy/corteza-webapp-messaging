@@ -1,6 +1,10 @@
 import { Channel, Message } from '@/types'
 import localCommands from '@/commands'
 
+const userActivityTTL = 5 // seconds
+
+let userActivityInterval
+
 export default {
   beforeCreate () {
     this.$bus.$on('$ws.channels', (channels) => {
@@ -142,13 +146,14 @@ export default {
       const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(currentUser.ID) !== -1
       this.$rest.reactionToMessage(message.channelID, message.ID, reaction, existing && ours)
     })
+
+    // Activity cleanup interval
+    userActivityInterval = window.setInterval(() => {
+      this.$store.commit('users/cleanup', { ttl: userActivityTTL })
+    }, userActivityTTL * 1000)
   },
 
-  // created () {
-  //   window.addEventListener('keydown', globalShortcuts)
-  // },
-  //
-  // destroyed () {
-  //   window.removeEventListener('keydown', globalShortcuts)
-  // },
+  destroyed () {
+    if (userActivityInterval) window.clearInterval(userActivityInterval)
+  },
 }
