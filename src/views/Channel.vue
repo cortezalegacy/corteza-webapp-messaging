@@ -13,6 +13,7 @@
       ref="upload" />
 
     <channel-header
+      v-on="$listeners"
       :channel="channel"></channel-header>
 
     <messages
@@ -81,8 +82,6 @@ export default {
       activeInChannel: 'users/activeInChannel',
 
       channelHistory: 'history/getByChannelID',
-
-      isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
 
     messages () {

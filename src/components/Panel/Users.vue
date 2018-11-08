@@ -1,30 +1,35 @@
 <template>
-  <div
-    class="menu-layer right"
-    :class="[
-      { display : isUserPanelOpen }
-    ]"
+  <base-panel
+    v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <label class="closer"
-           @click="toggleUserPanel(false)"
-           aria-label="Close"><i class="icon-close"></i></label>
-    <ul v-if="users">
-      <li
-        v-for="u in users"
-        :key="u.ID"
-        @click="$emit('openDirectMessage', u.ID);"
-        v-bind:class="[{active:u.connections}, 'channel-member']">
-        <user-avatar :user="u" />
-        <span class="member-name">{{ u | userLabel }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
-      </li>
-    </ul>
-  </div>
+    <template slot="header">Users</template>
+    <template slot="subtitle">in <channel-name :channel="channel"></channel-name></template>
+    <template slot="main">
+      <ul v-if="members">
+        <li
+          v-for="u in members"
+          :key="u.ID"
+          @click="$emit('openDirectMessage', u.ID);">
+          <user-avatar :user="u" />
+          <span class="member-name">{{ u | userLabel }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
+        </li>
+      </ul>
+    </template>
+  </base-panel>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import BasePanel from './'
 import Avatar from '@/components/Avatar'
 
 export default {
+  props: {
+    channel: {
+      type: Object,
+      required: true,
+    },
+  },
+
   data () {
     return {}
   },
@@ -32,8 +37,11 @@ export default {
   computed: {
     ...mapGetters({
       users: 'users/list',
-      isUserPanelOpen: 'ui/isUserPanelOpen',
     }),
+
+    members () {
+      return this.users.filter(u => this.channel.isMember(u.ID))
+    },
   },
 
   // beforeCreate () {
@@ -57,6 +65,7 @@ export default {
 
   components: {
     'user-avatar': Avatar,
+    BasePanel,
   },
 }
 </script>

@@ -1,0 +1,57 @@
+<template>
+  <aside class="menu-layer right noborder">
+    <header>
+      <h1><slot name="header"></slot></h1>
+      <h2><slot name="subtitle"></slot></h2>
+      <label class="closer"
+             @click="$emit('close')"
+             aria-label="Close"><i class="icon-close"></i></label>
+    </header>
+    <main><slot name="main"></slot></main>
+  </aside>
+</template>
+<style scoped lang="scss">
+//inlude generic definitions
+@import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/menu-layer.scss';
+
+aside {
+  overflow: hidden;
+  margin-top:0;
+  padding-top:0;
+  height: 100vh;
+}
+
+header {
+  min-height:60px;
+  padding:10px;
+  box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
+  margin-bottom:5px;
+  top: 0px;
+  width: 100%;
+
+  .closer {
+    position: absolute;
+    top: 5px;
+    right: 20px;
+    font-size: 20px;
+    z-index: 9999;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 18px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 12px;
+    color: $appgrey
+  }
+}
+
+main {
+
+}
+
+</style>

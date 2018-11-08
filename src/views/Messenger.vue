@@ -3,10 +3,10 @@
         v-if="isAuthenticated"
         :class="{
             'left-panel-open': isChannelPanelOpen,
-            'right-panel-open': null !== openThread && currentChannel,
+            'right-panel-open': isRightPanelOpen,
         }">
         <!-- if no channel selected channel list should be displayed -->
-        <panel-channels
+        <channels-panel
             @openQuickSearch="quickSearch=true"
             @searchSubmit="onPanelSearchSubmit"
             :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
@@ -15,17 +15,20 @@
 
         <!-- no use in displaying messages if no channel -->
         <router-view
-          @openThread="onOpenThread"
+          @panelThreadMessageID="panelThreadMessageID = $event.message.ID"
+          @panelMembersOpen="panelMembersOpen = !panelMembersOpen"
           class="channel-container" />
 
-        <panel-users
-            v-if="isUserPanelOpen"
+        <users-panel
+            v-if="panelMembersOpen"
+            :channel="currentChannel"
+            @close="panelMembersOpen = false"
             @openDirectMessage="onOpenDirectChannel" />
 
-        <panel-thread
-            v-if="currentChannel && openThread"
-            @close="openThread = null"
-            :repliesTo="openThread" />
+        <thread-panel
+            v-if="currentChannel && panelThreadMessageID"
+            @close="panelThreadMessageID = null"
+            :repliesTo="panelThreadMessageID" />
 
         <search-results
           v-if="searchQuery"
@@ -42,49 +45,39 @@
           v-if="quickSearch"
           @close="quickSearch=false"></quick-search>
 
-      <picker
-        v-if="emojiPickerCallback"
-        @select="onEmojiSelect"
-        :style="{ position: 'absolute', bottom: '80px', right: openThread ? '415px' : '15px' }"
-        :native="true"
-        :showSkinTones="false"
-        :showPreview="false"
-        :sheetSize="16"
-        set="apple" />
+        <picker
+          v-if="emojiPickerCallback"
+          @select="onEmojiSelect"
+          :style="{ position: 'absolute', bottom: '80px', right: isRightPanelOpen ? '415px' : '15px' }"
+          :native="true"
+          :showSkinTones="false"
+          :showPreview="false"
+          :sheetSize="16"
+          set="apple" />
 
-      <global-events
-          @keydown.esc.exact="emojiPickerCallback=null"
-          @keydown.meta.k.exact="quickSearch=!quickSearch" />
-
+        <global-events
+            @keydown.esc.exact="emojiPickerCallback=null"
+            @keydown.meta.k.exact="quickSearch=!quickSearch" />
     </section>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
+import ChannelsPanel from '@/components/Panel/Channels'
+import UsersPanel from '@/components/Panel/Users'
+import ThreadPanel from '@/components/Panel/Thread'
+import GPanel from '@/components/Panel'
+import Preview from '@/components/Lightboxed/Preview'
+import QuickSearch from '@/components/Lightboxed/QuickSearch'
+import SearchResults from '@/components/Lightboxed/SearchResults'
 import { Picker } from 'emoji-mart-vue'
-import Preview from '../components/Lightboxed/Preview'
-import QuickSearch from '../components/Lightboxed/QuickSearch'
-import SearchResults from '../components/Lightboxed/SearchResults'
 import { User } from '@/types'
 
 export default {
-  computed: {
-    ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated',
-      currentUser: 'auth/user',
-      currentChannel: 'channels/current',
-      findChannelByID: 'channels/findByID',
-      findUserByID: 'users/findByID',
-      isChannelPanelOpen: 'ui/isChannelPanelOpen',
-      isUserPanelOpen: 'ui/isUserPanelOpen',
-      getSettings: 'settings/get',
-    }),
-  },
-
   data () {
     return {
       preview: null,
-      openThread: null,
+      panelThreadMessageID: null,
+      panelMembersOpen: false,
       searchQuery: null,
       quickSearch: false,
       showChannelCreator: false,
@@ -97,14 +90,20 @@ export default {
     }
   },
 
-  components: {
-    PanelChannels,
-    PanelUsers,
-    PanelThread,
-    Preview,
-    SearchResults,
-    QuickSearch,
-    Picker,
+  computed: {
+    ...mapGetters({
+      isAuthenticated: 'auth/isAuthenticated',
+      currentUser: 'auth/user',
+      currentChannel: 'channels/current',
+      findChannelByID: 'channels/findByID',
+      findUserByID: 'users/findByID',
+      isChannelPanelOpen: 'ui/isChannelPanelOpen',
+      getSettings: 'settings/get',
+    }),
+
+    isRightPanelOpen () {
+      return this.panelThreadMessageID !== null || this.panelMembersOpen
+    },
   },
 
   beforeCreate () {
@@ -209,13 +208,6 @@ export default {
       this.toggleUserPanel(false)
     },
 
-    onOpenThread ({ message }) {
-      // Thread opened, set original message to openThread
-      // so that <panel-thread> component picks it up and
-      // opens itself...
-      this.openThread = message.ID
-    },
-
     onPanelSearchSubmit ({ query }) {
       // Take query we received from panel search input box
       // and push it to search result component
@@ -236,6 +228,17 @@ export default {
       this.emojiPickerCallback(emoji)
       this.emojiPickerCallback = null
     },
+  },
+
+  components: {
+    ChannelsPanel,
+    UsersPanel,
+    ThreadPanel,
+    GPanel,
+    Preview,
+    SearchResults,
+    QuickSearch,
+    Picker,
   },
 }
 </script>

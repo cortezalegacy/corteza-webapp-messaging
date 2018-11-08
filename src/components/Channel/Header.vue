@@ -13,13 +13,9 @@
     <div class="channel-toolbox">
       <label
         class="tool"
-        @click="$router.push({name: 'members', params: {channelID: channel.ID}})">
+        @click="$emit('panelMembersOpen')">
+        <sup class="count">{{ channel.members.length }}</sup>
         <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
-      <label
-        class="tool people"
-        @click="toggleUserPanel()">
-        <sup class="count">{{ usersCount }}</sup>
-        <i title="Users" aria-label="Users" class="icon icon-user2"></i></label>
       <label
         class="tool edit"
         @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
