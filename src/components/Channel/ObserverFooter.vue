@@ -1,7 +1,7 @@
 <template>
   <footer>
-    You can only observe the action here.
-    <button @click="onJoin">Join</button>&nbsp;<channel-name :channel="channel" /> to participate
+    <h3>You are viewing #<channel-name :channel="channel" /></h3>
+    <button @click="onJoin" class="btn btn-green">Join Channel</button>
   </footer>
 </template>
 <script>
@@ -29,12 +29,13 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/btns.scss';
 
 footer {
   text-align: center;
   width: 100%;
-  height: 80px;
-  padding: 30px;
-  background-color: $appyellow;
+  height: 90px;
+  border-top: 2px solid $defaultlinecolor;
+  background-color: $appcream;
 }
 </style>
