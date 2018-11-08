@@ -136,7 +136,7 @@ export default {
 
       this.allowAutoScroll = atBottom
 
-      if (atTop) {
+      if (atTop && this.$refs.list) {
         // load more messages 'above'.
         this.$refs.list.scrollTop = 5
         this.$emit('scrollTop', { messageID: this.getFirstID(this.messages) })
