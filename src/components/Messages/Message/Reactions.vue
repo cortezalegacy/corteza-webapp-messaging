@@ -3,18 +3,17 @@
     <li v-for="(r) in reactions"
         v-if="r.reaction"
         @click="$emit('reaction', { reaction: r.reaction })"
-        :key="r.reaction">{{parse(r.reaction)}}<sup>{{r.count}}</sup></li>
+        :key="r.reaction"><span v-html="emoji(r.reaction)"></span><sup>{{r.count}}</sup></li>
 
     <li v-for="(reaction) in defaultReactions"
         class="defaults"
         @click="$emit('reaction', { reaction })"
-        :key="reaction">{{parse(reaction)}}</li>
+        v-html="emoji(reaction)"
+        :key="reaction"></li>
   </ul>
 </template>
 <script>
-import EmojiConvertor from 'emoji-js'
-
-const emoji = new EmojiConvertor()
+import { textToEmoji } from '@/lib/emoji'
 
 const defaultReactions = [
   ':thumbsup:',
@@ -48,8 +47,8 @@ export default {
   },
 
   methods: {
-    parse (str) {
-      return emoji.replace_colons(str)
+    emoji (str) {
+      return textToEmoji(str)
     },
   },
 

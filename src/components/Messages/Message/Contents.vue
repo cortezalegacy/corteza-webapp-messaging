@@ -1,6 +1,6 @@
 <script>
 import markdown2VDOM from '@/lib/markdown'
-import emoji from '@/lib/emoji'
+import { vdomifyEmojis } from '@/lib/emoji'
 
 export default {
   props: {
@@ -19,7 +19,7 @@ export default {
     const trimmed = this.content.trim()
 
     if (trimmed.length > 0) {
-      return createElement('div', null, markdown2VDOM(emoji(trimmed)).toVue(createElement))
+      return createElement('div', null, vdomifyEmojis(markdown2VDOM(trimmed).toVue(createElement), createElement))
     }
   },
 
@@ -35,13 +35,6 @@ export default {
 
 p {
   margin: 0;
-}
-
-img.emoji {
-  height: 1em;
-  width: 1em;
-  margin: 0 .05em 0 .1em;
-  vertical-align: -0.1em;
 }
 
 blockquote {

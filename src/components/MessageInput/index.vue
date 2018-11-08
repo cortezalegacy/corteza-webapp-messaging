@@ -30,6 +30,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import TextInput from './TextInput'
+import { EmojiPicker } from 'emoji-mart-vue'
 
 export default {
   props: {
@@ -146,6 +147,7 @@ export default {
 
   components: {
     TextInput,
+    EmojiPicker,
   },
 }
 </script>

@@ -214,6 +214,10 @@ export default {
   },
 }
 </script>
+<style lang="scss">
+// General stuff we need everywhere..
+@import '@/assets/sass/emojis.scss';
+</style>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
