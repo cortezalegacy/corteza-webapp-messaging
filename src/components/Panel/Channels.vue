@@ -235,7 +235,7 @@ export default {
     position: absolute;
     top: 35px;
     z-index: 3;
-    left: 260px;
+    left: 270px;
   }
 }
 
