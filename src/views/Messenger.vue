@@ -3,7 +3,7 @@
         v-if="isAuthenticated"
         :class="{
             'left-panel-open': isChannelPanelOpen,
-            'right-panel-open': isRightPanelOpen,
+            'right-panel-open': rightSidePanel,
         }">
         <!-- if no channel selected channel list should be displayed -->
         <channels-panel
@@ -15,20 +15,33 @@
 
         <!-- no use in displaying messages if no channel -->
         <router-view
-          @openThreadPanel="onOpenThreadPanel"
-          @openMembersPanel="onOpenMemberPanel"
+          @openThreadPanel="switchRightSidePanel('thread', $event)"
+          @openMembersPanel="switchRightSidePanel('members', $event)"
+          @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
+          @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)"
           class="channel-container" />
 
         <members-panel
-            v-if="panelMembersOpen"
+            v-if="rightSidePanel === 'members'"
             :channel="currentChannel"
-            @close="panelMembersOpen = false"
+            @close="switchRightSidePanel()"
             @openDirectMessage="onOpenDirectChannel" />
 
         <thread-panel
-            v-if="currentChannel && panelThreadMessageID"
-            @close="panelThreadMessageID = null"
+            v-if="currentChannel && rightSidePanel === 'thread'"
+            @close="switchRightSidePanel()"
             :repliesTo="panelThreadMessageID" />
+
+        <pinned-messages-panel
+            v-if="currentChannel && rightSidePanel === 'pinnedMessages'"
+            :channel="currentChannel"
+            @openThreadPanel="switchRightSidePanel('thread', $event)"
+            @close="switchRightSidePanel()" />
+
+        <bookmarked-messages-panel
+            v-if="currentChannel && rightSidePanel === 'bookmarkedMessages'"
+            @openThreadPanel="switchRightSidePanel('thread', $event)"
+            @close="switchRightSidePanel()" />
 
         <search-results
           v-if="searchQuery"
@@ -48,7 +61,7 @@
         <picker
           v-if="emojiPickerCallback"
           @select="onEmojiSelect"
-          :style="{ position: 'absolute', bottom: '80px', right: isRightPanelOpen ? '415px' : '15px' }"
+          :style="{ position: 'absolute', bottom: '80px', right: rightSidePanel ? '415px' : '15px' }"
           :native="true"
           :showSkinTones="false"
           :showPreview="false"
@@ -65,7 +78,8 @@ import { mapGetters, mapActions } from 'vuex'
 import ChannelsPanel from '@/components/Panel/Channels'
 import MembersPanel from '@/components/Panel/Members'
 import ThreadPanel from '@/components/Panel/Thread'
-import GPanel from '@/components/Panel'
+import BookmarkedMessagesPanel from '@/components/Panel/BookmarkedMessages'
+import PinnedMessagesPanel from '@/components/Panel/PinnedMessages'
 import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
@@ -77,7 +91,7 @@ export default {
     return {
       preview: null,
       panelThreadMessageID: null,
-      panelMembersOpen: false,
+      rightSidePanel: null,
       searchQuery: null,
       quickSearch: false,
       showChannelCreator: false,
@@ -100,10 +114,6 @@ export default {
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       getSettings: 'settings/get',
     }),
-
-    isRightPanelOpen () {
-      return this.panelThreadMessageID !== null || this.panelMembersOpen
-    },
   },
 
   beforeCreate () {
@@ -229,14 +239,13 @@ export default {
       this.emojiPickerCallback = null
     },
 
-    onOpenThreadPanel ($event) {
-      this.panelMembersOpen = false
-      this.panelThreadMessageID = $event.message.ID
-    },
+    switchRightSidePanel (panel = null, $event = {}) {
+      this.rightSidePanel = panel
 
-    onOpenMemberPanel ($event) {
-      this.panelThreadMessageID = null
-      this.panelMembersOpen = !this.panelMembersOpen
+      switch (panel) {
+        case 'thread':
+          this.panelThreadMessageID = $event.message.ID
+      }
     },
   },
 
@@ -244,7 +253,8 @@ export default {
     ChannelsPanel,
     MembersPanel,
     ThreadPanel,
-    GPanel,
+    PinnedMessagesPanel,
+    BookmarkedMessagesPanel,
     Preview,
     SearchResults,
     QuickSearch,

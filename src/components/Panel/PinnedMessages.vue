@@ -2,25 +2,22 @@
   <base-panel
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <template slot="header">Users</template>
+    <template slot="header">Pinned messages</template>
     <template slot="subtitle">in <channel-name :channel="channel"></channel-name></template>
     <template slot="main">
-      <ul v-if="members">
-        <li
-          v-for="u in members"
-          :key="u.ID"
-          @click="$emit('openDirectMessage', u.ID);">
-          <user-avatar :user="u" />
-          <span class="member-name">{{ u | userLabel }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
-        </li>
-      </ul>
+      <messages
+        :messages="pinned"
+        :currentUser="currentUser"
+        origin="pinned"
+        :scrollable="false"
+        v-on="$listeners" />
     </template>
   </base-panel>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import BasePanel from './'
-import Avatar from '@/components/Avatar'
+import Messages from '@/components/Messages'
 
 export default {
   props: {
@@ -30,23 +27,24 @@ export default {
     },
   },
 
-  data () {
-    return {}
-  },
-
   computed: {
     ...mapGetters({
-      users: 'users/list',
+      currentUser: 'auth/user',
+      allPinned: 'history/getPinned',
     }),
 
-    members () {
-      return this.users.filter(u => this.channel.isMember(u.ID))
+    pinned () {
+      return this.allPinned.filter(m => m.channelID === this.channel.ID)
     },
   },
 
+  mounted () {
+    this.$ws.getMessages({ pinned: true, channelID: this.channelID })
+  },
+
   components: {
-    'user-avatar': Avatar,
     BasePanel,
+    Messages,
   },
 }
 </script>

@@ -10,21 +10,28 @@
       <span  v-if="channel.topic" class="topic"><span class="badge badge-blue">{{ channel.topic }}</span></span>
     </div>
 
+    <div class="messaging-toolbox">
+      <button @click="$emit('openBookmarkedMessagesPanel')">B</button>
+    </div>
+
     <div class="channel-toolbox">
       <label
         class="tool"
         @click="$emit('openMembersPanel')">
         <sup class="count">{{ channel.members.length }}</sup>
         <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
+
       <label
         class="tool edit"
         @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
         <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-info"></i></label>
+
+      <button @click="$emit('openPinnedMessagesPanel')">P</button>
     </div>
   </header>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'channel-header',
@@ -37,15 +44,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      usersCount: 'users/length',
-    }),
   },
 
   methods: {
     ...mapActions({
       toggleChannelPanel: 'ui/toggleChannelPanel',
-      toggleUserPanel: 'ui/toggleUserPanel',
     }),
   },
 }
@@ -88,13 +91,15 @@ export default {
     padding-top:5px;
   }
 
-  .channel-toolbox
-  {
+  .channel-toolbox, .messaging-toolbox {
     float:right;
     line-height:35px; // the folding breaks line height
     margin:0;
     padding:0;
     margin-top:5px;
+  }
+
+  .messaging-toolbox {
   }
 
   .tool
@@ -161,7 +166,7 @@ export default {
     {
       display:none;
     }
-    .channel-toolbox
+    .channel-toolbox, .messaging-toolbox
     {
       margin-top:0;
       line-height:5em; // the folding breaks line height

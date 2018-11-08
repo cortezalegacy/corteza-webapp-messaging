@@ -2,51 +2,37 @@
   <base-panel
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <template slot="header">Users</template>
-    <template slot="subtitle">in <channel-name :channel="channel"></channel-name></template>
+    <template slot="header">Bookmarked messages</template>
     <template slot="main">
-      <ul v-if="members">
-        <li
-          v-for="u in members"
-          :key="u.ID"
-          @click="$emit('openDirectMessage', u.ID);">
-          <user-avatar :user="u" />
-          <span class="member-name">{{ u | userLabel }} <i title="connected" class='icon-bubble2' v-if="u.connections"></i></span>
-        </li>
-      </ul>
+      <messages
+        :messages="bookmarked"
+        :currentUser="currentUser"
+        origin="bookmarked"
+        :scrollable="false"
+        v-on="$listeners" />
     </template>
   </base-panel>
 </template>
 <script>
 import { mapGetters } from 'vuex'
 import BasePanel from './'
-import Avatar from '@/components/Avatar'
+import Messages from '@/components/Messages'
 
 export default {
-  props: {
-    channel: {
-      type: Object,
-      required: true,
-    },
-  },
-
-  data () {
-    return {}
-  },
-
   computed: {
     ...mapGetters({
-      users: 'users/list',
+      currentUser: 'auth/user',
+      bookmarked: 'history/getBookmarked',
     }),
+  },
 
-    members () {
-      return this.users.filter(u => this.channel.isMember(u.ID))
-    },
+  mounted () {
+    this.$ws.getMessages({ bookmarked: true })
   },
 
   components: {
-    'user-avatar': Avatar,
     BasePanel,
+    Messages,
   },
 }
 </script>

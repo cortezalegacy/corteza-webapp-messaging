@@ -34,7 +34,7 @@
   </base-panel>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import BasePanel from './'
 import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
@@ -96,10 +96,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      toggleUserPanel: 'ui/toggleUserPanel',
-    }),
-
     // Preloads all thread data
     preload () {
       this.$ws.getReplies(this.repliesTo)
