@@ -240,7 +240,11 @@ export default {
     },
 
     switchRightSidePanel (panel = null, $event = {}) {
-      this.rightSidePanel = panel
+      if (panel !== 'thread' && panel === this.rightSidePanel) {
+        this.rightSidePanel = null
+      } else {
+        this.rightSidePanel = panel
+      }
 
       switch (panel) {
         case 'thread':
