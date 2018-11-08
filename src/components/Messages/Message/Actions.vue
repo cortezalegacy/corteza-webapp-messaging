@@ -1,7 +1,10 @@
 <template>
   <div class="actions" >
     <div>
-      <!-- i class="action icon-message-circle-left-speak"></i -->
+      <i class="action icon-message-circle-left-speak"
+         title="Reaction"
+         @click="onReaction"
+      ></i>
       <i class="action icon-message-circle-left-speak"
          title="Reply in thread"
          v-if="message.canReply && !hideActionOpenThread"
@@ -58,6 +61,7 @@
   </div>
 </template>
 <script>
+
 export default {
   props: {
     message: {
@@ -94,6 +98,15 @@ export default {
       this.$bus.$emit(evName)
       this.$bus.$once(evName, () => { this.isContextMenuOpen = false })
       this.isContextMenuOpen = true
+    },
+
+    onReaction () {
+      this.$bus.$emit('ui.openEmojiPicker', {
+        callback: ({ colons }) => {
+          // Got called back from the emoji picker, now send the reaction to this message...
+          this.$bus.$emit('message.reaction', { message: this.message, reaction: colons })
+        },
+      })
     },
   },
 }

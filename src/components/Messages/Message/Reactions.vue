@@ -4,28 +4,10 @@
         v-if="r.reaction"
         @click="$emit('reaction', { reaction: r.reaction })"
         :key="r.reaction"><span v-html="emoji(r.reaction)"></span><sup>{{r.count}}</sup></li>
-
-    <li v-for="(reaction) in defaultReactions"
-        class="defaults"
-        @click="$emit('reaction', { reaction })"
-        v-html="emoji(reaction)"
-        :key="reaction"></li>
   </ul>
 </template>
 <script>
 import { textToEmoji } from '@/lib/emoji'
-
-const defaultReactions = [
-  ':thumbsup:',
-  ':thumbsdown:',
-  ':heart:',
-  ':smile:',
-  ':disappointed:',
-  ':rage:',
-  ':cry:',
-  ':muscle:',
-  ':clap:',
-]
 
 export default {
   props: {
@@ -37,12 +19,7 @@ export default {
 
   computed: {
     defaultReactions () {
-      if (!this.reactions) {
-        return defaultReactions
-      }
-
-      const reacted = this.reactions.map(r => r.reaction)
-      return defaultReactions.filter(d => reacted.indexOf(d) === -1)
+      return this.reactions.map(r => r.reaction)
     },
   },
 

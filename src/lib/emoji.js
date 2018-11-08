@@ -51,7 +51,7 @@ export function vdomifyEmojis (vtree, createElement) {
             nodes.push(split[s])
           }
         } else {
-          let [ , classes,, style, dataCodepoints, nativeEmoji, ] = split[s].match(emojiREMatch)
+          let [ , classes,, style, dataCodepoints, nativeEmoji ] = split[s].match(emojiREMatch)
           nodes.push(createElement(
             'span',
             { attrs: { class: classes, style, 'data-codepoints': dataCodepoints } },

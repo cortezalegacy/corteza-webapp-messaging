@@ -42,7 +42,18 @@
           v-if="quickSearch"
           @close="quickSearch=false"></quick-search>
 
-        <global-events
+      <picker
+        v-if="emojiPickerCallback"
+        @select="onEmojiSelect"
+        :style="{ position: 'absolute', bottom: '80px', right: openThread ? '415px' : '15px' }"
+        :native="true"
+        :showSkinTones="false"
+        :showPreview="false"
+        :sheetSize="16"
+        set="apple" />
+
+      <global-events
+          @keydown.esc.exact="emojiPickerCallback=null"
           @keydown.meta.k.exact="quickSearch=!quickSearch" />
 
     </section>
@@ -50,6 +61,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { PanelChannels, PanelUsers, PanelThread } from '../components/Panel'
+import { Picker } from 'emoji-mart-vue'
 import Preview from '../components/Lightboxed/Preview'
 import QuickSearch from '../components/Lightboxed/QuickSearch'
 import SearchResults from '../components/Lightboxed/SearchResults'
@@ -76,6 +88,7 @@ export default {
       searchQuery: null,
       quickSearch: false,
       showChannelCreator: false,
+      emojiPickerCallback: null,
       wideWidth: 768,
       window: {
         width: 0,
@@ -91,6 +104,7 @@ export default {
     Preview,
     SearchResults,
     QuickSearch,
+    Picker,
   },
 
   beforeCreate () {
@@ -153,10 +167,16 @@ export default {
         caption: attachment.name,
       }
     })
+
+    // Assigns callback to emojiPickerCallback or sets it to null (of it's already opened)
+    this.$bus.$on('ui.openEmojiPicker', ({ callback }) => {
+      this.emojiPickerCallback = !this.emojiPickerCallback ? callback : null
+    })
   },
 
   destroyed () {
     window.removeEventListener('resize', this.handleResize)
+    this.$bus.$off('ui.openEmojiPicker')
   },
 
   watch: {
@@ -210,6 +230,11 @@ export default {
 
       // go to channel
       this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.ID } })
+    },
+
+    onEmojiSelect (emoji) {
+      this.emojiPickerCallback(emoji)
+      this.emojiPickerCallback = null
     },
   },
 }

@@ -22,6 +22,11 @@
 
         <span>+</span>
       </button>
+<!--
+      <i class="emoji-picker-button icon-smile"
+         title="Insert emoji"
+         @click="onEmojiPickerClick"
+      ></i> -->
     </div>
   </div>
 </template>
@@ -137,6 +142,16 @@ export default {
       }
     },
 
+    // onEmojiPickerClick () {
+    //   this.$bus.$emit('ui.openEmojiPicker', {
+    //     callback: ({ colons }) => {
+    //       // Got called back from the emoji picker, now send the reaction to this message...
+    //       // this.$bus.$emit('message.reaction', { message: this.message, reaction: colons })
+    //       console.log('FOO')
+    //     },
+    //   })
+    // },
+
     // Update channel activity once in a while while typing
     onChange: _.throttle(function ({ value }) {
       if (value.length > 1) {
@@ -249,4 +264,11 @@ export default {
       box-shadow: none;
     }
   }
+
+  /*.emoji-picker-button {*/
+    /*position: absolute;*/
+    /*right: 10px;*/
+    /*font-size: 24px;*/
+    /*top: 10px;*/
+  /*}*/
 </style>
