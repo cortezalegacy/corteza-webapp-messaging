@@ -1,7 +1,6 @@
 <template>
   <quill-editor
     ref="quill"
-    @created="$event.focus()"
     @ready="onQuillReady"
     v-model="internalValue"
     :options="options"/>
@@ -123,6 +122,17 @@ export default {
           },
         },
       },
+    }
+  },
+
+  mounted () {
+    if (this.$refs.quill !== undefined) {
+      const q = this.$refs.quill.quill
+      // Focus on editor
+      q.scrollingContainer.focus()
+
+      // And select all content
+      q.setSelection(0, q.getLength())
     }
   },
 

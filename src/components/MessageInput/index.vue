@@ -58,6 +58,12 @@ export default {
     }
   },
 
+  watch: {
+    channel () {
+      this.textInputKey++
+    },
+  },
+
   computed: {
     ...mapGetters({
       users: 'users/list',
