@@ -1,8 +1,5 @@
 <template>
   <div class="embedded-frame">
-    <p>
-      <a :href="chunk" v-html="chunk" />
-    </p>
     <iframe
       type="text/html"
       width="100%"
@@ -17,12 +14,6 @@
 <script>
 export default {
   props: {
-    chunk: {
-      type: String,
-      required: true,
-      default: '',
-    },
-
     src: {
       type: String,
       required: true,
