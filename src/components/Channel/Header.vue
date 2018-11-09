@@ -7,7 +7,9 @@
 
     <div class="channel-n-topic">
       <strong v-if="channel.name" class="channel-name">{{ channel.name }}</strong>
-      <span  v-if="channel.topic" class="topic"><span class="badge badge-blue">{{ channel.topic }}</span></span>
+      <span  v-if="channel.topic" class="topic badge badge-blue">
+        {{ channel.topic }}
+      </span>
     </div>
 
     <div class="channel-toolbox">
@@ -79,7 +81,7 @@ export default {
 
   .channel-n-topic
   {
-    max-width:calc(100% - 160px);
+    max-width:calc(100% - 200px);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -152,6 +154,9 @@ export default {
     padding-right: 10px;
     margin-right: 5px;
   }
+  .topic{
+    margin-bottom: 20px;
+  }
 
   @media (max-width: $wideminwidth - 1)
   {
@@ -183,7 +188,7 @@ export default {
     .channel-name, .topic
     {
       display:inline-block;
-      max-width:50%;
+      max-width:45%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
