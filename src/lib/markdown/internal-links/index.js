@@ -1,6 +1,6 @@
 'use strict'
 
-const internalLinkSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]+?>)`)
+const internalLinkSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]*?>)`)
 const internalLinkRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
 
 export default (md, setup) => {
