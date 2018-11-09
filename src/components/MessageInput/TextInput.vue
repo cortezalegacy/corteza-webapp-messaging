@@ -133,6 +133,7 @@ export default {
 
       // And select all content
       q.setSelection(0, q.getLength())
+      console.log(0, q.getLength())
     }
   },
 

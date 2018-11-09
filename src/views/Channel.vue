@@ -140,6 +140,7 @@ export default {
     changeChannel (channel) {
       if (!channel) return
 
+      this.editLastMessage = false
       this.channel = channel
 
       this.setCurrentChannel(this.channel)
