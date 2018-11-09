@@ -1,6 +1,6 @@
 <!-- template for the user avatar component -->
 <template>
-  <form @submit.prevent="onSubmit">
+  <form @submit.prevent="$emit('searchSubmit', query)">
       <span class="badge badge-block badge-pill badge-tall">
           <i class="icon-search"></i>
           <input
@@ -28,26 +28,23 @@ export default {
     },
   },
 
+  data () {
+    return {
+      internalValue: this.preset,
+    }
+  },
+
   computed: {
     // making sure value goes from our parent to <input> and back properly...
     query: {
       get () {
-        return this.value
+        return this.internalValue
       },
 
       set (value) {
+        this.internalValue = value
         this.$emit('input', value)
       },
-    },
-  },
-
-  mounted () {
-    this.query = this.preset || ''
-  },
-
-  methods: {
-    onSubmit (ev) {
-      this.$emit('searchSubmit', { query: this.query })
     },
   },
 

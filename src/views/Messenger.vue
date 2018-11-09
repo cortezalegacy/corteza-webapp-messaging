@@ -218,7 +218,7 @@ export default {
       this.toggleUserPanel(false)
     },
 
-    onPanelSearchSubmit ({ query }) {
+    onPanelSearchSubmit (query) {
       // Take query we received from panel search input box
       // and push it to search result component
       this.searchQuery = query

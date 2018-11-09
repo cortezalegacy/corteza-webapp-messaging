@@ -4,6 +4,7 @@
     :class="current?'':'no-current'">
     <div class="layer-section-wrapper search-section">
       <search-input
+        :focus="true"
         v-on="$listeners" />
     </div>
     <div class="menu-layer-inner">

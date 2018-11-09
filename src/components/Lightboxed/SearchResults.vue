@@ -3,7 +3,7 @@
       <header>
           <span class="closer" @click="onClose">&times;</span>
           <section>
-              <search-input :preset="searchQuery" @searchSubmit="onSearchSubmit" />
+              <search-input :preset="searchQuery" :focus="true" @searchSubmit="onSearchSubmit" />
           </section>
       </header>
       <main>
@@ -98,7 +98,7 @@ export default {
       this.$emit('close')
     },
 
-    onSearchSubmit ({ query }) {
+    onSearchSubmit (query) {
       this.search(query)
     },
   },
@@ -123,7 +123,7 @@ header {
   width: 100vw;
 
   section {
-    padding: 10px 70px 0 15px;
+    padding: 10px 70px 0 10px;
   }
 
   .closer {
@@ -142,7 +142,7 @@ header {
 main {
   height: calc(100vh - 100px);
   background-color: $appcream;
-  margin: 10px 70px 0 15px;
+  margin: 10px 70px 0 10px;
   border-radius: 5px;
   overflow-x: auto;
   overflow-x: hidden;

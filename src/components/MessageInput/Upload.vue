@@ -124,7 +124,6 @@ export default {
 
       // If file is already in DZ, remove it and use curent one
       const qFiles = this.dropzone.getQueuedFiles()
-      console.log(qFiles)
       if (qFiles.length > 0) {
         this.dropzone.removeFile(qFiles[0])
       }
