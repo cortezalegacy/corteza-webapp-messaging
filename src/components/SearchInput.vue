@@ -11,7 +11,6 @@
             :placeholder="placeholder"
             autocomplete="true"
             class="txt no-border">
-        <i class="icon-settings-horizontal float-right"></i>
       </span>
   </form>
 </template>
