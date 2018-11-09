@@ -85,6 +85,7 @@ import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { Picker } from 'emoji-mart-vue'
 import { User } from '@/types'
+import { cleanMentions } from '@/lib/mentions'
 
 export default {
   data () {
@@ -110,7 +111,9 @@ export default {
       currentUser: 'auth/user',
       currentChannel: 'channels/current',
       findChannelByID: 'channels/findByID',
+      channels: 'channels/list',
       findUserByID: 'users/findByID',
+      users: 'users/list',
       isChannelPanelOpen: 'ui/isChannelPanelOpen',
       getSettings: 'settings/get',
     }),
@@ -155,7 +158,7 @@ export default {
         return
       }
 
-      const body = message.message
+      const body = cleanMentions(message.message, this.users, this.channels)
       const msgChannel = this.findChannelByID(message.channelID)
 
       console.debug('Sending notification about new message', { message })

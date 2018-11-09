@@ -1,10 +1,9 @@
 'use strict'
 
-const internalLinkSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]*?>)`)
-const internalLinkRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
+import { mentionSplitRE, mentionRE } from '@/lib/mentions.js'
 
 export default (md, setup) => {
-  md.core.ruler.push('internalLink', parser.bind(md))
+  md.core.ruler.push('mention', parser.bind(md))
 }
 
 function parser (state) {
@@ -20,7 +19,7 @@ function parser (state) {
     for (let i = tokens.length - 1; i >= 0; i--) {
       let token = tokens[i]
 
-      if (token.type === 'text' && autolinkLevel === 0 && internalLinkRE.test(token.content)) {
+      if (token.type === 'text' && autolinkLevel === 0 && mentionRE.test(token.content)) {
         // replace current node
         blockTokens[j].children = tokens = this.utils.arrayReplaceAt(
           tokens, i, splitTextToken(token.content, token.level, state.Token)
@@ -36,8 +35,8 @@ function splitTextToken (text, level, Token) {
   let nodes = []
   let t
 
-  text.split(internalLinkSplitRE).forEach(text => {
-    const match = internalLinkRE.exec(text)
+  text.split(mentionSplitRE).forEach(text => {
+    const match = mentionRE.exec(text)
     if (match === null) {
       t = new Token('text', '', 0)
       t.content = text
