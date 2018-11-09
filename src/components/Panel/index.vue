@@ -46,10 +46,13 @@ header {
   h2 {
     margin: 0;
     font-size: 12px;
-    color: $appgrey
+    color: $appgrey;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
-
 main {
 }
 

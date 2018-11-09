@@ -142,7 +142,7 @@ export default {
     padding: 4px;
     width: 25px;
     height: 25px;
-    border: 2px solid $appgrey;
+    border: 1px solid $appgrey;
     margin-bottom: -8px;
     border-radius: 50px;
     color: $appgrey;
