@@ -23,7 +23,6 @@ export class Channel {
 
   removeMember (user) {
     const ID = (user || {}).ID || user
-    console.log('Removing', user, ID)
     this.members = this.members.filter(m => m !== ID)
   }
 }
