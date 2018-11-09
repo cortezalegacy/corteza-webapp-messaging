@@ -32,4 +32,3 @@ describe('markdown.js', () => {
       equal('<p>one <user-link ID="1"></user-link> two <channel-link ID="2"></channel-link> three <user-link ID="3"></user-link> stop</p>')
   })
 })
-

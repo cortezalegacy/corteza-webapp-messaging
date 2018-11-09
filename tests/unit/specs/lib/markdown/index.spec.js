@@ -27,5 +27,12 @@ describe('index.js', () => {
     mdInput('``` js\ncode\n```').equal('<pre><code class="language-js">code\n</code></pre>')
   })
 
+  it('Multiple empty lines', () => {
+    mdInput('line1\n\nline2').equal('<p>line1</p>\n<p>line2</p>')
+  })
+
+  it('Multiple empty lines in a codeblck', () => {
+    mdInput('``` js\ncode\n\nmore code...\n\n\n```').equal('<pre><code class="language-js">code\n\nmore code...\n\n\n</code></pre>')
+  })
 })
 

@@ -37,6 +37,11 @@ p {
   margin: 0;
 }
 
+p + p {
+  // double \n are split into separate paragraphs
+  margin-top: 1em;
+}
+
 blockquote {
   margin: 5px 20px 5px 5px;
   padding-left: 5px;

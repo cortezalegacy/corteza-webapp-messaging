@@ -38,7 +38,7 @@ export default {
         let str = ''
 
         if (this.value) {
-          str = '<p>' + this.value.replace('\n', '</p><p>') + '</p>'
+          str = this.value.replace(/\n/g, '<br>')
         }
 
         return str
