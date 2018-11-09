@@ -312,6 +312,10 @@ section
   opacity: 0.25;
 }
 
+.emoji-mart{
+  z-index: 99999;
+}
+
 @media (min-width: $wideminwidth)
 {
   .channel-container

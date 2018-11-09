@@ -129,12 +129,11 @@ export default {
   .action {
     display: inline-block;
     border: solid 1px rgba($appgrey, 0.25);
-    margin: 0 5px;
-    border-radius: 30px;
-    line-height: 30px;
-    width: 30px;
+    border-radius: 5px;
+    line-height: 20px;
+    width: 25px;
     background-color: $appwhite;
-    font-size: 18px;
+    font-size: 15px;
     text-align: center;
     box-shadow: 0 0 5px 0 rgba($appgrey, 0.5);
     cursor: pointer;
@@ -148,10 +147,10 @@ export default {
     color: $appyellow;
   }
   .svg-inline--fa{
-    padding: 7px;
-    width: 30px;
-    height: 32px;
-    margin-bottom: -6px;
+    padding: 4px;
+    width: 25px;
+    height: 22px;
+    margin-bottom: -3px;
   }
 }
 

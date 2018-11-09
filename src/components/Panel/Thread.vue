@@ -138,7 +138,6 @@ export default {
 
 .messages {
   position: absolute;
-  top: 72px;
   height: calc(100vh - 147px);
   padding-top:20px;
 }
