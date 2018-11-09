@@ -1,15 +1,16 @@
 <template>
-  <section>
-    <label><slot></slot></label>
-    <div class="actions">
-      <confirmation-toggle v-bind="$props" v-on="$listeners"></confirmation-toggle>
-    </div>
-  </section>
+  <span>
+    <span v-if="!inConfirmation">
+      <button class="btn" :class="btnClass" @click="inConfirmation=true" :disabled="disabled">{{cta}}</button>
+    </span>
+    <span v-if="inConfirmation">
+      <button class="btn" :class="btnClass" @click="onConfirmation()">Yes</button>
+      <button class="btn" @click="inConfirmation=false">Cancel</button>
+    </span>
+  </span>
 </template>
 <script>
-import ConfirmationToggle from './ConfirmationToggle'
 export default {
-
   props: {
     cta: String,
     ctaClass: { type: String, default: 'danger' },
@@ -39,23 +40,9 @@ export default {
       this.$emit('confirmed')
     },
   },
-
-  components: {
-    ConfirmationToggle,
-  },
 }
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
-
-section {
-  label {
-    float: left;
-  }
-
-  div.actions {
-    float: right;
-  }
-}
 </style>

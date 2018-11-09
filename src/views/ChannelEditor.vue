@@ -83,6 +83,7 @@
 
         <div v-if="channel.ID">
           <confirmation-row
+            class="toggle-state"
             v-if="!channel.archivedAt"
             @confirmed="updateChannelState('archive')"
             cta="Archive">
@@ -90,6 +91,7 @@
           </confirmation-row>
 
           <confirmation-row
+            class="toggle-state"
             v-if="channel.archivedAt"
             @confirmed="updateChannelState('unarchive')"
             cta="Unarchive" ctaClass="info">
@@ -97,6 +99,7 @@
           </confirmation-row>
 
           <confirmation-row
+            class="toggle-state"
             v-if="!channel.deletedAt"
             @confirmed="updateChannelState('delete')"
             cta="Delete">
@@ -104,6 +107,7 @@
           </confirmation-row>
 
           <confirmation-row
+            class="toggle-state"
             v-if="channel.deletedAt"
             @confirmed="updateChannelState('undelete')"
             cta="Undelete" ctaClass="info">
@@ -261,6 +265,13 @@ form {
   .actions {
     text-align: right;
   }
+}
+
+section.toggle-state {
+  border-top: 1px solid $appgrey;
+  font-size: 1.5em;
+  padding: 20px 10px 30px 10px;
+  margin: 20px;
 }
 
 .closer {
