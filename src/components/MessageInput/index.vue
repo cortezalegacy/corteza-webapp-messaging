@@ -196,6 +196,11 @@ export default {
       width:100%;
       position:relative;
     }
+    &.editing{
+      border: none;
+      padding-right: 10px;
+      background: transparent;
+    }
   }
 
   .upload-button, .message-input

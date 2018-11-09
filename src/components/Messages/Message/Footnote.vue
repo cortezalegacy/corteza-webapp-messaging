@@ -21,6 +21,7 @@ export default {
 {
   font-size:10px;
   opacity:0.35;
+  display: inline;
   .info
   {
     display:inline-block;

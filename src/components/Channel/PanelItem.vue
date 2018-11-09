@@ -139,6 +139,12 @@ export default {
   }
 }
 
+.layer-item-wrap{
+  a{
+    padding-right: 20px;
+  }
+}
+
 //webkit specific hack
 @media screen and (-webkit-min-device-pixel-ratio:0)
 {

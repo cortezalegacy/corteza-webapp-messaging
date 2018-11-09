@@ -38,8 +38,9 @@
             v-on="$listeners" />
         </section>
         <div
-          class="message"
-          :class="{ from_me: (message.user || {}).ID === currentUser.ID }">
+          :class="{ from_me: (message.user || {}).ID === currentUser.ID,
+          'message' : !inEditing,
+           }">
           <attachment
             v-if="message.attachment"
             class="message-content"
@@ -284,6 +285,10 @@ a{
   position: relative;
   padding: 5px 5px 5px 66px;
   position: relative;
+
+  .message{
+    margin-right: 10px;
+  }
 
   &.continued {
     background: none;
