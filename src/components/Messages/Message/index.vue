@@ -49,6 +49,7 @@
 
           <message-input
             v-if="inEditing"
+            :hideFileUpload="true"
             :message="message"
             @submit="onInputSubmit"
             @cancel="inEditing=false"

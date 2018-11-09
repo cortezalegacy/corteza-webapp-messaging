@@ -200,6 +200,13 @@ export default {
       border: none;
       padding-right: 10px;
       background: transparent;
+      .message-input{
+        width: 100%;
+        &:focus-within{
+          border-left: 1px solid $appgreen;
+          border-radius: 5px;
+        }
+      }
     }
   }
 
