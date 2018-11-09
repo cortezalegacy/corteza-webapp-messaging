@@ -1,4 +1,4 @@
-import { Channel, Message } from '@/types'
+import { Channel, Message, User } from '@/types'
 import localCommands from '@/commands'
 
 const userActivityTTL = 5 // seconds
@@ -45,7 +45,7 @@ export default {
 
     // Handle users payload when it gets back
     this.$bus.$on('$ws.users', (users) => {
-      this.$store.dispatch('users/resetList', users)
+      this.$store.dispatch('users/resetList', users.map(u => new User(u)))
     })
 
     this.$bus.$on('$ws.clientConnected', ({ uid }) => {

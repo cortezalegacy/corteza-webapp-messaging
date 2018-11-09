@@ -1,49 +1,52 @@
 <template>
   <section>
       <header class="header sub-header">
-          <h2 v-if="ch.type === 'group' && ch.ID">Edit group</h2>
-          <h2 v-else-if="ch.type === 'group'">Create new group</h2>
-          <h2 v-else-if="ch.ID">Channel editor</h2>
+        <label class="closer"
+               @click.prevent="$router.back()"
+               aria-label="Close"><i class="icon-close"></i></label>
+          <h2 v-if="channel.type === 'group' && channel.ID">Edit group</h2>
+          <h2 v-else-if="channel.type === 'group'">Create new group</h2>
+          <h2 v-else-if="channel.ID">Channel editor</h2>
           <h2 v-else>Create new channel</h2>
       </header>
       <main class="container">
-        <form class="editor big-form" @submit.prevent="submit" v-if="!ch.ID || ch.type !== 'group'">
+        <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.ID || channel.type !== 'group'">
           <div v-if="error" class="error">
             {{error}}
           </div>
-
+<!--
           <div class="notification info no-margin">
               <p>Notifications ready to use ! Check assets/sass/README.MD for more info</p>
               <span class="close"></span>
           </div>
-
-          <div v-if="ch.type !== 'group'" class="input-wrap">
+-->
+          <div v-if="channel.type !== 'group'" class="input-wrap">
             <label class="label-block">Channel name</label>
             <input
               class="input-txt input-block name"
               name="name"
-              v-model.trim="ch.name"
+              v-model.trim="channel.name"
               required
               autocomplete="channel-name"
               placeholder="Make it short, make it sweet">
           </div>
 
-          <div v-if="ch.type !== 'group'" class="input-wrap">
+          <div v-if="channel.type !== 'group'" class="input-wrap">
             <label class="label-block">Topic</label>
             <input
               class="input-txt input-block"
               name="topic"
-              v-model.trim="ch.topic"
+              v-model.trim="channel.topic"
               autocomplete="channel-topic"
               placeholder="Things we talk about">
           </div>
 
-          <div class="form-check" v-if="ch.type !== 'group'">
+          <div class="form-check" v-if="channel.type !== 'group'">
             <input
               class="input-chk"
               type="checkbox"
               id="channel-type"
-              v-model="ch.type"
+              v-model="channel.type"
               true-value="private"
               false-value="public">
             <label for="channel-type">
@@ -51,45 +54,57 @@
             </label>
           </div>
 
-          <ul v-if="!ch.ID">
-            <li v-for="u in users" :key="u.ID">
-              <label>
-                <input type="checkbox" v-model="ch.members" :value="u.ID"> {{u | userLabel }}
-              </label>
-            </li>
-          </ul>
+          <div v-if="!channel.ID">
+            <label class="label-block">Members</label>
+            <vue-simple-suggest
+              v-model="selectedMember"
+              :list="nonMembers"
+              placeholder="Find users to add as members"
+              :filter-by-query="true"
+              value-attribute="ID"
+              display-attribute="label"
+              @select="onMemberSelect"
+              />
+
+            <ul>
+              <li v-for="(u) in members" :key="u.ID">
+                {{ u | userLabel }}
+                <button @click.prevent="channel.removeMember(u)">remove</button>
+              </li>
+            </ul>
+          </div>
 
           <div class="actions">
-            <button class="btn btn-green" v-if="ch.ID">Update</button>
+            <button class="btn btn-green" v-if="channel.ID">Update</button>
             <button class="btn btn-green" v-else>Create</button>
             <button class="btn" @click.prevent="$router.back()">Close</button>
           </div>
         </form>
 
-        <div v-if="ch.ID">
+        <div v-if="channel.ID">
           <confirmation-row
-            v-if="!ch.archivedAt"
+            v-if="!channel.archivedAt"
             @confirmed="updateChannelState('archive')"
             cta="Archive">
             Archive this channel?
           </confirmation-row>
 
           <confirmation-row
-            v-if="ch.archivedAt"
+            v-if="channel.archivedAt"
             @confirmed="updateChannelState('unarchive')"
             cta="Unarchive" ctaClass="info">
             Unarchive this channel?
           </confirmation-row>
 
           <confirmation-row
-            v-if="!ch.deletedAt"
+            v-if="!channel.deletedAt"
             @confirmed="updateChannelState('delete')"
             cta="Delete">
             Delete this channel?
           </confirmation-row>
 
           <confirmation-row
-            v-if="ch.deletedAt"
+            v-if="channel.deletedAt"
             @confirmed="updateChannelState('undelete')"
             cta="Undelete" ctaClass="info">
             Undelete this channel?
@@ -102,6 +117,9 @@
 import { Channel } from '@/types'
 import { mapGetters, mapActions } from 'vuex'
 import ConfirmationRow from '@/components/Form/ConfirmationRow'
+import SearchInput from '@/components/SearchInput'
+import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
+import 'vue-simple-suggest/dist/styles.css'
 
 export default {
   name: 'channel-editor',
@@ -109,15 +127,33 @@ export default {
 
   data () {
     return {
-      ch: new Channel(),
+      channel: new Channel(),
       error: null,
+
+      selectedMember: null,
+      autoCompleteStyle: {
+        vueSimpleSuggest: 'position-relative',
+        inputWrapper: '',
+        defaultInput: 'form-control',
+        suggestions: 'position-absolute list-group z-1000',
+        suggestItem: 'list-group-item',
+      },
     }
   },
 
   computed: {
     ...mapGetters({
       users: 'users/list',
+      currentUser: 'auth/user',
     }),
+
+    nonMembers () {
+      return this.users.filter(u => !this.channel.isMember(u.ID) && u.ID !== this.currentUser.ID)
+    },
+
+    members () {
+      return this.users.filter(u => this.channel.isMember(u.ID))
+    },
   },
 
   watch: {
@@ -126,7 +162,7 @@ export default {
     },
 
     'type' (newType) {
-      if (!this.ch.ID) this.ch.type = newType
+      if (!this.channel.ID) this.channel.type = newType
     },
   },
 
@@ -142,11 +178,11 @@ export default {
     load (channelID) {
       if (channelID) {
         this.$rest.getChannel(channelID).then((ch) => {
-          this.ch = ch
+          this.channel = ch
 
           this.$rest.getMembers(channelID).then((members) => {
             console.debug('Chanel member info loaded into editor', members)
-            this.ch.members = members.map((m) => {
+            this.channel.members = members.map((m) => {
               return m.user.ID
             })
           })
@@ -156,25 +192,34 @@ export default {
           // this.disabled = false
         })
       } else {
-        this.ch = new Channel()
+        this.channel = new Channel()
         if (this.type) {
-          this.ch.type = this.type
+          this.channel.type = this.type
         }
       }
     },
 
-    submit () {
-      if (this.ch.ID) {
-        console.debug('Updating channel', this.ch)
-        this.$rest.updateChannel(this.ch).then((ch) => {
+    // moving channels between deleted, undeleted, archived, unarchived states
+    updateChannelState (state) {
+      this.$rest.updateChannelState(this.channel.ID, state).then((ch) => {
+        this.channel = ch
+      }).catch(({ message }) => {
+        this.error = message
+      })
+    },
+
+    onSubmit () {
+      if (this.channel.ID) {
+        console.debug('Updating channel', this.channel)
+        this.$rest.updateChannel(this.channel).then((ch) => {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
           this.error = error.message
         })
       } else {
-        console.debug('Creating channel', this.ch)
-        this.$rest.createChannel(this.ch).then((ch) => {
+        console.debug('Creating channel', this.channel)
+        this.$rest.createChannel(this.channel).then((ch) => {
           console.debug('Channel created', ch)
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch(({ error }) => {
@@ -183,16 +228,15 @@ export default {
       }
     },
 
-    updateChannelState (state) {
-      this.$rest.updateChannelState(this.ch.ID, state).then((ch) => {
-        this.ch = ch
-      }).catch(({ message }) => {
-        this.error = message
-      })
+    onMemberSelect (user) {
+      this.selectedMember = ''
+      this.channel.members.push(user.ID)
     },
   },
 
   components: {
+    VueSimpleSuggest,
+    SearchInput,
     ConfirmationRow,
   },
 }
@@ -217,6 +261,18 @@ form {
   .actions {
     text-align: right;
   }
+}
+
+.closer {
+  position: relative;
+  color: $appgrey;
+  float: right;
+  font-size: 20px;
+  font-weight: bold;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  line-height: 30px;
 }
 
 </style>

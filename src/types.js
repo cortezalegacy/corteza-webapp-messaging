@@ -1,6 +1,7 @@
 export class Channel {
   constructor (c) {
     if (!c) {
+      this.members = []
       return
     }
 
@@ -18,6 +19,12 @@ export class Channel {
 
   isMember (userID) {
     return this.members.indexOf(userID) !== -1
+  }
+
+  removeMember (user) {
+    const ID = (user || {}).ID || user
+    console.log('Removing', user, ID)
+    this.members = this.members.filter(m => m !== ID)
   }
 }
 
@@ -111,10 +118,13 @@ export class User {
     this.name = u.name || ''
     this.email = u.email || ''
     this.connections = u.connections || 0
+
+    this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.ID).toLocaleLowerCase()
+    this.label = this.name || this.username || this.handle || this.email || this.ID || 'N/A'
   }
 
   Label () {
-    return this.name || this.username || this.handle || this.email || this.ID || 'N/A'
+    return this.label
   }
 }
 
