@@ -1,7 +1,7 @@
 import moment from 'moment'
 
-// Time window for continued messages in seconds
-const continuedMessagesTimeWindow = (window.CrustConfig.spa.content || {}).continuedMessagesTimeWindow || 3 * 60
+// Time window for consecutive messages in seconds
+const consecutiveMessagesTimeWindow = (window.CrustConfig.spa.content || {}).consecutiveMessagesTimeWindow || 3 * 60
 
 export function getFirstID (set) {
   return (set[0] || {}).ID
@@ -34,5 +34,5 @@ export function isConsecutive (set, index = 0) {
   }
 
   // Time span check
-  return moment(cm.createdAt).diff(moment(pm.createdAt), 'seconds') <= continuedMessagesTimeWindow
+  return moment(cm.createdAt).diff(moment(pm.createdAt), 'seconds') <= consecutiveMessagesTimeWindow
 }

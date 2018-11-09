@@ -2,8 +2,8 @@
     <li
       class="message-n-meta"
       :class="{
-        'continued': continued,
-        'first': !continued,
+        'consecutive': consecutive,
+        'first': !consecutive,
         'attachement' : message.attachment,
         'valid' : message.attachment && message.attachment.size > 0,
         'with-replies' : message.replies,
@@ -17,11 +17,10 @@
       :key="message.ID">
 
         <section>
-          <em class="dot-dot-dot"></em>
-          <em v-if="!continued" class="avatar">
+          <em v-if="!consecutive" class="avatar">
             <avatar :user="message.user" />
           </em>
-          <em  v-if="!continued" class="author">{{ message.user | userLabel }}</em>
+          <em  v-if="!consecutive" class="author">{{ message.user | userLabel }}</em>
           <span class="date">
               {{ moment(message.createdAt).fromNow() }}
               <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
@@ -96,7 +95,7 @@ export default {
       type: Object,
       required: true,
     },
-    continued: {
+    consecutive: {
       type: Boolean,
       required: false,
     },
@@ -269,18 +268,6 @@ a{
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-.dot-dot-dot {
-  position: absolute;
-  left: 35px;
-  top: 55px;
-  float: left;
-  background: url(../../../assets/images/vertical-dots.svg) no-repeat;
-  background-size: auto 10px;
-  min-height: 12px;
-  min-width: 4px;
-  z-index: 4;
-}
-
 .message-n-meta {
   margin-bottom: 10px;
   position: relative;
@@ -291,12 +278,8 @@ a{
     margin-right: 10px;
   }
 
-  &.continued {
+  &.consecutive {
     background: none;
-
-    .dot-dot-dot {
-      display: none;
-    }
 
     &.attachement {
       margin-bottom: 10px;
@@ -322,14 +305,14 @@ a{
 }
 
 // all margins in one place
-.message-n-meta.continued {
+.message-n-meta.consecutive {
   margin-top: -18px;
 }
 
 .message-n-meta.first {
 }
 
-.message-n-meta.first + .message-n-meta.continued {
+.message-n-meta.first + .message-n-meta.consecutive {
 }
 
 .author, .date, .time, .day {
@@ -364,7 +347,7 @@ a{
   font-size: 10px;
 }
 
-.continued {
+.consecutive {
   .time {
     left: 22px;
     top: 15px;
@@ -387,7 +370,7 @@ a{
 
 }
 
-.written-today.continued {
+.written-today.consecutive {
   .time {
     display: none;
   }
@@ -415,7 +398,7 @@ a{
 
 }
 
-.message-n-meta.continued:hover, .message-n-meta.continued:focus {
+.message-n-meta.consecutive:hover, .message-n-meta.consecutive:focus {
   .date {
     display: none;
   }

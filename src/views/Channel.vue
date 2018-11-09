@@ -23,6 +23,7 @@
       :currentUser="currentUser"
       :origin="channel"
       :scrollable="true"
+      :consecutive="true"
       :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
       :editLastMessage="editLastMessage"
       @cancelEditing="editLastMessage=false"

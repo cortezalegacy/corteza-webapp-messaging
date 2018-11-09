@@ -55,7 +55,7 @@ export default {
     // Is provided message list is consecutive
     //
     // When not, we do not calculate cont
-    consecutive: { type: Boolean, default: false },
+    consecutive: { type: Boolean, default: true },
 
     hideActions: Boolean,
     hideReactions: Boolean,
