@@ -10,7 +10,7 @@
         @cancel="$emit('cancel', $event)"
         @submit="onSubmit"
         @change="onChange"
-        :value="(message || {}).message || ''"
+        :value="editableString"
         :channels="channelSuggestions"
         :users="userSuggestions"
         class="message-input"
@@ -36,6 +36,7 @@ import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import TextInput from './TextInput'
 import { EmojiPicker } from 'emoji-mart-vue'
+import { enrichMentions } from '@/lib/mentions'
 
 export default {
   props: {
@@ -92,6 +93,14 @@ export default {
     showFileUpload () {
       // Hide file upload when editing
       return !this.hideFileUpload || !this.message
+    },
+
+    editableString () {
+      if (this.message) {
+        return enrichMentions(this.message.message)
+      }
+
+      return ''
     },
   },
 
