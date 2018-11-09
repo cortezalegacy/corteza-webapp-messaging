@@ -75,7 +75,7 @@
               <i class="icon icon-left icon-plus btn"></i>
             </router-link>
             <a @click="groupUnfold=!groupUnfold">
-              Groups and direct messages
+              Direct messages
               <span v-if="groupChannels">
                 <i v-if="groupUnfold" class="icon-chevron-up"></i>
                 <i v-else class="icon-chevron-down"></i>

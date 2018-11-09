@@ -10,10 +10,6 @@
       <span  v-if="channel.topic" class="topic"><span class="badge badge-blue">{{ channel.topic }}</span></span>
     </div>
 
-    <div class="messaging-toolbox">
-      <button @click="$emit('openBookmarkedMessagesPanel')">B</button>
-    </div>
-
     <div class="channel-toolbox">
       <label
         class="tool"
@@ -22,11 +18,24 @@
         <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
 
       <label
-        class="tool edit"
+        class="tool"
         @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
-        <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-info"></i></label>
-
-      <button @click="$emit('openPinnedMessagesPanel')">P</button>
+        <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3 edit"></i>
+      </label>
+      <label
+        @click="$emit('openPinnedMessagesPanel')">
+          <font-awesome-icon
+            icon="thumbtack"
+            title="Open pinned messages"
+          ></font-awesome-icon>
+      </label>
+      <label
+        @click="$emit('openBookmarkedMessagesPanel')">
+          <font-awesome-icon
+            :icon="['far', 'bookmark']"
+            title="Open bookmarks"
+          ></font-awesome-icon>
+      </label>
     </div>
   </header>
 </template>
@@ -125,6 +134,23 @@ export default {
       font-size:24px;
       width:24px;
     }
+  }
+
+  .svg-inline--fa{
+    padding: 4px;
+    width: 25px;
+    height: 25px;
+    border: 2px solid $appgrey;
+    margin-bottom: -8px;
+    border-radius: 50px;
+    color: $appgrey;
+    margin-right: 5px;
+  }
+
+  .edit{
+    border-right: 1px solid #90A3B1;
+    padding-right: 10px;
+    margin-right: 5px;
   }
 
   @media (max-width: $wideminwidth - 1)
