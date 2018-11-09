@@ -16,9 +16,25 @@
           >
           <user-avatar :user="u" />
           <span class="member-name">{{ u | userLabel }}</span>
-          <i title="connected" class='message-icon icon-bubble2' v-if="u.connections"></i>
+          <button @click="remove(u.ID)">-</button>
         </li>
       </ul>
+
+      <hr />
+
+      <h1>Add members</h1>
+      <search-input v-model="userQuery" :focus="true"></search-input>
+      <ul v-if="searchResults">
+        <li
+          v-for="u in searchResults"
+          :key="u.ID"
+          class="channel-member">
+          <user-avatar :user="u" />
+          <span class="member-name">{{ u | userLabel }}</span>
+          <button @click="add(u.ID)">+</button>
+        </li>
+      </ul>
+
     </template>
   </base-panel>
 </template>
@@ -26,6 +42,7 @@
 import { mapGetters } from 'vuex'
 import BasePanel from './'
 import Avatar from '@/components/Avatar'
+import SearchInput from '../SearchInput'
 
 export default {
   props: {
@@ -36,7 +53,9 @@ export default {
   },
 
   data () {
-    return {}
+    return {
+      userQuery: null,
+    }
   },
 
   computed: {
@@ -47,11 +66,32 @@ export default {
     members () {
       return this.users.filter(u => this.channel.isMember(u.ID))
     },
+
+    searchResults () {
+      return this.users.filter(u => !this.channel.isMember(u.ID) && u.Match(this.userQuery))
+    },
   },
 
   components: {
+    SearchInput,
     'user-avatar': Avatar,
     BasePanel,
+  },
+
+  methods: {
+    add (userID) {
+      this.$rest.addMember(this.channel.ID, userID)
+    },
+
+    remove (userID) {
+      this.$rest.removeMember(this.channel.ID, userID).then(() => {
+        this.channel.removeMember(userID)
+      })
+    },
+
+    isMember (userID) {
+      return !!this.members.find(m => m.user.ID === userID)
+    },
   },
 }
 </script>

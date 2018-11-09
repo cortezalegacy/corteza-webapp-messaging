@@ -126,6 +126,10 @@ export class User {
   Label () {
     return this.label
   }
+
+  Match (q) {
+    return this.fts.indexOf(q) > -1
+  }
 }
 
 export function Member (m) {
