@@ -42,7 +42,6 @@
   .closer
   {
     float:right;
-    padding-top:10px;
   }
 
   ul
@@ -55,6 +54,12 @@
   .badge, .btn
   {
     font-size:12px;
+  }
+}
+
+.menu-layer-inner{
+  .closer{
+    padding-top: 10px;
   }
 }
 

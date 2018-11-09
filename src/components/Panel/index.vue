@@ -51,7 +51,6 @@ header {
 }
 
 main {
-
 }
 
 </style>
