@@ -66,7 +66,7 @@ export default {
 
   watch: {
     channel () {
-      this.textInputKey++
+      this.clearInputText()
     },
   },
 
@@ -107,6 +107,10 @@ export default {
       setChannelUnreadCount: 'unread/setChannel',
     }),
 
+    clearInputText () {
+      this.textInputKey++
+    },
+
     onPromptFilePicker () {
       this.$emit('promptFilePicker', {})
     },
@@ -118,7 +122,7 @@ export default {
 
       const stdResponse = () => {
         // Trigger remounting
-        this.textInputKey++
+        this.clearInputText()
 
         // Tell parent we're done with editing.
         this.$emit('cancel', {})
@@ -137,6 +141,12 @@ export default {
         this.$rest.sendReply(this.replyTo.channelID, this.replyTo.ID, value).then(stdResponse)
       } else if (this.channel) {
         // Sending message
+        if (this.$commands.test(value)) {
+          this.$commands.exec(this, value, { channel: this.channel })
+          this.clearInputText()
+          return
+        }
+
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
         this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
       }
