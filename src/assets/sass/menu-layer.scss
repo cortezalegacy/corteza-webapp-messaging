@@ -27,6 +27,9 @@
     left:auto;
     margin-left:0;
     border-left: solid 1px $defaultlinecolor;
+    ul{
+      padding-top: 10px;
+    }
   }
 
   &.noborder
@@ -54,11 +57,6 @@
   .badge, .btn
   {
     font-size:12px;
-  }
-  &.right{
-    ul{
-      padding-top: 15px;
-    }
   }
 }
 

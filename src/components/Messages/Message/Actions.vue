@@ -121,7 +121,7 @@ export default {
   width: 100%;
   left: 0px;
   text-align: right;
-  top: -15px;
+  top: 0px;
   display: inline-block;
   padding: 0 0.5em;
   z-index: 5;
@@ -135,9 +135,13 @@ export default {
     background-color: $appwhite;
     font-size: 15px;
     text-align: center;
-    box-shadow: 0 0 5px 0 rgba($appgrey, 0.5);
+    box-shadow: 0 0 3px 0 rgba($appgrey, 0.5);
     cursor: pointer;
     color: $defaultlinecolor;
+    margin-right: 1px;
+    &:hover{
+      border-color: $appgrey;
+    }
   }
 }
 

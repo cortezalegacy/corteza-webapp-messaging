@@ -75,7 +75,7 @@ export default {
 .channel-member
 {
   line-height:30px;
-  margin-top:10px;
+  margin-bottom:10px;
   margin-left:20px;
   cursor: pointer;
 }
