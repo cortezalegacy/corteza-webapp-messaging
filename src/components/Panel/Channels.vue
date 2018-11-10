@@ -209,7 +209,7 @@ export default {
     background-color: $appwhite;
     z-index: 2;
     width: 90vw;
-    max-width: 260px;
+    max-width: 250px;
     min-width: 120px;
   }
 
