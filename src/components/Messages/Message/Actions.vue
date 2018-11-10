@@ -40,19 +40,19 @@
       <ul class="context-menu-list">
         <li v-if="message.canReply && !hideActionOpenThread"
             class="extra-action"
-            @click="$emit('openThreadPanel', { message })">
+            @click="$emit('openThreadPanel', { message });isContextMenuOpen=false">
             <i class="icon icon-message-circle-left-speak"></i>
             <span>Reply in thread </span>
         </li>
         <li v-if="message.canEdit"
             class="extra-action"
-            @click="$emit('editMessage', { message })">
+            @click="$emit('editMessage', { message });isContextMenuOpen=false">
             <i class="icon icon-edit"></i>
             <span>edit message</span>
         </li>
         <li v-if="message.canDelete"
             class="extra-action"
-            @click="$emit('deleteMessage', { message })">
+            @click="$emit('deleteMessage', { message });isContextMenuOpen=false">
             <i class="icon icon-trash"></i>
             <span>delete message</span>
         </li>
@@ -118,8 +118,8 @@ export default {
 .actions, .context-menu {
   position: absolute;
   border-radius: 3px;
-  width: 100%;
-  left: 0px;
+  width: auto;
+  right: 0px;
   text-align: right;
   top: 0px;
   display: inline-block;
@@ -159,9 +159,8 @@ export default {
 }
 
 .context-menu {
-  min-width: 180px;
-  left: -30px;
   z-index: 6;
+  margin-top:25px;
 
   &:hover {
     display: block;
