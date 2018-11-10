@@ -1,0 +1,25 @@
+// Make body and everything below that (inherit) unselectable
+// And enable to make elements/contents explicity selectable with .selectable class
+body {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+* {
+  -moz-user-select: inherit;
+  -khtml-user-select: inherit;
+  -webkit-user-select: inherit;
+  -ms-user-select: inherit;
+  user-select: inherit;
+}
+
+.selectable {
+  -moz-user-select: all;
+  -khtml-user-select: all;
+  -webkit-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
+}

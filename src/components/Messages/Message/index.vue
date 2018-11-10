@@ -20,13 +20,13 @@
           <em v-if="!consecutive" class="avatar">
             <avatar :user="message.user" />
           </em>
-          <em  v-if="!consecutive" class="author">{{ message.user | userLabel }}</em>
+          <em  v-if="!consecutive" class="author selectable">{{ message.user | userLabel }}</em>
           <span class="date">
               {{ moment(message.createdAt).fromNow() }}
               <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
             </span>
-          <em class="time">{{ momentHourMinute(message.createdAt) }}</em>
-          <em class="day">{{ momentDayMonth(message.createdAt) }}</em>
+          <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
+          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
 
           <actions
             class="actions"
@@ -37,6 +37,7 @@
             v-on="$listeners" />
         </section>
         <div
+          class="selectable"
           :class="{ from_me: (message.user || {}).ID === currentUser.ID,
           'message' : !inEditing,
            }">

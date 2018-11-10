@@ -272,6 +272,8 @@ export default {
 <style lang="scss">
 // General stuff we need everywhere..
 @import '@/assets/sass/emojis.scss';
+@import '@/assets/sass/text.scss';
+
 </style>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
