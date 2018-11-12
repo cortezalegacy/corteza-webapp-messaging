@@ -30,6 +30,8 @@ export default {
       type: Array,
       required: false,
     },
+
+    focus: { type: Boolean, default: true },
   },
 
   computed: {
@@ -126,7 +128,7 @@ export default {
   },
 
   mounted () {
-    if (this.$refs.quill !== undefined) {
+    if (this.$refs.quill !== undefined && this.focus) {
       const q = this.$refs.quill.quill
       // Focus on editor
       q.scrollingContainer.focus()

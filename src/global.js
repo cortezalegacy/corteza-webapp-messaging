@@ -7,6 +7,7 @@ import ChannelName from '@/components/Channel/Name'
 import ChannelLink from '@/components/Channel/Link'
 import GlobalEvents from 'vue-global-events'
 import UserLink from '@/components/User/Link'
+import UI from '@/mixins/ui'
 import { User } from '@/types'
 
 Vue.config.productionTip = false
@@ -19,3 +20,5 @@ Vue.component('global-events', GlobalEvents)
 Vue.component('channel-name', ChannelName)
 Vue.component('channel-link', ChannelLink)
 Vue.component('user-link', UserLink)
+
+Vue.mixin(UI)

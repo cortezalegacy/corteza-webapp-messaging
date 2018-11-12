@@ -10,6 +10,7 @@
         @cancel="$emit('cancel', $event)"
         @submit="onSubmit"
         @change="onChange"
+        :focus="focus && uiFocusMessageInput"
         :value="editableString"
         :channels="channelSuggestions"
         :users="userSuggestions"
@@ -50,6 +51,8 @@ export default {
 
     // Channel we're posting to
     channel: Object,
+
+    focus: { type: Boolean, default: true },
   },
 
   data () {
