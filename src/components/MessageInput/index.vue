@@ -227,8 +227,6 @@ export default {
       background: transparent;
       .message-input{
         width: 100%;
-        &:focus-within{
-        }
       }
     }
   }
