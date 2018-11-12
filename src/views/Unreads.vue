@@ -4,7 +4,7 @@
       <b>[WIP] Unreads in {{ unreadChannels.length }} channel(s)</b>
     </header>
     <main>
-      <section v-for="(unread) in unreadChannels" :key="unread.ID">
+      <section v-for="(unread) in unreadChannels" :key="unread.ID" v-if="findChannelByID(unread.ID)">
         <header>
           <channel-name :channel="findChannelByID(unread.ID)" /> {{unread.count}}
           <button @click="markAsRead(unread)">mark as read [@todo]</button>
@@ -50,6 +50,7 @@ export default {
 
   mounted () {
     this.loadUnreadMessages()
+    this.$store.dispatch('channels/setCurrent', null)
   },
 
   methods: {

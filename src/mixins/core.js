@@ -9,6 +9,7 @@ export default {
   beforeCreate () {
     this.$bus.$on('$ws.channels', (channels) => {
       let cc = []
+      console.debug('Prefeched %d channels', channels.length)
       channels.forEach((c) => {
         cc.push(new Channel(c))
 

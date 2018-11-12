@@ -37,6 +37,7 @@ export default {
 
   mounted () {
     this.$ws.getThreads()
+    this.$store.dispatch('channels/setCurrent', null)
   },
 
   components: {
