@@ -240,6 +240,7 @@ export default {
     display:inline-block;
     line-height: 1;
   }
+
   .message-input
   {
     font-family: $crustregular;
@@ -316,7 +317,7 @@ export default {
       .wrap
       {
         padding-left:30px;
-              border:solid 1px rgba($appgreen,0.25);
+        border:solid 1px rgba($appgreen,0.25);
       }
     }
   }
