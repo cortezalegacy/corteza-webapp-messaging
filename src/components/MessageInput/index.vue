@@ -19,10 +19,15 @@
 
       <button
         v-if="showFileUpload"
-        class="upload-button" @click="onPromptFilePicker">
-
+        class="upload-button input-button" @click="onPromptFilePicker">
         <span>+</span>
       </button>
+      <button
+        v-if="true || showSendBtn"
+        class="send-button input-button">
+        <span class="icon-play3"></span>
+      </button>
+
 <!--
       <i class="emoji-picker-button icon-smile"
          title="Insert emoji"
@@ -199,40 +204,42 @@ export default {
 
   @import '@/assets/sass/_0.commons.scss';
   // This component probably won't be used elsewhere,
-  // should it be the cas easy to externalize
+  // should it be the case easy to externalize
+  $inputheight : 30px;
+  $inputwidth : 30px;
   .channel-input
   {
-    min-height:50px;
+    min-height:$inputheight;
     width:100%;
-    border:solid 5px $appwhite;
     background-color:$appwhite;
-    box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
-    .wrap {
+    box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.1);
+    .wrap
+    {
       float:left;
       width:100%;
       position:relative;
+      max-width:100%;
+      overflow-x:hidden;
     }
-    &.editing{
-      border: none;
+    &.editing
+    {
       padding-right: 10px;
       background: transparent;
       .message-input{
         width: 100%;
         &:focus-within{
-          border-left: 1px solid $appgreen;
-          border-radius: 5px;
         }
       }
     }
   }
 
-  .upload-button, .message-input
+  .input-button, .message-input
   {
     border: 1px solid transparent;
     background-color:transparent;
   }
 
-  .upload-button span
+  .input-button span
   {
     display:inline-block;
     line-height: 1;
@@ -240,8 +247,8 @@ export default {
   .message-input
   {
     font-family: $crustregular;
-    margin-left:50px;
-    width:calc(100% - 50px);
+    margin-left:$inputwidth;
+    width:calc(100% - #{$inputwidth});
     border-radius: 0 5px 5px 0;
     border-left:0;
     float:right;
@@ -254,13 +261,13 @@ export default {
     width: 100%;
   }
 
-  .upload-button {
+  .input-button {
     position: absolute;
     height: calc(100%);
-    width: 50px;
+    width: $inputwidth + 5px;
     color: $appgrey;
     border-radius: 5px 0 0 5px;
-    font-size: 1.5rem;
+    font-size: 15px;
     cursor: pointer;
     text-align: center;
     font-size:30px;
@@ -269,23 +276,71 @@ export default {
     z-index: 2;
   }
 
-  .upload-button:focus {
+  .send-button
+  {
+    float:right;
+    right:0;
+    display:none;
+  }
+
+  .input-button:focus {
     outline: none;
   }
 
-  .message-input:focus-within {
-    outline:none;
-    border-color:$appgreen;
-    ~ .upload-button
+  @media ( max-width: ($wideminwidth - 1px) )
+  {
+    .message-input ~
     {
-      background-color:rgba($appgreen,0.1);
-      border-color:$appgreen;
-      color:$appgreen;
+      .send-button
+      {
+        display:inline-block;
+      }
     }
   }
+
   // another background in wide, and no shadow
   @media (min-width: $wideminwidth)
   {
+    $wideinputheight : 50px;
+    $wideinputwidth  : 50px;
+    .channel-input
+    {
+      min-height:$wideinputheight;
+      &.editing
+      {
+        border: none;
+        padding-right: 10px;
+        background: transparent;
+        .message-input{
+          width: 100%;
+          &:focus-within{
+            border-left: 1px solid $appgreen;
+            border-radius: 5px;
+          }
+        }
+      }
+    }
+
+    .message-input:focus-within {
+      outline:none;
+      border-color:$appgreen;
+      ~ .input-button
+      {
+        background-color:rgba($appgreen,0.1);
+        border-color:$appgreen;
+        color:$appgreen;
+      }
+    }
+
+    .message-input
+    {
+      margin-left:$wideinputwidth;
+      width:calc(100% - #{$wideinputwidth});
+    }
+    .input-button
+    {
+      width: $wideinputwidth;
+    }
     .channel-input .wrap
     {
       border-radius: 5px;

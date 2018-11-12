@@ -157,21 +157,33 @@ export default {
 </script>
 
 <style lang="scss">
-.q-editor .ql-editor {
-  padding: 0;
-}
-.ql-mention-list-item{
-  font-size: 14px;
-  height: 30px;
-  line-height: 30px;
-
-  &[data-denotation-char="#"]:before {
-    content: "#";
+  @import '@/assets/sass/_0.commons.scss';
+  @media (max-width: $wideminwidth - 1px)
+  {
+    .ql-editor
+    {
+      padding: 7px 3px 5px 5px;
+    }
+    .ql-editor.ql-blank::before
+    {
+      left:5px;
+      right:5px;
+    }
   }
+  @media (min-width: $wideminwidth)
+  {
+    .ql-mention-list-item{
+      font-size: 14px;
+      height: 30px;
+      line-height: 30px;
 
-  &[data-denotation-char="@"]:before {
-    content: "@";
+      &[data-denotation-char="#"]:before {
+        content: "#";
+      }
+
+      &[data-denotation-char="@"]:before {
+        content: "@";
+      }
+    }
   }
-}
-
 </style>
