@@ -177,7 +177,7 @@ li {
 }
 
 .scrollable {
-  height: calc(100vh - 105px);
+  height: calc(100vh - 80px);
   position:relative;
   max-height:100%;
   overflow-x: hidden;
