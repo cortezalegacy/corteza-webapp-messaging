@@ -102,7 +102,7 @@ $icon-indent-decrease: "\ea7c";
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: '#{$icomoon-font-family}' !important;
-  speak: none;
+  // speak: none; // unsupported / outdated ?
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
