@@ -2,19 +2,21 @@
     <section class="messenger"
         v-if="isAuthenticated"
         :class="{
-            'left-panel-open': isChannelPanelOpen,
+            'left-panel-open': leftSidePanel,
             'right-panel-open': rightSidePanel,
         }">
         <!-- if no channel selected channel list should be displayed -->
         <channels-panel
             @openQuickSearch="quickSearch=true"
             @searchSubmit="onPanelSearchSubmit"
-            :class="{'force-on': !currentChannel,  'open': isChannelPanelOpen}" />
+            @close="leftSidePanel=null"
+            :class="{'force-on': !currentChannel,  'open': !!leftSidePanel}" />
 
         <div v-if="!currentChannel" class="welcome"></div>
 
         <!-- no use in displaying messages if no channel -->
         <router-view
+          @toggleChannelPanel="leftSidePanel=leftSidePanel ? null : 'channels'"
           @openThreadPanel="switchRightSidePanel('thread', $event)"
           @openMembersPanel="switchRightSidePanel('members', $event)"
           @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
@@ -24,8 +26,7 @@
         <members-panel
             v-if="rightSidePanel === 'members'"
             :channel="currentChannel"
-            @close="switchRightSidePanel()"
-            @openDirectMessage="onOpenDirectChannel" />
+            @close="switchRightSidePanel()" />
 
         <thread-panel
             v-if="currentChannel && rightSidePanel === 'thread'"
@@ -74,7 +75,7 @@
     </section>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import ChannelsPanel from '@/components/Panel/Channels'
 import MembersPanel from '@/components/Panel/Members'
 import ThreadPanel from '@/components/Panel/Thread'
@@ -91,6 +92,7 @@ export default {
   data () {
     return {
       preview: null,
+      leftSidePanel: null,
       panelThreadMessageID: null,
       rightSidePanel: null,
       searchQuery: null,
@@ -114,7 +116,6 @@ export default {
       channels: 'channels/list',
       findUserByID: 'users/findByID',
       users: 'users/list',
-      isChannelPanelOpen: 'ui/isChannelPanelOpen',
       getSettings: 'settings/get',
     }),
   },
@@ -208,17 +209,9 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      toggleFocus: 'ui/toggleFocus',
-    }),
-
     handleResize () {
       this.window.width = window.innerWidth
       this.window.height = window.innerHeight
-    },
-
-    onOpenDirectChannel (userId) {
-      this.toggleUserPanel(false)
     },
 
     onPanelSearchSubmit (query) {
@@ -297,7 +290,7 @@ section
 
 .left-panel-open .channel-container
 {
-  margin-left:260px;
+  margin-left:250px;
 }
 
 .right-panel-open .channel-container
@@ -325,8 +318,8 @@ section
 {
   .channel-container
   {
-    margin-left:260px;
-    max-width:calc(100vw - 260px);
+    margin-left:250px;
+    max-width:calc(100vw - 250px);
   }
 }
 

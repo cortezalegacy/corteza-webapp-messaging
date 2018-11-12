@@ -1,5 +1,5 @@
 <template>
-  <li class="layer-item-wrap" :class="[channel.type, isGroupMemberOnline ? 'member-is-online' : null]" @click="toggleChannelPanel()">
+  <li class="layer-item-wrap" :class="[channel.type, isGroupMemberOnline ? 'member-is-online' : null]" @click="$emit('close')">
     <router-link
             class="layer-item layer-selectable channel-name"
             v-bind:class="[
@@ -20,7 +20,7 @@
   </li>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'channel-panel-item',
@@ -60,10 +60,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions({
-      toggleChannelPanel: 'ui/toggleChannelPanel',
-    }),
-
     channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])

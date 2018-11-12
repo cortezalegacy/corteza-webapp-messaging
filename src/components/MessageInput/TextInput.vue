@@ -132,7 +132,6 @@ export default {
       q.scrollingContainer.focus()
 
       // And select all content
-      console.log(q.getLength())
       q.setSelection(0, 10000)
     }
   },

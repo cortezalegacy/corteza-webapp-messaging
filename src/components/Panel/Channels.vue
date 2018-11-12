@@ -34,12 +34,12 @@
             </a>
           </div>
           <ul v-if="joinedPublicChannels && publicUnfold">
-            <channel-panel-item
-                    v-for="(ch, index) in sort(joinedPublicChannels)"
-                    :key="ch.ID"
-                    :channel="ch"
-                    :index="index"
-            ></channel-panel-item>
+            <panel-item
+              v-for="(ch, index) in sort(joinedPublicChannels)"
+              :key="ch.ID"
+              :channel="ch"
+              :index="index"
+              v-on="$listeners" />
           </ul>
         </section>
 
@@ -60,12 +60,12 @@
             </span>
             </a></div>
           <ul v-if="privateChannels && privateUnfold">
-            <channel-panel-item
-                    v-for="(ch, index) in sort(privateChannels)"
-                    :key="ch.ID"
-                    :channel="ch"
-                    :index="index"
-            ></channel-panel-item>
+            <panel-item
+              v-for="(ch, index) in sort(privateChannels)"
+              :key="ch.ID"
+              :channel="ch"
+              :index="index"
+              v-on="$listeners" />
           </ul>
         </section>
 
@@ -83,12 +83,12 @@
             </a>
           </div>
           <ul v-if="groupChannels && groupUnfold">
-            <channel-panel-item
-              v-for="(ch, index) in sort(groupChannels)"
-              :key="ch.ID"
-              :channel="ch"
-              :index="index"
-            ></channel-panel-item>
+            <panel-item
+        v-for="(ch, index) in sort(groupChannels)"
+        :key="ch.ID"
+        :channel="ch"
+        :index="index"
+              v-on="$listeners" />
           </ul>
         </section>
       </div>
@@ -97,8 +97,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
-import { ChannelPanelItem } from '@/components/Channel'
+import { mapGetters } from 'vuex'
+import PanelItem from '@/components/Channel/PanelItem'
 import SearchInput from '@/components/SearchInput'
 
 function sortChannels (a, b) {
@@ -154,17 +154,13 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      toggleChannelPanel: 'ui/toggleChannelPanel',
-    }),
-
     sort (cc) {
       return cc.sort(sortChannels)
     },
   },
 
   components: {
-    ChannelPanelItem,
+    PanelItem,
     SearchInput,
   },
 }
@@ -255,7 +251,7 @@ export default {
     top: 0;
     padding-top: 10px;
     left: 0;
-    width: 260px;
+    width: 250px;
     background-color: $appwhite;
     z-index: 2;
   }

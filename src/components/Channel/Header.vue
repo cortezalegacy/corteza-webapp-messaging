@@ -2,7 +2,7 @@
   <header class="header sub-header">
     <label
       class="channel-toggle"
-      @click="toggleChannelPanel()">
+      @click="$emit('toggleChannelPanel')">
       <i class="icon-menu4"></i></label>
 
     <div class="channel-n-topic">
@@ -42,8 +42,6 @@
   </header>
 </template>
 <script>
-import { mapActions } from 'vuex'
-
 export default {
   name: 'channel-header',
 
@@ -52,15 +50,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-
-  computed: {
-  },
-
-  methods: {
-    ...mapActions({
-      toggleChannelPanel: 'ui/toggleChannelPanel',
-    }),
   },
 }
 </script>
