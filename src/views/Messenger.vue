@@ -87,6 +87,9 @@ import SearchResults from '@/components/Lightboxed/SearchResults'
 import { Picker } from 'emoji-mart-vue'
 import { User } from '@/types'
 import { cleanMentions } from '@/lib/mentions'
+import TitleNotifications from '@/lib/title_notifications'
+
+const titleNtf = new TitleNotifications(document)
 
 export default {
   data () {
@@ -131,8 +134,11 @@ export default {
   },
 
   created () {
+    window.addEventListener('focus', this.titleNotificationsHandler)
     window.addEventListener('resize', this.handleResize)
     this.handleResize()
+
+    titleNtf.update()
 
     this.$bus.$on('$core.newMessage', ({ message }) => {
       if (!this.currentUser || this.currentUser.ID === (message.user || {}).ID) {
@@ -146,6 +152,9 @@ export default {
         // We're already paying atention
         return
       }
+
+      // Set window title so user maybe notice the action in the channel (notifications mixin)
+      titleNtf.flashNew()
 
       if (!message.isMentioned(this.currentUser.ID)) {
         console.debug('Not notifying, not mentioned')
@@ -188,7 +197,9 @@ export default {
   },
 
   destroyed () {
+    titleNtf.stopFlashing()
     window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('focus', this.titleNotificationsHandler)
     this.$bus.$off('ui.openEmojiPicker')
   },
 
@@ -200,11 +211,8 @@ export default {
     },
 
     'currentChannel' () {
-      if (this.currentChannel) {
-        document.title = `${this.currentChannel.name} | Crust`
-      } else {
-        document.title = `Crust`
-      }
+      // Channel change means title change
+      titleNtf.setChannelName(this.currentChannel ? this.currentChannel.name : null).update()
     },
   },
 
@@ -246,6 +254,10 @@ export default {
         case 'thread':
           this.panelThreadMessageID = $event.message.ID
       }
+    },
+
+    titleNotificationsHandler () {
+      titleNtf.stopFlashing()
     },
   },
 
