@@ -76,7 +76,7 @@
 
       <footnote
         :message="message"
-        @openThread="$emit('openThreadPanel', $event)" />
+        v-on="$listeners" />
     </li>
 </template>
 <script>
