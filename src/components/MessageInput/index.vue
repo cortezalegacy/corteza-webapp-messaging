@@ -219,7 +219,7 @@ export default {
       width:100%;
       position:relative;
       max-width:100%;
-      overflow-x:hidden;
+      background-color:$appwhite;
     }
     &.editing
     {
@@ -245,8 +245,8 @@ export default {
   .message-input
   {
     font-family: $crustregular;
-    margin-left:$inputwidth;
-    width:calc(100% - #{$inputwidth});
+    margin-right:$inputwidth;
+    width:calc(100% - #{$inputwidth * 2});
     border-radius: 0 5px 5px 0;
     border-left:0;
     float:right;
@@ -262,21 +262,22 @@ export default {
   .input-button {
     position: absolute;
     height: calc(100%);
-    width: $inputwidth + 5px;
+    width: $inputwidth;
     color: $appgrey;
     border-radius: 5px 0 0 5px;
     font-size: 15px;
     cursor: pointer;
     text-align: center;
-    font-size:30px;
+    font-size:28px;
     line-height: 100%;
     float:left;
     z-index: 2;
+    margin:0;
+    padding:0;
   }
 
   .send-button
   {
-    float:right;
     right:0;
     display:none;
   }
@@ -333,11 +334,13 @@ export default {
     .message-input
     {
       margin-left:$wideinputwidth;
+      margin-right:0;
       width:calc(100% - #{$wideinputwidth});
     }
     .input-button
     {
       width: $wideinputwidth;
+      font-size:30px;
     }
     .channel-input .wrap
     {

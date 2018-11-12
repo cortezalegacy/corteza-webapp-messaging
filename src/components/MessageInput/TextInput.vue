@@ -163,6 +163,7 @@ export default {
     .ql-editor
     {
       padding: 7px 3px 5px 5px;
+      line-height: 18px;
     }
     .ql-editor.ql-blank::before
     {
