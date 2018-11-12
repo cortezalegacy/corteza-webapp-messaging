@@ -1,29 +1,30 @@
 <template>
-  <main v-if="unreadChannels && unreadChannels.length > 0">
+  <div v-if="unreadChannels && unreadChannels.length > 0">
     <header>
       <b>[WIP] Unreads in {{ unreadChannels.length }} channel(s)</b>
     </header>
-
-    <section v-for="(unread) in unreadChannels" :key="unread.ID">
-      <header>
-        <channel-name :channel="findChannelByID(unread.ID)" /> {{unread.count}}
-        <button @click="markAsRead(unread)">mark as read [@todo]</button>
-      </header>
-      <section>
-        <messages
-          ref="messages"
-          :messages="unreadInChannel(unread.ID, unread.lastMessageID)"
-          :currentUser="currentUser"
-          origin="unreads"
-          :scrollable="false"
-          v-on="$listeners" />
+    <main>
+      <section v-for="(unread) in unreadChannels" :key="unread.ID">
+        <header>
+          <channel-name :channel="findChannelByID(unread.ID)" /> {{unread.count}}
+          <button @click="markAsRead(unread)">mark as read [@todo]</button>
+        </header>
+        <section>
+          <messages
+            ref="messages"
+            :messages="unreadInChannel(unread.ID, unread.lastMessageID)"
+            :currentUser="currentUser"
+            origin="unreads"
+            :scrollable="false"
+            v-on="$listeners" />
+        </section>
+        <hr/>
       </section>
-      <hr/>
-    </section>
+    </main>
     <footer>
       <button @click="markAllAsRead()">mark all as read [@todo]</button>
     </footer>
-  </main>
+  </div>
   <empty v-else>No unread messages</empty>
 </template>
 <script>
@@ -96,5 +97,11 @@ export default {
   list-style:none;
   padding:0;
   margin:0;
+}
+
+div > main {
+  overflow-y: scroll;
+  overflow-x: scroll;
+  height: 100vh;
 }
 </style>

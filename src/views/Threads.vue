@@ -1,22 +1,24 @@
 <template>
-  <main v-if="getThreads.length > 0">
+  <div v-if="getThreads.length > 0">
     <header>
       <b>[WIP] Threads</b>
     </header>
 
-    <section v-for="(thread) in getThreads" :key="thread.ID">
-      <section>
-        <messages
-          ref="messages"
-          :messages="getThread(thread.ID)"
-          :currentUser="currentUser"
-          origin="threads"
-          :scrollable="false"
-          v-on="$listeners" />
+    <main>
+      <section v-for="(thread) in getThreads" :key="thread.ID">
+        <section>
+          <messages
+            ref="messages"
+            :messages="getThread(thread.ID)"
+            :currentUser="currentUser"
+            origin="threads"
+            :scrollable="false"
+            v-on="$listeners" />
+        </section>
+        <hr/>
       </section>
-      <hr/>
-    </section>
-  </main>
+    </main>
+  </div>
   <empty v-else>No threads found</empty>
 </template>
 <script>
@@ -50,5 +52,11 @@ export default {
   list-style:none;
   padding:0;
   margin:0;
+}
+
+div > main {
+  overflow-y: scroll;
+  overflow-x: scroll;
+  height: 100vh;
 }
 </style>
