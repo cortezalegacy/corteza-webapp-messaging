@@ -10,7 +10,7 @@
         @cancel="$emit('cancel', $event)"
         @submit="onSubmit"
         @change="onChange"
-        :focus="focus && uiFocusMessageInput"
+        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput)"
         :value="editableString"
         :channels="channelSuggestions"
         :users="userSuggestions"
@@ -65,6 +65,8 @@ export default {
       // we need to do it to get because setting input.value to ''
       // does not work as expected (value does not change)
       textInputKey: 0,
+
+      keepFocusOnSubmit: false,
     }
   },
 
@@ -152,6 +154,8 @@ export default {
         // Sending reply
         this.$rest.sendReply(this.replyTo.channelID, this.replyTo.ID, value).then(stdResponse)
       } else if (this.channel) {
+        this.keepFocusOnSubmit = true
+
         // Sending message
         if (this.$commands.test(value)) {
           this.$commands.exec(this, value, { channel: this.channel })

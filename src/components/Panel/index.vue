@@ -1,5 +1,5 @@
 <template>
-  <aside class="menu-layer right noborder">
+  <aside class="menu-layer noborder">
     <header>
       <h1><slot name="header"></slot></h1>
       <h2><slot name="subtitle"></slot></h2>
@@ -15,11 +15,17 @@
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
 
-aside {
+aside.menu-layer {
+  margin: 0;
   overflow: hidden;
-  margin-top:0;
-  padding-top:0;
   height: 100vh;
+  width: 360px;
+  right:0;
+  left:auto;
+  border-left: solid 1px $defaultlinecolor;
+  ul{
+    padding-top: 10px;
+  }
 }
 
 header {
@@ -32,9 +38,9 @@ header {
 
   .closer {
     position: absolute;
-    top: 5px;
-    right: 20px;
-    font-size: 20px;
+    top: 10px;
+    right: 10px;
+    font-size: 30px;
     z-index: 9999;
   }
 
@@ -52,8 +58,6 @@ header {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-}
-main {
 }
 
 </style>

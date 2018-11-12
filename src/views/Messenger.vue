@@ -286,6 +286,7 @@ section
   position:relative;
   margin:0;
   height:100vh;
+  min-width: 300px;
 }
 
 .left-panel-open .channel-container
@@ -295,7 +296,7 @@ section
 
 .right-panel-open .channel-container
 {
-  margin-right:400px;
+  margin-right:360px;
 }
 
 .welcome

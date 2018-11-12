@@ -21,17 +21,6 @@
     box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
   }
 
-  &.right
-  {
-    right:0;
-    left:auto;
-    margin-left:0;
-    border-left: solid 1px $defaultlinecolor;
-    ul{
-      padding-top: 10px;
-    }
-  }
-
   &.noborder
   {
     border:none;
@@ -162,17 +151,6 @@
   }
 }
 
-.menu-layer.right.display,
-.menu-layer.right.force-on,
-.menu-layer.right.open
-{
-  margin-right:0;
-  width:90vw;
-  .menu-layer-section-wrapper
-  {
-    margin:0;
-  }
-}
 
 @media (max-width: $wideminwidth - 1)
 {
