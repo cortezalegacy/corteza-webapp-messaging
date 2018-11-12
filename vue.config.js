@@ -2,7 +2,7 @@ var webpack = require('webpack')
 var exec = require('child_process').execSync
 
 module.exports = {
-  baseUrl: '/',
+  baseUrl: '/messaging',
   configureWebpack: {
     // other webpack options to merge in ...
     plugins: [
