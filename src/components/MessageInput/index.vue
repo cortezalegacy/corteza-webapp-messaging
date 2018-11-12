@@ -25,7 +25,7 @@
       <button
         v-if="true || showSendBtn"
         class="send-button input-button">
-        <span class="icon-play3"></span>
+        <span class="icon-hsend"></span>
       </button>
 
 <!--
@@ -294,6 +294,8 @@ export default {
   {
     right:0;
     display:none;
+    font-size:24px;
+    margin-top:2px;
   }
 
   .input-button:focus {

@@ -13,7 +13,12 @@ $icon-edit-2: "\e927";
 $icon-edit-3: "\e92c";
 $icon-heart: "\e929";
 $icon-more-horizontal: "\e928";
+$icon-navigation: "\e92d";
+$icon-play: "\e92e";
+$icon-play-circle: "\e92f";
+$icon-send: "\e930";
 $icon-trash: "\e92a";
+$icon-triangle: "\e931";
 $icon-align-justify: "\e903";
 $icon-bell2: "\e901";
 $icon-chevron-down: "\e904";
@@ -33,6 +38,7 @@ $icon-square: "\e911";
 $icon-terminal: "\e912";
 $icon-user2: "\e902";
 $icon-x: "\e913";
+$icon-hsend: "\e932";
 $icon-grid-interface-close: "\e920";
 $icon-grid-interface-absent: "\e921";
 $icon-grid-interface-open: "\e922";
@@ -78,6 +84,8 @@ $icon-radio-checked2: "\ea55";
 $icon-google: "\ea88";
 $icon-facebook: "\ea90";
 $icon-youtube: "\ea9d";
+$icon-github: "\eab0";
+$icon-linkedin: "\eac9";
 $icon-files-empty: "\e925";
 $icon-bell: "\e951";
 $icon-bubble: "\e96b";
@@ -92,9 +100,9 @@ $icon-indent-decrease: "\ea7c";
 @font-face {
   font-family: '#{$icomoon-font-family}';
   src:
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?6ef0ia') format('truetype'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?6ef0ia') format('woff'),
-    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?6ef0ia##{$icomoon-font-family}') format('svg');
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.ttf?4jy88j') format('truetype'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.woff?4jy88j') format('woff'),
+    url('#{$icomoon-font-path}/#{$icomoon-font-family}.svg?4jy88j##{$icomoon-font-family}') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -102,7 +110,7 @@ $icon-indent-decrease: "\ea7c";
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: '#{$icomoon-font-family}' !important;
-  // speak: none; // unsupported / outdated ?
+  speak: none;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -154,9 +162,34 @@ $icon-indent-decrease: "\ea7c";
     content: $icon-more-horizontal;
   }
 }
+.icon-navigation {
+  &:before {
+    content: $icon-navigation;
+  }
+}
+.icon-play {
+  &:before {
+    content: $icon-play;
+  }
+}
+.icon-play-circle {
+  &:before {
+    content: $icon-play-circle;
+  }
+}
+.icon-send {
+  &:before {
+    content: $icon-send;
+  }
+}
 .icon-trash {
   &:before {
     content: $icon-trash;
+  }
+}
+.icon-triangle {
+  &:before {
+    content: $icon-triangle;
   }
 }
 .icon-align-justify {
@@ -252,6 +285,11 @@ $icon-indent-decrease: "\ea7c";
 .icon-x {
   &:before {
     content: $icon-x;
+  }
+}
+.icon-hsend {
+  &:before {
+    content: $icon-hsend;
   }
 }
 .icon-grid-interface-close {
@@ -477,6 +515,16 @@ $icon-indent-decrease: "\ea7c";
 .icon-youtube {
   &:before {
     content: $icon-youtube;
+  }
+}
+.icon-github {
+  &:before {
+    content: $icon-github;
+  }
+}
+.icon-linkedin {
+  &:before {
+    content: $icon-linkedin;
   }
 }
 .icon-files-empty {
