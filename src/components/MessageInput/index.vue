@@ -10,8 +10,10 @@
         @cancel="$emit('cancel', $event)"
         @submit="onSubmit"
         @change="onChange"
-        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput)"
-        :value="editableString"
+        v-model="value"
+        :preset="editableString"
+        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
+        :submitOnEnter="!uiEnableSubmitButton()"
         :channels="channelSuggestions"
         :users="userSuggestions"
         class="message-input"
@@ -19,12 +21,14 @@
 
       <button
         v-if="showFileUpload"
-        class="upload-button input-button" @click="onPromptFilePicker">
+        class="upload-button input-button"
+        @click="onPromptFilePicker">
         <span>+</span>
       </button>
       <button
-        v-if="true || showSendBtn"
-        class="send-button input-button">
+        v-if="uiEnableSubmitButton()"
+        class="send-button input-button"
+        @click="onSubmitBtnClick">
         <span class="icon-hsend"></span>
       </button>
 
@@ -136,8 +140,8 @@ export default {
 
     // Override original submit event and extend event
     // data with submitMeta data.
-    onSubmit ({ plain, delta, markdown }) {
-      const value = markdown.trim()
+    onSubmit (ev) {
+      const value = ev.value.trim()
 
       const stdResponse = () => {
         // Trigger remounting
@@ -149,7 +153,7 @@ export default {
 
       if (this.message && value.length === 0) {
         this.$emit('deleteMessage')
-      } else if (markdown.length === 0) {
+      } else if (value.length === 0) {
         // nothing to do here...
         return false
       } else if (this.message) {
@@ -171,6 +175,11 @@ export default {
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
         this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
       }
+    },
+
+    onSubmitBtnClick (value) {
+      this.onSubmit({ value: this.value })
+      this.clearInputText()
     },
 
     // onEmojiPickerClick () {
@@ -222,7 +231,7 @@ export default {
     }
     &.editing
     {
-      padding-right: 10px 0 10px 10px;
+      padding: 10px 0 10px 10px;
       .message-input{
         width: 100%;
       }
@@ -279,23 +288,21 @@ export default {
     width: $inputwidth;
     color: $appgrey;
     border-radius: 5px 0 0 5px;
-    font-size: 15px;
     cursor: pointer;
     text-align: center;
     font-size:28px;
+    margin-top: 0;
     line-height: 100%;
     float:left;
     z-index: 2;
-    margin:0;
     padding:0;
   }
 
   .send-button
   {
     right:0;
-    display:none;
     font-size:24px;
-    margin-top:2px;
+    margin-top: 0px;
   }
 
   .input-button:focus {
@@ -343,6 +350,9 @@ export default {
             border-left: 1px solid $appgreen;
             border-radius: 5px;
           }
+        }
+        .send-button {
+          margin-top: -2px;
         }
       }
     }

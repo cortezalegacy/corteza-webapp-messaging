@@ -37,7 +37,7 @@
 
     <message-input
       :channel="channel"
-      :focus="uiFocusMessageInput"
+      :focus="uiFocusMessageInput()"
       v-if="isMember"
       @promptFilePicker="onOpenFilePicker"
       @editLastMessage="editLastMessage=true" />

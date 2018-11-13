@@ -2,7 +2,7 @@
   <quill-editor
     ref="quill"
     @ready="onQuillReady"
-    v-model="internalValue"
+    v-model="content"
     :options="options"/>
 </template>
 
@@ -31,23 +31,19 @@ export default {
       required: false,
     },
 
+    preset: String,
     focus: { type: Boolean, default: true },
+    submitOnEnter: { type: Boolean, default: false },
   },
 
   computed: {
-    internalValue: {
+    content: {
       get () {
-        let str = ''
-
-        if (this.value) {
-          str = this.value.replace(/\n/g, '<br>')
-        }
-
-        return str
+        return this.internalValue
       },
 
       set (value) {
-        this.$emit('change', { value })
+        this.$emit('input', exportToMarkdown(this.$refs.quill.quill.getContents()))
       },
     },
   },
@@ -58,6 +54,8 @@ export default {
     const vm = this
 
     return {
+      internalValue: this.preset.replace(/\n/g, '<br>'),
+
       options: {
         debug: false,
         placeholder: this.placeholder,
@@ -103,13 +101,14 @@ export default {
               handleEnter: {
                 key: 'ENTER',
                 handler: function () {
-                  // @todo send markdown instead of plaintext / delta
-                  vm.$emit('submit', {
-                    plain: this.quill.getText(),
-                    delta: this.quill.getContents(),
-                    markdown: exportToMarkdown(this.quill.getContents()),
-                  })
-                  return false
+                  if (vm.submitOnEnter) {
+                    vm.$emit('submit', {
+                      value: exportToMarkdown(this.quill.getContents()),
+                    })
+                    return false
+                  }
+
+                  return true
                 },
               },
               // Catch ESC key event and emit cancel event
@@ -140,7 +139,6 @@ export default {
 
   methods: {
     onQuillReady (quill) {
-      window.quill = quill
       quill.root.addEventListener('keydown', ev => {
         // on arrow-up but only on empty input!
         if (ev.key === 'ArrowUp' && quill.getText().trim().length === 0) {
