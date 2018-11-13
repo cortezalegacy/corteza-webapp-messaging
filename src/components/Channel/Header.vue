@@ -2,7 +2,7 @@
   <header class="header sub-header">
     <label
       class="channel-toggle"
-      @click="$emit('toggleChannelPanel')">
+      @click="$emit('toggleChannelPanel', null)">
       <i class="icon-menu4"></i></label>
 
     <div class="channel-n-topic">

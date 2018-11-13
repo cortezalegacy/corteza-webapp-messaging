@@ -8,16 +8,14 @@
         v-on="$listeners" />
     </div>
     <div class="menu-layer-inner">
-      <!-- cant close this if no channel selected-->
-      <label class="closer"
-        v-if="current"
-        @click="toggleChannelPanel(false)">
-          <i class="icon-close" aria-label="close"></i>
-      </label>
       <div class="layer-section-wrapper">
         <section class="layer-section shortcuts">
-          <div class="layer-item layer-section-title"><router-link :to="{name: 'threads'}"><i class="icon icon-left icon-Fichier-2"></i>My threads</router-link></div>
-          <div class="layer-item layer-section-title"><router-link :to="{name: 'unreads'}"><i class="icon icon-left icon-bell2"></i>All unreads</router-link></div>
+          <div class="layer-item layer-section-title" @click="gotoAndClose({name: 'threads'})">
+            <i class="icon icon-left icon-Fichier-2"></i>My threads
+          </div>
+          <div class="layer-item layer-section-title" @click="gotoAndClose({name: 'unreads'})">
+            <i class="icon icon-left icon-bell2"></i>All unreads
+          </div>
         </section>
         <!-- one section per "board" (group of channels) -->
         <section class="layer-section">
@@ -156,6 +154,14 @@ export default {
   methods: {
     sort (cc) {
       return cc.sort(sortChannels)
+    },
+
+    gotoAndClose (params) {
+      this.$emit('close')
+
+      if (params) {
+        this.$router.push(params)
+      }
     },
   },
 

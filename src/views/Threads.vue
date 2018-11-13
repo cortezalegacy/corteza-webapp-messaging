@@ -1,10 +1,14 @@
 <template>
-  <div v-if="getThreads.length > 0">
+  <div>
     <header class="header sub-header">
+      <label
+        class="channel-toggle"
+        @click="$emit('toggleChannelPanel', null)">
+        <i class="icon-menu4"></i></label>
+
       <span>All Threads</span>
     </header>
-
-    <main>
+    <main v-if="getThreads.length > 0">
       <section v-for="(thread) in getThreads" :key="thread.ID">
         <section>
           <messages
@@ -18,8 +22,8 @@
         <hr/>
       </section>
     </main>
+    <empty v-else class="empty">No threads found</empty>
   </div>
-  <empty v-else class="empty">No threads found</empty>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -80,5 +84,18 @@ hr {
 .empty {
   text-align: center;
   margin-top: 30px;
+}
+
+.channel-toggle
+{
+  font-size:24px;
+  float:left;
+  line-height:50px;
+  width:60px;
+  margin:0;
+  margin-left:-20px;
+  text-align:center;
+  border:none;
+  padding-top:5px;
 }
 </style>

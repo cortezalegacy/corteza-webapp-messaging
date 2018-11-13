@@ -10,7 +10,7 @@
             @openQuickSearch="quickSearch=true"
             @searchSubmit="onPanelSearchSubmit"
             @close="leftSidePanel=null"
-            :class="{'force-on': !currentChannel,  'open': !!leftSidePanel}" />
+            :class="{'force-on': !!leftSidePanel,  'open': !!leftSidePanel}" />
 
         <div v-if="!currentChannel" class="welcome"></div>
 

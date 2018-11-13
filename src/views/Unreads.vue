@@ -1,9 +1,14 @@
 <template>
-  <div v-if="unreadChannels && unreadChannels.length > 0">
+  <div>
     <header class="header sub-header">
-      <span>[WIP] Unreads in {{ unreadChannels.length }} channel(s)</span>
+      <label
+        class="channel-toggle"
+        @click="$emit('toggleChannelPanel', null)">
+        <i class="icon-menu4"></i></label>
+
+      <span>Unread messages</span>
     </header>
-    <main>
+    <main v-if="unreadChannels && unreadChannels.length > 0">
       <section v-for="(unread) in unreadChannels" :key="unread.ID" v-if="findChannelByID(unread.ID)">
         <header class="channel-unread">
           <channel-name :channel="findChannelByID(unread.ID)" /> ({{unread.count}})
@@ -21,11 +26,11 @@
         <hr/>
       </section>
     </main>
-    <footer>
+    <empty v-else class="empty">No unread messages</empty>
+    <footer v-if="unreadChannels && unreadChannels.length > 0">
       <button @click="markAllAsRead()">mark all as read [@todo]</button>
     </footer>
   </div>
-  <empty v-else class="empty">No unread messages</empty>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -131,5 +136,18 @@ hr {
   background-color: $appwhite;
   height: 1px;
   border: none;
+}
+
+.channel-toggle
+{
+  font-size:24px;
+  float:left;
+  line-height:50px;
+  width:60px;
+  margin:0;
+  margin-left:-20px;
+  text-align:center;
+  border:none;
+  padding-top:5px;
 }
 </style>
