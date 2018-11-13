@@ -470,6 +470,7 @@ a{
       max-width: 100%;
       overflow: scroll;
       font-size: 12px;
+      white-space: pre-wrap
     }
 
   }

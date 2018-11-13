@@ -53,6 +53,7 @@ pre {
   background-color: white;
   border: 1px solid $appgrey;
   border-radius: 5px;
+  white-space: pre-wrap
 }
 
 p > code {
