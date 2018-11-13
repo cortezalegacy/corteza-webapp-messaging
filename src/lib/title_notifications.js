@@ -38,6 +38,7 @@ export default class {
 
   flashNew () {
     let counter = 0
+    this.stopFlashing()
     this.intervalHandle = window.setInterval(() => {
       this.update({ incNew: counter % 2 === 0 })
       counter++
