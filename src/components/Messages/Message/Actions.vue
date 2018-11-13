@@ -139,6 +139,9 @@ export default {
     cursor: pointer;
     color: $defaultlinecolor;
     margin-right: 1px;
+    &.unread{
+      color: $appred;
+    }
     &:hover{
       border-color: $appgrey;
     }
