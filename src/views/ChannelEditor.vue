@@ -21,7 +21,7 @@
           </div>
 -->
           <div v-if="channel.type !== 'group'" class="input-wrap">
-            <label class="label-block">Channel name</label>
+            <label class="label-block">Channel name *</label>
             <input
               class="input-txt input-block name"
               name="name"
@@ -67,6 +67,8 @@
               value-attribute="ID"
               display-attribute="label"
               @select="onMemberSelect"
+              class="select-members"
+              :destyled="true"
               />
 
             <ul>
@@ -248,10 +250,11 @@ export default {
   },
 }
 </script>
+
 <style scoped lang="scss">
+@import '@/assets/sass/inputs.scss';
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/headers.scss';
-@import '@/assets/sass/inputs.scss';
 @import '@/assets/sass/btns.scss';
 @import '@/assets/sass/notifications.scss';
 
@@ -294,7 +297,37 @@ section.toggle-state {
 }
 
 .label-block{
-  /*color: $appgrey;*/
+  font-weight: bold;
+  padding-bottom: 10px;
 }
 
+.form-check{
+  margin-bottom: 30px;
+}
+
+.btn{
+  font-size: 14px;
+}
+
+</style>
+
+<style lang="scss">
+  .select-members{
+    .input-wrapper{
+      input{
+        font-size: 16px;
+        width: 100%;
+        height: 42px;
+        padding: 0 0.5em;
+        border-radius: 3px;
+        border: solid 1px #90A3B1;
+        &::placeholder{
+          color: #90A3B1;
+        }
+        &:focus{
+          border: 1px solid #1397CB;
+        }
+      }
+    }
+  }
 </style>

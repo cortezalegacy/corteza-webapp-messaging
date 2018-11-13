@@ -183,6 +183,7 @@ export default {
 .shortcuts {
   padding-bottom: 25px;
   padding-left: 8px;
+  cursor: pointer;
   .layer-item {
     padding-top: 0;
     margin-top: 0;

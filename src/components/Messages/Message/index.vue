@@ -310,7 +310,7 @@ a{
     margin-top: 0;
   }
 
-  margin-top: -10px;
+  margin-top: -18px;
 }
 
 .message-n-meta.first {
