@@ -169,7 +169,7 @@ export default {
     background: white;
     padding-bottom: 5px;
     z-index: 1;
-    width: 400px;
+    width: 360px;
   }
 
   ul{
