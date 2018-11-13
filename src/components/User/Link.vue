@@ -1,7 +1,7 @@
 <template>
   <router-link
     @click="$emit('click', $event)"
-    :to="linkProps" :class="{ 'current-user':ID===currentUser.ID }">
+    :to="linkProps" :class="{ 'current-user': highlight && ID === currentUser.ID }">
     <slot>{{ user | userLabel }}</slot></router-link>
 </template>
 <script>
@@ -12,6 +12,10 @@ export default {
     ID: {
       type: String,
       required: true,
+    },
+    highlight: {
+      type: Boolean,
+      default: true,
     },
   },
 
