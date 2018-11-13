@@ -184,6 +184,12 @@ li {
   overflow-y: auto;
 }
 
+//media query specific for webkit, because of fixed and vh related problem in android/webkit
+@media all and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
+  .scrollable {
+    height: calc(100vh - 130px);
+  }
+}
 @media (min-width: $wideminwidth)
 {
   .scrollable {

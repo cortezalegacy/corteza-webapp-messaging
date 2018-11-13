@@ -216,30 +216,59 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
 //disposition of elements is done here:
-.header,
-.channel-input,
-.messages
+@media (max-width: #{$wideminwidth - 1px})
 {
-  position: absolute;
-  width:100%;
-  max-width:100vw;
-  left:0;
+  .header,
+  .channel-input,
+  .messages
+  {
+    position: fixed;
+    width:100%;
+    max-width:100vw;
+    left:0;
+  }
+  .header
+  {
+    top:0;
+  }
+  .channel-input
+  {
+    bottom:0;
+  }
+  .messages
+  {
+    top:52px;
+    bottom:50px;
+  }
+  footer
+  {
+    bottom: 0px;
+    position: fixed;
+  }
 }
-.header
-{
-  top:0;
-}
-.channel-input
-{
-  bottom:0;
-}
-.messages
-{
-  top:52px;
-}
-
 @media (min-width: $wideminwidth)
 {
+  .header,
+  .channel-input,
+  .messages
+  {
+    position: absolute;
+    width:100%;
+    max-width:100vw;
+    left:0;
+  }
+  .header
+  {
+    top:0;
+  }
+  .channel-input
+  {
+    bottom:0;
+  }
+  .messages
+  {
+    top:52px;
+  }
   .header,
   .channel-input,
   .messages
@@ -251,11 +280,10 @@ export default {
     top:62px;
     bottom:65px;
   }
-}
-
-footer {
-  bottom: 0px;
-  position: absolute;
+  footer {
+    bottom: 0px;
+    position: absolute;
+  }
 }
 
 section.activity {
