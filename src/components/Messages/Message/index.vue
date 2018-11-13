@@ -12,6 +12,7 @@
         'bookmarked' : message.isBookmarked,
         'first-unread': isFirstUnread && !isFirst && !isLast,
         'unread': isUnread,
+        'type-channel-event': message.type === 'channelEvent',
       }"
       ref="message"
       :key="message.ID">

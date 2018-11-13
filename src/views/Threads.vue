@@ -1,7 +1,7 @@
 <template>
   <div v-if="getThreads.length > 0">
-    <header>
-      <b>[WIP] Threads</b>
+    <header class="header sub-header">
+      <span>All Threads</span>
     </header>
 
     <main>
@@ -19,7 +19,7 @@
       </section>
     </main>
   </div>
-  <empty v-else>No threads found</empty>
+  <empty v-else class="empty">No threads found</empty>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -48,16 +48,37 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.discussion
-{
-  list-style:none;
-  padding:0;
-  margin:0;
+  @import '@/assets/sass/headers.scss';
+.channel-container {
+  width: 100%;
+}
+
+.discussion {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 div > main {
   overflow-y: scroll;
   overflow-x: scroll;
-  height: 100vh;
+  height: calc(100vh - 60px);
+}
+
+.header span {
+  font-size: 13px;
+  font-family: $crustheavy;
+  font-weight: bold;
+}
+
+hr {
+  background-color: $appwhite;
+  height: 1px;
+  border: none;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 30px;
 }
 </style>

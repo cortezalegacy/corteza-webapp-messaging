@@ -1,13 +1,13 @@
 <template>
   <div v-if="unreadChannels && unreadChannels.length > 0">
-    <header>
-      <b>[WIP] Unreads in {{ unreadChannels.length }} channel(s)</b>
+    <header class="header sub-header">
+      <span>[WIP] Unreads in {{ unreadChannels.length }} channel(s)</span>
     </header>
     <main>
       <section v-for="(unread) in unreadChannels" :key="unread.ID" v-if="findChannelByID(unread.ID)">
-        <header>
-          <channel-name :channel="findChannelByID(unread.ID)" /> {{unread.count}}
-          <button @click="markAsRead(unread)">mark as read [@todo]</button>
+        <header class="channel-unread">
+          <channel-name :channel="findChannelByID(unread.ID)" /> ({{unread.count}})
+          <button @click="markAsRead(unread)" class="btn btn-green">Mark as read</button>
         </header>
         <section>
           <messages
@@ -25,7 +25,7 @@
       <button @click="markAllAsRead()">mark all as read [@todo]</button>
     </footer>
   </div>
-  <empty v-else>No unread messages</empty>
+  <empty v-else class="empty">No unread messages</empty>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -93,16 +93,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.discussion
-{
-  list-style:none;
-  padding:0;
-  margin:0;
+  @import '@/assets/sass/headers.scss';
+  @import '@/assets/sass/btns.scss';
+.channel-container {
+  width: 100%;
+}
+
+.discussion {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 div > main {
   overflow-y: scroll;
   overflow-x: scroll;
-  height: 100vh;
+  height: calc(100vh - 60px);
+}
+
+.header span {
+  font-size: 13px;
+  font-family: $crustheavy;
+  font-weight: bold;
+}
+
+.empty {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.channel-unread {
+  font-size: 18px;
+  padding: 10px 20px;
+}
+
+hr {
+  background-color: $appwhite;
+  height: 1px;
+  border: none;
 }
 </style>

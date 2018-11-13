@@ -299,6 +299,7 @@ section
   margin:0;
   height:100vh;
   min-width: 300px;
+  background: $mainbgcolor;
 }
 
 .left-panel-open .channel-container
