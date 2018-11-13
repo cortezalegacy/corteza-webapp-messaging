@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <h3>You are viewing #<channel-name :channel="channel" /></h3>
+    <h3>You are viewing #{{ label(channel) }}</h3>
     <button @click="onJoin" class="btn btn-green" v-if="channel.canJoin">Join Channel</button>
   </footer>
 </template>

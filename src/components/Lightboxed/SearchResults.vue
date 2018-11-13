@@ -9,7 +9,7 @@
       <main>
           <section v-for="(r) in results" :key="r.channel.ID">
               <h2>
-                  Results in #<channel-name :channel="r.channel"></channel-name>
+                  Results in #{{ label(channel) }}
               </h2>
               <messages
                   ref="messages"

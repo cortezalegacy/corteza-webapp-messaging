@@ -11,7 +11,7 @@
     <main v-if="unreadChannels && unreadChannels.length > 0">
       <section v-for="(unread) in unreadChannels" :key="unread.ID" v-if="findChannelByID(unread.ID)">
         <header class="channel-unread">
-          <channel-name :channel="findChannelByID(unread.ID)" /> ({{unread.count}})
+          {{ labelChannel(unread.ID) }} ({{unread.count}})
           <button @click="markAsRead(unread)" class="btn btn-green">Mark as read</button>
         </header>
         <section>

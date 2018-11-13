@@ -5,7 +5,7 @@
     @dragenter="showUploadArea=true">
 
     <template slot="header">Thread</template>
-    <template slot="subtitle">in <channel-name class="channel-name" :channel="channel"></channel-name></template>
+    <template slot="subtitle">in #{{ label(channel) }}</template>
     <template slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false"

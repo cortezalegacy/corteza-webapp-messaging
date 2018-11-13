@@ -71,7 +71,7 @@
 
             <ul>
               <li v-for="(u) in members" :key="u.ID">
-                {{ u | userLabel }}
+                {{ label(u) }}
                 <button @click.prevent="channel.removeMember(u)">remove</button>
               </li>
             </ul>

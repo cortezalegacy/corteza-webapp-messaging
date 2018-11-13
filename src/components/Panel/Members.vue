@@ -3,9 +3,7 @@
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
     <template slot="header">Members</template>
-    <template slot="subtitle">in
-      <channel-name :channel="channel"></channel-name>
-    </template>
+    <template slot="subtitle">in #{{ label(channel) }}</template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">
@@ -16,7 +14,7 @@
             class="channel-member"
             >
             <user-avatar :user="u" />
-            <span class="member-name">{{ u | userLabel }}</span>
+            <span class="member-name">{{ label(u) }}</span>
             <confirmation-toggle
               @confirmed="remove(u.ID)"
               cta="Remove"
@@ -38,7 +36,7 @@
             :key="u.ID"
             class="channel-member">
             <user-avatar :user="u" />
-            <span class="member-name">{{ u | userLabel }}</span>
+            <span class="member-name">{{ label(u) }}</span>
             <button @click="add(u.ID)" class="btn">Add</button>
           </li>
         </ul>

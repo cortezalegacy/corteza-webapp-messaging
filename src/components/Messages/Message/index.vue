@@ -21,7 +21,7 @@
           <em v-if="!consecutive" class="avatar">
             <avatar :user="message.user" />
           </em>
-          <em  v-if="!consecutive" class="author selectable">{{ message.user | userLabel }}</em>
+          <em  v-if="!consecutive" class="author selectable">{{ label(message.user) }}</em>
           <span class="date">
               {{ moment(message.createdAt).fromNow() }}
               <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>

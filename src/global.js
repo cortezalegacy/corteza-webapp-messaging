@@ -3,22 +3,21 @@
 import Vue from 'vue'
 import './ui'
 import VueNativeNotification from 'vue-native-notification'
-import ChannelName from '@/components/Channel/Name'
 import ChannelLink from '@/components/Channel/Link'
 import GlobalEvents from 'vue-global-events'
 import UserLink from '@/components/User/Link'
-import UI from '@/mixins/ui'
-import { User } from '@/types'
+import uiMixin from '@/mixins/ui'
+import labelsMixin from '@/mixins/labels'
 
 Vue.config.productionTip = false
 
 Vue.use(VueNativeNotification)
 
-Vue.filter('userLabel', (u) => (new User(u)).Label())
+// Vue.filter('userLabel', (u) => (new User(u)).Label())
 
 Vue.component('global-events', GlobalEvents)
-Vue.component('channel-name', ChannelName)
 Vue.component('channel-link', ChannelLink)
 Vue.component('user-link', UserLink)
 
-Vue.mixin(UI)
+Vue.mixin(uiMixin)
+Vue.mixin(labelsMixin)

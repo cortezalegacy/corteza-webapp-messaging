@@ -25,11 +25,6 @@ const getters = {
   privateOnly: (state, getters) => getters.byType('private'),
   groupsOnly: (state, getters) => getters.byType('group'),
 
-  // Find channel by name
-  findByName: (state, getters) => (name) => {
-    return getters.list.filter(c => c.name === name)[0] || undefined
-  },
-
   // Find channel by
   findByID: (state, getters) => (ID) => {
     return getters.list.filter(c => c.ID === ID)[0] || undefined

@@ -8,7 +8,7 @@
           <button @click="remove(u.ID)" v-if="isMember(u.ID)">remove</button>
           <button @click="add(u.ID)" v-if="!isMember(u.ID)">add</button>
         </td>
-        <td>{{u | userLabel }}</td>
+        <td>{{ label(u) }}</td>
       </tr>
     </table>
   </section>

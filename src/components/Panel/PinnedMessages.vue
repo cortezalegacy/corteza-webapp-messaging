@@ -3,7 +3,7 @@
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
     <template slot="header">Pinned messages</template>
-    <template slot="subtitle">in <channel-name :channel="channel"></channel-name></template>
+    <template slot="subtitle">in #{{ label(channel) }}</template>
     <template slot="main">
       <messages
         :messages="pinned"

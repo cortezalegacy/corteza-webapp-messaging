@@ -2,7 +2,7 @@
   <router-link
     @click="$emit('click', $event)"
     :to="{ name: 'channel', params: { channelID: ID } }">
-    <slot>{{ channel ? channel.name : 'N/A' }}</slot></router-link>
+    <slot>{{ label(channel) }}</slot></router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'

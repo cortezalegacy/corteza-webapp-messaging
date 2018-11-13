@@ -7,9 +7,7 @@
               { current: (current||{}).ID === channel.ID },
             ]"
             :to="{name:'channel', params:{channelID:channel.ID}}">
-      <channel-name
-        :channel="channel"
-      ></channel-name>
+      {{ labelChannel(channel) }}
     </router-link>
     <transition name="slide-fade">
       <span>

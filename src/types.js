@@ -134,11 +134,6 @@ export class User {
     this.connections = u.connections || 0
 
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.ID).toLocaleLowerCase()
-    this.label = this.name || this.username || this.handle || this.email || this.ID || 'N/A'
-  }
-
-  Label () {
-    return this.label
   }
 
   Match (q) {
