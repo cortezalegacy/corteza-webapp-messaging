@@ -104,7 +104,10 @@ export function Attachment (a) {
   this.meta = a.meta
   this.url = a.url
   this.previewUrl = a.previewUrl
-  this.downloadUrl = this.url + '?download=1'
+
+  if (window.CrustConfig.sam.baseUrl) {
+    this.downloadUrl = window.CrustConfig.sam.baseUrl + this.url + '?download=1'
+  }
 }
 
 export class User {
