@@ -2,6 +2,7 @@
   <ul :class="{'has-reactions':reactions.length > 0}">
     <li v-for="(r) in reactions"
         v-if="r.reaction"
+        :title="labels(r.userIDs)"
         @click="$emit('reaction', { reaction: r.reaction })"
         :key="r.reaction"><span v-html="emoji(r.reaction)"></span><sup>{{r.count}}</sup></li>
   </ul>
@@ -17,15 +18,13 @@ export default {
     },
   },
 
-  computed: {
-    defaultReactions () {
-      return this.reactions.map(r => r.reaction)
-    },
-  },
-
   methods: {
     emoji (str) {
       return textToEmoji(str)
+    },
+
+    labels (IDs) {
+      return IDs.map(this.labelUser).join(', ')
     },
   },
 
