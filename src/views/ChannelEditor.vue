@@ -27,6 +27,7 @@
               name="name"
               v-model.trim="channel.name"
               required
+              :disabled="!channel.canUpdate"
               autocomplete="channel-name"
               placeholder="Make it short, make it sweet">
           </div>
@@ -37,6 +38,7 @@
               class="input-txt input-block"
               name="topic"
               v-model.trim="channel.topic"
+              :disabled="!channel.canUpdate"
               autocomplete="channel-topic"
               placeholder="Things we talk about">
           </div>
@@ -47,6 +49,7 @@
               type="checkbox"
               id="channel-type"
               v-model="channel.type"
+              :disabled="!channel.canUpdate"
               true-value="private"
               false-value="public">
             <label for="channel-type">
@@ -75,8 +78,8 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-green" v-if="channel.ID">Update</button>
-            <button class="btn btn-green" v-else>Create</button>
+            <button class="btn btn-green" v-if="channel.ID && channel.canUpdate">Update</button>
+            <button class="btn btn-green" v-if="!channel.ID">Create</button>
             <button class="btn" @click.prevent="$router.back()">Close</button>
           </div>
         </form>
@@ -84,7 +87,7 @@
         <div v-if="channel.ID">
           <confirmation-row
             class="toggle-state"
-            v-if="!channel.archivedAt"
+            v-if="!channel.archivedAt && channel.canArchive"
             @confirmed="updateChannelState('archive')"
             cta="Archive">
             Archive this channel?
@@ -92,7 +95,7 @@
 
           <confirmation-row
             class="toggle-state"
-            v-if="channel.archivedAt"
+            v-if="channel.archivedAt && channel.canArchive"
             @confirmed="updateChannelState('unarchive')"
             cta="Unarchive" ctaClass="info">
             Unarchive this channel?
@@ -100,7 +103,7 @@
 
           <confirmation-row
             class="toggle-state"
-            v-if="!channel.deletedAt"
+            v-if="!channel.deletedAt && channel.canDelete"
             @confirmed="updateChannelState('delete')"
             cta="Delete">
             Delete this channel?
@@ -108,7 +111,7 @@
 
           <confirmation-row
             class="toggle-state"
-            v-if="channel.deletedAt"
+            v-if="channel.deletedAt && channel.canDelete"
             @confirmed="updateChannelState('undelete')"
             cta="Undelete" ctaClass="info">
             Undelete this channel?

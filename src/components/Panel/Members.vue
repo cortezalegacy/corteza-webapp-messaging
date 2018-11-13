@@ -20,6 +20,7 @@
             <confirmation-toggle
               @confirmed="remove(u.ID)"
               cta="Remove"
+              v-if="channel.canChangeMembers && u.ID != currentUser.ID"
               class="confirmation-buttons">
             </confirmation-toggle>
           </li>
@@ -70,6 +71,7 @@ export default {
   computed: {
     ...mapGetters({
       users: 'users/list',
+      currentUser: 'auth/user',
     }),
 
     members () {

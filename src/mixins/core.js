@@ -10,6 +10,7 @@ export default {
     this.$bus.$on('$ws.channels', (channels) => {
       let cc = []
       console.debug('Prefeched %d channels', channels.length)
+      console.table(channels)
       channels.forEach((c) => {
         cc.push(new Channel(c))
 
@@ -25,6 +26,7 @@ export default {
     })
 
     this.$bus.$on('$ws.channel', (channel) => {
+      console.log(channel)
       this.$store.dispatch('channels/updateList', new Channel(channel))
     })
 

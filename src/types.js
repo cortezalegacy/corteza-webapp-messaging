@@ -1,5 +1,7 @@
 export class Channel {
   constructor (c) {
+    this.canUpdate = true
+
     if (!c) {
       this.members = []
       return
@@ -13,6 +15,16 @@ export class Channel {
     this.updatedAt = c.updatedAt || null
     this.deletedAt = c.deletedAt || null
     this.archivedAt = c.archivedAt || null
+
+    this.canJoin = !!c.canJoin
+    this.canPart = !!c.canPart
+    this.canObserve = !!c.canObserve
+    this.canSendMessages = !!c.canSendMessages
+    this.canDeleteMessages = !!c.canDeleteMessages
+    this.canChangeMembers = !!c.canChangeMembers
+    this.canUpdate = !!c.canUpdate
+    this.canArchive = !!c.canArchive
+    this.canDelete = !!c.canDelete
 
     this.members = c.members || [] // []string
   }
