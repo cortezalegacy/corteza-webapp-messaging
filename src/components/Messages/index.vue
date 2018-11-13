@@ -185,9 +185,18 @@ li {
 }
 
 //media query specific for webkit, because of fixed and vh related problem in android/webkit
-@media all and (-webkit-min-device-pixel-ratio:0) and (min-resolution: .001dpcm) {
+@media (max-width: #{$wideminwidth - 1px})
+{
   .scrollable {
-    height: calc(100vh - 130px);
+    //@support for webkit only
+    @supports (-webkit-appearance:none) {
+      //see : https://developers.google.com/web/updates/2016/12/url-bar-resizing
+      //and : https://dev.to/peiche/100vh-behavior-on-chrome-2hm8
+      height: calc(100% - 80px);
+      top:60px;
+      //bottom:50px;
+      //background-color:blue;
+    }
   }
 }
 @media (min-width: $wideminwidth)

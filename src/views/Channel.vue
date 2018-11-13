@@ -216,36 +216,47 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
 //disposition of elements is done here:
+//fixed... because chrome, absolute works on firefox, fixed on both.
+//the issue is with the foldable adress bar, so only on mobile.
 @media (max-width: #{$wideminwidth - 1px})
 {
   .header,
   .channel-input,
   .messages
   {
-    position: fixed;
+    position: absolute;
     width:100%;
     max-width:100vw;
     left:0;
   }
   .header
   {
+    position:fixed;
     top:0;
   }
   .channel-input
   {
+    position:fixed;
     bottom:0;
   }
   .messages
   {
+    position:fixed;
     top:52px;
-    bottom:50px;
   }
   footer
   {
     bottom: 0px;
-    position: fixed;
+    position: absolute;
+  }
+  section.activity {
+    color: $appgrey;
+    position: absolute;
+    left: 65px;
+    bottom: 5px;
   }
 }
+//in wide mode revert to absolute
 @media (min-width: $wideminwidth)
 {
   .header,
@@ -284,12 +295,12 @@ export default {
     bottom: 0px;
     position: absolute;
   }
-}
 
-section.activity {
-  color: $appgrey;
-  position: absolute;
-  left: 65px;
-  bottom: 5px;
+  section.activity {
+    color: $appgrey;
+    position: absolute;
+    left: 65px;
+    bottom: 5px;
+  }
 }
 </style>
