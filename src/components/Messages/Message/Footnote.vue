@@ -20,11 +20,16 @@ export default {
 .message-infos
 {
   font-size:10px;
-  opacity:0.35;
+  color: $appgrey;
   display: inline;
   .info
   {
     display:inline-block;
+    font-weight: 300;
+    &.unread{
+      color: $appred;
+      font-weight: 900;
+    }
     &:after
     {
       content: '●';
