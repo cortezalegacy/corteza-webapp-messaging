@@ -267,7 +267,6 @@ export default {
     width:calc(100%);
     .wrap
     {
-      box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.1);
       display:table-cell;
       background-color:white;
     }
@@ -322,11 +321,12 @@ export default {
     {
       margin-right:0;
       width:calc(100%);
-
+      display:table-cell;
+      box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
       .wrap
       {
         padding-left:30px;
-        border:solid 1px rgba($appgreen,0.25);
+
       }
     }
   }
