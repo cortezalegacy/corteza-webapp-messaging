@@ -10,7 +10,6 @@ export default {
     this.$bus.$on('$ws.channels', (channels) => {
       let cc = []
       console.debug('Prefeched %d channels', channels.length)
-      console.table(channels)
       channels.forEach((c) => {
         cc.push(new Channel(c))
 
@@ -26,16 +25,15 @@ export default {
     })
 
     this.$bus.$on('$ws.channel', (channel) => {
-      console.log(channel)
       this.$store.dispatch('channels/updateList', new Channel(channel))
     })
 
     this.$bus.$on('$ws.channelJoin', (join) => {
-      this.$store.dispatch('channels/joinChannel', join)
+      this.$store.dispatch('channels/join', join)
     })
 
     this.$bus.$on('$ws.channelPart', (part) => {
-      this.$store.dispatch('channels/partChannel', part)
+      this.$store.dispatch('channels/part', part)
     })
 
     this.$bus.$on('$ws.channelActivity', (activity) => {
