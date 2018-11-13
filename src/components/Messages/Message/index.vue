@@ -306,10 +306,11 @@ a{
 
 // all margins in one place
 .message-n-meta.consecutive {
-  margin-top: -18px;
   &.type-channel-event{
     margin-top: 0;
   }
+
+  margin-top: -10px;
 }
 
 .message-n-meta.first {
