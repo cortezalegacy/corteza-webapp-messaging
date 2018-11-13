@@ -31,7 +31,7 @@
 
           <actions
             class="actions"
-            v-if="!hideActions && !inEditing"
+            v-if="!hideActions && !inEditing && !readOnly"
             v-bind="$props"
             @editMessage="inEditing=true"
             @deleteMessage="onDeleteMessage"
@@ -49,7 +49,7 @@
             :inline="message.type === 'inlineImage'" />
 
           <message-input
-            v-if="inEditing"
+            v-if="inEditing && !readOnly"
             :hideFileUpload="true"
             :message="message"
             @submit="onInputSubmit"
@@ -105,6 +105,8 @@ export default {
       type: Object,
       required: true,
     },
+
+    readOnly: Boolean,
 
     hideActions: Boolean,
     hideActionOpenThread: Boolean,

@@ -17,6 +17,7 @@
       <messages
         class="messages"
         ref="messages"
+        :readOnly="!channel.canSendMessages"
         :messages="messages"
         :currentUser="currentUser"
         :origin="channel"
@@ -28,6 +29,7 @@
 
       <message-input
         :replyTo="message"
+        v-if="channel.canSendMessages"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
     </template>

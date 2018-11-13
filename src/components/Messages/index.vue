@@ -4,6 +4,7 @@
       v-for="(msg, index) in messages"
       ref="message"
       @cancelEditing="$emit('cancelEditing')"
+      :readOnly="readOnly"
       :message="msg"
       :consecutive="consecutive && isConsecutive(messages, index)"
       :currentUser="currentUser"
@@ -40,6 +41,8 @@ export default {
       type: Array,
       required: true,
     },
+
+    readOnly: Boolean,
 
     // We can not just watch for updates of messages
     // sometime we need to react only when origin changes (whatever origin is)

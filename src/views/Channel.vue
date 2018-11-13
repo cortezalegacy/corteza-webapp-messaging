@@ -26,6 +26,7 @@
       :consecutive="true"
       :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
       :editLastMessage="editLastMessage"
+      :readOnly="!channel.canSendMessages"
       @cancelEditing="editLastMessage=false"
       @scrollTop="onScrollTop"
       @scrollBottom="onScrollBottom"
