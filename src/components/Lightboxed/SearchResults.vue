@@ -23,7 +23,8 @@
                   :hideBookmarking="true"
                   origin="search"
                   :scrollable="false"
-                  v-on="$listeners"/>
+                  v-on="$listeners"
+                  class="search-messages"/>
             </section>
       </main>
       <footer></footer>
@@ -117,13 +118,14 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/_0.declare.scss';
 
 header {
   height: 50px;
   width: 100vw;
 
   section {
-    padding: 10px 70px 0 10px;
+    padding: 10px 70px 0 70px;
   }
 
   .closer {
@@ -131,30 +133,40 @@ header {
     color: $appcream;
     float: right;
     font-size: 50px;
-    font-weight: bold;
     top: 10px;
     right: 30px;
     cursor: pointer;
     line-height: 30px;
   }
+
 }
 
 main {
   height: calc(100vh - 100px);
-  background-color: $appcream;
-  margin: 10px 70px 0 10px;
-  border-radius: 5px;
+  background-color: $appwhite;
+  margin: 0px 70px 0 70px;
   overflow-x: auto;
   overflow-x: hidden;
 
   section {
     h2 {
       margin: 16px 20px;
+      font-weight: 300;
+      font-size: 16px;
+
+      span {
+        font-weight: 900;
+      }
+
     }
 
-    padding: 16px 0px;
-    border-bottom: 2px solid $appgrey;
+    padding: 10px 0px;
+    border-bottom: 1px solid $tab_bgcolor;
   }
+
+}
+.search-messages{
+  margin-left: 30px;
 }
 
 </style>
