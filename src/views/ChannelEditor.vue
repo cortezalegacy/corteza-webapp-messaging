@@ -277,6 +277,10 @@ section.toggle-state {
   margin: 20px;
 }
 
+.default-input{
+  font-size: 16px;
+}
+
 .closer {
   position: relative;
   color: $appgrey;
@@ -287,6 +291,10 @@ section.toggle-state {
   right: 10px;
   cursor: pointer;
   line-height: 30px;
+}
+
+.label-block{
+  /*color: $appgrey;*/
 }
 
 </style>
