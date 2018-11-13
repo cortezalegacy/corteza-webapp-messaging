@@ -17,7 +17,7 @@
       ref="message"
       :key="message.ID">
 
-        <section>
+        <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
             <avatar :user="message.user" />
           </em>
@@ -301,14 +301,15 @@ a{
     margin-left: -10px;
     z-index: 2;
     float: right;
-
   }
-
 }
 
 // all margins in one place
 .message-n-meta.consecutive {
   margin-top: -18px;
+  &.type-channel-event{
+    margin-top: 0;
+  }
 }
 
 .message-n-meta.first {
@@ -397,7 +398,6 @@ a{
     display: block;
     right: 0px;
   }
-
 }
 
 .message-n-meta.consecutive:hover, .message-n-meta.consecutive:focus {
@@ -411,6 +411,20 @@ a{
     z-index: 5;
   }
 
+}
+
+.message-n-meta{
+  &.type-channel-event{
+    padding: 1px 1px 1px 66px;
+    margin-bottom: 0px;
+    font-style: italic;
+    &:hover{
+      background: none;
+    }
+    .message .message-content{
+      font-size: 12px;
+    }
+  }
 }
 
 .message {
@@ -469,6 +483,16 @@ a{
 .first-unread {
   border-bottom: 2px solid $appred;
 }
+
+/*styling for system messages: members leaving/joining channels, renaming channel names/topics...*/
+ .type-channel-event{
+  .message{
+    background: none;
+    &::before{
+      background: none;
+    }
+  }
+ }
 
 @media (min-width:$wideminwidth) {
 
