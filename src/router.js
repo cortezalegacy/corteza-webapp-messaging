@@ -12,8 +12,6 @@ export default new Router({
       name: 'root',
       component: view('Messenger'),
       children: [
-        { path: 'experimental', name: 'experimental', component: view('Experimental'), props: true },
-
         { path: 'channel/new/:type', name: 'new-channel', component: view('ChannelEditor'), props: true },
         { path: 'channel/:channelID', name: 'channel', component: view('Channel'), props: true },
         { path: 'channel/:channelID/editor', name: 'edit-channel', component: view('ChannelEditor'), props: true },
