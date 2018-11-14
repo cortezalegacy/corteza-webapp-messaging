@@ -31,7 +31,7 @@
 
           <actions
             class="actions"
-            v-if="!hideActions && !inEditing && !readOnly"
+            v-if="!hideActions && !inEditing"
             v-bind="$props"
             @editMessage="inEditing=true"
             @deleteMessage="onDeleteMessage"

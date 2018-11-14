@@ -36,9 +36,8 @@
     <div class="footer">
       <message-input
         :channel="channel"
-        :readonlt="!isMember"
+        :readonly="!isMember"
         :focus="uiFocusMessageInput()"
-        v-if="isMember"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
     </div>
