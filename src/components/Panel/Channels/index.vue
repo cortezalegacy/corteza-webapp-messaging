@@ -34,10 +34,11 @@
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'group' } }"
         :list="groupChannels">Direct messages</group>
+
+      <pre
+        class="version selectable">{{ version }}</pre>
     </div>
 
-    <pre
-      class="version selectable">{{ version }}</pre>
   </nav>
 </template>
 
@@ -135,15 +136,14 @@ nav {
   overflow: hidden;
   height: 100vh;
 
-  form.search {
-    //padding: 10px 0 10px 5px;
-    width: 240px;
-    border: 1px solid red;
+  & > form {
+    margin: 10px;
   }
 
   div.scrollable {
     overflow-y: scroll;
     flex: 1;
+    margin-bottom: 10px;
 
     div.browse {
       padding-top: 0;
