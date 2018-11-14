@@ -208,8 +208,7 @@ export default {
 
     // Update channel activity once in a while while typing
     onChange: _.throttle(function (value) {
-      console.log(value)
-      if (value.length > 1) {
+      if (value.text.length > 1) {
         this.$ws.send({ channelActivity: { ID: this.channelID, kind: 'typing' } })
       }
     }, 2000),

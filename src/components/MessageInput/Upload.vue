@@ -153,16 +153,14 @@ export default {
 @import '@/assets/sass/btns.scss';
 
 .droparea {
+  position: absolute;
   width: 100%;
   height: 100vh;
-  height: calc(100vh - 60px);
-  top: 60px;
   background: rgba(0,0,0,.8);
-  position: relative;
   z-index: 5;
 }
 
-.message-confirm{
+.message-confirm {
   position: relative;
   top: 50%;
   -webkit-transform: translateY(-50%);
