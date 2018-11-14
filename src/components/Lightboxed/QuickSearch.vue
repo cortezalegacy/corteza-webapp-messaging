@@ -37,7 +37,8 @@ export default {
     }),
 
     filtered () {
-      return this.channels.filter(c => c.name.indexOf(this.query) > -1)
+      const q = this.query.toLocaleLowerCase()
+      return this.channels.filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
     },
 
     // List of prefered channels -- ones we're not members of
