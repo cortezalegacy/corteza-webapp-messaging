@@ -12,8 +12,6 @@
                   @searchSubmit="onPanelSearchSubmit" />
           </base-side-panel>
 
-          <div v-if="!currentChannel" class="welcome"></div>
-
           <!-- no use in displaying messages if no channel -->
           <div class="main">
             <router-view
@@ -213,7 +211,6 @@ export default {
     window.removeEventListener('focus', this.titleNotificationsHandler)
     window.removeEventListener('resize', this.windowResizeHandler)
     this.$bus.$off('ui.openEmojiPicker')
-
   },
 
   watch: {
@@ -338,15 +335,6 @@ div.flex-grid {
 
 div.helper {
   z-index: 2000;
-/*
-  .welcome
-  {
-    display: table-cell;
-    box-sizing: border-box;
-    background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
-    opacity: 0.25;
-  }
-  */
 }
 
 .emoji-mart{

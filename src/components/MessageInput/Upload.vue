@@ -14,7 +14,6 @@
         :useCustomSlot=true
         :options="options">
 
-        <!-- <img src="/../assets/images/crust-logo-with-tagline.png"> -->
         <h2>Drop files to upload to<br>
           <span v-if="replyTo">thread</span>
           <span v-else>#{{ channel.name || channel.ID }}</span>
