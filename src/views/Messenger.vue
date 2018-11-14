@@ -27,7 +27,7 @@
         v-if="rightSidePanel"
         orientation="right"
         :width="400"
-        :pinned="true">
+        :pinned="uiPinRightSidePanel">
           <members-panel
               v-if="rightSidePanel === 'members'"
               :channel="currentChannel"
@@ -114,8 +114,7 @@ export default {
 
       uiPinChannelSidePanel: null,
       uiHideChannelSidePanel: false,
-      uiPinRightSidePanel: false,
-      uiHideRightSidePanel: true,
+      uiPinRightSidePanel: null,
     }
   },
 
@@ -255,6 +254,11 @@ export default {
         this.rightSidePanel = panel
       }
 
+      if (this.rightSidePanel && !this.uiIsWide()) {
+        // Close channels when opening right panel and screen is not wide enough
+        this.uiHideChannelSidePanel = true
+      }
+
       switch (panel) {
         case 'thread':
           this.panelThreadMessageID = $event.message.ID
@@ -263,7 +267,11 @@ export default {
 
     toggleChannelSidePanel (state = null) {
       this.uiHideChannelSidePanel = state === null ? !this.uiHideChannelSidePanel : state
-      console.log('Setting uiHideChannelSidePanel to %o using %o', this.uiHideChannelSidePanel, state)
+
+      if (!this.uiHideChannelSidePanel && !this.uiIsWide()) {
+        // Close right side when screen is not wide enough
+        this.switchRightSidePanel(false)
+      }
     },
 
     hideChannelSidePanel () {
@@ -275,7 +283,9 @@ export default {
     },
 
     windowResizeHandler () {
+      // We want to pin side panels when screen is wide enough.
       this.uiPinChannelSidePanel = this.uiIsWide()
+      this.uiPinRightSidePanel = this.uiIsWide()
     },
   },
 
