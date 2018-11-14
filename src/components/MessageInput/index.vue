@@ -44,9 +44,8 @@
           ></i> -->
 
       </div>
-
       <div class="activity">
-          <activity v-if="false" :users="activeInChannel(channelID, 'typing')">typing</activity>
+          <activity :users="activeInChannel(channelID, 'typing')">typing</activity>
       </div>
   </div>
 </template>
