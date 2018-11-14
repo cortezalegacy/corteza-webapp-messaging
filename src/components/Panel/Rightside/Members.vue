@@ -10,9 +10,7 @@
           <li
             v-for="u in members"
             :key="u.ID"
-            @click="$emit('openDirectMessage', u.ID);"
-            class="channel-member"
-            >
+            @click="$emit('openDirectMessage', u.ID);">
             <user-avatar :user="u" />
             <span class="member-name">{{ label(u) }}</span>
             <confirmation-toggle
@@ -33,8 +31,7 @@
         <ul v-if="searchResults">
           <li
             v-for="u in searchResults"
-            :key="u.ID"
-            class="channel-member">
+            :key="u.ID">
             <user-avatar :user="u" />
             <span class="member-name">{{ label(u) }}</span>
             <button @click="add(u.ID)" class="btn">Add</button>
@@ -112,68 +109,68 @@ export default {
 @import '@/assets/sass/menu-layer.scss';
 @import '@/assets/sass/btns.scss';
 
-.channel-name{
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.channel-member
-{
-  line-height:30px;
-  margin-bottom:10px;
-  margin-left:20px;
-  cursor: pointer;
-  .confirmation-buttons,
-  .btn {
-    float: right;
-    margin-right: 10px;
-  }
-}
-.member-name
-{
-  display:inline-block;
-  line-height:1;
-  max-width:60%;
-  overflow:hidden;
-  padding-left:10px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.message-icon{
-  float: right;
-  margin-right: 20px;
-  line-height: 30px;
-}
-
-.current-members{
-}
-.current-members,
-.add-members{
-  position: relative;
-  overflow: scroll;
-  height: auto;
-  height: calc((100vh - 80px)/2);
-}
-
-.add-members{
-  .header{
-    position: fixed;
-    background: white;
-    padding-bottom: 5px;
-    z-index: 1;
-    width: 360px;
+div {
+  &.current-members,
+  &.add-members {
+    position: relative;
+    overflow: scroll;
+    height: auto;
+    height: calc((100vh - 80px) / 2);
   }
 
-  ul{
-    margin-top: 100px;
+  &.add-members {
+    .header {
+      background: white;
+      padding-bottom: 5px;
+      z-index: 1;
+      width: 360px;
+
+      h1 {
+        margin: 10px 10px;
+      }
+
+      form {
+        padding: 0 0 10px 5px;
+        width: 300px;
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      line-height: 30px;
+      margin-bottom: 10px;
+      padding: 0 5px;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba($appgrey, 0.15);
+        border-radius: 30px 0 0 30px;
+      }
+
+      .confirmation-buttons, .btn {
+        float: right;
+      }
+
+      .btn {
+        margin-top: 5px;
+      }
+
+      .member-name {
+        display: inline-block;
+        line-height: 1;
+        max-width: 60%;
+        overflow: hidden;
+        padding-left: 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
   }
 }
 
-li:hover {
-  background:rgba($appgrey,0.15);
-  border-radius:30px 0 0  30px;
-}
-h1,
-form{
-  padding: 0 10px;
-}
 </style>
