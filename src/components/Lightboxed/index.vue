@@ -19,7 +19,7 @@ export default {
   right: 0;
   bottom: 0;
   background-color: transparentize(black,.2);;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 </style>

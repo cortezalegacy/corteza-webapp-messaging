@@ -54,7 +54,7 @@ export default {
 @import '@/assets/sass/_0.commons.scss';
 
 aside {
-  z-index: 10000;
+  z-index: 1001;
   height: 100vh;
   margin: 0;
   padding: 0;

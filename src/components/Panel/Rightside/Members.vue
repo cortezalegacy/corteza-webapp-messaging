@@ -122,7 +122,6 @@ div {
     .header {
       background: white;
       padding-bottom: 5px;
-      z-index: 1;
       width: 360px;
 
       h1 {
