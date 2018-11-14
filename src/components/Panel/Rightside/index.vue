@@ -27,8 +27,8 @@ div.rightside-panel-container {
   overflow: hidden;
 
   & > div.header {
-    min-height:60px;
-    padding:10px;
+    min-height: 55px;
+    padding: 10px 0 0 10px;
     box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
     margin-bottom:5px;
     top: 0px;
@@ -44,17 +44,21 @@ div.rightside-panel-container {
 
     h1 {
       margin: 0;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     h2 {
       margin: 0;
       font-size: 12px;
       color: $appgrey;
-      max-width: 100%;
+      max-width: 90%;
       overflow: hidden;
+    }
+
+    h1, h2 {
       text-overflow: ellipsis;
       white-space: nowrap;
+      overflow: hidden;
     }
   }
 
