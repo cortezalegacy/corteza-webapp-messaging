@@ -36,7 +36,7 @@
         :list="groupChannels">Direct messages</group>
 
       <pre
-        class="version selectable">{{ version }}</pre>
+        class="version selectable" v-html="version"></pre>
     </div>
 
   </nav>
@@ -100,7 +100,7 @@ export default {
 
     version () {
       /* eslint-disable no-undef */
-      return `Crust\n${CRUST_VERSION}\n${CRUST_BUILD_TIME}`
+      return `<a href="https://github.com/crusttech/crust/commit/${CRUST_VERSION}" target="_blank">${CRUST_VERSION}</a>`
     },
   },
 
