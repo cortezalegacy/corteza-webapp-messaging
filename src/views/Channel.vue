@@ -1,10 +1,8 @@
 <template>
-  <section
-    v-if="channel"
-    :class="{ 'unread-messages': unread(channelID) }"
+  <div class="channel"
     @dragover="showUploadArea=true"
-    @dragenter="showUploadArea=true">
-
+    @dragenter="showUploadArea=true"
+    v-if="channel">
     <upload
       v-show="showUploadArea"
       @close="showUploadArea=false"
@@ -12,25 +10,28 @@
       :channelID="channel.ID"
       ref="upload" />
 
-    <channel-header
-      v-on="$listeners"
-      :channel="channel"></channel-header>
+    <div class="header">
+      <channel-header
+        v-on="$listeners"
+        :channel="channel"></channel-header>
+    </div>
 
-    <messages
-      class="messages"
-      ref="messages"
-      :messages="messages"
-      :currentUser="currentUser"
-      :origin="channel"
-      :scrollable="true"
-      :consecutive="true"
-      :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
-      :editLastMessage="editLastMessage"
-      :readOnly="!channel.canSendMessages"
-      @cancelEditing="editLastMessage=false"
-      @scrollTop="onScrollTop"
-      @scrollBottom="onScrollBottom"
-      v-on="$listeners" />
+    <div class="messages">
+      <messages
+        ref="messages"
+        :messages="messages"
+        :currentUser="currentUser"
+        :origin="channel"
+        :scrollable="true"
+        :consecutive="true"
+        :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
+        :editLastMessage="editLastMessage"
+        :readOnly="!channel.canSendMessages"
+        @cancelEditing="editLastMessage=false"
+        @scrollTop="onScrollTop"
+        @scrollBottom="onScrollBottom"
+        v-on="$listeners" />
+    </div>
 
     <observer-footer
       v-if="!isMember"
@@ -46,8 +47,7 @@
     <activity
       v-if="isMember"
       :users="activeInChannel(channelID, 'typing')">typing</activity>
-
-  </section>
+  </div>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
@@ -213,95 +213,17 @@ export default {
   },
 }
 </script>
-
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
-//disposition of elements is done here:
-//fixed... because chrome, absolute works on firefox, fixed on both.
-//the issue is with the foldable adress bar, so only on mobile.
-@media (max-width: #{$wideminwidth - 1px})
-{
-  .header,
-  .channel-input,
-  .messages
-  {
-    position: absolute;
-    width:100%;
-    max-width:100vw;
-    left:0;
-  }
-  .header
-  {
-    position:fixed;
-    top:0;
-  }
-  .channel-input
-  {
-    position:fixed;
-    bottom:0;
-  }
-  .messages
-  {
-    position:fixed;
-    top:52px;
-  }
-  footer
-  {
-    bottom: 0px;
-    position: absolute;
-  }
-  section.activity {
-    color: $appgrey;
-    position: absolute;
-    left: 65px;
-    bottom: 5px;
-  }
-}
-//in wide mode revert to absolute
-@media (min-width: $wideminwidth)
-{
-  .header,
-  .channel-input,
-  .messages
-  {
-    position: absolute;
-    width:100%;
-    max-width:100vw;
-    left:0;
-  }
-  .header
-  {
-    top:0;
-  }
-  .channel-input
-  {
-    bottom:0;
-  }
-  .messages
-  {
-    top:52px;
-  }
-  .header,
-  .channel-input,
-  .messages
-  {
-    right:0;
-  }
-  .messages
-  {
-    top:62px;
-    bottom:65px;
-  }
-  footer {
-    bottom: 0px;
-    position: absolute;
-  }
 
-  section.activity {
-    color: $appgrey;
-    position: absolute;
-    left: 65px;
-    bottom: 5px;
+div.channel {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100vh;
+
+  & > div.messages {
+    flex: 1 100%;
+    overflow-y: scroll;
   }
 }
 </style>

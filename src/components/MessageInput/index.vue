@@ -1,9 +1,8 @@
 <template>
-  <div class="channel-input"
+  <div class="container"
        :class="{editing:!!message, inThread:!!replyTo}">
 
-    <div class="wrap">
-
+    <div class="group">
       <text-input
         :key="textInputKey"
         @editLastMessage="$emit('editLastMessage', $event)"
@@ -16,7 +15,7 @@
         :submitOnEnter="!uiEnableSubmitButton()"
         :channels="channelSuggestions"
         :users="userSuggestions"
-        class="message-input"
+        class="text-input "
         :class="{'no-files': !showFileUpload}" />
 
       <button
@@ -25,6 +24,7 @@
         @click="onPromptFilePicker">
         <span>+</span>
       </button>
+
       <button
         v-if="uiEnableSubmitButton()"
         class="send-button input-button"
@@ -212,191 +212,179 @@ export default {
 // @todo remove div.wrap, merge it with base tag
 // @todo move all styling and basic positioning inside <text-input>
 
-  @import '@/assets/sass/_0.commons.scss';
-  // This component probably won't be used elsewhere,
-  // should it be the case easy to externalize
-  $inputheight : 30px;
-  $inputwidth : 30px;
-  .channel-input
-  {
-    min-height:$inputheight;
-    width:100%;
-    background-color:$appwhite;
-    box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.1);
-    .wrap
-    {
-      float:left;
-      width:100%;
-      position:relative;
-      max-width:100%;
-    }
-    &.editing
-    {
-      padding: 10px 0 10px 10px;
-      .message-input{
-        width: 100%;
-      }
-    }
-  }
+@import '@/assets/sass/_0.commons.scss';
+// This component probably won't be used elsewhere,
+// should it be the case easy to externalize
+$inputheight: 30px;
+$inputwidth: 30px;
 
-  .input-button, .message-input
+.container
+{
+  min-height:$inputheight;
+  width:100%;
+  .group
   {
-    border: 1px solid transparent;
-    background-color:transparent;
-  }
-
-  .input-button span
-  {
-    display:inline-block;
-    line-height: 1;
-  }
-
-  .message-input
-  {
-    font-family: $crustregular;
-    margin-right:$inputwidth;
-    width:calc(100% - #{$inputwidth * 2});
-    border-radius: 0 5px 5px 0;
-    border-left:0;
-    float:right;
-    font-size:15px;
-    padding:0;
-  }
-  .channel-input.editing
-  {
-    margin-right:0;
-    width:calc(100%);
-    .wrap
-    {
-      display:table-cell;
-      background-color:white;
-    }
-    .message-input
-    {
-      margin-left:30px;
-    }
-  }
-  .message-input.no-files
-  {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .input-button {
-    position: absolute;
-    height: calc(100%);
-    width: $inputwidth;
-    color: $appgrey;
-    border-radius: 5px 0 0 5px;
-    cursor: pointer;
-    text-align: center;
-    font-size:28px;
-    margin-top: 0;
-    line-height: 100%;
     float:left;
-    z-index: 2;
-    padding:0;
+    width:100%;
+    position:relative;
+    max-width:100%;
   }
-
-  .send-button
+  &.editing
   {
-    right:0;
-    font-size:24px;
-    margin-top: 0px;
-  }
-
-  .input-button:focus {
-    outline: none;
-  }
-
-  @media ( max-width: ($wideminwidth - 1px) )
-  {
-    .message-input ~
-    {
-      .send-button
-      {
-        display:inline-block;
-      }
-    }
-    .channel-input.editing
-    {
-      margin-right:0;
-      width:calc(100%);
-      display:table-cell;
-      box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
-      .wrap
-      {
-        padding-left:30px;
-
-      }
+    padding: 10px 0 10px 10px;
+    .text-input {
+      width: 100%;
     }
   }
+}
 
-  // another background in wide, and no shadow
-  @media (min-width: $wideminwidth)
+.input-button, .text-input
+{
+  border: 1px solid transparent;
+  background-color:transparent;
+}
+
+.input-button span
+{
+  display:inline-block;
+  line-height: 1;
+}
+
+.text-input
+{
+  font-family: $crustregular;
+  margin-right:$inputwidth;
+  width:calc(100% - #{$inputwidth * 2});
+  border-radius: 0 5px 5px 0;
+  border-left:0;
+  float:right;
+  font-size:15px;
+  padding:0;
+}
+.container.editing
+{
+  margin-right:0;
+  width:calc(100%);
+  .group
   {
-    $wideinputheight : 50px;
-    $wideinputwidth  : 50px;
-    .channel-input
-    {
-      min-height:$wideinputheight;
-      &.editing
-      {
-        border: none;
-        padding-right: 10px;
-        background: transparent;
-        .message-input{
-          width: 100%;
-          &:focus-within{
-            border-left: 1px solid $appgreen;
-            border-radius: 5px;
+    display:table-cell;
+    background-color:white;
+  }
+  .text-input
+  {
+    margin-left:30px;
+  }
+}
+.text-input .no-files
+{
+  margin-left: 0;
+  width: 100%;
+}
+
+.input-button {
+  position: absolute;
+  height: calc(100%);
+  width: $inputwidth;
+  color: $appgrey;
+  border-radius: 5px 0 0 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size:28px;
+  margin-top: 0;
+  line-height: 100%;
+  float:left;
+  z-index: 2;
+  padding:0;
+}
+
+.send-button
+{
+  right:0;
+  font-size:24px;
+  margin-top: 0px;
+}
+
+.input-button:focus {
+  outline: none;
+}
+
+  off {
+    @media (max-width: ($wideminwidth - 1px)) {
+      .text-input  ~ {
+        .send-button {
+          display: inline-block;
+        }
+      }
+      .container.editing {
+        margin-right: 0;
+        width: calc(100%);
+        display: table-cell;
+        box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
+
+        .group {
+          padding-left: 30px;
+
+        }
+      }
+    }
+
+    // another background in wide, and no shadow
+    @media (min-width: $wideminwidth) {
+      $wideinputheight: 50px;
+      $wideinputwidth: 50px;
+      .container {
+        min-height: $wideinputheight;
+
+        &.editing {
+          border: none;
+          padding-right: 10px;
+          background: transparent;
+
+          .text-input  {
+            width: 100%;
+
+            &:focus-within {
+              border-left: 1px solid $appgreen;
+              border-radius: 5px;
+            }
+          }
+
+          .send-button {
+            margin-top: -2px;
           }
         }
-        .send-button {
-          margin-top: -2px;
+      }
+
+      .text-input :focus-within {
+        outline: none;
+        border-color: $appgreen;
+
+        ~ .input-button {
+          background-color: rgba($appgreen, 0.1);
+          border-color: $appgreen;
+          color: $appgreen;
         }
       }
-    }
 
-    .message-input:focus-within {
-      outline:none;
-      border-color:$appgreen;
-      ~ .input-button
-      {
-        background-color:rgba($appgreen,0.1);
-        border-color:$appgreen;
-        color:$appgreen;
+      .text-input  {
+        margin-left: $wideinputwidth;
+        margin-right: 0;
+        width: calc(100% - #{$wideinputwidth});
+      }
+      .input-button {
+        width: $wideinputwidth;
+        font-size: 30px;
+      }
+      .container .group {
+        border-radius: 5px;
+        border: 1px solid $appgrey;
+      }
+      .container {
+        padding: 0 15px;
+        box-shadow: none;
       }
     }
-
-    .message-input
-    {
-      margin-left:$wideinputwidth;
-      margin-right:0;
-      width:calc(100% - #{$wideinputwidth});
-    }
-    .input-button
-    {
-      width: $wideinputwidth;
-      font-size:30px;
-    }
-    .channel-input .wrap
-    {
-      border-radius: 5px;
-      border: 1px solid $appgrey;
-    }
-    .channel-input
-    {
-      border:solid 15px $appwhite;
-      border-top-width:0;
-      border-bottom:none;
-      padding-bottom:25px;
-      border-color: $mainbgcolor;
-      background-color:$mainbgcolor;
-      box-shadow: none;
-    }
   }
-
   /*.emoji-picker-button {*/
     /*position: absolute;*/
     /*right: 10px;*/

@@ -1,65 +1,71 @@
 <template>
-    <section class="messenger"
-        v-if="isAuthenticated"
-        :class="{
-            'left-panel-open': leftSidePanel,
-            'right-panel-open': rightSidePanel,
-        }">
-        <!-- if no channel selected channel list should be displayed -->
-        <channels-panel
-            @openQuickSearch="quickSearch=true"
-            @searchSubmit="onPanelSearchSubmit"
-            @close="leftSidePanel=null"
-            :class="{'force-on': !!leftSidePanel,  'open': !!leftSidePanel}" />
+    <div class="messenger" v-if="isAuthenticated">
+        <base-side-panel
+          orientation="left"
+          :width="260"
+          :pinned="uiPinChannelSidePanel"
+          :hidden="uiHideChannelSidePanel">
+            <channels-panel
+                @close="hideChannelSidePanel"
+                @openQuickSearch="quickSearch=true"
+                @searchSubmit="onPanelSearchSubmit" />
+        </base-side-panel>
 
         <div v-if="!currentChannel" class="welcome"></div>
 
-        <!-- no use in displaying messages if no channel -->
+      <!-- no use in displaying messages if no channel -->
+      <div class="main">
         <router-view
-          @toggleChannelPanel="leftSidePanel=leftSidePanel ? null : 'channels'"
-          @openThreadPanel="switchRightSidePanel('thread', $event)"
-          @openMembersPanel="switchRightSidePanel('members', $event)"
-          @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
-          @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)"
-          class="channel-container" />
-
-        <members-panel
-            v-if="rightSidePanel === 'members'"
-            :channel="currentChannel"
-            @close="switchRightSidePanel()" />
-
-        <thread-panel
-            v-if="currentChannel && rightSidePanel === 'thread'"
-            @close="switchRightSidePanel()"
-            :repliesTo="panelThreadMessageID" />
-
-        <pinned-messages-panel
-            v-if="currentChannel && rightSidePanel === 'pinnedMessages'"
-            :channel="currentChannel"
+            @toggleChannelPanel="toggleChannelSidePanel()"
             @openThreadPanel="switchRightSidePanel('thread', $event)"
-            @close="switchRightSidePanel()" />
+            @openMembersPanel="switchRightSidePanel('members', $event)"
+            @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
+            @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)" />
+      </div>
 
-        <bookmarked-messages-panel
-            v-if="currentChannel && rightSidePanel === 'bookmarkedMessages'"
-            @openThreadPanel="switchRightSidePanel('thread', $event)"
-            @close="switchRightSidePanel()" />
+      <base-side-panel
+        v-if="rightSidePanel"
+        orientation="right"
+        :width="400"
+        :pinned="true">
+          <members-panel
+              v-if="rightSidePanel === 'members'"
+              :channel="currentChannel"
+              @close="switchRightSidePanel()" />
 
-        <search-results
+          <thread-panel
+              v-if="currentChannel && rightSidePanel === 'thread'"
+              @close="switchRightSidePanel()"
+              :repliesTo="panelThreadMessageID" />
+
+          <pinned-messages-panel
+              v-if="currentChannel && rightSidePanel === 'pinnedMessages'"
+              :channel="currentChannel"
+              @openThreadPanel="switchRightSidePanel('thread', $event)"
+              @close="switchRightSidePanel()" />
+
+          <bookmarked-messages-panel
+              v-if="currentChannel && rightSidePanel === 'bookmarkedMessages'"
+              @openThreadPanel="switchRightSidePanel('thread', $event)"
+              @close="switchRightSidePanel()" />
+      </base-side-panel>
+<!--
+      <search-results
           v-if="searchQuery"
           @close="searchQuery=null"
           @goToMessage="onGoToMessage"
           :searchQuery="searchQuery" />
 
-        <preview
+      <preview
           v-if="preview"
           @close="preview=null"
           :src="preview.src" />
 
-        <quick-search
+      <quick-search
           v-if="quickSearch"
           @close="quickSearch=false"></quick-search>
 
-        <picker
+      <picker
           v-if="emojiPickerCallback"
           @select="onEmojiSelect"
           :style="{ position: 'absolute', bottom: '80px', right: rightSidePanel ? '415px' : '15px' }"
@@ -68,19 +74,21 @@
           :showPreview="false"
           :sheetSize="16"
           set="apple" />
-
-        <global-events
-            @keydown.esc.exact="emojiPickerCallback=null"
-            @keydown.meta.k.exact="quickSearch=!quickSearch" />
-    </section>
+-->
+      <global-events
+          @keydown.esc.exact="emojiPickerCallback=null"
+          @keydown.meta.k.exact="quickSearch=!quickSearch" />
+    </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import ClickOutside from 'vue-click-outside'
+import BaseSidePanel from '@/components/Panel/Base'
 import ChannelsPanel from '@/components/Panel/Channels'
-import MembersPanel from '@/components/Panel/Members'
-import ThreadPanel from '@/components/Panel/Thread'
-import BookmarkedMessagesPanel from '@/components/Panel/BookmarkedMessages'
-import PinnedMessagesPanel from '@/components/Panel/PinnedMessages'
+import MembersPanel from '@/components/Panel/Rightside/Members'
+import ThreadPanel from '@/components/Panel/Rightside/Thread'
+import BookmarkedMessagesPanel from '@/components/Panel/Rightside/BookmarkedMessages'
+import PinnedMessagesPanel from '@/components/Panel/Rightside/PinnedMessages'
 import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
@@ -95,18 +103,19 @@ export default {
   data () {
     return {
       preview: null,
-      leftSidePanel: null,
+      leftSidePanel: true,
       panelThreadMessageID: null,
-      rightSidePanel: null,
+      rightSidePanel: true,
       searchQuery: null,
       quickSearch: false,
       showChannelCreator: false,
       emojiPickerCallback: null,
       wideWidth: 768,
-      window: {
-        width: 0,
-        height: 0,
-      },
+
+      uiPinChannelSidePanel: null,
+      uiHideChannelSidePanel: false,
+      uiPinRightSidePanel: false,
+      uiHideRightSidePanel: true,
     }
   },
 
@@ -134,9 +143,10 @@ export default {
   },
 
   created () {
+    this.windowResizeHandler()
+    window.addEventListener('resize', this.windowResizeHandler)
+
     window.addEventListener('focus', this.titleNotificationsHandler)
-    window.addEventListener('resize', this.handleResize)
-    this.handleResize()
 
     titleNtf.update()
 
@@ -198,8 +208,8 @@ export default {
 
   destroyed () {
     titleNtf.stopFlashing()
-    window.removeEventListener('resize', this.handleResize)
     window.removeEventListener('focus', this.titleNotificationsHandler)
+    window.removeEventListener('resize', this.windowResizeHandler)
     this.$bus.$off('ui.openEmojiPicker')
   },
 
@@ -217,11 +227,6 @@ export default {
   },
 
   methods: {
-    handleResize () {
-      this.window.width = window.innerWidth
-      this.window.height = window.innerHeight
-    },
-
     onPanelSearchSubmit (query) {
       // Take query we received from panel search input box
       // and push it to search result component
@@ -256,12 +261,26 @@ export default {
       }
     },
 
+    toggleChannelSidePanel (state = null) {
+      this.uiHideChannelSidePanel = state === null ? !this.uiHideChannelSidePanel : state
+      console.log('Setting uiHideChannelSidePanel to %o using %o', this.uiHideChannelSidePanel, state)
+    },
+
+    hideChannelSidePanel () {
+      this.toggleChannelSidePanel(true)
+    },
+
     titleNotificationsHandler () {
       titleNtf.stopFlashing()
+    },
+
+    windowResizeHandler () {
+      this.uiPinChannelSidePanel = this.uiIsWide()
     },
   },
 
   components: {
+    BaseSidePanel,
     ChannelsPanel,
     MembersPanel,
     ThreadPanel,
@@ -271,6 +290,10 @@ export default {
     SearchResults,
     QuickSearch,
     Picker,
+  },
+
+  directives: {
+    ClickOutside,
   },
 }
 </script>
@@ -283,57 +306,32 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-.messenger
-{
-  overflow-y: hidden;
-}
-
-section
+div.messenger
 {
   background-color : $mainbgcolor;
-}
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-flow: row nowrap;
 
-.channel-container
-{
-  position:relative;
-  margin:0;
-  height:100vh;
-  min-width: 300px;
-  background: $mainbgcolor;
-}
+  .main {
+    flex: 1;
+    background: $mainbgcolor;
+    height: 100vh;
+    overflow: hidden;
+  }
 
-.left-panel-open .channel-container
-{
-  margin-left:250px;
-}
-
-.right-panel-open .channel-container
-{
-  margin-right:360px;
-}
-
-.welcome
-{
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  box-sizing: border-box;
-  background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
-  opacity: 0.25;
-}
-
-.emoji-mart{
-  z-index: 99999;
-}
-
-@media (min-width: $wideminwidth)
-{
-  .channel-container
+/*
+  .welcome
   {
-    margin-left:250px;
-    max-width:calc(100vw - 250px);
+    display: table-cell;
+    box-sizing: border-box;
+    background: url('../assets/images/crust-logo-with-tagline.png') no-repeat center center #efefef;
+    opacity: 0.25;
+  }
+  */
+  .emoji-mart{
+    z-index: 99999;
   }
 }
 

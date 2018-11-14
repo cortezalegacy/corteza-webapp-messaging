@@ -47,9 +47,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import BasePanel from './'
+import BasePanel from './.'
 import Avatar from '@/components/Avatar'
-import SearchInput from '../SearchInput'
+import SearchInput from '../../SearchInput'
 import ConfirmationToggle from '@/components/Form/ConfirmationToggle'
 
 export default {
@@ -107,18 +107,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  //inlude generic definitions
-  @import '@/assets/sass/_0.commons.scss';
-  @import '@/assets/sass/menu-layer.scss';
-  @import '@/assets/sass/btns.scss';
+//inlude generic definitions
+@import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/menu-layer.scss';
+@import '@/assets/sass/btns.scss';
 
-.closer
-{
-  position:fixed;
-  top:5px;
-  right:20px;
-  font-size:20px;
-}
 .channel-name{
   white-space: nowrap;
   text-overflow: ellipsis;

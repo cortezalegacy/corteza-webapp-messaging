@@ -432,7 +432,7 @@ a{
 
 .message {
   position: relative;
-  display: table;
+  //display: table;
   background-color: $messagebgcolor;
   word-wrap: break-word;
   border-radius: 3px;
