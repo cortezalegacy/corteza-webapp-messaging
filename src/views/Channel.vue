@@ -33,30 +33,23 @@
         v-on="$listeners" />
     </div>
 
-    <observer-footer
-      v-if="!isMember"
-      :channel="channel" />
-
-    <message-input
-      :channel="channel"
-      :focus="uiFocusMessageInput()"
-      v-if="isMember"
-      @promptFilePicker="onOpenFilePicker"
-      @editLastMessage="editLastMessage=true" />
-
-    <activity
-      v-if="isMember"
-      :users="activeInChannel(channelID, 'typing')">typing</activity>
+    <div class="footer">
+      <message-input
+        :channel="channel"
+        :readonlt="!isMember"
+        :focus="uiFocusMessageInput()"
+        v-if="isMember"
+        @promptFilePicker="onOpenFilePicker"
+        @editLastMessage="editLastMessage=true" />
+    </div>
   </div>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import ChannelHeader from '@/components/Channel/Header'
-import ObserverFooter from '@/components/Channel/ObserverFooter'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
-import Activity from '@/components/Activity'
 
 export default {
   props: {
@@ -80,8 +73,6 @@ export default {
 
       user: 'auth/user',
       currentUser: 'auth/user',
-
-      activeInChannel: 'users/activeInChannel',
 
       channelHistory: 'history/getByChannelID',
     }),
@@ -208,8 +199,6 @@ export default {
     MessageInput,
     Upload,
     ChannelHeader,
-    Activity,
-    ObserverFooter,
   },
 }
 </script>

@@ -28,11 +28,13 @@
         v-on="$listeners" />
     </template>
     <template slot="footer">
-      <message-input
-        :replyTo="message"
-        v-if="channel.canSendMessages"
-        @promptFilePicker="onOpenFilePicker"
-        @editLastMessage="editLastMessage=true" />
+      <div class="footer">
+        <message-input
+          :replyTo="message"
+          v-if="channel.canSendMessages"
+          @promptFilePicker="onOpenFilePicker"
+          @editLastMessage="editLastMessage=true" />
+      </div>
     </template>
   </base-panel>
 </template>
@@ -117,9 +119,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-//inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
-
-</style>

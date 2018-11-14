@@ -1,43 +1,53 @@
 <template>
-  <div class="container"
+
+  <observer-footer
+      v-if="readonly"
+      :channel="channel" />
+
+  <div v-else class="container"
        :class="{editing:!!message, inThread:!!replyTo}">
 
-    <div class="group">
-      <text-input
-        :key="textInputKey"
-        @editLastMessage="$emit('editLastMessage', $event)"
-        @cancel="$emit('cancel', $event)"
-        @submit="onSubmit"
-        @change="onChange"
-        v-model="value"
-        :preset="editableString"
-        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
-        :submitOnEnter="!uiEnableSubmitButton()"
-        :channels="channelSuggestions"
-        :users="userSuggestions"
-        class="text-input "
-        :class="{'no-files': !showFileUpload}" />
+      <div class="group">
+          <button
+              v-if="showFileUpload"
+              class="upload-button input-button"
+              @click="onPromptFilePicker">
+              <span>+</span>
+          </button>
 
-      <button
-        v-if="showFileUpload"
-        class="upload-button input-button"
-        @click="onPromptFilePicker">
-        <span>+</span>
-      </button>
+          <text-input
+              :key="textInputKey"
+              @editLastMessage="$emit('editLastMessage', $event)"
+              @cancel="$emit('cancel', $event)"
+              @submit="onSubmit"
+              @change="onChange"
+              v-model="value"
+              :preset="editableString"
+              :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
+              :submitOnEnter="!uiEnableSubmitButton()"
+              :channels="channelSuggestions"
+              :users="userSuggestions"
+              class="text-input "
+              :class="{'no-files': !showFileUpload}" />
 
-      <button
-        v-if="uiEnableSubmitButton()"
-        class="send-button input-button"
-        @click="onSubmitBtnClick">
-        <span class="icon-hsend"></span>
-      </button>
+          <button
+              v-if="uiEnableSubmitButton()"
+              class="send-button input-button"
+              @click="onSubmitBtnClick">
+              <span class="icon-hsend"></span>
+          </button>
 
-<!--
-      <i class="emoji-picker-button icon-smile"
-         title="Insert emoji"
-         @click="onEmojiPickerClick"
-      ></i> -->
-    </div>
+    <!--
+          <i class="emoji-picker-button icon-smile"
+             title="Insert emoji"
+             @click="onEmojiPickerClick"
+          ></i> -->
+
+      </div>
+
+      <div class="activity">
+          <activity v-if="false" :users="activeInChannel(channelID, 'typing')">typing</activity>
+      </div>
   </div>
 </template>
 
@@ -45,6 +55,8 @@
 import { mapGetters, mapActions } from 'vuex'
 import _ from 'lodash'
 import TextInput from './TextInput'
+import ObserverFooter from '@/components/Channel/ObserverFooter'
+import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
 
@@ -62,6 +74,7 @@ export default {
     channel: Object,
 
     focus: { type: Boolean, default: true },
+    readonly: { type: Boolean, default: false },
   },
 
   data () {
@@ -89,6 +102,7 @@ export default {
     ...mapGetters({
       users: 'users/list',
       channels: 'channels/list',
+      activeInChannel: 'users/activeInChannel',
     }),
 
     channelID () {
@@ -204,33 +218,33 @@ export default {
   components: {
     TextInput,
     EmojiPicker,
+    Activity,
+    ObserverFooter,
   },
 }
 </script>
 
 <style lang="scss" scoped>
-// @todo remove div.wrap, merge it with base tag
-// @todo move all styling and basic positioning inside <text-input>
-
 @import '@/assets/sass/_0.commons.scss';
-// This component probably won't be used elsewhere,
-// should it be the case easy to externalize
-$inputheight: 30px;
+
 $inputwidth: 30px;
 
-.container
-{
-  min-height:$inputheight;
+.container  {
+  // border-top: 2px dotted purple;
+
+  div.activity {
+    height: 20px;
+  }
+
   width:100%;
-  .group
-  {
+  .group {
     float:left;
     width:100%;
     position:relative;
     max-width:100%;
   }
-  &.editing
-  {
+
+  &.editing {
     padding: 10px 0 10px 10px;
     .text-input {
       width: 100%;
@@ -308,83 +322,80 @@ $inputwidth: 30px;
   outline: none;
 }
 
-  off {
-    @media (max-width: ($wideminwidth - 1px)) {
-      .text-input  ~ {
-        .send-button {
-          display: inline-block;
-        }
-      }
-      .container.editing {
-        margin-right: 0;
-        width: calc(100%);
-        display: table-cell;
-        box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
-
-        .group {
-          padding-left: 30px;
-
-        }
-      }
+@media (max-width: ($wideminwidth - 1px)) {
+  .text-input  ~ {
+    .send-button {
+      display: inline-block;
     }
+  }
+  .container.editing {
+    margin-right: 0;
+    width: calc(100%);
+    display: table-cell;
+    box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
 
-    // another background in wide, and no shadow
-    @media (min-width: $wideminwidth) {
-      $wideinputheight: 50px;
-      $wideinputwidth: 50px;
-      .container {
-        min-height: $wideinputheight;
+    .group {
+      padding-left: 30px;
 
-        &.editing {
-          border: none;
-          padding-right: 10px;
-          background: transparent;
+    }
+  }
+}
 
-          .text-input  {
-            width: 100%;
+// another background in wide, and no shadow
+@media (min-width: $wideminwidth) {
+  $wideinputwidth: 50px;
+  .container {
+    min-height: 75px;
+    padding: 4px 15px;
+    box-shadow: none;
 
-            &:focus-within {
-              border-left: 1px solid $appgreen;
-              border-radius: 5px;
-            }
-          }
-
-          .send-button {
-            margin-top: -2px;
-          }
-        }
-      }
-
-      .text-input :focus-within {
-        outline: none;
-        border-color: $appgreen;
-
-        ~ .input-button {
-          background-color: rgba($appgreen, 0.1);
-          border-color: $appgreen;
-          color: $appgreen;
-        }
-      }
+    .group {
+      border-radius: 5px;
+      border: 1px solid $appgrey;
 
       .text-input  {
         margin-left: $wideinputwidth;
         margin-right: 0;
         width: calc(100% - #{$wideinputwidth});
+
+        :focus-within {
+          outline: none;
+          border-color: $appgreen;
+
+          ~ .input-button {
+            background-color: rgba($appgreen, 0.1);
+            border-color: $appgreen;
+            color: $appgreen;
+          }
+        }
       }
+
       .input-button {
         width: $wideinputwidth;
         font-size: 30px;
       }
-      .container .group {
-        border-radius: 5px;
-        border: 1px solid $appgrey;
+    }
+
+    &.editing {
+      border: none;
+      padding-right: 10px;
+      background: transparent;
+
+      .text-input  {
+        width: 100%;
+
+        &:focus-within {
+          border-left: 1px solid $appgreen;
+          border-radius: 5px;
+        }
       }
-      .container {
-        padding: 0 15px;
-        box-shadow: none;
+
+      .send-button {
+        margin-top: -2px;
       }
     }
   }
+}
   /*.emoji-picker-button {*/
     /*position: absolute;*/
     /*right: 10px;*/
