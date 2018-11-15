@@ -155,7 +155,7 @@ export default {
 
     // Override original submit event and extend event
     // data with submitMeta data.
-    onSubmit (ev) {
+    onSubmit: _.debounce(function (ev) {
       const value = ev.value.trim()
 
       const stdResponse = () => {
@@ -190,7 +190,7 @@ export default {
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
-    },
+    }, 1000, { leading: true, trailing: false }),
 
     onSubmitBtnClick (value) {
       this.onSubmit({ value: this.value })
