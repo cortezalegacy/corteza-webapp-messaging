@@ -10,6 +10,7 @@
         :currentUser="currentUser"
         origin="bookmarked"
         :scrollable="false"
+        :highlightBookmarked="false"
         v-on="$listeners" />
     </template>
   </base-panel>
