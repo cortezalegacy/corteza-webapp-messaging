@@ -100,7 +100,7 @@ export default {
 
     version () {
       /* eslint-disable no-undef */
-      return `<a href="https://github.com/crusttech/crust/commit/${CRUST_VERSION}" target="_blank">${CRUST_VERSION}</a>`
+      return `<a href="https://github.com/crusttech/webapp-messaging/commit/${CRUST_VERSION}" target="_blank">${CRUST_VERSION}</a>`
     },
   },
 

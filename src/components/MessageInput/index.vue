@@ -243,7 +243,6 @@ export default {
 $inputWidth: 50px;
 $mobileInputWidth: 30px;
 
-
 .container {
   padding: 4px 15px;
   .activity {
