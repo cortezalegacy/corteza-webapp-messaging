@@ -162,7 +162,8 @@ export default {
       }
 
       // Set window title so user maybe notice the action in the channel (notifications mixin)
-      titleNtf.flashNew()
+      // @todo not very stable & consistent...
+      // titleNtf.flashNew()
 
       const ch = this.findChannelByID(message.channelID)
       if (ch.type === 'group' && ch.isMember(this.currentUser.ID)) {

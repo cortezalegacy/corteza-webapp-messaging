@@ -65,7 +65,7 @@
               placeholder="Find users to add as members"
               :filter-by-query="true"
               value-attribute="ID"
-              display-attribute="label"
+              display-attribute="name"
               @select="onMemberSelect"
               class="select-members"
               :destyled="true"
