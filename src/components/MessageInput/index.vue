@@ -8,12 +8,6 @@
        :class="{editing:!!message, inThread:!!replyTo}">
 
       <div class="group">
-          <button
-              v-if="showFileUpload"
-              class="upload-button input-button"
-              @click="onPromptFilePicker">
-              <span>+</span>
-          </button>
 
           <text-input
               :key="textInputKey"
@@ -29,6 +23,13 @@
               :users="userSuggestions"
               class="text-input "
               :class="{'no-files': !showFileUpload}" />
+
+          <button
+              v-if="showFileUpload"
+              class="upload-button input-button"
+              @click="onPromptFilePicker">
+              <span>+</span>
+          </button>
 
           <button
               v-if="uiEnableSubmitButton()"
@@ -354,6 +355,11 @@ $inputwidth: 30px;
 }
 
 // another background in wide, and no shadow
+.text-input:focus-within~.input-button{
+              background-color: rgba($appgreen, 0.1);
+            border-color: $appgreen;
+            color: $appgreen;
+}
 @media (min-width: $wideminwidth) {
   $wideinputwidth: 50px;
   .container {
@@ -370,15 +376,16 @@ $inputwidth: 30px;
         margin-right: 0;
         width: calc(100% - #{$wideinputwidth});
 
-        :focus-within {
+        &:focus-within {
           outline: none;
           border-color: $appgreen;
 
-          ~ .input-button {
-            background-color: rgba($appgreen, 0.1);
-            border-color: $appgreen;
-            color: $appgreen;
-          }
+         ~ .upload-button
+         {
+           background-color:rgba($appgreen,0.1);
+           border-color:$appgreen;
+           color:$appgreen;
+         }
         }
       }
 
