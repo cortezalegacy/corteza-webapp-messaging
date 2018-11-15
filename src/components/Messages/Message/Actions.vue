@@ -113,7 +113,6 @@ export default {
 
 .actions, .context-menu {
   position: absolute;
-  border-radius: 3px;
   width: auto;
   right: 0px;
   text-align: right;

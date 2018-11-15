@@ -12,7 +12,7 @@
         'edited' : message.updatedAt,
         'pinned' : highlightPinned && message.isPinned,
         'bookmarked' : highlightBookmarked && message.isBookmarked,
-        'first-unread': isFirstUnread && !isFirst && !isLast,
+        'first-unread': isLastRead && !isFirst && !isLast,
         'unread': isUnread,
         'type-channel-event': message.type === 'channelEvent',
       }"
@@ -119,7 +119,7 @@ export default {
     hideReactions: Boolean,
 
     isUnread: Boolean,
-    isFirstUnread: Boolean,
+    isLastRead: Boolean,
     isFirst: Boolean,
     isLast: Boolean,
 
@@ -288,14 +288,45 @@ a{
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
+em{
+  font-style: normal;
+}
 .message-n-meta {
   margin-bottom: 10px;
-  position: relative;
   padding: 5px 5px 5px 66px;
   position: relative;
 
-  .message{
-    margin-right: 10px;
+  &:hover,
+  &:focus{
+    background-color: rgba($appgrey, 0.1);
+    .date {
+      display: inline-block;
+    }
+    .actions {
+      display: block;
+    }
+    .reactions.no-reactions {
+      display: block;
+      right: 0px;
+    }
+  }
+
+  &.type-channel-event{
+    padding: 1px 1px 1px 66px;
+    margin-bottom: 0px;
+    font-style: italic;
+    &:hover{
+      background: none;
+    }
+    .message{
+      background: none;
+      &:before{
+        background: none;
+      }
+      .message-content {
+        font-size: 12px;
+      }
+    }
   }
 
   &.bookmarked {
@@ -310,64 +341,81 @@ a{
     }
   }
 
+  &.unread {
+    .message{
+      border-right: 4px solid $appred;
+    }
+  }
+
   &.consecutive {
-    background: none;
+    margin-top: -18px;
+    &:hover,
+    &:focus{
+      .date {
+        display: none;
+      }
+
+      .time {
+        display: block;
+        background-color: lighten($appgrey, 30);
+        z-index: 5;
+      }
+    }
+    &.type-channel-event{
+      margin-top: 0;
+    }
 
     &.attachement {
       margin-bottom: 10px;
       // because attachements are bigger than 65px;
     }
-
-    .message:before {
-      display: none !important;
+    .time {
+      left: 22px;
+      top: 15px;
+    }
+    .day {
+      display: none;
+    }
+    .message {
+      &:before {
+        display: none;
+      }
     }
 
   }
 
-  .reactions.no-reactions {
-    position: absolute;
-    display: none;
-    margin-top: -5px;
-    margin-left: -10px;
-    z-index: 2;
-    float: right;
+  .message{
+    margin-right: 10px;
+  }
+
+  .reactions {
+    &.no-reactions{
+      position: absolute;
+      display: none;
+      margin-top: -5px;
+      margin-left: -10px;
+      z-index: 2;
+      float: right;
+    }
   }
 }
 
-// all margins in one place
-.message-n-meta.consecutive {
-  &.type-channel-event{
-    margin-top: 0;
-  }
-
-  margin-top: -18px;
-}
-
-.message-n-meta.first {
-}
-
-.message-n-meta.first + .message-n-meta.consecutive {
-}
-
-.author, .date, .time, .day {
-  font-style: normal;
+.author,
+.date,
+.time,
+.day {
   color: $appgrey;
-  font-size: 12px;
 }
 
 .avatar {
-  display: inline-block;
   position: absolute;
   left: 20px;
 }
 
-.author, .date {
+.author,
+.date {
   display: inline-block;
   padding: 2px 0.5em;
-}
-
-.author {
-  padding: 2px 0.5em 2px 2px;
 }
 
 .time, .day {
@@ -381,86 +429,12 @@ a{
   font-size: 10px;
 }
 
-.consecutive {
-  .time {
-    left: 22px;
-    top: 15px;
-  }
-
-  .day {
-    display: none;
-  }
-
-}
-
-.written-today {
-  .time {
-    display: block;
-  }
-
-  .day {
-    display: none;
-  }
-
-}
-
-.written-today.consecutive {
-  .time {
-    display: none;
-  }
-
-}
-
 .date, .actions {
   display: none;
 }
 
-.message-n-meta:hover, .message-n-meta:focus {
-  background-color: rgba($appgrey, 0.1);
-
-  .date {
-    display: inline-block;
-  }
-  .actions {
-    display: block;
-  }
-
-  .reactions.no-reactions {
-    display: block;
-    right: 0px;
-  }
-}
-
-.message-n-meta.consecutive:hover, .message-n-meta.consecutive:focus {
-  .date {
-    display: none;
-  }
-
-  .time {
-    display: block;
-    background-color: lighten($appgrey, 30);
-    z-index: 5;
-  }
-
-}
-
-.message-n-meta{
-  &.type-channel-event{
-    padding: 1px 1px 1px 66px;
-    margin-bottom: 0px;
-    font-style: italic;
-    &:hover{
-      background: none;
-    }
-    .message .message-content{
-      font-size: 12px;
-    }
-  }
-}
-
 .message {
   position: relative;
-  //display: table;
   background-color: $messagebgcolor;
   word-wrap: break-word;
   border-radius: 3px;
@@ -468,7 +442,6 @@ a{
   display: table;
   min-width: 180px;
 
-  // the little triangle on the left of message
   &:before {
     content: " ";
     background-color: $messagebgcolor;
@@ -480,18 +453,13 @@ a{
     transform: rotate(45deg);
   }
 
-  // my messages in blue
   &.from_me {
     background-color: $currentmymessagebgcolor;
 
-    span {
+    span,
+    &:before  {
       background-color: $currentmymessagebgcolor;
     }
-
-    &:before {
-      background-color: $currentmymessagebgcolor;
-    }
-
   }
 
   .message-content {
@@ -515,33 +483,6 @@ a{
 
 .first-unread {
   border-bottom: 2px solid $appred;
-}
-
-/*styling for system messages: members leaving/joining channels, renaming channel names/topics...*/
- .type-channel-event{
-  .message{
-    background: none;
-    &::before{
-      background: none;
-    }
-  }
- }
-
-@media (min-width:$wideminwidth) {
-
-  /*
-  .actions, .context-menu
-  {
-    transform: translateX(-50%);
-  }
-  .in-thread
-  {
-    .actions, .context-menu
-    {
-      transform: translateX(0%);
-    }
-  }
-  */
 }
 
 </style>

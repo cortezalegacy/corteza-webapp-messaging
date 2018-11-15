@@ -41,6 +41,7 @@ export default {
 a{
   color: $defaulttextcolor;
   font-weight: 900;
+  text-decoration: none;
   &.current-user{
     color: $appred;
   }
