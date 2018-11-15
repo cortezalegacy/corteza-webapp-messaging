@@ -16,14 +16,14 @@
             <confirmation-toggle
               @confirmed="remove(u.ID)"
               cta="Remove"
-              v-if="channel.canChangeMembers && u.ID != currentUser.ID"
+              v-if="channel.canChangeMembers && u.ID != currentUser.ID && channel.type !== 'group'"
               class="confirmation-buttons">
             </confirmation-toggle>
           </li>
         </ul>
       </div>
-      <hr />
-      <div class="add-members">
+      <div class="add-members" v-if="channel.canChangeMembers && channel.type !== 'group'">
+        <hr />
         <div class="header">
           <h1>Add members</h1>
           <search-input v-model="userQuery" :focus="true"></search-input>
