@@ -33,7 +33,7 @@
 
           <button
               v-if="uiEnableSubmitButton()"
-              class="send-button input-button"
+              class="input-button send-button"
               @click="onSubmitBtnClick">
               <span class="icon-hsend"></span>
           </button>
@@ -240,185 +240,94 @@ export default {
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
 
-$inputwidth: 30px;
+$inputWidth: 50px;
+$mobileInputWidth: 30px;
 
-.container  {
-  // border-top: 2px dotted purple;
 
-  div.activity {
-    height: 20px;
+.container {
+  padding: 4px 15px;
+  .activity {
+    min-height: 20px;
+    display: inline-flex;
+    border: 1px solid transparent;
   }
 
-  width:100%;
   .group {
-    float:left;
-    width:100%;
-    position:relative;
-    max-width:100%;
+    float: left;
+    width: 100%;
+    position: relative;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border: 1px solid $appgrey;
+    .text-input {
+      width: calc(100% - #{$inputWidth});
+      float:right;
+      &:focus-within {
+        outline: none;
+        border-color: $appgreen;
+
+        ~ .upload-button {
+         background-color:rgba($appgreen,0.1);
+         border-color:$appgreen;
+         color:$appgreen;
+        }
+      }
+    }
+    .input-button {
+      width: $inputWidth;
+      position: absolute;
+      height: 100%;
+      color: $appgrey;
+      cursor: pointer;
+      font-size:28px;
+      span{
+        margin-top: -5px;
+        display: block;
+      }
+      &:focus{
+        outline: none;
+      }
+    }
+    .input-button,
+    .text-input
+    {
+      border: 1px solid transparent;
+      background-color:transparent;
+    }
   }
 
   &.editing {
-    padding: 10px 0 10px 10px;
+    padding: 0 10px 0 0;
     .text-input {
       width: 100%;
     }
-  }
-}
-
-.input-button, .text-input
-{
-  border: 1px solid transparent;
-  background-color:transparent;
-}
-
-.input-button span
-{
-  display:inline-block;
-  line-height: 1;
-}
-
-.text-input
-{
-  font-family: $crustregular;
-  margin-right:$inputwidth;
-  width:calc(100% - #{$inputwidth * 2});
-  border-radius: 0 5px 5px 0;
-  border-left:0;
-  float:right;
-  font-size:15px;
-  padding:0;
-}
-.container.editing
-{
-  margin-right:0;
-  width:calc(100%);
-  .group
-  {
-    display:table-cell;
-    background-color:white;
-  }
-  .text-input
-  {
-    margin-left:30px;
-  }
-}
-.text-input .no-files
-{
-  margin-left: 0;
-  width: 100%;
-}
-
-.input-button {
-  position: absolute;
-  height: calc(100%);
-  width: $inputwidth;
-  color: $appgrey;
-  border-radius: 5px 0 0 5px;
-  cursor: pointer;
-  text-align: center;
-  font-size:28px;
-  margin-top: 0;
-  line-height: 100%;
-  float:left;
-  z-index: 2;
-  padding:0;
-}
-
-.send-button
-{
-  right:0;
-  font-size:24px;
-  margin-top: 0px;
-}
-
-.input-button:focus {
-  outline: none;
-}
-
-@media (max-width: ($wideminwidth - 1px)) {
-  .text-input  ~ {
-    .send-button {
-      display: inline-block;
+    .group
+    {
+      background-color:white;
     }
-  }
-  .container.editing {
-    margin-right: 0;
-    width: calc(100%);
-    display: table-cell;
-    box-shadow: 2px 0 2px 0 rgba($defaulttextcolor, 0.3);
-
-    .group {
-      padding-left: 30px;
-
-    }
-  }
-}
-
-// another background in wide, and no shadow
-.text-input:focus-within~.input-button{
-              background-color: rgba($appgreen, 0.1);
-            border-color: $appgreen;
-            color: $appgreen;
-}
-@media (min-width: $wideminwidth) {
-  $wideinputwidth: 50px;
-  .container {
-    min-height: 75px;
-    padding: 4px 15px;
-    box-shadow: none;
-
-    .group {
-      border-radius: 5px;
-      border: 1px solid $appgrey;
-
-      .text-input  {
-        margin-left: $wideinputwidth;
-        margin-right: 0;
-        width: calc(100% - #{$wideinputwidth});
-
-        &:focus-within {
-          outline: none;
-          border-color: $appgreen;
-
-         ~ .upload-button
-         {
-           background-color:rgba($appgreen,0.1);
-           border-color:$appgreen;
-           color:$appgreen;
-         }
-        }
-      }
-
-      .input-button {
-        width: $wideinputwidth;
-        font-size: 30px;
-      }
-    }
-
-    &.editing {
+    .activity {
       border: none;
-      padding-right: 10px;
-      background: transparent;
+    }
 
-      .text-input  {
-        width: 100%;
+  }
 
-        &:focus-within {
-          border-left: 1px solid $appgreen;
-          border-radius: 5px;
-        }
+}
+
+@media (max-width: $wideminwidth) {
+  .container {
+    .group {
+      .text-input {
+        width: calc(100% - #{$mobileInputWidth});
       }
-
-      .send-button {
-        margin-top: -2px;
+      .input-button {
+        width: $mobileInputWidth;
+        &.send-button{
+          font-size: 20px;
+          right: 0;
+          height: 35px;
+        }
       }
     }
   }
 }
-  /*.emoji-picker-button {*/
-    /*position: absolute;*/
-    /*right: 10px;*/
-    /*font-size: 24px;*/
-    /*top: 10px;*/
-  /*}*/
 </style>
