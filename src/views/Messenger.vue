@@ -92,7 +92,6 @@ import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { Picker } from 'emoji-mart-vue'
-import { User } from '@/types'
 import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
 
@@ -165,7 +164,10 @@ export default {
       // Set window title so user maybe notice the action in the channel (notifications mixin)
       titleNtf.flashNew()
 
-      if (!message.isMentioned(this.currentUser.ID)) {
+      const ch = this.findChannelByID(message.channelID)
+      if (ch.type === 'group' && ch.isMember(this.currentUser.ID)) {
+        console.debug('Notifying, message sent to our group', { message })
+      } else if (!message.isMentioned(this.currentUser.ID)) {
         console.debug('Not notifying, not mentioned')
         // User is not mentioned.
         // @todo this needs to be a bit more intelegent, take user's settings into account etc...
@@ -183,7 +185,7 @@ export default {
       console.debug('Sending notification about new message', { message })
 
       // Please note that this will not work on non secure domains. "http://localhost" is an exception.
-      this.$notification.show(`${(new User(message.user)).Label()} in ${msgChannel.name} | Crust`, {
+      this.$notification.show(`${this.labelUser(message.user)} in ${msgChannel.name} | Crust`, {
         body: body.length > 200 ? body.substring(0, 200) + '...' : body,
       }, {
         onclick: () => {
