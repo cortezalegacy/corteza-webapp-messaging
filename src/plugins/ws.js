@@ -124,8 +124,9 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     return this.send({ messageThreads: { channelID } })
   },
 
-  async recordChannelView (channelID, lastMessageID) {
-    return this.send({ recordChannelView: { channelID, lastMessageID } })
+  async setUnread ({ channelID, threadID = 0, lastMessageID = 0 }) {
+    // @todo rename this to setUnread
+    return this.send({ recordChannelView: { channelID, threadID, lastMessageID } })
   },
 
   async users () {

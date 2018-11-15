@@ -25,6 +25,7 @@
         :hideActionOpenThread="true"
         :editLastMessage="editLastMessage"
         :lastReadMessageID="lastUnread(message)"
+        @scrollBottom="onScrollBottom"
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
     </template>
@@ -45,6 +46,7 @@ import BasePanel from './.'
 import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
+import mixinUnread from '@/mixins/unread'
 
 export default {
   props: {
@@ -111,6 +113,11 @@ export default {
     onOpenFilePicker () {
       this.$refs.upload.openFilePicker()
     },
+
+    // Prepares payload for unread resetting
+    unreadResetPayload () {
+      return { channelID: this.channel.ID, threadID: this.message.ID }
+    },
   },
 
   components: {
@@ -119,5 +126,9 @@ export default {
     Messages,
     BasePanel,
   },
+
+  mixins: [
+    mixinUnread,
+  ],
 }
 </script>

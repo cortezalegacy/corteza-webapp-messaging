@@ -83,10 +83,11 @@ export default {
 
       const channelID = ID
       const lastMessage = messages[messages.length - 1]
-      const newLastMessageID = lastMessage.ID
+
+      lastMessageID = lastMessage.ID
 
       // @todo unread remove thread unread on api & state
-      this.$ws.recordChannelView(channelID, newLastMessageID)
+      this.$ws.setUnread({ channelID, lastMessageID })
       this.$store.commit('unread/unset', { channelID })
       // @todo unread this.setChannelUnread({ ID, newLastMessageID })
     },

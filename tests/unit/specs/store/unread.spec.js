@@ -78,7 +78,11 @@ describe('unread.js', () => {
     expect(state.set.length).to.equal(2)
     expect(unread.getters.count(state)({channelID: '1234567890'})).to.equal(3)
     expect(unread.getters.count(state)({channelID: '1234567890', threadID: '9876543210'})).to.equal(4)
+  })
 
+  it('Can fetch ID of last read message', () => {
+    const state = {set: [{channelID: '1234567890', threadID: '', count: 2, lastMessageID: '9876543210' }]}
+    expect(unread.getters.last(state)({channelID: '1234567890', threadID: ''})).to.equal('9876543210')
   })
 })
 

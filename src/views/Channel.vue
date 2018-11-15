@@ -24,7 +24,7 @@
         :origin="channel"
         :scrollable="true"
         :consecutive="true"
-        :lastReadMessageID="lastUnread(channel)"
+        :lastReadMessageID="lastReadMessageID(channelID)"
         :editLastMessage="editLastMessage"
         :readOnly="!channel.canSendMessages"
         @cancelEditing="editLastMessage=false"
@@ -49,6 +49,7 @@ import ChannelHeader from '@/components/Channel/Header'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
+import mixinUnread from '@/mixins/unread'
 
 export default {
   props: {
@@ -67,8 +68,8 @@ export default {
     ...mapGetters({
       channelByID: 'channels/findByID',
 
-      countUnread: 'unread/count',
-      lastUnread: 'unread/last',
+      unread: 'unread/channel',
+      lastReadMessageID: 'unread/last',
 
       user: 'auth/user',
       currentUser: 'auth/user',
@@ -93,7 +94,7 @@ export default {
     return {
       showUploadArea: false,
 
-      resetUnreadTimeout: null,
+      // resetUnreadTimeout: null,
       channel: null,
 
       // Assists with on-scroll loading
@@ -125,7 +126,7 @@ export default {
     ...mapActions({
       clearHistory: 'history/clear',
       setCurrentChannel: 'channels/setCurrent',
-      // @todo unread setChannelUnreadCount: 'unread/setChannel',
+      // @todo unread setChannelUnreadCount: 'unread/set',
       // @todo unread ignoreChannelUnreadCount: 'unread/ignoreChannel',
       // @todo unread unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
@@ -148,22 +149,6 @@ export default {
       this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
     },
 
-    resetUnreadAfterTimeout (lastMessageID) {
-      this.clearUnreadTimeout()
-
-      this.resetUnreadTimeout = window.setTimeout(() => {
-        // @todo unread this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID })
-        this.$store.commit('unread/unset', this.channel)
-        this.$ws.recordChannelView(this.channel.ID, lastMessageID)
-      }, 2000)
-    },
-
-    clearUnreadTimeout () {
-      if (this.resetUnreadTimeout !== null) {
-        window.clearTimeout(this.resetUnreadTimeout)
-      }
-    },
-
     onOpenFilePicker () {
       this.$refs.upload.openFilePicker()
     },
@@ -181,16 +166,9 @@ export default {
       }
     },
 
-    onScrollBottom ({ messageID }) {
-      if (document.hasFocus()) {
-        this.resetUnreadAfterTimeout(messageID)
-      } else {
-        const resetUnreadAfterTimeoutOnFocus = () => {
-          this.resetUnreadAfterTimeout(messageID)
-          window.removeEventListener('focus', resetUnreadAfterTimeoutOnFocus)
-        }
-        window.addEventListener('focus', resetUnreadAfterTimeoutOnFocus)
-      }
+    // Prepares payload for unread resetting
+    unreadResetPayload () {
+      return { channelID: this.channel.ID }
     },
   },
 
@@ -200,6 +178,10 @@ export default {
     Upload,
     ChannelHeader,
   },
+
+  mixins: [
+    mixinUnread,
+  ],
 }
 </script>
 <style lang="scss" scoped>

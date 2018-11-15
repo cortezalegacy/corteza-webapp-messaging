@@ -3,7 +3,6 @@ import { Channel, Message } from '../types'
 
 const state = {
   set: [],
-  // ignoreChannel: null,
 }
 
 class Unread {
@@ -28,9 +27,16 @@ function filter ({ channelID, threadID = '' }) {
 
 function transform (o) {
   if (o instanceof Channel) {
+    // Channel always tranforms to channel
     return { channelID: o.ID, threadID: '' }
   } else if (o instanceof Message) {
-    return { channelID: o.channelID, threadID: o.replyTo || o.ID || '' }
+    if (o.replies > 0 || o.replyTo) {
+      // Reply or the original (first) thread message transform to thread
+      return { channelID: o.channelID, threadID: o.replyTo || o.ID }
+    } else {
+      // Other messages always transform to channel
+      return { channelID: o.channelID, threadID: '' }
+    }
   }
 
   if (typeof o === 'object') {
@@ -69,47 +75,16 @@ function delta (state, { channelID, threadID = '' }, delta = 0) {
 
 // getters
 const getters = {
-  // hasUnread: (state) => (cnd) => (state.set.find(filter(cnd)) || {}).lastMessageID !== lastMessageID
-
   // Return number of unread messages in channel/thread. Default to 0
   count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
-  last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).lastMessageID,
+  last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '' }).lastMessageID,
 
   // All unread channels
   channels: (state) => state.set.filter(u => !u.threadID),
-
-  // channels: (state) => state.channels.filter(c => c.count > 0),
-  // channel: (state) => (ID) => (state.channels.find(u => u.ID === ID) || new Unread(ID)).count,
-  // lastMessageInChannel: (state) => (ID) => (state.channels.find(u => u.ID === ID) || new Unread(ID)).lastMessageID,
-  // isChannelIgnored: (state) => (ID) => state.ignoreChannel === ID,
 }
 
 // actions
-const actions = {/*
-  setChannel ({ commit, getters }, { ID, count, lastMessageID }) {
-    if (!getters.isChannelIgnored(ID) || count === 0) {
-      commit('setChannel', new Unread(ID, count, lastMessageID))
-    }
-  },
-
-  incChannel ({ commit, getters }, ID) {
-    if (!getters.isChannelIgnored(ID)) {
-      commit('setChannel', new Unread(ID, getters.channel(ID) + 1))
-    }
-  },
-
-  ignoreChannel ({ commit, getters }, ID) {
-    if (!getters.isChannelIgnored(ID)) {
-      commit('setIgnoreChannel', ID)
-    }
-  },
-
-  unignoreChannel ({ commit, getters }, ID) {
-    if (getters.isChannelIgnored(ID)) {
-      commit('setIgnoreChannel', null)
-    }
-  },
-*/}
+const actions = {}
 
 // mutations
 const mutations = {
