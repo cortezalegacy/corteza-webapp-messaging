@@ -11,8 +11,8 @@
     </router-link>
     <transition name="slide-fade">
       <span>
-        <span class="unread" v-if="unread(channel.ID) > 99">99+</span>
-        <span class="unread" v-else-if="unread(channel.ID) > 0">{{ unread(channel.ID) }}</span>
+        <span class="unread" v-if="countUnread(channel) > 99">99+</span>
+        <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
       </span>
     </transition>
   </li>
@@ -35,7 +35,7 @@ export default {
   computed: {
     ...mapGetters({
       current: 'channels/current',
-      unread: 'unread/channel',
+      countUnread: 'unread/count',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
       currentUser: 'auth/user',

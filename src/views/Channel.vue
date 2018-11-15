@@ -24,7 +24,7 @@
         :origin="channel"
         :scrollable="true"
         :consecutive="true"
-        :lastReadMessageID="lastUnreadMessageInChannel(channelID)"
+        :lastReadMessageID="lastUnread(channel)"
         :editLastMessage="editLastMessage"
         :readOnly="!channel.canSendMessages"
         @cancelEditing="editLastMessage=false"
@@ -67,8 +67,8 @@ export default {
     ...mapGetters({
       channelByID: 'channels/findByID',
 
-      unread: 'unread/channel',
-      lastUnreadMessageInChannel: 'unread/lastMessageInChannel',
+      countUnread: 'unread/count',
+      lastUnread: 'unread/last',
 
       user: 'auth/user',
       currentUser: 'auth/user',
@@ -125,9 +125,9 @@ export default {
     ...mapActions({
       clearHistory: 'history/clear',
       setCurrentChannel: 'channels/setCurrent',
-      setChannelUnreadCount: 'unread/setChannel',
-      ignoreChannelUnreadCount: 'unread/ignoreChannel',
-      unignoreChannelUnreadCount: 'unread/unignoreChannel',
+      // @todo unread setChannelUnreadCount: 'unread/setChannel',
+      // @todo unread ignoreChannelUnreadCount: 'unread/ignoreChannel',
+      // @todo unread unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
 
     changeChannel (channel) {
@@ -140,7 +140,7 @@ export default {
 
       this.previousFetchFirstMessageID = null
 
-      this.ignoreChannelUnreadCount(this.channel.ID)
+      // @todo unread this.ignoreChannelUnreadCount(this.channel.ID)
 
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
@@ -152,7 +152,8 @@ export default {
       this.clearUnreadTimeout()
 
       this.resetUnreadTimeout = window.setTimeout(() => {
-        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID })
+        // @todo unread this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID })
+        this.$store.commit('unread/unset', this.channel)
         this.$ws.recordChannelView(this.channel.ID, lastMessageID)
       }, 2000)
     },

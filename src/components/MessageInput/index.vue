@@ -140,7 +140,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setChannelUnreadCount: 'unread/setChannel',
+      // @todo unread setChannelUnreadCount: 'unread/setChannel',
     }),
 
     clearInputText () {
@@ -186,7 +186,7 @@ export default {
         }
 
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
-        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
+        this.$store.commit('unread/unset', this.channel)
       }
     },
 

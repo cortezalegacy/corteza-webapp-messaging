@@ -41,6 +41,7 @@ export default {
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
+      // @todo unread -- port this
       unreadChannels: 'unread/channels',
       findChannelByID: 'channels/findByID',
       unreadInChannel: 'history/unreadInChannel',
@@ -60,10 +61,11 @@ export default {
 
   methods: {
     ...mapActions({
-      setChannelUnread: 'unread/setChannel',
+      // @todo unread setChannelUnread: 'unread/setChannel',
     }),
 
     loadUnreadMessages () {
+      // @todo unread -- port this
       this.unreadChannels.forEach(u => {
         if (u.lastMessageID) {
           this.$ws.getMessages({ channelID: u.ID, firstID: u.lastMessageID })
@@ -79,10 +81,14 @@ export default {
         return
       }
 
-      const newLastMessageID = messages[messages.length - 1].ID
+      const channelID = ID
+      const lastMessage = messages[messages.length - 1]
+      const newLastMessageID = lastMessage.ID
 
-      this.$ws.recordChannelView(ID, newLastMessageID)
-      this.setChannelUnread({ ID, newLastMessageID })
+      // @todo unread remove thread unread on api & state
+      this.$ws.recordChannelView(channelID, newLastMessageID)
+      this.$store.commit('unread/unset', { channelID })
+      // @todo unread this.setChannelUnread({ ID, newLastMessageID })
     },
 
     markAllAsRead () {
