@@ -31,7 +31,7 @@
 
           <actions
             class="actions"
-            v-if="!hideActions && !inEditing && !readOnly"
+            v-if="!hideActions && !inEditing"
             v-bind="$props"
             @editMessage="inEditing=true"
             @deleteMessage="onDeleteMessage"
@@ -432,7 +432,7 @@ a{
 
 .message {
   position: relative;
-  display: table;
+  //display: table;
   background-color: $messagebgcolor;
   word-wrap: break-word;
   border-radius: 3px;

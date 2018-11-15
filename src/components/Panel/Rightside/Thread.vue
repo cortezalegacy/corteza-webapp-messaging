@@ -26,18 +26,21 @@
         :editLastMessage="editLastMessage"
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
-
-      <message-input
-        :replyTo="message"
-        v-if="channel.canSendMessages"
-        @promptFilePicker="onOpenFilePicker"
-        @editLastMessage="editLastMessage=true" />
+    </template>
+    <template slot="footer">
+      <div class="footer">
+        <message-input
+          :replyTo="message"
+          v-if="channel.canSendMessages"
+          @promptFilePicker="onOpenFilePicker"
+          @editLastMessage="editLastMessage=true" />
+      </div>
     </template>
   </base-panel>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import BasePanel from './'
+import BasePanel from './.'
 import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
@@ -116,41 +119,3 @@ export default {
   },
 }
 </script>
-
-<style scoped lang="scss">
-//inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/menu-layer.scss';
-
-.closer {
-  position: absolute;
-  top: 5px;
-  right: 20px;
-  font-size: 20px;
-  z-index: 9999;
-}
-
-.thread
-{
-  overflow: hidden;
-  margin-top:0;
-  padding-top:0;
-  height: 100vh;
-}
-
-.messages {
-  position: absolute;
-  height: calc(100vh - 147px);
-  padding-top:20px;
-}
-.channel-input
-{
-  position: absolute;
-  border-width: 5px 15px 5px 15px;
-  display:table;
-  bottom:0;
-  background-color:$appwhite;
-  border-color:$appwhite;
-}
-
-</style>

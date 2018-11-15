@@ -18,7 +18,7 @@
       <font-awesome-icon
         class="action"
         icon="thumbtack"
-        v-if="!hidePinning"
+        v-if="!hidePinning && !readOnly"
         :class="{pinned:message.isPinned}"
         title="Pin message for everyone to see"
         @click="$bus.$emit('message.pin', { message })"
@@ -38,12 +38,6 @@
     </div>
     <div class="context-menu" v-if="isContextMenuOpen && isContextMenuEnabled">
       <ul class="context-menu-list">
-        <li v-if="message.canReply && !hideActionOpenThread"
-            class="extra-action"
-            @click="$emit('openThreadPanel', { message });isContextMenuOpen=false">
-            <i class="icon icon-message-circle-left-speak"></i>
-            <span>Reply in thread </span>
-        </li>
         <li v-if="message.canEdit"
             class="extra-action"
             @click="$emit('editMessage', { message });isContextMenuOpen=false">
@@ -69,6 +63,8 @@ export default {
       required: true,
     },
 
+    readOnly: Boolean,
+
     hideActions: Boolean,
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
@@ -85,7 +81,7 @@ export default {
 
   computed: {
     isContextMenuEnabled: function () {
-      return !this.hideActionsMenu &&
+      return !this.readOnly && !this.hideActionsMenu &&
         ((this.message.canReply && !this.hideActionOpenThread) ||
           this.message.canEdit ||
           this.message.canDelete)

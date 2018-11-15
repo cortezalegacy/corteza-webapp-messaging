@@ -180,11 +180,9 @@ li {
 }
 
 .scrollable {
-  height: calc(100vh - 80px);
-  position:relative;
-  max-height:100%;
+  height: 100%;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 //media query specific for webkit, because of fixed and vh related problem in android/webkit
@@ -195,8 +193,6 @@ li {
     @supports (-webkit-appearance:none) {
       //see : https://developers.google.com/web/updates/2016/12/url-bar-resizing
       //and : https://dev.to/peiche/100vh-behavior-on-chrome-2hm8
-      height: calc(100% - 80px);
-      top:60px;
       //bottom:50px;
       //background-color:blue;
     }
@@ -205,7 +201,6 @@ li {
 @media (min-width: $wideminwidth)
 {
   .scrollable {
-    height: calc(100vh - 140px);
   }
 }
 </style>

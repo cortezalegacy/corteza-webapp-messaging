@@ -1,12 +1,12 @@
 <template>
   <li class="layer-item-wrap" :class="[channel.type, isGroupMemberOnline ? 'member-is-online' : null]" @click="$emit('close')">
     <router-link
-            class="layer-item layer-selectable channel-name"
-            v-bind:class="[
-              channelColor(index),
-              { current: (current||{}).ID === channel.ID },
-            ]"
-            :to="{name:'channel', params:{channelID:channel.ID}}">
+      class="layer-item layer-selectable channel-name"
+      v-bind:class="[
+        channelColor(index),
+        { current: (current||{}).ID === channel.ID },
+      ]"
+      :to="{name:'channel', params:{channelID:channel.ID}}">
       {{ labelChannel(channel) }}
     </router-link>
     <transition name="slide-fade">
@@ -21,8 +21,6 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'channel-panel-item',
-
   props: {
     channel: {
       type: Object,

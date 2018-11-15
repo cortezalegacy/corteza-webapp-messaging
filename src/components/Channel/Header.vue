@@ -1,5 +1,5 @@
 <template>
-  <header class="header sub-header">
+  <div class="header sub-header">
     <label
       class="channel-toggle"
       @click="$emit('toggleChannelPanel', null)">
@@ -39,7 +39,7 @@
           ></font-awesome-icon>
       </label>
     </div>
-  </header>
+  </div>
 </template>
 <script>
 export default {

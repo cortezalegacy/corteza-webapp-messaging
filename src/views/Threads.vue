@@ -98,4 +98,12 @@ hr {
   border:none;
   padding-top:5px;
 }
+
+@media (min-width: $wideminwidth)
+{
+  .channel-toggle
+  {
+    display:none;
+  }
+}
 </style>

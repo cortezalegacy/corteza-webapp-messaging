@@ -2,6 +2,7 @@
   <quill-editor
     ref="quill"
     @ready="onQuillReady"
+    @change="$emit('change', $event)"
     v-model="content"
     :options="options"/>
 </template>

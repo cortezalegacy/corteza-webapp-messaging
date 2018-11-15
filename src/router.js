@@ -19,6 +19,7 @@ export default new Router({
 
         { path: 'threads', name: 'threads', component: view('Threads') },
         { path: 'unreads', name: 'unreads', component: view('Unreads') },
+        { path: '*', name: 'landing', component: view('Landing') },
       ],
     },
     {
