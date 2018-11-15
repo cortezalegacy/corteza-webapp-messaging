@@ -465,6 +465,7 @@ a{
   word-wrap: break-word;
   border-radius: 3px;
   padding: 6px;
+  display: table;
   min-width: 180px;
 
   // the little triangle on the left of message
