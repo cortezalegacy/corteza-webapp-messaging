@@ -82,7 +82,6 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import ClickOutside from 'vue-click-outside'
 import BaseSidePanel from '@/components/Panel/Base'
 import ChannelsPanel from '@/components/Panel/Channels'
 import MembersPanel from '@/components/Panel/Rightside/Members'
@@ -301,10 +300,6 @@ export default {
     SearchResults,
     QuickSearch,
     Picker,
-  },
-
-  directives: {
-    ClickOutside,
   },
 }
 </script>
