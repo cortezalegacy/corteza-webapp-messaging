@@ -24,6 +24,7 @@
         :scrollable="true"
         :hideActionOpenThread="true"
         :editLastMessage="editLastMessage"
+        :lastReadMessageID="lastUnread(message)"
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
     </template>
@@ -71,6 +72,7 @@ export default {
       getMessageByID: 'history/getByID',
       getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',
+      lastUnread: 'unread/last',
     }),
 
     message () {

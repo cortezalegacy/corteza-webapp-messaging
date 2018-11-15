@@ -30,7 +30,7 @@ function transform (o) {
   if (o instanceof Channel) {
     return { channelID: o.ID, threadID: '' }
   } else if (o instanceof Message) {
-    return { channelID: o.channelID, threadID: o.replyTo || '' }
+    return { channelID: o.channelID, threadID: o.replyTo || o.ID || '' }
   }
 
   if (typeof o === 'object') {
