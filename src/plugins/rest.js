@@ -160,6 +160,20 @@ export default {
         })
       },
 
+      async markMessageAsUnread (channelID, messageID) {
+        return new Promise((resolve, reject) => {
+          this.api().post(
+            `/channels/${channelID}/messages/${messageID}/unread`,
+          ).then((response) => {
+            if (response.data.error) {
+              reject(response.data.error)
+            } else {
+              resolve()
+            }
+          }, stdRejection(reject))
+        })
+      },
+
       async bookmarkMessage (channelID, messageID, remove = false) {
         return this.flag({ channelID, messageID, type: 'bookmark', remove })
       },

@@ -1,5 +1,7 @@
 <template>
     <li
+      @click.alt.exact="onMarkAsUnread"
+      @click.meta.exact="onOpenThread"
       class="message-n-meta"
       :class="{
         'consecutive': consecutive,
@@ -197,6 +199,16 @@ export default {
       if (confirm('Delete this message?')) {
         // @todo a more slick, inline confirmation...
         this.$rest.deleteMessage(this.message.channelID, this.message.ID)
+      }
+    },
+
+    onMarkAsUnread () {
+      this.$rest.markMessageAsUnread(this.message.channelID, this.message.ID)
+    },
+
+    onOpenThread () {
+      if (this.message.canReply && !this.hideActionOpenThread) {
+        this.$emit('openThreadPanel', { message: this.message })
       }
     },
   },
