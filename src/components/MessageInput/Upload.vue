@@ -180,7 +180,7 @@ export default {
   position: relative;
   z-index: 100;
   width: 100%;
-  height: calc(100vh - 60px);
+  height: 100vh;
   background: rgba(255,255,255,.1);
   &.dz-started{
     max-width: 800px;

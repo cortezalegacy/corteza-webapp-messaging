@@ -10,6 +10,7 @@
         :currentUser="currentUser"
         origin="pinned"
         :scrollable="false"
+        :highlightPinned="false"
         v-on="$listeners" />
     </template>
   </base-panel>

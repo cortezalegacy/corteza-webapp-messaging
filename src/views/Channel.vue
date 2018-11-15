@@ -208,6 +208,7 @@ div.channel {
   display: flex;
   flex-flow: column nowrap;
   height: 100vh;
+  position: relative;
 
   & > div.messages {
     flex: 1 100%;

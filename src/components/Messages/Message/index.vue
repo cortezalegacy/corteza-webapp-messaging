@@ -8,8 +8,8 @@
         'valid' : message.attachment && message.attachment.size > 0,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
-        'pinned' : message.isPinned,
-        'bookmarked' : message.isBookmarked,
+        'pinned' : highlightPinned && message.isPinned,
+        'bookmarked' : highlightBookmarked && message.isBookmarked,
         'first-unread': isFirstUnread && !isFirst && !isLast,
         'unread': isUnread,
         'type-channel-event': message.type === 'channelEvent',
@@ -122,6 +122,10 @@ export default {
     isLast: Boolean,
 
     showEditor: Boolean,
+
+    // Controling bookmarked and pinned messages highlighting
+    highlightBookmarked: { type: Boolean, default: true },
+    highlightPinned: { type: Boolean, default: true },
   },
 
   data () {
@@ -280,6 +284,18 @@ a{
 
   .message{
     margin-right: 10px;
+  }
+
+  &.bookmarked {
+    .message{
+      border-right: 4px solid $appgreen;
+    }
+  }
+
+  &.pinned {
+    .message{
+      border-right: 4px solid $appyellow;
+    }
   }
 
   &.consecutive {

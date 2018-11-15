@@ -146,7 +146,10 @@ export default {
 
 .actions {
   min-width: 180px;
-  .bookmarked, .pinned {
+  .bookmarked{
+    color: $appgreen;
+  }
+  .pinned {
     color: $appyellow;
   }
   .svg-inline--fa{

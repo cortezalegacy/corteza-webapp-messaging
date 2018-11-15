@@ -21,6 +21,8 @@
       :hideActionOpenThread="hideActionOpenThread"
       :hideActionsMenu="hideActionsMenu"
       :isLast="index === messages.length - 1"
+      :highlightPinned="highlightPinned"
+      :highlightBookmarked="highlightBookmarked"
       v-on="$listeners" />
     <li ref="anchor"></li>
   </ul>
@@ -70,6 +72,10 @@ export default {
 
     // Set to true to enable edit mode for last message from currentUser
     editLastMessage: Boolean,
+
+    // Controling bookmarked and pinned messages highlighting
+    highlightBookmarked: { type: Boolean, default: true },
+    highlightPinned: { type: Boolean, default: true },
   },
 
   computed: {
