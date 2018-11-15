@@ -13,12 +13,9 @@ export default {
       channels.forEach((c) => {
         cc.push(new Channel(c))
 
-        // Set unread state for all channels
-        this.$store.dispatch('unread/setChannel', {
-          ID: c.ID,
-          count: (c.view || {}).newMessagesCount,
-          lastMessageID: (c.view || {}).lastMessageID,
-        })
+        if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
+          this.$store.commit('unread/set', { channelID: c.ID, ...c.unread })
+        }
       })
 
       this.$store.dispatch('channels/resetList', cc)
@@ -63,9 +60,16 @@ export default {
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
         // Count only new mesages, no updates, no replies
-        this.$store.dispatch('unread/incChannel', msg.channelID)
-
+        this.$store.commit('unread/inc', msg)
         this.$bus.$emit('$core.newMessage', { message: msg })
+      }
+
+      if (msg.replyTo) {
+        // this.$store.commit('unread/set', {
+        //   channelID: c.ID,
+        //   count: (c.view || {}).newMessagesCount,
+        //   lastMessageID: (c.view || {}).lastMessageID,
+        // })
       }
       this.$store.dispatch('history/update', [msg])
 
@@ -120,6 +124,18 @@ export default {
           },
         }
       }).concat(localCommands))
+    })
+
+    // Handling requests for message pins
+    this.$bus.$on('message.delete', ({ message }) => {
+      // Response is broadcasted via WS
+      this.$rest.deleteMessage(message.channelID, message.ID)
+    })
+
+    // Handling requests for message pins
+    this.$bus.$on('message.markAsUnread', ({ message }) => {
+      // Response is broadcasted via WS
+      this.$rest.markMessageAsUnread(message.channelID, message.ID)
     })
 
     // Handling requests for message pins

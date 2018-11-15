@@ -45,7 +45,7 @@
 
       </div>
       <div class="activity">
-          <activity :users="activeInChannel(channelID, 'typing')">typing</activity>
+          <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')">typing</activity>
       </div>
   </div>
 </template>
@@ -101,7 +101,8 @@ export default {
     ...mapGetters({
       users: 'users/list',
       channels: 'channels/list',
-      activeInChannel: 'users/activeInChannel',
+      channelActivity: 'users/channelActivity',
+      messageActivity: 'users/messageActivity',
     }),
 
     channelID () {
@@ -140,7 +141,7 @@ export default {
 
   methods: {
     ...mapActions({
-      setChannelUnreadCount: 'unread/setChannel',
+      // @todo unread setChannelUnreadCount: 'unread/setChannel',
     }),
 
     clearInputText () {
@@ -186,7 +187,7 @@ export default {
         }
 
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
-        this.setChannelUnreadCount({ ID: this.channel.ID, count: 0, lastMessageID: 0 })
+        this.$store.commit('unread/unset', this.channel)
       }
     },
 
@@ -207,8 +208,21 @@ export default {
 
     // Update channel activity once in a while while typing
     onChange: _.throttle(function (value) {
-      if (value.text.length > 1) {
-        this.$ws.send({ channelActivity: { ID: this.channelID, kind: 'typing' } })
+      switch (true) {
+        case value.text.length === 0:
+          break
+
+        case this.message !== undefined:
+          this.$ws.send({ messageActivity: { channelID: this.message.channelID, messageID: this.message.ID, kind: 'editing' } })
+          break
+
+        case this.replyTo !== undefined:
+          this.$ws.send({ messageActivity: { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: 'replying' } })
+          break
+
+        default:
+          this.$ws.send({ channelActivity: { ID: this.channelID, kind: 'typing' } })
+          break
       }
     }, 2000),
   },

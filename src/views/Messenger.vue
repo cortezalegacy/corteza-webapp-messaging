@@ -33,7 +33,7 @@
                   @close="switchRightSidePanel()" />
 
               <thread-panel
-                  v-if="currentChannel && uiRightSidePanelContent === 'thread'"
+                  v-if="uiRightSidePanelContent === 'thread'"
                   @close="switchRightSidePanel()"
                   :repliesTo="uiRightSidePanelThreadMessageID" />
 
@@ -44,7 +44,7 @@
                   @close="switchRightSidePanel()" />
 
               <bookmarked-messages-panel
-                  v-if="currentChannel && uiRightSidePanelContent === 'bookmarkedMessages'"
+                  v-if="uiRightSidePanelContent === 'bookmarkedMessages'"
                   @openThreadPanel="switchRightSidePanel('thread', $event)"
                   @close="switchRightSidePanel()" />
           </base-side-panel>

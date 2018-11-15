@@ -45,13 +45,12 @@ const getters = {
       (ID) =>
         (state.list.find(a => a.ID === ID) || {}).connections > 0,
 
-  activeInChannel:
+  channelActivity:
     (state) =>
       (channelID, kind) => {
         const IDs = state.activity.filter(a => a.channelID === channelID && a.kind === kind).map(a => a.userID)
         return state.list.filter(u => IDs.includes(u.ID))
       },
-
 }
 // actions
 const actions = {

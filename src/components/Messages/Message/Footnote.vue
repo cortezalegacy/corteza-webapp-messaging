@@ -1,16 +1,27 @@
 <template>
   <div class="message-infos">
-    <a class="info" v-if="message.replies" @click="$emit('openThreadPanel', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
+    <a class="info"
+       :class="{unread: countUnread(message)}"
+       v-if="message.replies"
+       @click="$emit('openThreadPanel', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
     <span class="info" v-if="message.updatedAt">edited</span>
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   props: {
     message: {
       type: Object,
       required: true,
     },
+  },
+
+  computed: {
+    ...mapGetters({
+      countUnread: 'unread/count',
+    }),
   },
 }
 </script>

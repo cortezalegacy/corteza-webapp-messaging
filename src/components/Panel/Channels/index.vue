@@ -84,7 +84,7 @@ export default {
       groupChannels: 'channels/groupsOnly',
       current: 'channels/current',
       currentUser: 'auth/user',
-      unreadInChannel: 'unread/channel',
+      countUnread: 'unread/count',
     }),
 
     joinedPublicChannels () {
@@ -94,7 +94,7 @@ export default {
         return c && (
           (this.current && this.current.ID === c.ID) ||
           c.isMember(this.currentUser.ID) ||
-          this.unreadInChannel(c.ID) > 0)
+          this.countUnread(c) > 0)
       })
     },
 
