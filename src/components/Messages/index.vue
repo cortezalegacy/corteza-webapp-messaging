@@ -9,7 +9,7 @@
       :consecutive="consecutive && isConsecutive(messages, index)"
       :currentUser="currentUser"
       :key="msg.ID"
-      :isUnread="lastReadMessageID < msg.ID"
+      :isUnread="!!lastReadMessageID && lastReadMessageID < msg.ID"
       :isLastRead="lastReadMessageID === msg.ID"
       :isFirst="index === 0"
       :showEditor="showEditor(msg)"
