@@ -146,6 +146,7 @@ export default {
     }),
 
     clearInputText () {
+      this.value = ''
       this.textInputKey++
     },
 
@@ -155,8 +156,10 @@ export default {
 
     // Override original submit event and extend event
     // data with submitMeta data.
-    onSubmit: _.debounce(function (ev) {
-      const value = ev.value.trim()
+    onSubmit () {
+      // Make a copy and reset component's version of a value to prevent dups
+      const value = this.value.trim()
+      this.value = ''
 
       const stdResponse = () => {
         // Trigger remounting
@@ -190,10 +193,10 @@ export default {
         this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
-    }, 1000, { leading: true, trailing: false }),
+    },
 
     onSubmitBtnClick (value) {
-      this.onSubmit({ value: this.value })
+      this.onSubmit()
       this.clearInputText()
     },
 
