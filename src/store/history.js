@@ -16,7 +16,12 @@ const getters = {
   unreadInChannel: (state) =>
     (channelID, firstMessageID) =>
       state.set.filter(m => isValid(m) && !m.replyTo && m.channelID === channelID && (firstMessageID || 0) <= m.ID),
+
   getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
+
+  countFromMessageID: (state) =>
+    (f) =>
+      state.set.filter(m => m.ChannelD === f.ChannelID && m.ReplyTo === f.ReplyTo && m.ID >= f.ID).length,
 
   getThreads: (state) =>
     state.set.filter(m => isValid(m) && !m.replyTo && m.replies > 0),
