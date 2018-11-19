@@ -1,9 +1,11 @@
 import { Channel, Message, User } from '@/types'
 import localCommands from '@/commands'
 
-const userActivityTTL = 5 // seconds
+const userActivityTTL = 1000 * 5 // microseconds
+const autheticationRecheck = 1000 * 15 * 60 // microseconds
 
 let userActivityInterval
+let autheticationRecheckInterval
 
 export default {
   beforeCreate () {
@@ -167,10 +169,20 @@ export default {
     // Activity cleanup interval
     userActivityInterval = window.setInterval(() => {
       this.$store.commit('users/cleanup', { ttl: userActivityTTL })
-    }, userActivityTTL * 1000)
+    }, userActivityTTL)
+
+    // Activity cleanup interval
+    autheticationRecheckInterval = window.setInterval(() => {
+      this.$system.authCheck().catch((err) => {
+        // When logout (or a problem) is detected, redurect user
+        console.error(err)
+        this.$router.push({ name: 'signin' })
+      })
+    }, autheticationRecheck)
   },
 
   destroyed () {
     if (userActivityInterval) window.clearInterval(userActivityInterval)
+    if (autheticationRecheckInterval) window.clearInterval(autheticationRecheckInterval)
   },
 }
