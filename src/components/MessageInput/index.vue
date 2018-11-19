@@ -244,7 +244,7 @@ export default {
 @import '@/assets/sass/_0.commons.scss';
 
 $inputWidth: 50px;
-$mobileInputWidth: 30px;
+$mobileInputWidth: 35px;
 
 .container {
   padding: 4px 15px;
@@ -272,6 +272,11 @@ $mobileInputWidth: 30px;
          background-color:rgba($appgreen,0.1);
          border-color:$appgreen;
          color:$appgreen;
+        }
+        ~ .send-button{
+          span{
+            color: $appgreen;
+          }
         }
       }
     }
@@ -317,7 +322,9 @@ $mobileInputWidth: 30px;
 
 @media (max-width: $wideminwidth) {
   .container {
+    padding: 0;
     .group {
+      margin-bottom: 0;
       .text-input {
         width: calc(100% - #{$mobileInputWidth});
       }
@@ -326,9 +333,12 @@ $mobileInputWidth: 30px;
         &.send-button{
           font-size: 20px;
           right: 0;
-          height: 35px;
+          min-height: 35px;
         }
       }
+    }
+    .activity{
+      display: none;
     }
   }
 }
