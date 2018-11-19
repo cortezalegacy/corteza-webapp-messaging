@@ -343,7 +343,7 @@ em{
 
   &.unread {
     .message{
-      border-right: 4px solid $appred;
+      /*border-right: 4px solid $appred;*/
     }
   }
 
@@ -476,13 +476,22 @@ em{
 
 }
 
-.unread {
-
-  /*background: red;*/
-}
-
 .first-unread {
-  border-bottom: 2px solid $appred;
+  border-bottom: 1px solid $appred;
+  &::after{
+    content: "unread";
+    background: white;
+    color: red;
+    display: inline;
+    /* position: absolute; */
+    float: right;
+    right: 17px;
+    margin-right: 20px;
+    line-height: 20px;
+    margin-top: -5px;
+    padding: 0 10px;
+    border-radius: 5px;
+  }
 }
 
 </style>
