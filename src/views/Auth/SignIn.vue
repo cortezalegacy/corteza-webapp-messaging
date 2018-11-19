@@ -1,16 +1,10 @@
 <template>
-  <div class="signIn login-process centered">
-    <div class="app-form-wrap shaded">
-      <div class="crust-window-header">
-        <div class="crust_main-header_title-wrap">
-          <strong class="crust_main-header_title">Crust</strong>
-          <span class="crust_main-header_title__pf">platform</span>
-        </div>
-      </div>
-      <section>
-        <a :href="oidc">Login</a>
-      </section>
-    </div>
+  <div>
+    <header></header>
+    <main>
+      <a class="btn btn-green" :href="oidc">Login</a>
+    </main>
+    <footer></footer>
   </div>
 </template>
 
@@ -21,6 +15,7 @@ export default {
       oidc: this.$system.baseURL() + '/oidc',
     }
   },
+
   mounted () {
     this.$system.authCheck().then((check) => {
       this.$store.commit('auth/setUser', check.user)
@@ -32,16 +27,30 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+@import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/btns.scss';
 
-<style scoped>
-section {
+div {
+  background-color: $appcream;
+  dispaly: flex;
   text-align: center;
-  height: 120px;
-}
+  height: 100vh;
 
-section a {
-  padding: 50px;
-  font-size: 20px;
-  text-decoration: none;
+  header {
+    background: url('../../assets/images/crust-logo-with-tagline.png') no-repeat;
+    background-position: 50% 100%;
+    height: 30vh;
+  }
+
+  main {
+    height: 40vh;
+  }
+
+  a {
+    padding: 50px;
+    font-size: 20px;
+    text-decoration: none;
+  }
 }
 </style>
