@@ -334,15 +334,26 @@ $mobileInputWidth: 35px;
     padding: 0;
     .group {
       margin-bottom: 0;
+      border: none;
+      border-top: 1px solid $appgrey;
+      border-radius: 0;
       .text-input {
         width: calc(100% - #{$mobileInputWidth});
+        border: none;
+        border-top: 1px solid transparent;
       }
       .input-button {
         width: $mobileInputWidth;
+        span{
+          bottom: 0;
+          position: absolute;
+        }
         &.send-button{
           font-size: 20px;
           right: 0;
-          min-height: 35px;
+          span{
+            bottom: 5px;
+          }
         }
       }
     }
