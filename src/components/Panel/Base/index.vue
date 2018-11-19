@@ -60,6 +60,7 @@ aside {
   padding: 0;
   overflow: hidden;
   width: var(--width);
+  max-width: 100%;
   background-color: $menupanebgcolor;
 
   div {
