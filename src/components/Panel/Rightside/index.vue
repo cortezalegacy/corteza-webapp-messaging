@@ -18,7 +18,6 @@
 <style scoped lang="scss">
 //inlude generic definitions
 @import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/menu-layer.scss';
 
 div.rightside-panel-container {
   display: flex;
@@ -27,7 +26,7 @@ div.rightside-panel-container {
   overflow: hidden;
 
   & > div.header {
-    min-height: 55px;
+    min-height: 60px;
     padding: 10px 0 0 10px;
     box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
     margin-bottom:5px;
