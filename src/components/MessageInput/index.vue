@@ -259,7 +259,7 @@ $mobileInputWidth: 35px;
   padding: 4px 15px;
   .activity {
     min-height: 20px;
-    display: inline-flex;
+    display: inline-block;
     border: 1px solid transparent;
   }
 
