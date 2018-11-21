@@ -81,10 +81,7 @@ export default {
 
   computed: {
     isContextMenuEnabled: function () {
-      return !this.readOnly && !this.hideActionsMenu &&
-        ((this.message.canReply && !this.hideActionOpenThread) ||
-          this.message.canEdit ||
-          this.message.canDelete)
+      return !this.readOnly && !this.hideActionsMenu && (this.message.canEdit || this.message.canDelete)
     },
   },
 
