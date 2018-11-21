@@ -345,8 +345,7 @@ $mobileInputWidth: 35px;
       .input-button {
         width: $mobileInputWidth;
         span{
-          bottom: 0;
-          position: absolute;
+          margin-top: -2px;
         }
         &.send-button{
           font-size: 20px;
