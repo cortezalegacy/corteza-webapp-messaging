@@ -341,6 +341,7 @@ $mobileInputWidth: 35px;
         width: calc(100% - #{$mobileInputWidth});
         border: none;
         border-top: 1px solid transparent;
+        padding-right: 25px;
       }
       .input-button {
         width: $mobileInputWidth;
@@ -358,6 +359,11 @@ $mobileInputWidth: 35px;
     }
     .activity{
       display: none;
+    }
+    &.editing{
+      .text-input{
+        width: 100%;
+      }
     }
   }
 }

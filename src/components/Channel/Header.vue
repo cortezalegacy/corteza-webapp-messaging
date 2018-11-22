@@ -77,7 +77,6 @@ export default {
     float:left;
   }
 
-  // channel toggle is specific to here so no include.
   .channel-toggle
   {
     font-size:24px;
@@ -91,15 +90,13 @@ export default {
     padding-top:5px;
   }
 
-  .channel-toolbox, .messaging-toolbox {
+  .channel-toolbox,
+  .messaging-toolbox {
     float:right;
     line-height:35px; // the folding breaks line height
     margin:0;
     padding:0;
     margin-top:5px;
-  }
-
-  .messaging-toolbox {
   }
 
   .tool
@@ -123,7 +120,6 @@ export default {
     {
       vertical-align: middle;
       font-size:24px;
-      width:24px;
     }
   }
 
@@ -149,7 +145,6 @@ export default {
 
   @media (max-width: $wideminwidth - 1)
   {
-    // in our case the label should not be one line on mobile
     .channel-n-topic
     {
       margin-top:0.5em;
@@ -165,6 +160,18 @@ export default {
     .channel-name
     {
       vertical-align: bottom;
+    }
+    .channel-toolbox{
+      .tool{
+        .icon{
+          font-size: 20px;
+        }
+      }
+      .svg-inline--fa{
+        padding: 3px;
+        width: 22px;
+        height: 22px;
+      }
     }
   }
 
