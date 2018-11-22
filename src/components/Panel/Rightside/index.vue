@@ -19,7 +19,7 @@
 //inlude generic definitions
 @import '@/assets/sass/_0.commons.scss';
 
-div.rightside-panel-container {
+.rightside-panel-container {
   display: flex;
   flex-flow: column nowrap;
   height: 100vh;
@@ -68,6 +68,15 @@ div.rightside-panel-container {
 
   & > div.footer {
 
+  }
+}
+
+@media (max-width: $wideminwidth){
+  .rightside-panel-container{
+    & > div.header{
+      min-height: 50px;
+      padding-top: 5px;
+    }
   }
 }
 
