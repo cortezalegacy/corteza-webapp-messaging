@@ -480,6 +480,7 @@ em{
 
   .message-content {
     font-size: 14px;
+    word-break: break-all;
 
     pre {
       max-width: 100%;
@@ -510,4 +511,11 @@ em{
   }
 }
 
+@media (max-width: $wideminwidth){
+.message-n-meta{
+  &.consecutive{
+    margin-top: -12px;
+  }
+}
+}
 </style>
