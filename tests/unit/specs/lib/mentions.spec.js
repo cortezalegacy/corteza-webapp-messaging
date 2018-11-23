@@ -26,11 +26,11 @@ describe('mentions.js', () => {
   })
 
   it('It replaces user mention with person from the list', () => {
-    expect(cleanMentions('prefix <@12345678900> suffix', users, channels)).to.equal('prefix John suffix')
+    expect(cleanMentions('prefix <@12345678900 John> suffix', users, channels)).to.equal('prefix John suffix')
   })
 
   it('It replaces more complex combo', () => {
-    expect(cleanMentions('<@12345678900> on <#12345678900>', users, channels)).to.equal('John on #Chan')
+    expect(cleanMentions('<@12345678900 John> on <#12345678900>', users, channels)).to.equal('John on #Chan')
   })
 })
 
