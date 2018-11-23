@@ -81,6 +81,9 @@ const getters = {
 
   // All unread channels
   channels: (state) => state.set.filter(u => !u.threadID),
+
+  // Total unread count
+  total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
 }
 
 // actions

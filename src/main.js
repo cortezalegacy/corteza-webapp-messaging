@@ -5,6 +5,7 @@ import { sync } from 'vuex-router-sync'
 import store from './store'
 import router from './router'
 import core from './mixins/core'
+import Favico from 'favico.js'
 
 import './global'
 import './plugins'
@@ -13,6 +14,12 @@ import './main.scss'
 if (window.CrustConfig === undefined) {
   alert('Unexisting or invalid configuration. Make sure there is a public/config.js configuration file.')
 } else {
+  window.favicon = new Favico({
+    animation: 'none',
+    bgColor: '#E85568',
+    fontStyle: 'lighter',
+  })
+
   /* eslint-disable no-undef */
   console.log(
     `%cCrust Messaging, version: ${CRUST_VERSION}, build time: ${CRUST_BUILD_TIME}`,

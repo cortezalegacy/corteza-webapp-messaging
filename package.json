@@ -19,6 +19,7 @@
     "axios": "^0.17.1",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",
+    "favico.js": "^0.3.10",
     "highlight.js": "^9.13.1",
     "markdown-it": "^8.4.2",
     "markdown-it-v": "^1.1.0",

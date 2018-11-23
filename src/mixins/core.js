@@ -1,5 +1,6 @@
 import { Channel, Message, User } from '@/types'
 import localCommands from '@/commands'
+import Favico from 'favico.js'
 
 const userActivityTTL = 1000 * 5 // microseconds
 const autheticationRecheck = 1000 * 15 * 60 // microseconds
@@ -9,6 +10,20 @@ let autheticationRecheckInterval
 
 export default {
   beforeCreate () {
+    // Fav icon notifications
+    window.favicon = new Favico({
+      animation: 'none',
+      bgColor: '#E85568', // /src/assets/sass/_0.declare.scss -> $appred
+      fontStyle: 'lighter',
+    })
+
+    this.$store.watch(
+      () => this.$store.getters['unread/total'],
+      (count) => {
+        window.favicon.badge(count)
+      },
+    )
+
     this.$bus.$on('$ws.channels', (channels) => {
       let cc = []
       console.debug('Prefeched %d channels', channels.length)
