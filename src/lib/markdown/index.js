@@ -11,13 +11,19 @@ const md = MarkdownIt({
   breaks: true,
   linkify: true,
   highlight: function (str, lang) {
+    // If lang is specified
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return hljs.highlight(lang, str)
+        return hljs.highlight(lang, str).value
       } catch (__) {}
+    } else {
+      // try to guess the lang
+      // try {
+      //   return hljs.highlightAuto(str).value
+      // } catch (__) {}
     }
-
-    return str // use external default escaping
+    // Plain text
+    return md.utils.escapeHtml(str)
   },
 })
 
