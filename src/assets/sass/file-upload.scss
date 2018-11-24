@@ -1,3 +1,5 @@
+@import "_0.declare";
+
 .dz-message{
     position: relative;
     top: 50%;
@@ -5,10 +7,30 @@
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
-.dz-details,
-.dz-progress{
+.dz-details{
 	display: none;
 }
+
+.dropzone{
+	.dz-preview{
+		.dz-progress{
+			display: block;
+			border-radius: 0;
+			height: 5px;
+			.dz-upload{
+				animation: unset;
+				transition: unset;
+				background-color: $bleu;
+			}
+		}
+		&:not(.dz-processing) {
+			.dz-progress {
+				animation: unset;
+			}
+		}
+	}
+}
+
 .dz-image{
 	img{
 		margin: 0 auto;
