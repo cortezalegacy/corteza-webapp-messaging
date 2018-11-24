@@ -15,6 +15,7 @@
               @cancel="$emit('cancel', $event)"
               @submit="onSubmit"
               @change="onChange"
+              @focus="onFocus"
               v-model="value"
               :preset="editableString"
               :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
@@ -212,6 +213,9 @@ export default {
 
     // Update channel activity once in a while while typing
     onChange: _.throttle(function (value) {
+      // @todo emoji closing on focus interaction should be handled by core.js
+      this.$bus.$emit('ui.closeEmojiPicker')
+
       switch (true) {
         case value.text.length === 0:
           break
@@ -229,6 +233,11 @@ export default {
           break
       }
     }, 2000),
+
+    onFocus () {
+      // @todo emoji closing on focus interaction should be handled by core.js
+      this.$bus.$emit('ui.closeEmojiPicker')
+    },
   },
 
   components: {

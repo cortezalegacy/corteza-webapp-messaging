@@ -3,6 +3,7 @@
     ref="quill"
     @ready="onQuillReady"
     @change="$emit('change', $event)"
+    @focus="$emit('focus')"
     v-model="content"
     :options="options"/>
 </template>

@@ -211,6 +211,10 @@ export default {
     this.$bus.$on('ui.openEmojiPicker', ({ callback }) => {
       this.emojiPickerCallback = !this.emojiPickerCallback ? callback : null
     })
+
+    this.$bus.$on('ui.closeEmojiPicker', () => {
+      this.emojiPickerCallback = null
+    })
   },
 
   destroyed () {
