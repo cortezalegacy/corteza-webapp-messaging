@@ -65,15 +65,16 @@
               v-if="uiShowQuickSearch"
               @close="uiShowQuickSearch=false"></quick-search>
 
-          <picker
-              v-if="emojiPickerCallback"
+          <component
+              :is="emojiPickerLoader"
+              v-show="emojiPickerCallback"
               @select="onEmojiSelect"
               :style="{ position: 'absolute', bottom: '80px', right: uiRightSidePanelContent ? '415px' : '15px' }"
-              :native="true"
               :showSkinTones="false"
               :showPreview="false"
-              :sheetSize="16"
-              set="apple" />
+              :sheetSize="32"
+              set="apple"
+              :infiniteScroll="false" />
       </div>
       <global-events
           @keydown.esc.exact="emojiPickerCallback=null"
@@ -91,7 +92,6 @@ import PinnedMessagesPanel from '@/components/Panel/Rightside/PinnedMessages'
 import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
-import { Picker } from 'emoji-mart-vue'
 import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
 
@@ -118,6 +118,11 @@ export default {
   },
 
   computed: {
+    emojiPickerLoader () {
+      // eslint-disable-next-line
+      return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
+    },
+
     ...mapGetters({
       isAuthenticated: 'auth/isAuthenticated',
       currentUser: 'auth/user',
@@ -302,7 +307,6 @@ export default {
     Preview,
     SearchResults,
     QuickSearch,
-    Picker,
   },
 }
 </script>
