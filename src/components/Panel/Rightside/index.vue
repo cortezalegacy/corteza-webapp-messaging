@@ -18,16 +18,15 @@
 <style scoped lang="scss">
 //inlude generic definitions
 @import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/menu-layer.scss';
 
-div.rightside-panel-container {
+.rightside-panel-container {
   display: flex;
   flex-flow: column nowrap;
   height: 100vh;
   overflow: hidden;
 
   & > div.header {
-    min-height: 55px;
+    min-height: 60px;
     padding: 10px 0 0 10px;
     box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
     margin-bottom:5px;
@@ -69,6 +68,15 @@ div.rightside-panel-container {
 
   & > div.footer {
 
+  }
+}
+
+@media (max-width: $wideminwidth){
+  .rightside-panel-container{
+    & > div.header{
+      min-height: 50px;
+      padding-top: 5px;
+    }
   }
 }
 

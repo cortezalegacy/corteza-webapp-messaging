@@ -106,7 +106,6 @@ export default {
 <style scoped lang="scss">
 //inlude generic definitions
 @import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/menu-layer.scss';
 @import '@/assets/sass/btns.scss';
 
 div {
@@ -122,15 +121,13 @@ div {
     .header {
       background: white;
       padding-bottom: 5px;
-      width: 360px;
 
       h1 {
         margin: 10px 10px;
       }
 
       form {
-        padding: 0 0 10px 5px;
-        width: 300px;
+        padding: 0 5px 10px 5px;
       }
     }
   }

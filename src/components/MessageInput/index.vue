@@ -259,7 +259,7 @@ $mobileInputWidth: 35px;
   padding: 4px 15px;
   .activity {
     min-height: 20px;
-    display: inline-flex;
+    display: inline-block;
     border: 1px solid transparent;
   }
 
@@ -334,20 +334,36 @@ $mobileInputWidth: 35px;
     padding: 0;
     .group {
       margin-bottom: 0;
+      border: none;
+      border-top: 1px solid $appgrey;
+      border-radius: 0;
       .text-input {
         width: calc(100% - #{$mobileInputWidth});
+        border: none;
+        border-top: 1px solid transparent;
+        padding-right: 25px;
       }
       .input-button {
         width: $mobileInputWidth;
+        span{
+          margin-top: -2px;
+        }
         &.send-button{
           font-size: 20px;
           right: 0;
-          min-height: 35px;
+          span{
+            bottom: 5px;
+          }
         }
       }
     }
     .activity{
       display: none;
+    }
+    &.editing{
+      .text-input{
+        width: 100%;
+      }
     }
   }
 }

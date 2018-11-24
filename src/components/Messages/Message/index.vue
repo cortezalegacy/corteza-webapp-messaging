@@ -339,6 +339,22 @@ em{
     .message{
       border-right: 4px solid $appyellow;
     }
+    &.bookmarked{
+      .message{
+        &:after{
+          content:" ";
+          background: linear-gradient(to bottom, rgba(47,188,149,1) 0%, rgba(47,188,148,1) 50%, rgba(255,204,50,1) 50%, rgba(255,204,50,1) 100%);
+          display: block;
+          height: 100%;
+          width: 5px;
+          position: absolute;
+          bottom: 0;
+          right: -5px;
+          border-top-right-radius: 5px;
+          border-bottom-right-radius: 5px;
+        }
+      }
+    }
   }
 
   &.unread {
@@ -464,6 +480,7 @@ em{
 
   .message-content {
     font-size: 14px;
+    word-break: break-all;
 
     pre {
       max-width: 100%;
@@ -494,4 +511,11 @@ em{
   }
 }
 
+@media (max-width: $wideminwidth){
+.message-n-meta{
+  &.consecutive{
+    margin-top: -12px;
+  }
+}
+}
 </style>
