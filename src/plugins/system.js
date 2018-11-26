@@ -47,11 +47,28 @@ class System {
     })
   }
 
-  async authLogout () {
-    const endpoint = `${this.baseLink}/auth/check`
+  async authLogin ({ username, password }) {
+    const endpoint = `${this.baseLink}/auth/login`
     return new Promise((resolve, reject) => {
       axios({
-        method: 'DELETE',
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'username': username,
+          'password': password,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async authLogout () {
+    const endpoint = `${this.baseLink}/auth/logout`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'GET',
         url: endpoint,
         withCredentials: true,
         headers: this.headers,
@@ -62,7 +79,7 @@ class System {
   }
 
   async organisationList ({ query }) {
-    const endpoint = `${this.baseLink}/organisation/`
+    const endpoint = `${this.baseLink}/organisations/`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -78,7 +95,7 @@ class System {
   }
 
   async organisationCreate ({ name }) {
-    const endpoint = `${this.baseLink}/organisation/`
+    const endpoint = `${this.baseLink}/organisations/`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -94,7 +111,7 @@ class System {
   }
 
   async organisationEdit ({ id, name }) {
-    const endpoint = `${this.baseLink}/organisation/${id}`
+    const endpoint = `${this.baseLink}/organisations/${id}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'PUT',
@@ -110,7 +127,7 @@ class System {
   }
 
   async organisationRemove ({ id }) {
-    const endpoint = `${this.baseLink}/organisation/${id}`
+    const endpoint = `${this.baseLink}/organisations/${id}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
@@ -124,7 +141,7 @@ class System {
   }
 
   async organisationRead ({ id }) {
-    const endpoint = `${this.baseLink}/organisation/${id}`
+    const endpoint = `${this.baseLink}/organisations/${id}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -140,7 +157,7 @@ class System {
   }
 
   async organisationArchive ({ id }) {
-    const endpoint = `${this.baseLink}/organisation/${id}/archive`
+    const endpoint = `${this.baseLink}/organisations/${id}/archive`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -154,7 +171,7 @@ class System {
   }
 
   async teamList ({ query }) {
-    const endpoint = `${this.baseLink}/team/`
+    const endpoint = `${this.baseLink}/teams/`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -170,7 +187,7 @@ class System {
   }
 
   async teamCreate ({ name, members }) {
-    const endpoint = `${this.baseLink}/team/`
+    const endpoint = `${this.baseLink}/teams/`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -187,7 +204,7 @@ class System {
   }
 
   async teamEdit ({ teamID, name, members }) {
-    const endpoint = `${this.baseLink}/team/${teamID}`
+    const endpoint = `${this.baseLink}/teams/${teamID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'PUT',
@@ -204,7 +221,7 @@ class System {
   }
 
   async teamRead ({ teamID }) {
-    const endpoint = `${this.baseLink}/team/${teamID}`
+    const endpoint = `${this.baseLink}/teams/${teamID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -218,7 +235,7 @@ class System {
   }
 
   async teamRemove ({ teamID }) {
-    const endpoint = `${this.baseLink}/team/${teamID}`
+    const endpoint = `${this.baseLink}/teams/${teamID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
@@ -232,7 +249,7 @@ class System {
   }
 
   async teamArchive ({ teamID }) {
-    const endpoint = `${this.baseLink}/team/${teamID}/archive`
+    const endpoint = `${this.baseLink}/teams/${teamID}/archive`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -246,7 +263,7 @@ class System {
   }
 
   async teamMove ({ teamID, organisationID }) {
-    const endpoint = `${this.baseLink}/team/${teamID}/move`
+    const endpoint = `${this.baseLink}/teams/${teamID}/move`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -262,7 +279,7 @@ class System {
   }
 
   async teamMerge ({ teamID, destination }) {
-    const endpoint = `${this.baseLink}/team/${teamID}/merge`
+    const endpoint = `${this.baseLink}/teams/${teamID}/merge`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -277,8 +294,40 @@ class System {
     })
   }
 
-  async userSearch ({ query }) {
-    const endpoint = `${this.baseLink}/user/`
+  async teamMemberAdd ({ teamID, userID }) {
+    const endpoint = `${this.baseLink}/teams/${teamID}/memberAdd`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'userID': userID,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async teamMemberRemove ({ teamID, userID }) {
+    const endpoint = `${this.baseLink}/teams/${teamID}/memberRemove`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'userID': userID,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userList ({ query }) {
+    const endpoint = `${this.baseLink}/users/`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -288,6 +337,110 @@ class System {
         params: {
           'query': query,
         },
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userCreate ({ email, username, password, name, handle, kind, meta, satosaID, organisationID }) {
+    const endpoint = `${this.baseLink}/users/`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'email': email,
+          'username': username,
+          'password': password,
+          'name': name,
+          'handle': handle,
+          'kind': kind,
+          'meta': meta,
+          'satosaID': satosaID,
+          'organisationID': organisationID,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userEdit ({ userID, email, username, password, name, handle, kind, meta, satosaID, organisationID }) {
+    const endpoint = `${this.baseLink}/users/${userID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'PUT',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'email': email,
+          'username': username,
+          'password': password,
+          'name': name,
+          'handle': handle,
+          'kind': kind,
+          'meta': meta,
+          'satosaID': satosaID,
+          'organisationID': organisationID,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userRead ({ userID }) {
+    const endpoint = `${this.baseLink}/users/${userID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'GET',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userRemove ({ userID }) {
+    const endpoint = `${this.baseLink}/users/${userID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'DELETE',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userSuspend ({ userID }) {
+    const endpoint = `${this.baseLink}/users/${userID}/suspend`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async userUnsuspend ({ userID }) {
+    const endpoint = `${this.baseLink}/users/${userID}/unsuspend`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
         data: {},
       }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
     })
