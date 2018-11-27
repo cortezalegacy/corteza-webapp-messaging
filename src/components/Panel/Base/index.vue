@@ -66,7 +66,6 @@ aside {
   div {
     height: 100vh;
     overflow-x: hidden;
-    overflow-y: scroll;
   }
 
   &.unpinned {
