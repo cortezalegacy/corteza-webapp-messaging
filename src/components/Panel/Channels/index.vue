@@ -143,7 +143,7 @@ nav {
   }
 
   div.scrollable {
-    overflow-y: scroll;
+    overflow-y: auto;
     flex: 1;
     margin-bottom: 10px;
 
