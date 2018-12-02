@@ -76,8 +76,12 @@ export default {
       const msg = new Message(message)
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
-        // Count only new mesages, no updates, no replies
-        this.$store.commit('unread/inc', msg)
+        const currentUser = this.$store.getters['auth/user']
+        if (currentUser.ID !== msg.user.ID) {
+          // Count only new mesages, no updates, no replies
+          this.$store.commit('unread/inc', msg)
+        }
+
         this.$bus.$emit('$core.newMessage', { message: msg })
       }
 
