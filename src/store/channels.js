@@ -25,9 +25,18 @@ const getters = {
   privateOnly: (state, getters) => getters.byType('private'),
   groupsOnly: (state, getters) => getters.byType('group'),
 
-  // Find channel by
+  // Find channel by ID
   findByID: (state, getters) => (ID) => {
     return getters.list.filter(c => c.ID === ID)[0] || undefined
+  },
+
+  // Find direct/group channel for a specific set of members
+  findByMembership: (state, getters) => (...userIDs) => {
+    const userCount = userIDs.length
+    const uidstr = JSON.stringify(userIDs.sort())
+    const eq = (members) => JSON.stringify([...members].sort()) === uidstr
+
+    return getters.list.find(c => c.type === 'group' && c.members.length === userCount && eq(c.members))
   },
 
   otherMembersOf: (state, getters) => (channelID, userID) => {

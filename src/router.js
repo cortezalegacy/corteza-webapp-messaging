@@ -17,6 +17,8 @@ export default new Router({
         { path: 'channel/:channelID/editor', name: 'edit-channel', component: view('ChannelEditor'), props: true },
         { path: 'channel/:channelID/members', name: 'members', component: view('ChannelMembers'), props: true },
 
+        { path: 'user/:userID', name: 'profile', component: view('Profile'), props: true },
+
         { path: 'threads', name: 'threads', component: view('Threads') },
         { path: 'unreads', name: 'unreads', component: view('Unreads') },
         { path: '*', name: 'landing', component: view('Landing') },

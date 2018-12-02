@@ -22,11 +22,17 @@ export default {
   computed: {
     ...mapGetters({
       findUserByID: 'users/findByID',
+      findChannelByMembership: 'channels/findByMembership',
       currentUser: 'auth/user',
     }),
 
     linkProps () {
-      return { to: { name: 'user', params: { ID: this.ID } } }
+      let ch = this.findChannelByMembership(this.ID, this.currentUser.ID)
+      if (ch) {
+        return { name: 'channel', params: { channelID: ch.ID } }
+      } else {
+        return { name: 'profile', params: { userID: this.ID } }
+      }
     },
 
     user () {
