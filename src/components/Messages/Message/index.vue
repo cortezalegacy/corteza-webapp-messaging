@@ -480,15 +480,7 @@ em{
 
   .message-content {
     font-size: 14px;
-    word-break: break-all;
-
-    pre {
-      max-width: 100%;
-      overflow: scroll;
-      font-size: 12px;
-      white-space: pre-wrap
-    }
-
+    word-break: break-word;
   }
 
 }
