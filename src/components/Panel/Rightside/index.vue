@@ -63,7 +63,7 @@
 
   & > div.main {
     flex: 1 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   & > div.footer {
