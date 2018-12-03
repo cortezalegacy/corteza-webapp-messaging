@@ -160,12 +160,13 @@ nav {
       }
     }
 
-    div.shortcuts {
+    .shortcuts {
       ul {
         margin: 0;
         padding: 0;
         list-style: none;
         line-height: 28px;
+        cursor: pointer;
 
         .icon {
           display: inline-block;
