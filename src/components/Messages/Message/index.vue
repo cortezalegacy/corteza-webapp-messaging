@@ -39,6 +39,9 @@
             @deleteMessage="onDeleteMessage"
             v-on="$listeners" />
         </section>
+        <section v-else>
+          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+        </section>
         <div
           class="selectable"
           :class="{ from_me: (message.user || {}).ID === currentUser.ID,
@@ -227,16 +230,9 @@ export default {
 
 </script>
 
-<!-- this does not work in scoped... -->
-<!-- no clue why, in any case should not break anything -->
 <style lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-// @todo put those in generic file or resets ?
-
-/* reset mark styles */
-// marks do not work in scope either
-// @todo because they are in a function ?
 mark {
   background-color: rgba($appyellow, 0.25);
   display: inline-block;
@@ -293,7 +289,7 @@ em{
 }
 .message-n-meta {
   margin-bottom: 10px;
-  padding: 5px 5px 5px 66px;
+  padding: 1px 5px 1px 66px;
   position: relative;
 
   &:hover,
@@ -326,6 +322,12 @@ em{
       .message-content {
         font-size: 12px;
       }
+    }
+    &.first-unread {
+      font-style: normal;
+    }
+    .day {
+      top: 8px;
     }
   }
 
@@ -364,7 +366,7 @@ em{
   }
 
   &.consecutive {
-    margin-top: -18px;
+    margin-top: -10px;
     &:hover,
     &:focus{
       .date {
@@ -387,7 +389,7 @@ em{
     }
     .time {
       left: 22px;
-      top: 15px;
+      top: 10px;
     }
     .day {
       display: none;
@@ -437,7 +439,7 @@ em{
 .time, .day {
   position: absolute;
   left: 20px;
-  top: 40px;
+  top: 35px;
 }
 
 .time {
@@ -488,26 +490,19 @@ em{
 .first-unread {
   border-bottom: 1px solid $appred;
   &::after{
-    content: "unread";
+    content: "New messages";
     background: white;
-    color: red;
+    color: $appred;
+    font-weight: 900;
     display: inline;
-    /* position: absolute; */
+    position: absolute;
     float: right;
     right: 17px;
-    margin-right: 20px;
     line-height: 20px;
-    margin-top: -5px;
+    margin-top: -10px;
     padding: 0 10px;
     border-radius: 5px;
+    z-index: 1;
   }
-}
-
-@media (max-width: $wideminwidth){
-.message-n-meta{
-  &.consecutive{
-    margin-top: -12px;
-  }
-}
 }
 </style>

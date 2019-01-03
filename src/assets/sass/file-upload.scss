@@ -1,19 +1,19 @@
 @import "_0.declare";
 
-.dz-message{
+.dz-message {
     position: relative;
     top: 50%;
     -webkit-transform: translateY(-50%);
     -ms-transform: translateY(-50%);
     transform: translateY(-50%);
 }
-.dz-details{
+.dz-details {
 	display: none;
 }
 
-.dropzone{
-	.dz-preview{
-		.dz-progress{
+.dropzone {
+	.dz-preview {
+		.dz-progress {
 			display: block;
 			border-radius: 0;
 			height: 5px;
@@ -31,18 +31,33 @@
 	}
 }
 
-.dz-image{
-	img{
+.dz-image {
+	img {
 		margin: 0 auto;
 	}
 }
-.dropzone .dz-started{
+.dropzone .dz-started {
 	opacity: 1;
 }
-.vue-dropzone .dz-preview .dz-remove{
+.vue-dropzone .dz-preview .dz-remove {
 	color: black;
 	opacity: 1;
 	border: none;
 	width: 100%;
 	margin-bottom: -40px;
+}
+
+.rightside-panel-container {
+	.droparea {
+		width: 400px;
+    height: calc(100vh - 60px);
+    margin-top: -5px;
+	}
+}
+
+.channel {
+    .droparea {
+    	width: 100%;
+      height: 100vh;
+    }
 }
