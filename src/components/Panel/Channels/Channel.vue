@@ -139,7 +139,7 @@ export default {
 .unread
 {
   position:absolute;
-  top:3px;
+  top:5px;
   right:5px;
   background: #1397CB;
   color: white;
@@ -171,7 +171,7 @@ export default {
 
 .layer-item-wrap{
   a{
-    padding-right: 20px;
+    padding-right: 25px;
   }
 }
 
