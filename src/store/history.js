@@ -19,10 +19,6 @@ const getters = {
 
   getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
 
-  countFromMessageID: (state) =>
-    (f) =>
-      state.set.filter(m => m.ChannelD === f.ChannelID && m.ReplyTo === f.ReplyTo && m.ID >= f.ID).length,
-
   getThreads: (state) =>
     state.set.filter(m => isValid(m) && !m.replyTo && m.replies > 0),
 }

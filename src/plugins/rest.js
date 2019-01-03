@@ -168,7 +168,7 @@ export default {
             if (response.data.error) {
               reject(response.data.error)
             } else {
-              resolve()
+              resolve(response.data.response)
             }
           }, stdRejection(reject))
         })

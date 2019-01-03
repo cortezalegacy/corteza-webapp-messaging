@@ -156,12 +156,13 @@ export default {
     // Handling requests for message pins
     this.$bus.$on('message.markAsUnread', ({ message }) => {
       // Response is broadcasted via WS
-      this.$store.commit('unread/set', {
-        channelID: message.channelID,
-        threadID: message.replyTo,
-        count: this.$store.getters['history/countFromMessageID'](message),
-        lastMessageID: message.ID })
-      this.$rest.markMessageAsUnread(message.channelID, message.ID)
+      this.$rest.markMessageAsUnread(message.channelID, message.ID).then(newUnreadCount => {
+        this.$store.commit('unread/set', {
+          channelID: message.channelID,
+          threadID: message.replyTo,
+          count: newUnreadCount,
+          lastMessageID: message.ID })
+      })
     })
 
     // Handling requests for message pins
