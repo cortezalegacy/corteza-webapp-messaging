@@ -1,9 +1,10 @@
+
 <template>
   <div class="actions" >
     <div>
       <i class="action icon-smile"
          title="Reaction"
-         @click="onReaction"
+         @click.stop="onReaction"
       ></i>
       <i class="action icon-message-circle-left-speak"
          title="Reply in thread"

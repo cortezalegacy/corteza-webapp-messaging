@@ -1,5 +1,8 @@
 <template>
-  <ul @scroll="onScrollThrottled" ref="list" :class="{scrollable:scrollable}">
+  <ul @scroll="onScrollThrottled"
+      ref="list"
+      :class="{scrollable:scrollable}"
+      @click="$bus.$emit('ui.closeEmojiPicker')">
     <message
       v-for="(msg, index) in messages"
       ref="message"
