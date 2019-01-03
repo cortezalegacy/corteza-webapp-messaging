@@ -8,7 +8,7 @@ export default new Router({
 
   routes: [
     {
-      path: '/messaging/',
+      path: '',
       name: 'root',
       component: view('Messenger'),
       children: [
@@ -25,9 +25,9 @@ export default new Router({
       ],
     },
     {
-      path: '/messaging/auth',
+      path: 'auth',
       component: view('IndexNested'),
-      redirect: '/messaging/auth/signin',
+      redirect: 'signin',
 
       children: [
         { path: 'signin', name: 'signin', component: view('Auth/SignIn') },
