@@ -9,7 +9,7 @@
       <main>
           <section v-for="(r) in results" :key="r.channel.ID">
               <h2>
-                  Results in #{{ label(channel) }}
+                  Results in <channel-link :ID="r.channel.ID" @click="onClose"></channel-link>
               </h2>
               <messages
                   ref="messages"
@@ -36,6 +36,7 @@ import { mapGetters } from 'vuex'
 import Lightbox from '@/components/Lightboxed/index.vue'
 import SearchInput from '@/components/SearchInput'
 import Messages from '@/components/Messages'
+import ChannelLink from '@/components/Channel/Link'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
 export default {
@@ -108,6 +109,7 @@ export default {
     SearchInput,
     Lightbox,
     Messages,
+    ChannelLink,
   },
 
   mixins: [

@@ -1,6 +1,6 @@
 <template>
   <router-link
-    @click="$emit('click', $event)"
+    @click.native="$emit('click', $event)"
     :to="{ name: 'channel', params: { channelID: ID } }">
     <slot>{{ label(channel) }}</slot></router-link>
 </template>
