@@ -80,7 +80,7 @@ const getters = {
   last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '' }).lastMessageID,
 
   // All unread channels
-  channels: (state) => state.set.filter(u => !u.threadID),
+  channels: (state) => state.set.filter(u => !u.threadID && u.count > 0),
 
   // Total unread count
   total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),

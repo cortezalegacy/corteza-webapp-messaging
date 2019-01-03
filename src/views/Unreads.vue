@@ -9,15 +9,15 @@
       <span>Unread messages</span>
     </header>
     <main v-if="unreadChannels && unreadChannels.length > 0">
-      <section v-for="(unread) in unreadChannels" :key="unread.ID" v-if="findChannelByID(unread.ID)">
+      <section v-for="(unread) in unreadChannels" :key="unread.channelID" v-if="findChannelByID(unread.channelID)">
         <header class="channel-unread">
-          {{ labelChannel(unread.ID) }} ({{unread.count}})
+          {{ labelChannel(unread.channelID) }} ({{unread.count}})
           <button @click="markAsRead(unread)" class="btn btn-green">Mark as read</button>
         </header>
         <section>
           <messages
             ref="messages"
-            :messages="unreadInChannel(unread.ID, unread.lastMessageID)"
+            :messages="unreadInChannel(unread.channelID, unread.lastMessageID)"
             :currentUser="currentUser"
             origin="unreads"
             :scrollable="false"
@@ -68,20 +68,19 @@ export default {
       // @todo unread -- port this
       this.unreadChannels.forEach(u => {
         if (u.lastMessageID) {
-          this.$ws.getMessages({ channelID: u.ID, firstID: u.lastMessageID })
+          this.$ws.getMessages({ channelID: u.channelID, firstID: u.lastMessageID })
         } else {
-          this.$ws.getMessages({ channelID: u.ID })
+          this.$ws.getMessages({ channelID: u.channelID })
         }
       })
     },
 
-    markAsRead ({ ID, lastMessageID }) {
-      const messages = this.unreadInChannel(ID, lastMessageID)
+    markAsRead ({ channelID, lastMessageID }) {
+      const messages = this.unreadInChannel(channelID, lastMessageID)
       if (messages.length === 0) {
         return
       }
 
-      const channelID = ID
       const lastMessage = messages[messages.length - 1]
 
       lastMessageID = lastMessage.ID
