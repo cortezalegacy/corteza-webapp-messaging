@@ -5,7 +5,8 @@
     @dragenter="showUploadArea=true">
 
     <template slot="header">Thread</template>
-    <template slot="subtitle">in #{{ label(channel) }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">in group chat with {{ label(channel) }}</template>
+    <template slot="subtitle" v-else>in #{{ label(channel) }}</template>
     <template slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false"

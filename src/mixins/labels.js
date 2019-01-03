@@ -48,7 +48,7 @@ export default {
       }
 
       if (o instanceof Channel) {
-        return this.labelUser(o)
+        return this.labelChannel(o)
       }
 
       return o

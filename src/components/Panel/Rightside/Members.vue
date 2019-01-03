@@ -3,7 +3,8 @@
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
     <template slot="header">Members</template>
-    <template slot="subtitle">in #{{ label(channel) }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">in group chat with {{ label(channel) }}</template>
+    <template slot="subtitle" v-else>in #{{ label(channel) }}</template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">
