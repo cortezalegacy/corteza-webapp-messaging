@@ -107,6 +107,7 @@ export default {
     content: '●';
     font-weight: bold;
     color: $appgrey;
+    font-size: 20px;
   }
 
   &.full-moon {
@@ -125,7 +126,8 @@ export default {
 
   &.last-quarter-moon {
     .channel-name:before {
-      color: $appblue;
+      content: '○';
+      color: $appgreen;
     }
 
     a{
