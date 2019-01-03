@@ -293,7 +293,7 @@ em{
 }
 .message-n-meta {
   margin-bottom: 10px;
-  padding: 5px 5px 5px 66px;
+  padding: 1px 5px 1px 66px;
   position: relative;
 
   &:hover,
@@ -326,6 +326,9 @@ em{
       .message-content {
         font-size: 12px;
       }
+    }
+    &.first-unread {
+      font-style: normal;
     }
   }
 
@@ -364,7 +367,7 @@ em{
   }
 
   &.consecutive {
-    margin-top: -18px;
+    margin-top: -10px;
     &:hover,
     &:focus{
       .date {
@@ -488,26 +491,19 @@ em{
 .first-unread {
   border-bottom: 1px solid $appred;
   &::after{
-    content: "unread";
+    content: "New messages";
     background: white;
-    color: red;
+    color: $appred;
+    font-weight: 900;
     display: inline;
-    /* position: absolute; */
+    position: absolute;
     float: right;
     right: 17px;
-    margin-right: 20px;
     line-height: 20px;
-    margin-top: -5px;
+    margin-top: -10px;
     padding: 0 10px;
     border-radius: 5px;
+    z-index: 1;
   }
-}
-
-@media (max-width: $wideminwidth){
-.message-n-meta{
-  &.consecutive{
-    margin-top: -12px;
-  }
-}
 }
 </style>
