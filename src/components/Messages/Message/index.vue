@@ -39,6 +39,9 @@
             @deleteMessage="onDeleteMessage"
             v-on="$listeners" />
         </section>
+        <section v-else>
+          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+        </section>
         <div
           class="selectable"
           :class="{ from_me: (message.user || {}).ID === currentUser.ID,
@@ -227,16 +230,9 @@ export default {
 
 </script>
 
-<!-- this does not work in scoped... -->
-<!-- no clue why, in any case should not break anything -->
 <style lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-// @todo put those in generic file or resets ?
-
-/* reset mark styles */
-// marks do not work in scope either
-// @todo because they are in a function ?
 mark {
   background-color: rgba($appyellow, 0.25);
   display: inline-block;
@@ -330,6 +326,9 @@ em{
     &.first-unread {
       font-style: normal;
     }
+    .day {
+      top: 8px;
+    }
   }
 
   &.bookmarked {
@@ -390,7 +389,7 @@ em{
     }
     .time {
       left: 22px;
-      top: 15px;
+      top: 10px;
     }
     .day {
       display: none;
@@ -440,7 +439,7 @@ em{
 .time, .day {
   position: absolute;
   left: 20px;
-  top: 40px;
+  top: 35px;
 }
 
 .time {
