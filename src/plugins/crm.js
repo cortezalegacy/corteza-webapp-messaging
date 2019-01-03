@@ -61,7 +61,7 @@ class CRM {
     })
   }
 
-  async pageList ({ selfID }) {
+  async pageList ({ selfID, recordPagesOnly }) {
     const endpoint = `${this.baseLink}/page/`
     return new Promise((resolve, reject) => {
       axios({
@@ -71,6 +71,7 @@ class CRM {
         headers: this.headers,
         params: {
           'selfID': selfID,
+          recordPagesOnly,
         },
         data: {},
       }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
@@ -224,32 +225,7 @@ class CRM {
     })
   }
 
-  async moduleChart ({ moduleID, name, description, xAxis, xMin, xMax, yAxis, groupBy, sum, count, kind }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/chart`
-    return new Promise((resolve, reject) => {
-      axios({
-        method: 'GET',
-        url: endpoint,
-        withCredentials: true,
-        headers: this.headers,
-        params: {
-          'name': name,
-          'description': description,
-          'xAxis': xAxis,
-          'xMin': xMin,
-          'xMax': xMax,
-          'yAxis': yAxis,
-          'groupBy': groupBy,
-          'sum': sum,
-          'count': count,
-          'kind': kind,
-        },
-        data: {},
-      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
-    })
-  }
-
-  async moduleEdit ({ moduleID, name, fields }) {
+  async moduleEdit ({ moduleID, name, fields, meta }) {
     const endpoint = `${this.baseLink}/module/${moduleID}`
     return new Promise((resolve, reject) => {
       axios({
@@ -261,6 +237,7 @@ class CRM {
         data: {
           'name': name,
           'fields': fields,
+          meta,
         },
       }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
     })
@@ -280,8 +257,8 @@ class CRM {
     })
   }
 
-  async moduleContentList ({ moduleID, query, page, perPage }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content`
+  async moduleRecordList ({ moduleID, filter, page, perPage, sort }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/record`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -289,17 +266,36 @@ class CRM {
         withCredentials: true,
         headers: this.headers,
         params: {
-          'query': query,
+          'filter': filter,
           'page': page,
           'perPage': perPage,
+          sort,
         },
         data: {},
       }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
     })
   }
 
-  async moduleContentCreate ({ moduleID, fields }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content`
+  async moduleRecordReport ({ moduleID, metrics, dimensions, filter }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/report`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'GET',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {
+          'metrics': metrics,
+          'dimensions': dimensions,
+          filter,
+        },
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async moduleRecordCreate ({ moduleID, fields }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/record`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -314,8 +310,8 @@ class CRM {
     })
   }
 
-  async moduleContentRead ({ moduleID, contentID }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
+  async moduleRecordRead ({ moduleID, recordID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/record/${recordID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'GET',
@@ -328,8 +324,8 @@ class CRM {
     })
   }
 
-  async moduleContentEdit ({ moduleID, contentID, fields }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
+  async moduleRecordEdit ({ moduleID, recordID, fields }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/record/${recordID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'POST',
@@ -344,8 +340,84 @@ class CRM {
     })
   }
 
-  async moduleContentDelete ({ moduleID, contentID }) {
-    const endpoint = `${this.baseLink}/module/${moduleID}/content/${contentID}`
+  async moduleRecordDelete ({ moduleID, recordID }) {
+    const endpoint = `${this.baseLink}/module/${moduleID}/record/${recordID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'DELETE',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async chartList () {
+    const endpoint = `${this.baseLink}/chart/`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'GET',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async chartCreate ({ name, fields }) {
+    const endpoint = `${this.baseLink}/chart/`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          'name': name,
+          'fields': fields,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async chartRead ({ chartID }) {
+    const endpoint = `${this.baseLink}/chart/${chartID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'GET',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {},
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async chartEdit ({ chartID, name, config }) {
+    const endpoint = `${this.baseLink}/chart/${chartID}`
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'POST',
+        url: endpoint,
+        withCredentials: true,
+        headers: this.headers,
+        params: {},
+        data: {
+          name,
+          config,
+        },
+      }).then(this.stdResolve(resolve, reject), this.stdReject(reject))
+    })
+  }
+
+  async chartDelete ({ chartID }) {
+    const endpoint = `${this.baseLink}/chart/${chartID}`
     return new Promise((resolve, reject) => {
       axios({
         method: 'DELETE',
