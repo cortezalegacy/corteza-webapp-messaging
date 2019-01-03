@@ -1,5 +1,5 @@
 <template>
-  <li class="layer-item-wrap" :class="[channel.type, isGroupMemberOnline ? 'member-is-online' : null]" @click="$emit('close')">
+  <li class="layer-item-wrap" :class="cssClass" @click="$emit('close')">
     <router-link
       class="layer-item layer-selectable channel-name"
       v-bind:class="[
@@ -41,6 +41,25 @@ export default {
       currentUser: 'auth/user',
     }),
 
+    cssClass () {
+      let set = [this.channel.type]
+
+      if (this.channel.type === 'group') {
+        const online = this.channel.members.filter(memberID => (this.findUserByID(memberID) || {}).connections > 0).length
+        const total = this.channel.members.length
+
+        if (online === total) {
+          set.push('full-moon')
+        } else if (online > 1) {
+          set.push('last-quarter-moon')
+        } else {
+          set.push('new-moon')
+        }
+      }
+
+      return set
+    },
+
     isGroupMemberOnline () {
       // We don't care about other types or multi-member groups...
       if (this.channel.type !== 'group' || this.channel.members.length > 2) return false
@@ -55,6 +74,7 @@ export default {
       return (this.findUserByID(memberID) || {}).connections > 0
     },
   },
+
   methods: {
     channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
@@ -82,19 +102,35 @@ export default {
   }
 }
 
-.group .channel-name:before {
-  content: '●';
-  font-weight: bold;
-  color: $appgrey;
-}
+.group {
+  .channel-name:before {
+    content: '●';
+    font-weight: bold;
+    color: $appgrey;
+  }
 
-.group.member-is-online .channel-name:before {
-  color: $appgreen;
-}
+  &.full-moon {
+    .channel-name:before {
+      color: $appgreen;
+    }
 
-.member-is-online{
-  a{
-    color: $defaulttextcolor;
+    a{
+      color: $defaulttextcolor;
+    }
+  }
+
+  &.new-moon .channel-name:before {
+    //
+  }
+
+  &.last-quarter-moon {
+    .channel-name:before {
+      color: $appblue;
+    }
+
+    a{
+      color: $defaulttextcolor;
+    }
   }
 }
 
