@@ -1,12 +1,12 @@
 <!-- template for the user avatar component -->
 <template>
-    <div v-if="users.length > 0" class="activity">
+    <span v-if="users.length > 0" class="typing">
         <b v-for="(user, i) in users.slice(0, limit)" :key="user.ID" class="user">{{ i > 0 ? ', ' : '' }}{{ label(user) }}</b>
         <span v-if="users.length > limit"> and {{users.length - limit}} others ... are </span>
         <span v-else-if="users.length > 1"> are </span>
         <span v-else> is </span>
         <slot></slot>
-    </div>
+    </span>
 </template>
 <script>
 export default {
@@ -25,3 +25,9 @@ export default {
   },
 }
 </script>
+<style lang="scss" scoped>
+  .typing {
+    position: absolute;
+    margin-top: 2px;
+  }
+</style>
