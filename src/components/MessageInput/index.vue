@@ -48,6 +48,7 @@
       </div>
       <div class="activity">
           <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')">typing</activity>
+          <button class="btn float-right">Mark as Read</button>
       </div>
   </div>
 </template>
@@ -251,14 +252,16 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/btns.scss';
 
 $inputWidth: 50px;
 $mobileInputWidth: 35px;
 
 .container {
-  padding: 4px 15px;
+  padding: 4px 15px 0;
   .activity {
-    min-height: 20px;
+    min-height: 25px;
+    width: 100%;
     display: inline-block;
     border: 1px solid transparent;
   }
@@ -267,7 +270,7 @@ $mobileInputWidth: 35px;
     float: left;
     width: 100%;
     position: relative;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
     border-radius: 5px;
     border: 1px solid $appgrey;
     .text-input {
