@@ -7,12 +7,13 @@
         <i class="icon-menu4"></i></label>
 
       <span>Unread messages</span>
+      <button @click="markAllAsRead()" class="btn btn-green">Mark All as Read [@todo]</button>
     </header>
     <main v-if="unreadChannels && unreadChannels.length > 0">
       <section v-for="(unread) in unreadChannels" :key="unread.channelID" v-if="findChannelByID(unread.channelID)">
         <header class="channel-unread">
           {{ labelChannel(unread.channelID) }} ({{unread.count}})
-          <button @click="markAsRead(unread)" class="btn btn-green">Mark as read</button>
+          <button @click="markAsRead(unread)" class="btn btn-green float-right">Mark as Read</button>
         </header>
         <section>
           <messages
@@ -27,9 +28,6 @@
       </section>
     </main>
     <empty v-else class="empty">No unread messages</empty>
-    <footer v-if="unreadChannels && unreadChannels.length > 0">
-      <button @click="markAllAsRead()">mark all as read [@todo]</button>
-    </footer>
   </div>
 </template>
 <script>
@@ -134,7 +132,8 @@ div > main {
 }
 
 .channel-unread {
-  font-size: 18px;
+  font-size: 13px;
+  font-weight: 900;
   padding: 10px 20px;
 }
 
