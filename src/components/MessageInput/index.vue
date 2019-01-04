@@ -48,7 +48,7 @@
       </div>
       <div class="activity">
           <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')">typing</activity>
-          <button class="btn float-right">Mark as Read</button>
+          <!-- <button class="btn float-right">Mark as Read</button> -->
       </div>
   </div>
 </template>
