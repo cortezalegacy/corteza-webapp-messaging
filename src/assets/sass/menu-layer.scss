@@ -151,6 +151,13 @@
   }
 }
 
+.message-n-meta {
+  &.last {
+    .context-menu {
+      margin-top: -43px;
+    }
+  }
+}
 
 @media (max-width: $wideminwidth - 1)
 {

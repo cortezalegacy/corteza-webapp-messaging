@@ -15,6 +15,7 @@
         'first-unread': isLastRead && !isFirst && !isLast,
         'unread': isUnread,
         'type-channel-event': message.type === 'channelEvent',
+        'last' : isLast && !isFirst,
       }"
       ref="message"
       :key="message.ID">
@@ -283,6 +284,7 @@ a{
 
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/menu-layer.scss';
 
 em{
   font-style: normal;

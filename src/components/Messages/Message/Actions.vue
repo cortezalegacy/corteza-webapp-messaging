@@ -108,11 +108,12 @@ export default {
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+@import '@/assets/sass/menu-layer.scss';
 
 .actions, .context-menu {
   position: absolute;
   width: auto;
-  right: 0px;
+  right: 10px;
   text-align: right;
   top: 0px;
   display: inline-block;
@@ -159,7 +160,9 @@ export default {
 
 .context-menu {
   z-index: 6;
-  margin-top:25px;
+  margin-top: 1px;
+  right: 26px;
+  height: 65px;
 
   &:hover {
     display: block;
