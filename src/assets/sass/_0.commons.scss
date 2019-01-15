@@ -30,27 +30,3 @@ label
 {
   cursor:pointer;
 }
-
-@supports (-moz-appearance:none) and (background-attachment:local)
-  and (not (-moz-osx-font-smoothing:auto)) {
-    @media not screen and (-moz-os-version) { 
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #888; 
-        }
-
-        /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555; 
-        }
-    } 
-}
