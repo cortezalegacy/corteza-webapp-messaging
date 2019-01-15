@@ -231,57 +231,6 @@ export default {
 
 </script>
 
-<style lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-
-mark {
-  background-color: rgba($appyellow, 0.25);
-  display: inline-block;
-  border-radius: 1em;
-  padding: 1px 5px;
-  margin: 0 3px;
-
-  b {
-    font-weight: normal;
-    margin-right: 2px;
-    display: inline-block;
-  }
-
-}
-
-.channel-mark {
-  background-color: rgba($appblue, 0.15);
-}
-
-.command-mark {
-  background-color: rgba($appgrey, 0.15);
-}
-
-//if my own messages ligthen text to increase difference.
-.from_me {
-  mark {
-    background-color: rgba($appyellow, 1);
-    color: black;
-  }
-
-  .channel-mark {
-    background-color: rgba($appblue, 0.75);
-    color: white;
-  }
-
-}
-
-.spaced:first-child mark {
-  margin-left: 0;
-}
-
-a{
-  color: $defaulttextcolor;
-  font-weight: 900;
-}
-
-</style>
-
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
