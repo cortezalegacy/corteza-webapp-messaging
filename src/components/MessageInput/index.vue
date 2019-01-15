@@ -326,6 +326,7 @@ $mobileInputWidth: 35px;
     }
     .activity {
       border: none;
+      display: none;
     }
 
   }

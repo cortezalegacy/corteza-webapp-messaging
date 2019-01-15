@@ -153,6 +153,7 @@
 
 .message-n-meta {
   &.last {
+    overflow: visible;
     .context-menu {
       margin-top: -43px;
     }
