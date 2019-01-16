@@ -158,9 +158,9 @@ export default {
 
     // Override original submit event and extend event
     // data with submitMeta data.
-    onSubmit () {
+    onSubmit ($event) {
       // Make a copy and reset component's version of a value to prevent dups
-      const value = this.value.trim()
+      const value = $event.value.trim()
       this.value = ''
 
       const stdResponse = () => {
