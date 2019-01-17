@@ -235,11 +235,38 @@ em{
   font-style: normal;
 }
 
+.last-read {
+  border-bottom: 1px solid $appred;
+  &::after{
+    content: "New messages";
+    background: white;
+    color: $appred;
+    display: inline;
+    position: absolute;
+    float: right;
+    right: 16px;
+    line-height: 20px;
+    margin-top: -10px;
+    padding: 0 10px;
+    border-radius: 5px;
+    z-index: 1;
+    border: 1px solid $appred;
+  }
+}
+
 .message-n-meta {
   margin-bottom: 10px;
   padding: 1px 5px 1px 66px;
   position: relative;
   overflow: hidden;
+
+  &.edited {
+    &.last-read {
+      &::after {
+        margin-top: 5px;
+      }
+    }
+  }
 
   &:hover,
   &:focus{
@@ -438,24 +465,5 @@ em{
     word-break: break-word;
   }
 
-}
-
-.last-read {
-  border-bottom: 1px solid $appred;
-  &::after{
-    content: "New messages";
-    background: white;
-    color: $appred;
-    font-weight: 900;
-    display: inline;
-    position: absolute;
-    float: right;
-    right: 17px;
-    line-height: 20px;
-    margin-top: -10px;
-    padding: 0 10px;
-    border-radius: 5px;
-    z-index: 1;
-  }
 }
 </style>
