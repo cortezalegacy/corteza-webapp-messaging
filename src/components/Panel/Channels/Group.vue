@@ -70,6 +70,10 @@ ul {
   margin: 0;
 }
 
+a {
+  cursor: pointer;
+}
+
 .icon-plus {
   &.btn {
     padding: 1px;

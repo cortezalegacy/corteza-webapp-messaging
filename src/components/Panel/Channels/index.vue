@@ -19,7 +19,8 @@
       <group
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'public' } }"
-        :list="joinedPublicChannels">Public channels</group>
+        :list="joinedPublicChannels"
+        class="channel-group">Public channels</group>
 
       <div class="browse">
         <a @click="$emit('openQuickSearch')">+ Browse all channels</a>
