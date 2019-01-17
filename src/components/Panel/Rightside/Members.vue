@@ -24,7 +24,6 @@
         </ul>
       </div>
       <div class="add-members" v-if="channel.canChangeMembers && channel.type !== 'group'">
-        <hr />
         <div class="header">
           <h1>Add members</h1>
           <search-input v-model="userQuery" :focus="true"></search-input>
@@ -39,7 +38,6 @@
           </li>
         </ul>
       </div>
-
     </template>
   </base-panel>
 </template>
@@ -109,16 +107,21 @@ export default {
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
+.header {
+  height: auto;
+}
+
 div {
   &.current-members,
   &.add-members {
     position: relative;
     overflow: scroll;
     height: auto;
-    height: calc((100vh - 80px) / 2);
+    height: calc((100vh - 50px) / 2);
   }
 
   &.add-members {
+    border-top: 1px solid $appgrey;
     .header {
       background: white;
       padding-bottom: 5px;
@@ -146,7 +149,6 @@ div {
 
       &:hover {
         background: rgba($appgrey, 0.15);
-        border-radius: 30px 0 0 30px;
       }
 
       .confirmation-buttons, .btn {

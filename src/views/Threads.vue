@@ -1,12 +1,11 @@
 <template>
   <div>
-    <header class="header sub-header">
+    <header class="header">
       <label
         class="channel-toggle"
         @click="$emit('toggleChannelPanel', null)">
         <i class="icon-menu4"></i></label>
-
-      <span>All Threads</span>
+      <span class="title">All Threads</span>
     </header>
     <main v-if="getThreads.length > 0">
       <section v-for="(thread) in getThreads" :key="thread.ID">
@@ -69,10 +68,15 @@ div > main {
   height: calc(100vh - 60px);
 }
 
-.header span {
-  font-size: 13px;
-  font-family: $crustheavy;
-  font-weight: bold;
+.header {
+  span {
+    font-size: 13px;
+    font-family: $crustheavy;
+    font-weight: bold;
+  }
+  .title {
+    padding-top: 15px;
+  }
 }
 
 hr {

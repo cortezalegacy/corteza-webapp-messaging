@@ -6,14 +6,14 @@
         @click="$emit('toggleChannelPanel', null)">
         <i class="icon-menu4"></i></label>
 
-      <span>Unread messages</span>
-      <button @click="markAllAsRead()" class="btn btn-green">Mark All as Read [@todo]</button>
+      <span class="title">Unread messages</span>
+      <button @click="markAllAsRead()" class="btn"> Mark All as Read [@todo]</button>
     </header>
     <main v-if="unreadChannels && unreadChannels.length > 0">
       <section v-for="(unread) in unreadChannels" :key="unread.channelID" v-if="findChannelByID(unread.channelID)">
         <header class="channel-unread">
           {{ labelChannel(unread.channelID) }} ({{unread.count}})
-          <button @click="markAsRead(unread)" class="btn btn-green float-right">Mark as Read</button>
+          <button @click="markAsRead(unread)" class="btn">Mark as Read</button>
         </header>
         <section>
           <messages
@@ -120,10 +120,16 @@ div > main {
   height: calc(100vh - 60px);
 }
 
-.header span {
-  font-size: 13px;
-  font-family: $crustheavy;
-  font-weight: bold;
+.header {
+  span {
+    font-size: 13px;
+    font-family: $crustheavy;
+    font-weight: bold;
+  }
+  .title {
+    display: inline-block;
+    padding-top: 15px;
+  }
 }
 
 .empty {
@@ -135,6 +141,11 @@ div > main {
   font-size: 13px;
   font-weight: 900;
   padding: 10px 20px;
+}
+
+.btn {
+  float: right;
+  margin-top: 15px;
 }
 
 hr {

@@ -1,45 +1,63 @@
 <template>
-  <div class="header sub-header">
+  <header class="header">
     <label
       class="channel-toggle"
       @click="$emit('toggleChannelPanel', null)">
       <i class="icon-menu4"></i></label>
 
-    <div class="channel-n-topic">
-      <strong v-if="channel.name" class="channel-name">{{ channel.name }}</strong>
-      <span  v-if="channel.topic" class="topic badge badge-blue">
-        {{ channel.topic }}
+    <div class="channel-header">
+      <div v-if="channel.name" class="toolbox">
+
+      </div>
+      <span class="channel-name" :class="[ channel.type]">{{ label(channel) }}</span>
+      <span  v-if="channel.topic" class="topic">
+        Topic: {{ channel.topic }}
       </span>
     </div>
 
-    <div class="channel-toolbox">
-      <label
-        class="tool"
-        @click="$emit('openMembersPanel')">
-        <sup class="count">{{ channel.members.length }}</sup>
-        <i title="Members" aria-label="Members" class="icon icon-user"></i></label>
-
-      <label
-        class="tool"
-        @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
-        <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3 edit"></i>
-      </label>
-      <label
-        @click="$emit('openPinnedMessagesPanel')">
+    <div>
+      <div class="dropdown">
+        <label class="dropbtn">
           <font-awesome-icon
-            icon="thumbtack"
-            title="Open pinned messages"
-          ></font-awesome-icon>
-      </label>
-      <label
-        @click="$emit('openBookmarkedMessagesPanel')">
-          <font-awesome-icon
-            :icon="['far', 'bookmark']"
+            :icon="['fas', 'ellipsis-v']"
             title="Open bookmarks"
+            class="dropbtn"
           ></font-awesome-icon>
-      </label>
+        </label>
+        <div class="dropdown-content">
+          <div v-if="channel.name" class="channel-settings">
+            <label
+              @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
+              <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
+              Edit channel
+            </label>
+            <label
+              @click="$emit('openMembersPanel')">
+              <i title="Members" aria-label="Members" class="icon icon-user"></i>
+              Member list ({{ channel.members.length }})
+            </label>
+          </div>
+          <label
+            @click="$emit('openBookmarkedMessagesPanel')">
+            <font-awesome-icon
+              :icon="['far', 'bookmark']"
+              title="Open bookmarks"
+            ></font-awesome-icon>
+            Bookmarked messages
+          </label>
+          <label
+            @click="$emit('openPinnedMessagesPanel')">
+            <font-awesome-icon
+              icon="thumbtack"
+              title="Open pinned messages"
+            ></font-awesome-icon>
+            Pinned messages
+          </label>
+        </div>
+      </div>
     </div>
-  </div>
+
+  </header>
 </template>
 <script>
 export default {
@@ -56,147 +74,108 @@ export default {
 
 <style scoped lang="scss">
   @import '@/assets/sass/_0.commons.scss';
-  @import '@/assets/sass/badges.scss';
-  @import '@/assets/sass/channel-names.scss';
   @import '@/assets/sass/headers.scss';
-  // custom styles
-  // if i increase channel name, everything should.
-  .channel-name
-  {
-    font-size:13px;
-    font-family: $crustheavy;
-    font-weight: bold;
-  }
 
-  .channel-n-topic
-  {
-    max-width:calc(100% - 200px);
+  .channel-name,
+  .topic {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+  }
+  .channel-name {
+    font-size:15px;
+    font-family: $crustsemibold;
+    display: block;
+    &.public {
+      &:before {
+        content:"#";
+        display:inline-block;
+      }
+    }
+  }
+
+  .channel-settings {
+    border-bottom: 1px solid $appcream;
+  }
+
+  .topic {
+    font-size: 11px;
+    display: block;
+  }
+
+  .channel-header {
+    max-width:calc(100% - 80px);
     float:left;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    .toolbox {
+      display: inline;
+    }
   }
 
   .channel-toggle
   {
     font-size:24px;
     float:left;
-    line-height:50px;
-    width:60px;
+    line-height: 20px;
+    width: 40px;
     margin:0;
-    margin-left:-20px;
+    margin-left:-10px;
     text-align:center;
     border:none;
-    padding-top:5px;
+    padding-top:15px;
   }
 
-  .channel-toolbox,
-  .messaging-toolbox {
-    float:right;
-    line-height:35px; // the folding breaks line height
-    margin:0;
-    padding:0;
-    margin-top:5px;
-  }
-
-  .tool
-  {
+  .dropdown {
+    float: right;
     display: inline-block;
-    margin:0 5px;
-    &:last-of-type
-    {
-      border-right:0;
+    height: 50px;
+    width: 100px;
+    .dropbtn {
+      float: right;
+      height: 50px;
+      width: 7px;
+      color: $appgrey;
     }
-    &:first-of-type
-    {
-      border-left:0;
-    }
-    .count
-    {
-      color:$appgrey;
-      font-size:0.8em;
-    }
-    .icon
-    {
-      vertical-align: middle;
-      font-size:24px;
-    }
-  }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: $appwhite;
+      min-width: 160px;
+      z-index: 1;
+      right: 0;
+      top: 50px;
+      border-right: 1px solid $appcream;
 
-  .svg-inline--fa{
-    padding: 4px;
-    width: 25px;
-    height: 25px;
-    border: 1px solid $appgrey;
-    margin-bottom: -8px;
-    border-radius: 50px;
-    color: $appgrey;
-    margin-right: 5px;
-  }
-
-  .edit{
-    border-right: 1px solid #90A3B1;
-    padding-right: 10px;
-    margin-right: 5px;
-  }
-  .topic{
-    margin-bottom: 20px;
+      label {
+        padding: 10px;
+        display: block;
+        font-size: 12px;
+        .svg-inline--fa,
+        .icon {
+          margin-right: 3px;
+          color: $appblue;
+        }
+      }
+    }
+    &:hover {
+      .dropdown-content {
+        display: block;
+      }
+    }
   }
 
   @media (max-width: $wideminwidth - 1)
   {
-    .channel-n-topic
-    {
-      margin-top:0.5em;
-      line-height: 1.5em;
-    }
-    .topic
-    {
-      display:block;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .channel-name
-    {
-      vertical-align: bottom;
-    }
-    .channel-toolbox{
-      .tool{
-        .icon{
-          font-size: 20px;
-        }
-      }
-      .svg-inline--fa{
-        padding: 3px;
-        width: 22px;
-        height: 22px;
-      }
+    .channel-header{
+      margin-left: 45px;
     }
   }
 
   @media (min-width: $wideminwidth)
   {
-    .channel-n-topic
-    {
-      width:calc(100% - 160px);
-    }
-    .channel-name, .topic
-    {
-      display:inline-block;
-      max-width:45%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .channel-toggle
-    {
+    .channel-toggle {
       display:none;
-    }
-    .channel-toolbox, .messaging-toolbox
-    {
-      margin-top:0;
-      line-height:5em; // the folding breaks line height
     }
   }
 

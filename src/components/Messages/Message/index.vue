@@ -283,6 +283,10 @@ em{
     }
   }
 
+  &.first-unread {
+    overflow: visible;
+  }
+
   &.bookmarked {
     .message{
       border-right: 4px solid $appgreen;

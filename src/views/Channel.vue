@@ -10,11 +10,9 @@
       :channelID="channel.ID"
       ref="upload" />
 
-    <div class="header">
-      <channel-header
-        v-on="$listeners"
-        :channel="channel"></channel-header>
-    </div>
+    <channel-header
+      v-on="$listeners"
+      :channel="channel"></channel-header>
 
     <div class="messages">
       <messages

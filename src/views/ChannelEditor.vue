@@ -1,13 +1,13 @@
 <template>
   <section>
-      <header class="header sub-header">
+      <header class="header">
         <label class="closer"
                @click.prevent="$router.back()"
                aria-label="Close"><i class="icon-close"></i></label>
-          <h2 v-if="channel.type === 'group' && channel.ID">Edit group</h2>
-          <h2 v-else-if="channel.type === 'group'">Create new group</h2>
-          <h2 v-else-if="channel.ID">Channel editor</h2>
-          <h2 v-else>Create new channel</h2>
+          <span class="title" v-if="channel.type === 'group' && channel.ID">Edit group</span>
+          <span class="title" v-else-if="channel.type === 'group'">Create new group</span>
+          <span class="title" v-else-if="channel.ID">Channel editor</span>
+          <span class="title" v-else>Create new channel</span>
       </header>
       <main class="container">
         <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.ID || channel.type !== 'group'">
@@ -257,6 +257,12 @@ export default {
 @import '@/assets/sass/headers.scss';
 @import '@/assets/sass/btns.scss';
 @import '@/assets/sass/notifications.scss';
+
+.header {
+  .title {
+    padding-top: 15px;
+  }
+}
 
 div.error {
   color: $appred;

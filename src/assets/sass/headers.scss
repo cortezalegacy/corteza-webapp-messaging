@@ -3,31 +3,36 @@
 .header
 {
   font-size:10px;
-  height:6em;
-  overflow:hidden;
-  background-color: $headerbgcolor;
-  box-shadow: 0 0.1em 0.2em 0 rgba($defaulttextcolor, 0.1);
+  min-height:50px;
+  background-color: $appwhite;
+  border-bottom: 1px solid $appcream;
   padding:0 10px;
-}
+  position: relative;
+  white-space: nowrap;
 
-.sub-header
-{
-  background-color: transparent;
-  height:5em;
-  line-height:5em;
-  padding:0 10px;
+  .title,
+  .subtitle {
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .title {
+    font-size:15px;
+    font-family: $crustsemibold;
+    padding-top: 10px;
+  }
+
+  .subtitle {
+    font-size: 11px;
+  }
 }
 
 @media (min-width: $wideminwidth)
 {
-  .header, .sub-header
+  .header
   {
     padding: 0 10px 0 20px;
-    height:6em;
-    line-height:6em;
-  }
-  .sub-header
-  {
-    background-color: transparent;
+    height:50px;
   }
 }
