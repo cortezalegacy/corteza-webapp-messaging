@@ -238,6 +238,7 @@ export default {
 em{
   font-style: normal;
 }
+
 .message-n-meta {
   margin-bottom: 10px;
   padding: 1px 5px 1px 66px;

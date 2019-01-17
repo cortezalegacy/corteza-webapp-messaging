@@ -100,6 +100,7 @@ a{
   font-size: 12px;
   display: block;
   margin-bottom: 15px;
+  color: #000;
   .meta{
     font-weight: 300;
   }

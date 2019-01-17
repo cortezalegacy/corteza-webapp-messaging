@@ -67,4 +67,8 @@ p > code {
   border-radius: 2px;
   color: $appred
 }
+
+  a {
+    color: $black;
+  }
 </style>
