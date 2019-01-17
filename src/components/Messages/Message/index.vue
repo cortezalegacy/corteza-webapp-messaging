@@ -258,7 +258,6 @@ em{
   margin-bottom: 10px;
   padding: 1px 5px 1px 66px;
   position: relative;
-  overflow: hidden;
 
   &.edited {
     &.last-read {
@@ -305,10 +304,6 @@ em{
     .day {
       top: 8px;
     }
-  }
-
-  &.last-read {
-    overflow: visible;
   }
 
   &.bookmarked {

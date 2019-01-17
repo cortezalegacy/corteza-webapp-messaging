@@ -320,6 +320,7 @@ $mobileInputWidth: 35px;
 
   &.editing {
     padding: 0 10px 0 0;
+    overflow: hidden;
     .text-input {
       width: 100%;
     }
