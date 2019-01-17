@@ -189,11 +189,12 @@ export default {
       right: 0;
       top: 50px;
       border-right: 1px solid $appcream;
+      box-shadow: 0px 5px 7px -2px rgba(0, 0, 0, 0.4);
 
       label {
         padding: 10px;
         display: block;
-        font-size: 12px;
+        font-size: 14px;
         .svg-inline--fa,
         .icon {
           margin-right: 3px;
