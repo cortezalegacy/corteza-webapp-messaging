@@ -153,15 +153,15 @@ export default {
       this.$rest.deleteMessage(message.channelID, message.ID)
     })
 
-    // Handling requests for message pins
-    this.$bus.$on('message.markAsUnread', ({ message }) => {
-      // Response is broadcasted via WS
-      this.$rest.markMessageAsUnread(message.channelID, message.ID).then(newUnreadCount => {
+    // Handling requests for last read message
+    this.$bus.$on('message.markAsLastRead', ({ channelID, messageID, threadID }) => {
+      this.$rest.markMessageAsRead({ channelID, lastReadMessageID: messageID, threadID }).then(count => {
         this.$store.commit('unread/set', {
-          channelID: message.channelID,
-          threadID: message.replyTo,
-          count: newUnreadCount,
-          lastMessageID: message.ID })
+          channelID,
+          threadID,
+          count,
+          lastMessageID: messageID,
+        })
       })
     })
 

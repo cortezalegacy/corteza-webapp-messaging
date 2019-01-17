@@ -160,10 +160,11 @@ export default {
         })
       },
 
-      async markMessageAsUnread (channelID, messageID) {
+      async markMessageAsRead ({ channelID, threadID = '0', lastReadMessageID = '0' }) {
         return new Promise((resolve, reject) => {
-          this.api().post(
-            `/channels/${channelID}/messages/${messageID}/unread`,
+          this.api().get(
+            `/channels/${channelID}/messages/mark-as-read`,
+            { params: { threadID, lastReadMessageID } }
           ).then((response) => {
             if (response.data.error) {
               reject(response.data.error)

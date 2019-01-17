@@ -13,18 +13,16 @@ export default {
   },
 
   methods: {
-    resetUnreadAfterTimeout (lastMessageID) {
+    resetUnreadAfterTimeout (messageID) {
       this.clearUnreadTimeout()
 
-      if (this.$unread.lastMessageID === lastMessageID) {
+      if (this.$unread.lastMessageID === messageID) {
         // already recorded, nothing to do.
         return
       }
 
-      this.$unread.lastMessageID = lastMessageID
-
       this.$unread.timeoutHandle = window.setTimeout(() => {
-        this.recordUnreadReset({ lastMessageID })
+        this.recordUnreadReset({ messageID })
       }, 2000)
     },
 
@@ -42,18 +40,27 @@ export default {
           this.resetUnreadAfterTimeout(messageID)
           window.removeEventListener('focus', resetUnreadAfterTimeoutOnFocus)
         }
+
         window.addEventListener('focus', resetUnreadAfterTimeoutOnFocus)
       }
     },
 
-    recordUnreadReset ({ lastMessageID = 0 }) {
-      const payload = Object.assign({}, { lastMessageID }, this.unreadResetPayload())
+    onMarkAsRead (o) {
+      this.recordUnreadReset(o)
+    },
+
+    recordUnreadReset ({ lastReadMessageID = '0' } = {}) {
+      const payload = { lastReadMessageID, ...this.unreadResetPayload() }
+
+      if (!payload.threadID) delete payload.threadID
 
       // Update store, set pointer to the ast message id
       this.$store.commit('unread/set', payload)
 
+      this.$unread.lastMessageID = lastReadMessageID
+
       // Tell the backend we've read it all..
-      this.$ws.setUnread(payload)
+      this.$bus.$emit('message.markAsLastRead', payload)
     },
 
     unreadResetPayload () {

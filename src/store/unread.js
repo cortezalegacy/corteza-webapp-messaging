@@ -16,8 +16,8 @@ class Unread {
 
     this.channelID = channelID
     this.count = count || 0
-    this.threadID = threadID || ''
-    this.lastMessageID = lastMessageID || ''
+    this.threadID = threadID || '0'
+    this.lastMessageID = lastMessageID || '0'
   }
 }
 
@@ -28,14 +28,14 @@ function filter ({ channelID, threadID = '' }) {
 function transform (o) {
   if (o instanceof Channel) {
     // Channel always tranforms to channel
-    return { channelID: o.ID, threadID: '' }
+    return { channelID: o.ID, threadID: '0' }
   } else if (o instanceof Message) {
     if (o.replies > 0 || o.replyTo) {
       // Reply or the original (first) thread message transform to thread
       return { channelID: o.channelID, threadID: o.replyTo || o.ID }
     } else {
       // Other messages always transform to channel
-      return { channelID: o.channelID, threadID: '' }
+      return { channelID: o.channelID, threadID: '0' }
     }
   }
 
@@ -48,11 +48,11 @@ function transform (o) {
       throw new Error('Expecting threadID property to be string')
     }
 
-    return { channelID: o.channelID, threadID: o.threadID || '' }
+    return { channelID: o.channelID, threadID: o.threadID || '0' }
   }
 
   if (typeof o === 'string') {
-    return { channelID: o, threadID: '' }
+    return { channelID: o, threadID: '0' }
   }
 
   throw new Error('Expecting input params for unread to be string, ' +
@@ -77,7 +77,8 @@ function delta (state, { channelID, threadID = '' }, delta = 0) {
 const getters = {
   // Return number of unread messages in channel/thread. Default to 0
   count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
-  last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '' }).lastMessageID,
+  last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID,
+  has: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID !== '0',
 
   // All unread channels
   channels: (state) => state.set.filter(u => !u.threadID && u.count > 0),

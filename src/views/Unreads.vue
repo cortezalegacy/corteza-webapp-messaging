@@ -73,20 +73,9 @@ export default {
       })
     },
 
-    markAsRead ({ channelID, lastMessageID }) {
-      const messages = this.unreadInChannel(channelID, lastMessageID)
-      if (messages.length === 0) {
-        return
-      }
-
-      const lastMessage = messages[messages.length - 1]
-
-      lastMessageID = lastMessage.ID
-
-      // @todo unread remove thread unread on api & state
-      this.$ws.setUnread({ channelID, lastMessageID })
-      this.$store.commit('unread/unset', { channelID })
-      // @todo unread this.setChannelUnread({ ID, newLastMessageID })
+    markAsRead ({ channelID, lastReadMessageID }) {
+      this.$bus.$emit('message.markAsLastRead', { channelID, lastReadMessageID })
+      this.$store.commit('unread/unset', { channelID, lastReadMessageID })
     },
 
     markAllAsRead () {

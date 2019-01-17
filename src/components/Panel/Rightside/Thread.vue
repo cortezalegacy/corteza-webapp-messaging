@@ -21,7 +21,7 @@
         :readOnly="!channel.canSendMessages"
         :messages="messages"
         :currentUser="currentUser"
-        :origin="channel"
+        :origin="message"
         :scrollable="true"
         :hideActionOpenThread="true"
         :editLastMessage="editLastMessage"
@@ -33,6 +33,7 @@
     <template slot="footer">
       <div class="footer">
         <message-input
+          @markAsRead="onMarkAsRead"
           :replyTo="message"
           v-if="channel.canSendMessages"
           @promptFilePicker="onOpenFilePicker"

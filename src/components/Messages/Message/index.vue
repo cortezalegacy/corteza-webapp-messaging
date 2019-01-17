@@ -1,6 +1,7 @@
 <template>
     <li
-      @click.alt.exact.prevent="onMarkAsUnread"
+      :id="message.ID"
+      @click.alt.exact.prevent="$emit('markAsUnread')"
       @click.meta.exact.prevent="onOpenThread"
       class="message-n-meta"
       :class="{
@@ -12,14 +13,13 @@
         'edited' : message.updatedAt,
         'pinned' : highlightPinned && message.isPinned,
         'bookmarked' : highlightBookmarked && message.isBookmarked,
-        'first-unread': isLastRead && !isFirst && !isLast,
+        'last-read': isLastRead && !isLast,
         'unread': isUnread,
         'type-channel-event': message.type === 'channelEvent',
         'last' : isLast && !isFirst,
       }"
       ref="message"
       :key="message.ID">
-
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
             <avatar :user="message.user" />
@@ -206,10 +206,6 @@ export default {
       }
     },
 
-    onMarkAsUnread () {
-      this.$bus.$emit('message.markAsUnread', { message: this.message })
-    },
-
     onOpenThread () {
       if (this.message.canReply && !this.hideActionOpenThread) {
         this.$emit('openThreadPanel', { message: this.message })
@@ -276,7 +272,7 @@ em{
         font-size: 12px;
       }
     }
-    &.first-unread {
+    &.last-read {
       font-style: normal;
     }
     .day {
@@ -284,7 +280,7 @@ em{
     }
   }
 
-  &.first-unread {
+  &.last-read {
     overflow: visible;
   }
 
@@ -444,7 +440,7 @@ em{
 
 }
 
-.first-unread {
+.last-read {
   border-bottom: 1px solid $appred;
   &::after{
     content: "New messages";

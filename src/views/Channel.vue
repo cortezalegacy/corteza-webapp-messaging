@@ -36,6 +36,7 @@
         :channel="channel"
         :readonly="!isMember"
         :focus="uiFocusMessageInput()"
+        @markAsRead="onMarkAsRead"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
     </div>
@@ -124,9 +125,6 @@ export default {
     ...mapActions({
       clearHistory: 'history/clear',
       setCurrentChannel: 'channels/setCurrent',
-      // @todo unread setChannelUnreadCount: 'unread/set',
-      // @todo unread ignoreChannelUnreadCount: 'unread/ignoreChannel',
-      // @todo unread unignoreChannelUnreadCount: 'unread/unignoreChannel',
     }),
 
     changeChannel (channel) {

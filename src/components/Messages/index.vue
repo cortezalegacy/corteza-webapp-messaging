@@ -6,6 +6,7 @@
     <message
       v-for="(msg, index) in messages"
       ref="message"
+      @markAsUnread="markAsUnread(index)"
       @cancelEditing="$emit('cancelEditing')"
       :readOnly="readOnly"
       :message="msg"
@@ -164,6 +165,31 @@ export default {
       if (atBottom) {
         this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
       }
+    },
+
+    // When we receive a request to mark message as unread
+    // we want to find a previous message and mark that one as last read
+    markAsUnread (index) {
+      if (index === 0 || typeof this.origin !== 'object') {
+        return
+      }
+
+      const m = this.messages[index - 1]
+      let payload = {
+        channelID: m.channelID,
+        messageID: m.ID,
+      }
+      switch (this.origin.constructor.name) {
+        case 'Message':
+          payload.threadID = m.replyTo || m.ID
+          break
+        case 'Channel':
+          break
+        default:
+          return
+      }
+
+      this.$bus.$emit('message.markAsLastRead', payload)
     },
 
     getLastMessageByUserID: (set, userID) => {
