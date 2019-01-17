@@ -1,11 +1,13 @@
 <!-- template for the user avatar component -->
 <template>
-  <i class="u-avatar"
-     :title="title"
-     :class="{online: isOnline }"
-     :style="img?'background-image:'+img:''">
+  <span>
+    <i class="u-avatar"
+       :title="title"
+       :class="{online: isOnline }"
+       :style="img?'background-image:'+img:''">
       <span aria-hidden="true">{{ initials }}</span>
-  </i>
+    </i>
+  </span>
 </template>
 
 <script>
@@ -64,28 +66,19 @@ export default {
   font-size:16px;
   height:32px;
   width:32px;
-  border:solid 2px $defaultlinecolor;
+  border:solid 1px $defaultlinecolor;
   border-radius:100%;
   background:url('/static/pics/no-profile-pic.png') center center no-repeat;
   background-size:contain;
   line-height:28px;
   text-align:center;
   font-style:normal;
-  background-color:$appgrey;
-  color:$appwhite;
-}
-.coward
-{
-  background-color:rgba($appgrey,0.5);
-  border-color:rgba($defaultlinecolor,0.15);
-}
-.online:before {
-  content: '●';
-  font-weight: bold;
-  color: lighten($appgreen,0.55);
-  position: absolute;
-  font-size: 26px;
-  margin-top: -12px;
-  margin-left: 12px;
+  background-color:rgba($appgrey,0.08);;
+  color:$appgrey;
+  &.online {
+    background-color: rgba($appgreen,0.08);
+    color: $appgreen;
+    border: 1px solid $appgreen;
+  }
 }
 </style>

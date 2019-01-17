@@ -9,7 +9,7 @@
       <div v-if="channel.name" class="toolbox">
 
       </div>
-      <span class="channel-name" :class="[ channel.type]">{{ label(channel) }}</span>
+      <span class="channel-name" :class="[channel.type]">{{ label(channel) }}</span>
       <span v-if="isOnline" class="is-online">Online</span>
       <span v-else-if="isPrivateDirectMessage" class="is-offline">Offline</span>
       <span v-else-if="isDirectMessageGroup" class="topic">Private group</span>
