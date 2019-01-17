@@ -10,7 +10,10 @@
 
       </div>
       <span class="channel-name" :class="[ channel.type]">{{ label(channel) }}</span>
-      <span  v-if="channel.topic" class="topic">
+      <span v-if="isOnline" class="is-online">Online</span>
+      <span v-else-if="isPrivateDirectMessage" class="is-offline">Offline</span>
+      <span v-else-if="isDirectMessageGroup" class="topic">Private group</span>
+      <span v-else-if="channel.topic" class="topic">
         Topic: {{ channel.topic }}
       </span>
     </div>
@@ -60,6 +63,8 @@
   </header>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'channel-header',
 
@@ -67,6 +72,24 @@ export default {
     channel: {
       type: Object,
       required: true,
+    },
+  },
+
+  computed: {
+    ...mapGetters({
+      isPresent: 'users/isPresent',
+      currentUser: 'auth/user',
+    }),
+    isOnline () {
+      if (this.isPrivateDirectMessage) {
+        return this.isPresent(this.channel.members.find(ID => ID !== this.currentUser.ID))
+      }
+    },
+    isPrivateDirectMessage () {
+      return (this.channel.members.length === 2 && this.channel.type === 'group')
+    },
+    isDirectMessageGroup () {
+      return (this.channel.members.length > 2 && this.channel.type === 'group')
     },
   },
 }
@@ -97,7 +120,9 @@ export default {
     border-bottom: 1px solid $appcream;
   }
 
-  .topic {
+  .topic,
+  .is-offline,
+  .is-online {
     font-size: 11px;
     display: block;
   }
@@ -124,6 +149,24 @@ export default {
     text-align:center;
     border:none;
     padding-top:15px;
+  }
+
+  .is-online,
+  .is-offline {
+    color: $appgrey;
+    &:before {
+      content: '\25CF';
+      font-weight: bold;
+      margin-right: 2px;
+      color: $appgrey;
+    }
+  }
+
+  .is-online {
+    color: $appgreen;
+    &:before {
+      color: $appgreen;
+    }
   }
 
   .dropdown {
