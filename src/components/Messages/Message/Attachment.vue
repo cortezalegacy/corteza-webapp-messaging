@@ -84,10 +84,6 @@ export default {
 .missing {
   color: #ccc;
 }
-.attachment-wrap
-{
-  min-height:180px;
-}
 
 img {
   max-width: 100% !important;
