@@ -143,6 +143,11 @@ export default {
       console.error('Could not mount message input without at least one of channel/message/replyTo props')
       return false
     }
+
+    if (this.message) {
+      // When editing a message, make sure we prefill value
+      this.value = this.message.message
+    }
   },
 
   methods: {
@@ -200,8 +205,8 @@ export default {
       }
     },
 
-    onSubmitBtnClick (value) {
-      this.onSubmit()
+    onSubmitBtnClick ($event) {
+      this.onSubmit({ value: this.value })
       this.clearInputText()
     },
 
