@@ -171,6 +171,10 @@ export default {
       // titleNtf.flashNew()
 
       const ch = this.findChannelByID(message.channelID)
+      if (!ch) {
+        return
+      }
+
       if (ch.type === 'group' && ch.isMember(this.currentUser.ID)) {
         console.debug('Notifying, message sent to our group', { message })
       } else if (!message.isMentioned(this.currentUser.ID)) {
