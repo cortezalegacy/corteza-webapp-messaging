@@ -20,7 +20,9 @@ const getters = {
   getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
 
   getThreads: (state) =>
-    state.set.filter(m => isValid(m) && !m.replyTo && m.replies > 0),
+    // @todo this should be sorted by date/id of the last message in the thread
+    [...state.set.filter(m => isValid(m) && !m.replyTo && m.replies > 0)]
+      .sort((a, b) => b.ID - a.ID),
 }
 
 // actions
