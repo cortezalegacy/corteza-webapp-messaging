@@ -11,6 +11,7 @@ export class Channel {
     this.name = c.name
     this.topic = c.topic
     this.type = c.type
+    this.membershipFlag = c.membershipFlag
     this.createdAt = c.createdAt
     this.updatedAt = c.updatedAt || null
     this.deletedAt = c.deletedAt || null

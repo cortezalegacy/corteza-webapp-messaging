@@ -96,8 +96,8 @@ export default {
         return c && (
           (this.current && this.current.ID === c.ID) ||
           c.isMember(this.currentUser.ID) ||
-          this.countUnread(c) > 0 ||
-          !!this.lastUnread(c))
+          this.countUnread(c) > 0
+        )
       })
     },
 

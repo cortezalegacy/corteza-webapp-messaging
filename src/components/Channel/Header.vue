@@ -74,6 +74,10 @@
             ></font-awesome-icon>
             Pinned messages
           </label>
+          <label @click="onFlag('pinned')">Pin channel</label>
+          <label @click="onFlag('hidden')">Hide channel</label>
+          <label @click="onFlag('ignored')">Ignore channel</label>
+          <label @click="onFlag('')">Remove channel flag</label>
         </div>
       </div>
     </div>
@@ -117,6 +121,14 @@ export default {
 
     onJoin () {
       this.$rest.addMember(this.channel.ID, this.currentUser.ID)
+    },
+
+    onFlag (flag) {
+      if (flag) {
+        this.$rest.setMembershipFlag(this.channel.ID, flag)
+      } else {
+        this.$rest.removeMembershipFlag(this.channel.ID)
+      }
     },
   },
 }

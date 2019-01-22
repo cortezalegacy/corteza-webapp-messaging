@@ -119,6 +119,23 @@ export default {
         })
       },
 
+      async setMembershipFlag (channelID, flag) {
+        return new Promise((resolve, reject) => {
+          this.api().put(
+            `/channels/${channelID}/flag`,
+            { flag }
+          ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
+      async removeMembershipFlag (channelID) {
+        return new Promise((resolve, reject) => {
+          this.api().delete(
+            `/channels/${channelID}/flag`
+          ).then(stdChannelResolve(resolve, reject), stdRejection(reject))
+        })
+      },
+
       async sendMessage (channelID, message) {
         return new Promise((resolve, reject) => {
           this.api().post(
