@@ -28,36 +28,47 @@
           ></font-awesome-icon>
         </label>
         <div class="dropdown-content">
-          <div v-if="!channel.isDirectMessage()" class="channel-settings">
-            <label
-              @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
-              <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
-              Edit channel
-            </label>
+          <div v-if="!channel.isDirectMessage()">
             <label
               @click="$emit('openMembersPanel')">
               <i title="Members" aria-label="Members" class="icon icon-user"></i>
               Member list ({{ channel.members.length }})
             </label>
             <label
-              v-if="isMember"
-              @click="onPart">
-              <font-awesome-icon
-                :icon="'door-open'"
-                title="Part channel"
-              ></font-awesome-icon>
-              Part channel
+              @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
+              <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
+              Edit channel
             </label>
-            <label
-              v-if="!isMember"
-              @click="onJoin">
+            <label v-if="channel.membershipFlag!=='pinned'" @click="onFlag('pinned')">
               <font-awesome-icon
-                :icon="'door-open'"
-                title="Join channel"
+                icon="thumbtack"
+                title="Pin channel"
               ></font-awesome-icon>
-              Join channel
+              Pin channel
+            </label>
+            <label v-if="channel.membershipFlag!=='hidden'" @click="onFlag('hidden')">
+              <font-awesome-icon
+                :icon="['far', 'eye-slash']"
+                title="Hide channel"
+              ></font-awesome-icon>
+              Hide channel
+            </label>
+            <label v-if="channel.membershipFlag!=='ignored'" @click="onFlag('ignored')">
+              <font-awesome-icon
+                :icon="['far', 'bell-slash']"
+                title="Ignore channel"
+              ></font-awesome-icon>
+              Ignore channel
+            </label>
+            <label v-if="channel.membershipFlag" @click="onFlag('')">
+              <font-awesome-icon
+                :icon="'eraser'"
+                title="Remove channel flag"
+              ></font-awesome-icon>
+              Remove channel flag
             </label>
           </div>
+          <hr>
           <label
             @click="$emit('openBookmarkedMessagesPanel')">
             <font-awesome-icon
@@ -74,10 +85,25 @@
             ></font-awesome-icon>
             Pinned messages
           </label>
-          <label @click="onFlag('pinned')">Pin channel</label>
-          <label @click="onFlag('hidden')">Hide channel</label>
-          <label @click="onFlag('ignored')">Ignore channel</label>
-          <label @click="onFlag('')">Remove channel flag</label>
+          <hr>
+          <label
+            v-if="isMember"
+            @click="onPart">
+            <font-awesome-icon
+              :icon="'door-open'"
+              title="Part channel"
+            ></font-awesome-icon>
+            Part channel
+          </label>
+          <label
+            v-if="!isMember"
+            @click="onJoin">
+            <font-awesome-icon
+              :icon="'door-open'"
+              title="Join channel"
+            ></font-awesome-icon>
+            Join channel
+          </label>
         </div>
       </div>
     </div>
@@ -138,6 +164,12 @@ export default {
   @import '@/assets/sass/_0.commons.scss';
   @import '@/assets/sass/headers.scss';
 
+  hr {
+    background: $appcream;
+    border: none;
+    height: 1px;
+  }
+
   .channel-name,
   .topic {
     overflow: hidden;
@@ -153,10 +185,6 @@ export default {
         display:inline-block;
       }
     }
-  }
-
-  .channel-settings {
-    border-bottom: 1px solid $appcream;
   }
 
   .topic,
@@ -224,7 +252,7 @@ export default {
       position: absolute;
       background-color: $appwhite;
       min-width: 160px;
-      z-index: 1;
+      z-index: 2;
       right: 0;
       top: 50px;
       border-right: 1px solid $appcream;
@@ -238,6 +266,9 @@ export default {
         .icon {
           margin-right: 3px;
           color: $appblue;
+          display: inline-block;
+          width: 15px;
+          text-align: right;
         }
       }
     }
