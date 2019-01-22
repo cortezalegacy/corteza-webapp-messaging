@@ -175,7 +175,11 @@ export default {
         return
       }
 
-      if (ch.type === 'group' && ch.isMember(this.currentUser.ID)) {
+      if (ch.membershipFlag === 'ignored') {
+        return
+      }
+
+      if (ch.isGroup() && ch.isMember(this.currentUser.ID)) {
         console.debug('Notifying, message sent to our group', { message })
       } else if (!message.isMentioned(this.currentUser.ID)) {
         console.debug('Not notifying, not mentioned')

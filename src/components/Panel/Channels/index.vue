@@ -102,7 +102,6 @@ export default {
 
     groupChannels () {
       return this.channelSlicer(this.filteredChannels.filter(c => c.isGroup()), this.sortByOnlineStatus)
-
     },
 
     version () {
