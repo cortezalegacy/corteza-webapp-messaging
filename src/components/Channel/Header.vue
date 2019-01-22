@@ -39,6 +39,24 @@
               <i title="Members" aria-label="Members" class="icon icon-user"></i>
               Member list ({{ channel.members.length }})
             </label>
+            <label
+              v-if="isMember"
+              @click="onPart">
+              <font-awesome-icon
+                :icon="'door-open'"
+                title="Part channel"
+              ></font-awesome-icon>
+              Part channel
+            </label>
+            <label
+              v-if="!isMember"
+              @click="onJoin">
+              <font-awesome-icon
+                :icon="'door-open'"
+                title="Join channel"
+              ></font-awesome-icon>
+              Join channel
+            </label>
           </div>
           <label
             @click="$emit('openBookmarkedMessagesPanel')">
@@ -85,6 +103,20 @@ export default {
       if (this.channel.isDirectMessage()) {
         return this.isPresent(this.channel.members.find(ID => ID !== this.currentUser.ID))
       }
+    },
+
+    isMember () {
+      return !!this.channel.members.find(ID => ID === this.currentUser.ID)
+    },
+  },
+
+  methods: {
+    onPart () {
+      this.$rest.removeMember(this.channel.ID, this.currentUser.ID)
+    },
+
+    onJoin () {
+      this.$rest.addMember(this.channel.ID, this.currentUser.ID)
     },
   },
 }
