@@ -37,6 +37,22 @@ export class Channel {
     const ID = (user || {}).ID || user
     this.members = this.members.filter(m => m !== ID)
   }
+
+  isDirectMessage () {
+    return this.type === 'group' && this.members.length === 2
+  }
+
+  isGroup () {
+    return this.type === 'group' && this.members.length > 2
+  }
+
+  isPrivate () {
+    return this.type === 'private'
+  }
+
+  isPublic () {
+    return this.type === 'public'
+  }
 }
 
 export class Message {

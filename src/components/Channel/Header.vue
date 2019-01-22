@@ -11,8 +11,8 @@
       </div>
       <span class="channel-name" :class="[channel.type]">{{ label(channel) }}</span>
       <span v-if="isOnline" class="is-online">Online</span>
-      <span v-else-if="isPrivateDirectMessage" class="is-offline">Offline</span>
-      <span v-else-if="isDirectMessageGroup" class="topic">Private group</span>
+      <span v-else-if="channel.isDirectMessage()" class="is-offline">Offline</span>
+      <span v-else-if="channel.isPrivate()" class="topic">Private group</span>
       <span v-else-if="channel.topic" class="topic">
         Topic: {{ channel.topic }}
       </span>
@@ -28,7 +28,7 @@
           ></font-awesome-icon>
         </label>
         <div class="dropdown-content">
-          <div v-if="channel.name" class="channel-settings">
+          <div v-if="!channel.isDirectMessage()" class="channel-settings">
             <label
               @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
               <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
@@ -80,16 +80,11 @@ export default {
       isPresent: 'users/isPresent',
       currentUser: 'auth/user',
     }),
+
     isOnline () {
-      if (this.isPrivateDirectMessage) {
+      if (this.channel.isDirectMessage()) {
         return this.isPresent(this.channel.members.find(ID => ID !== this.currentUser.ID))
       }
-    },
-    isPrivateDirectMessage () {
-      return (this.channel.members.length === 2 && this.channel.type === 'group')
-    },
-    isDirectMessageGroup () {
-      return (this.channel.members.length > 2 && this.channel.type === 'group')
     },
   },
 }
