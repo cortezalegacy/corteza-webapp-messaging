@@ -6,10 +6,29 @@
       <i class="icon-menu4"></i></label>
 
     <div class="channel-header">
-      <div v-if="channel.name" class="toolbox">
-
-      </div>
-      <span class="channel-name" :class="[channel.type]">{{ label(channel) }}</span>
+      <span class="channel-name" :class="[channel.type]">{{ label(channel) }}
+        <span v-if="channel.membershipFlag==='pinned'">
+          <label>
+            <font-awesome-icon
+              :icon="['fas', 'star']"
+            ></font-awesome-icon>
+          </label>
+        </span>
+        <span v-else-if="channel.membershipFlag==='hidden'">
+          <label>
+            <font-awesome-icon
+              :icon="['far', 'eye-slash']"
+            ></font-awesome-icon>
+          </label>
+        </span>
+        <span v-else-if="channel.membershipFlag==='ignored'">
+          <label>
+            <font-awesome-icon
+              :icon="['far', 'bell-slash']"
+            ></font-awesome-icon>
+          </label>
+        </span>
+      </span>
       <span v-if="isOnline" class="is-online">Online</span>
       <span v-else-if="channel.isDirectMessage()" class="is-offline">Offline</span>
       <span v-else-if="channel.isPrivate()" class="topic">Private group</span>
@@ -34,26 +53,28 @@
               <i title="Members" aria-label="Members" class="icon icon-user"></i>
               Member list ({{ channel.members.length }})
             </label>
-            <label
+            <label v-if="channel.canUpdate"
               @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
               <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
               Edit channel
             </label>
-            <label v-if="channel.membershipFlag!=='pinned'" @click="onFlag('pinned')">
+            <hr>
+          </div>
+            <label v-if="channel.membershipFlag!=='pinned' && isMember" @click="onFlag('pinned')">
               <font-awesome-icon
-                icon="thumbtack"
+                :icon="['fas', 'star']"
                 title="Pin channel"
               ></font-awesome-icon>
               Pin channel
             </label>
-            <label v-if="channel.membershipFlag!=='hidden'" @click="onFlag('hidden')">
+            <label v-if="channel.membershipFlag!=='hidden' && isMember" @click="onFlag('hidden')">
               <font-awesome-icon
                 :icon="['far', 'eye-slash']"
                 title="Hide channel"
               ></font-awesome-icon>
               Hide channel
             </label>
-            <label v-if="channel.membershipFlag!=='ignored'" @click="onFlag('ignored')">
+            <label v-if="channel.membershipFlag!=='ignored' && isMember" @click="onFlag('ignored')">
               <font-awesome-icon
                 :icon="['far', 'bell-slash']"
                 title="Ignore channel"
@@ -67,27 +88,27 @@
               ></font-awesome-icon>
               Remove channel flag
             </label>
+          <hr>
+          <div class="open-sidebar">
+            <label
+              @click="$emit('openBookmarkedMessagesPanel')">
+              <font-awesome-icon
+                :icon="['far', 'bookmark']"
+                title="Open bookmarks"
+              ></font-awesome-icon>
+              Bookmarked messages
+            </label>
+            <label
+              @click="$emit('openPinnedMessagesPanel')">
+              <font-awesome-icon
+                icon="thumbtack"
+                title="Open pinned messages"
+              ></font-awesome-icon>
+              Pinned messages
+            </label>
           </div>
-          <hr>
           <label
-            @click="$emit('openBookmarkedMessagesPanel')">
-            <font-awesome-icon
-              :icon="['far', 'bookmark']"
-              title="Open bookmarks"
-            ></font-awesome-icon>
-            Bookmarked messages
-          </label>
-          <label
-            @click="$emit('openPinnedMessagesPanel')">
-            <font-awesome-icon
-              icon="thumbtack"
-              title="Open pinned messages"
-            ></font-awesome-icon>
-            Pinned messages
-          </label>
-          <hr>
-          <label
-            v-if="isMember"
+            v-if="isMember && channel.canPart"
             @click="onPart">
             <font-awesome-icon
               :icon="'door-open'"
@@ -96,7 +117,7 @@
             Part channel
           </label>
           <label
-            v-if="!isMember"
+            v-if="!isMember && channel.canJoin"
             @click="onJoin">
             <font-awesome-icon
               :icon="'door-open'"
@@ -185,6 +206,14 @@ export default {
         display:inline-block;
       }
     }
+    .svg-inline--fa {
+      color: $appgrey;
+      vertical-align: inherit;
+      font-size: 12px;
+      &.fa-star {
+        color: $appyellow;
+      }
+    }
   }
 
   .topic,
@@ -200,9 +229,6 @@ export default {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    .toolbox {
-      display: inline;
-    }
   }
 
   .channel-toggle
@@ -257,6 +283,10 @@ export default {
       top: 50px;
       border-right: 1px solid $appcream;
       box-shadow: 0px 5px 7px -2px rgba(0, 0, 0, 0.4);
+
+      .open-sidebar {
+        border-bottom: 1px solid $appcream;
+      }
 
       label {
         padding: 10px;
