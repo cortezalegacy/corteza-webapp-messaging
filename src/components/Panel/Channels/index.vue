@@ -19,7 +19,7 @@
       <group
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'public' } }"
-        :list="joinedPublicChannels"
+        :list="publicChannels"
         class="channel-group">Public channels</group>
 
       <div class="browse">
@@ -48,19 +48,6 @@ import { mapGetters } from 'vuex'
 import Group from '@/components/Panel/Channels/Group'
 import SearchInput from '@/components/SearchInput'
 
-function sortChannels (a, b) {
-  if (a.archivedAt && !b.archivedAt) return 1
-  if (!a.archivedAt && b.archivedAt) return -1
-  // if (!a.deletedAt || !b.deletedAt) return !a.deletedAt - !b.deletedAt
-  // if (!a.archivedAt || !b.archivedAt) return !a.archivedAt - !b.archivedAt
-
-  // Make sure named channels are on the top
-  if (!a.name) return 1
-  if (!b.name) return -1
-
-  return b.name.toLocaleLowerCase() - a.name.toLocaleLowerCase()
-}
-
 export default {
   props: {
     searchQuery: {
@@ -80,25 +67,42 @@ export default {
 
   computed: {
     ...mapGetters({
-      privateChannels: 'channels/privateOnly',
-      publicChannels: 'channels/publicOnly',
-      groupChannels: 'channels/groupsOnly',
+      isPresent: 'users/isPresent',
+      findUserByID: 'users/findByID',
       current: 'channels/current',
+      channels: 'channels/list',
       currentUser: 'auth/user',
       countUnread: 'unread/count',
       lastUnread: 'unread/last',
     }),
 
-    joinedPublicChannels () {
-      // channels/publicOnly returns all public channels,
-      // we need to filter out only the ones we're member of
-      return this.publicChannels.filter(c => {
-        return c && (
-          (this.current && this.current.ID === c.ID) ||
-          c.isMember(this.currentUser.ID) ||
-          this.countUnread(c) > 0
-        )
-      })
+    filteredChannels () {
+      return this.channels.filter(c => c && (
+        // Always show current channel on the list
+        (this.current && this.current.ID === c.ID) ||
+
+        // Unless hidden, show channels we're members of
+        (c.isMember(this.currentUser.ID) && c.membershipFlag !== 'hidden') ||
+
+        // Unless ignored, show channels with unread messages
+        (this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
+
+        // and ignore the rest...
+        false
+      ))
+    },
+
+    publicChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isPublic()), this.sortChannelByName)
+    },
+
+    privateChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isPrivate()), this.sortChannelByName)
+    },
+
+    groupChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isGroup()), this.sortByOnlineStatus)
+
     },
 
     version () {
@@ -108,16 +112,37 @@ export default {
   },
 
   methods: {
-    sort (cc) {
-      return cc.sort(sortChannels)
-    },
-
     gotoAndClose (params) {
       this.$emit('close')
 
       if (params) {
         this.$router.push(params)
       }
+    },
+
+    channelSlicer (cc, sortFn) {
+      const pinned = cc.filter(c => c.membershipFlag === 'pinned')
+      const unpinned = cc.filter(c => c.membershipFlag !== 'pinned')
+      const valid = unpinned.filter(c => c.isValid())
+      const invalid = unpinned.filter(c => !c.isValid())
+
+      return [
+        ...pinned.sort(sortFn),
+        ...valid.sort(sortFn),
+        ...invalid.sort(sortFn),
+      ]
+    },
+
+    sortChannelByName (a, b) {
+      return b.name.toLocaleLowerCase() - a.name.toLocaleLowerCase()
+    },
+
+    sortByOnlineStatus (a, b) {
+      const aLen = a.members.filter(m => this.isPresent(m)).length
+      const bLen = b.members.filter(m => this.isPresent(m)).length
+      if (aLen !== bLen) return bLen - aLen
+
+      return b.ID - a.ID
     },
   },
 

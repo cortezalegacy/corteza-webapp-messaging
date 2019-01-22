@@ -44,7 +44,7 @@ export class Channel {
   }
 
   isGroup () {
-    return this.type === 'group' && this.members.length > 2
+    return this.type === 'group'
   }
 
   isPrivate () {
@@ -53,6 +53,10 @@ export class Channel {
 
   isPublic () {
     return this.type === 'public'
+  }
+
+  isValid () {
+    return !this.deletedAt && !this.archivedAt
   }
 }
 

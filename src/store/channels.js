@@ -21,10 +21,6 @@ const getters = {
   // Return private & public channels
   byType: (state, getters) => (type) => getters.list.filter(c => c.type === type),
 
-  publicOnly: (state, getters) => getters.byType('public'),
-  privateOnly: (state, getters) => getters.byType('private'),
-  groupsOnly: (state, getters) => getters.byType('group'),
-
   // Find channel by ID
   findByID: (state, getters) => (ID) => {
     return getters.list.filter(c => c.ID === ID)[0] || undefined
