@@ -120,28 +120,47 @@ export default {
     },
 
     channelSlicer (cc, sortFn) {
+      const presenceFilter = (c, cnd) => {
+        const present = c.members.filter(m => this.isPresent(m)).length
+
+        switch (cnd) {
+          case 'everyone':
+            return present === c.members.length
+          case 'some':
+            return present > 0 && present < c.members.length
+          case 'none':
+            return present === 0
+        }
+      }
+
       const pinned = cc.filter(c => c.membershipFlag === 'pinned')
       const unpinned = cc.filter(c => c.membershipFlag !== 'pinned')
       const valid = unpinned.filter(c => c.isValid())
+      const validChan = valid.filter(c => !c.isGroup())
+      const validDirectEveryoneOnline = valid.filter(c => c.isGroup() && presenceFilter(c, 'everyone'))
+      const validDirectSomeOnline = valid.filter(c => c.isGroup() && presenceFilter(c, 'some'))
+      const validDirectAllOffline = valid.filter(c => c.isGroup() && presenceFilter(c, 'none'))
       const invalid = unpinned.filter(c => !c.isValid())
 
       return [
         ...pinned.sort(sortFn),
-        ...valid.sort(sortFn),
+        ...validChan.sort(sortFn),
+        ...validDirectEveryoneOnline.sort(sortFn),
+        ...validDirectSomeOnline.sort(sortFn),
+        ...validDirectAllOffline.sort(sortFn),
         ...invalid.sort(sortFn),
       ]
     },
 
     sortChannelByName (a, b) {
-      return b.name.toLocaleLowerCase() - a.name.toLocaleLowerCase()
+      return this.label(a).toLocaleLowerCase().localeCompare(this.label(b).toLocaleLowerCase())
     },
 
     sortByOnlineStatus (a, b) {
       const aLen = a.members.filter(m => this.isPresent(m)).length
       const bLen = b.members.filter(m => this.isPresent(m)).length
       if (aLen !== bLen) return bLen - aLen
-
-      return b.ID - a.ID
+      return this.sortChannelByName(a, b)
     },
   },
 
