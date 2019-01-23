@@ -183,8 +183,9 @@ nav {
   height: 100vh;
 
   & > form {
-    margin: 10px 25px 10px 10px;
-    height: 29px;
+    margin-top: 10px;
+    border-bottom: 1px solid $appcream;
+    padding: 0 25px 12px 10px;
   }
 
   div.scrollable {
