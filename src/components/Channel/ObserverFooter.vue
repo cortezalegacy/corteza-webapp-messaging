@@ -34,8 +34,8 @@ export default {
 footer {
   text-align: center;
   width: 100%;
-  height: 90px;
+  height: 80px;
   border-top: 2px solid $defaultlinecolor;
-  background-color: $appcream;
+  background-color: $white;
 }
 </style>
