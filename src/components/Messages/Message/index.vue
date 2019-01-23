@@ -248,7 +248,6 @@ em{
     line-height: 20px;
     margin-top: -10px;
     padding: 0 10px;
-    border-radius: 5px;
     z-index: 1;
     border: 1px solid $appred;
   }
@@ -308,13 +307,13 @@ em{
 
   &.bookmarked {
     .message{
-      border-right: 4px solid $appgreen;
+      border-right: 3px solid $appgreen;
     }
   }
 
   &.pinned {
     .message{
-      border-right: 4px solid $appyellow;
+      border-right: 3px solid $appyellow;
     }
     &.bookmarked{
       .message{
@@ -323,12 +322,10 @@ em{
           background: linear-gradient(to bottom, rgba(47,188,149,1) 0%, rgba(47,188,148,1) 50%, rgba(255,204,50,1) 50%, rgba(255,204,50,1) 100%);
           display: block;
           height: 100%;
-          width: 5px;
+          width: 3px;
           position: absolute;
           bottom: 0;
-          right: -5px;
-          border-top-right-radius: 5px;
-          border-bottom-right-radius: 5px;
+          right: -3px;
         }
       }
     }
@@ -408,18 +405,19 @@ em{
 .author,
 .date {
   display: inline-block;
-  padding: 2px 0.5em;
+  padding: 2px 0.5em 2px 0;
 }
 
 .time, .day {
   position: absolute;
-  left: 20px;
   top: 35px;
+  font-size: 10px;
+  left: 23px;
 }
 
 .time {
   display: none;
-  font-size: 10px;
+  left: 20px;
 }
 
 .date, .actions {
@@ -430,7 +428,6 @@ em{
   position: relative;
   background-color: $messagebgcolor;
   word-wrap: break-word;
-  border-radius: 3px;
   padding: 6px;
   display: table;
   min-width: 180px;

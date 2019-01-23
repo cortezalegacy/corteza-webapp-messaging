@@ -279,7 +279,6 @@ $mobileInputWidth: 35px;
     width: 100%;
     position: relative;
     margin-bottom: 2px;
-    border-radius: 5px;
     border: 1px solid $appgrey;
     .text-input {
       width: calc(100% - #{$inputWidth});
@@ -358,15 +357,9 @@ $mobileInputWidth: 35px;
       }
       .input-button {
         width: $mobileInputWidth;
-        span{
-          margin-top: -2px;
-        }
         &.send-button{
           font-size: 20px;
           right: 0;
-          span{
-            bottom: 5px;
-          }
         }
       }
     }
