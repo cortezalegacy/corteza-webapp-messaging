@@ -350,7 +350,7 @@ em{
 
       .time {
         display: block;
-        background-color: lighten($appgrey, 30);
+        background-color: transparent;
         z-index: 5;
       }
     }
