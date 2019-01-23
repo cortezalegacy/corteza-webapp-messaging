@@ -1,13 +1,22 @@
 <template>
   <li class="layer-item-wrap" :class="cssClass" @click="$emit('close')">
-    <router-link
-      class="layer-item layer-selectable channel-name"
-      v-bind:class="[
-        channelColor(index),
+    <router-link v-if="channel.membershipFlag==='ignored'"
+                 class="ignored layer-item layer-selectable channel-name"
+                 :to="{name:'channel', params:{channelID:channel.ID}}">
+      <label>
+        <font-awesome-icon
+          :icon="['far', 'bell-slash']"
+        ></font-awesome-icon>
+      </label>
+      {{ labelChannel(channel) }}
+    </router-link>
+    <router-link v-else
+                 class="layer-item layer-selectable channel-name"
+                 :class="[channelColor(index),
         { current: (current||{}).ID === channel.ID },
       ]"
       :to="{name:'channel', params:{channelID:channel.ID}}">
-      {{ labelChannel(channel) }}
+                  {{ labelChannel(channel) }}
     </router-link>
     <transition name="slide-fade">
         <span class="unread" v-if="countUnread(channel) > 99">99+</span>
@@ -113,13 +122,15 @@ export default {
     font-size: 20px;
   }
 
+  &.new-moon {
+    a {
+      color: $appgrey;
+    }
+  }
+
   &.full-moon {
     .channel-name:before {
       color: $appgreen;
-    }
-
-    a{
-      color: $defaulttextcolor;
     }
   }
 
@@ -127,10 +138,6 @@ export default {
     .channel-name:before {
       content: '○';
       color: $appgreen;
-    }
-
-    a{
-      color: $defaulttextcolor;
     }
   }
 }
@@ -167,6 +174,27 @@ export default {
   {
     transform: translateX(10px);
     opacity: 0;
+  }
+}
+
+.ignored {
+  color: $appgrey;
+  &::before {
+    content: "";
+  }
+  label {
+    margin-left: -10px;
+    font-size: 12px;
+    display: inline-block;
+    width: 20px;
+  }
+  &.channel-name {
+    &::before {
+      content: "";
+    }
+    label {
+      width: 22px;
+    }
   }
 }
 

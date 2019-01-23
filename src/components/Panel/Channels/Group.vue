@@ -72,6 +72,7 @@ ul {
 
 a {
   cursor: pointer;
+  font-family: $crustsemibold;
 }
 
 .icon-plus {

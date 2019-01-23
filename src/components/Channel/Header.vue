@@ -7,21 +7,21 @@
 
     <div class="channel-header">
       <span class="channel-name" :class="[channel.type]">{{ label(channel) }}
-        <span v-if="channel.membershipFlag==='pinned'">
+        <span v-if="channel.membershipFlag==='pinned'" @click="onFlag('')">
           <label>
             <font-awesome-icon
               :icon="['fas', 'star']"
             ></font-awesome-icon>
           </label>
         </span>
-        <span v-else-if="channel.membershipFlag==='hidden'">
+        <span v-else-if="channel.membershipFlag==='hidden'" @click="onFlag('')">
           <label>
             <font-awesome-icon
               :icon="['far', 'eye-slash']"
             ></font-awesome-icon>
           </label>
         </span>
-        <span v-else-if="channel.membershipFlag==='ignored'">
+        <span v-else-if="channel.membershipFlag==='ignored'" @click="onFlag('')">
           <label>
             <font-awesome-icon
               :icon="['far', 'bell-slash']"

@@ -1,46 +1,47 @@
 @import './_0.declare';
 
-.channel-name:before
-{
-  content:"#";
-  display:inline-block;
-  margin-right:0.5em;
-  font-weight:400;
-}
-.channel-name.blue
-{
-  &:before
-  {
-    color:$appblue;
+.channel-name {
+  &:before {
+    content:"#";
+    display:inline-block;
+    margin-right:0.5em;
+    font-weight:400;
   }
-}
-.channel-name.green
-{
-  &:before
-  {
-    color:$appgreen;
+  &.blue {
+    &:before {
+      color:$appblue;
+    }
   }
-}
-.channel-name.red
-{
-  &:before
-  {
-    color:$appred;
+  &.green {
+    &:before {
+      color:$appgreen;
+    }
   }
-}
-.channel-name.yellow
-{
-  &:before
-  {
-    color:$appyellow;
+  &.red {
+    &:before {
+      color:$appred;
+    }
+  }
+  &.yellow {
+    &:before {
+      color:$appyellow;
+    }
   }
 }
 
-.private .channel-name
-{
-  &:before
-  {
-    content: "\e98f";
-    font-family: '#{$icomoon-font-family}';
+.private {
+  .channel-name {
+    &:before {
+      content: "\e98f";
+      font-family: '#{$icomoon-font-family}';
+    }
+  }
+  .ignored {
+    &:before {
+      content: "";
+    }
+    label {
+      width: 23px;
+    }
   }
 }
