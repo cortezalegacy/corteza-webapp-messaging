@@ -183,13 +183,16 @@ nav {
   height: 100vh;
 
   & > form {
-    margin: 10px;
+    margin: 10px 25px 10px 10px;
+    height: 29px;
   }
 
   div.scrollable {
     overflow-y: auto;
     flex: 1;
-    margin-bottom: 10px;
+    padding-bottom: 10px;
+    box-shadow: inset -15px 0px 0px $mainbgcolor;
+    padding-right: 15px;
 
     div.browse {
       padding-top: 0;

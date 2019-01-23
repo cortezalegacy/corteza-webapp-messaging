@@ -1,7 +1,7 @@
 <!-- template for the user avatar component -->
 <template>
   <form @submit.prevent="$emit('searchSubmit', query)">
-      <span class="badge badge-block badge-pill badge-tall">
+      <span class="badge badge-block">
           <i class="icon-search"></i>
           <input
             v-focus="focus"
@@ -66,6 +66,9 @@ form  {
     input {
       width: calc(100% - 40px);
     }
+  }
+  .badge {
+    border-radius: 0;
   }
 }
 

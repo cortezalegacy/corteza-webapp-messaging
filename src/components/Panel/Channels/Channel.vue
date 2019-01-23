@@ -10,11 +10,15 @@
       {{ labelChannel(channel) }}
     </router-link>
     <transition name="slide-fade">
-      <span>
         <span class="unread" v-if="countUnread(channel) > 99">99+</span>
         <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
-      </span>
     </transition>
+    <span v-if="'countUnread(channel) == 0'" class="hide" @click="onFlag('hidden')">
+      <font-awesome-icon
+        :icon="['fas', 'times']"
+        title="Hide channel"
+      ></font-awesome-icon>
+    </span>
   </li>
 </template>
 <script>
@@ -80,26 +84,25 @@ export default {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])
     },
+    onFlag (flag) {
+      if (flag) {
+        this.$rest.setMembershipFlag(this.channel.ID, flag)
+      } else {
+        this.$rest.removeMembershipFlag(this.channel.ID)
+      }
+    },
   },
 }
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
-@import '@/assets/sass/badges.scss';
 @import '@/assets/sass/channel-names.scss';
 
-  // add specific stuff here if desired
-.channel-name
-{
+.channel-name {
   text-decoration:none;
   line-height:20px;
   font-weight: 400;
-  &:hover
-  {
-    background-color:rgba($appgrey,0.15);
-    border-color:rgba($appgrey,0.5);
-  }
 }
 
 .group {
@@ -120,10 +123,6 @@ export default {
     }
   }
 
-  &.new-moon .channel-name:before {
-    //
-  }
-
   &.last-quarter-moon {
     .channel-name:before {
       content: '○';
@@ -136,23 +135,25 @@ export default {
   }
 }
 
-.unread
-{
-  position:absolute;
+.unread {
+  background: $appblue;
+  color: white;
+  display:inline-block;
+  pointer-events: none; // make this click through.
+}
+
+.unread,
+.hide {
+  position: absolute;
   top:5px;
   right:5px;
-  background: #1397CB;
-  color: white;
-  border-radius: 10px;
+  text-align: center;
+  vertical-align: middle;
   width: 20px;
   height: 20px;
   line-height: 20px;
   font-size: 9px;
-  text-align: center;
-  vertical-align: middle;
-  display:inline-block;
-
-  pointer-events: none; // make this click through.
+  border-radius: 10px;
 
   &.slide-fade-enter-active
   {
@@ -169,13 +170,29 @@ export default {
   }
 }
 
-.layer-item-wrap{
+.hide {
+  color: $appgrey;
+  font-size: 11px;
+  display: none;
+  line-height: 22px;
+  cursor: pointer;
+}
+
+.layer-item-wrap {
   a{
     padding-right: 25px;
   }
+  &:hover {
+    .channel-name {
+      background-color:rgba($appgrey,0.15);
+      border-color:rgba($appgrey,0.5);
+    }
+    .hide {
+      display: inline-block;
+    }
+  }
 }
 
-//webkit specific hack
 @media screen and (-webkit-min-device-pixel-ratio:0)
 {
   // unread does not align correctly

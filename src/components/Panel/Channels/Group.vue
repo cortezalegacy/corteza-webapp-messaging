@@ -78,11 +78,13 @@ a {
   &.btn {
     padding: 1px;
     float: right;
-    margin-right: 10px;
+    margin-right: 7px;
     margin-top: 6px;
     font-size: 12px;
     &:hover{
-      background-color: $appgrey;
+      color: $black;
+      background: transparent;
+      border-color: $black;
     }
   }
 }
