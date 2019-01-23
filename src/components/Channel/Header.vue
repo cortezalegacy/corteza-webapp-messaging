@@ -88,7 +88,7 @@
               ></font-awesome-icon>
               Remove channel flag
             </label>
-          <hr>
+          <hr v-if="isMember">
           <div class="open-sidebar">
             <label
               @click="$emit('openBookmarkedMessagesPanel')">
