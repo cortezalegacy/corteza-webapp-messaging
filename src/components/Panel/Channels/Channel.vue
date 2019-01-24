@@ -127,6 +127,7 @@ export default {
     font-weight: bold;
     color: $appgrey;
     font-size: 20px;
+    margin-left: -2px;
   }
 
   &.new-moon {
@@ -189,19 +190,18 @@ export default {
   color: $appgrey;
   &::before {
     content: "";
+    width: 0px;
   }
   label {
     margin-left: -10px;
     font-size: 12px;
     display: inline-block;
-    width: 20px;
+    width: 18px;
   }
   &.channel-name {
     &::before {
       content: "";
-    }
-    label {
-      width: 22px;
+      width: 0px;
     }
   }
 }
