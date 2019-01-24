@@ -18,11 +18,18 @@
       :to="{name:'channel', params:{channelID:channel.ID}}">
                   {{ labelChannel(channel) }}
     </router-link>
-    <transition name="slide-fade">
-        <span class="unread" v-if="countUnread(channel) > 99">99+</span>
+    <transition v-if="countUnread(channel) > 0"
+                name="slide-fade">
+        <span class="unread" v-if="countUnread(channel) > 9">9+</span>
         <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
     </transition>
-    <span v-if="'countUnread(channel) == 0'" class="hide" @click="onFlag('hidden')">
+    <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
+      <font-awesome-icon
+        :icon="['fas', 'star']"
+        title="Remove star"
+      ></font-awesome-icon>
+    </span>
+    <span v-else class="hide" @click="onFlag('hidden')">
       <font-awesome-icon
         :icon="['fas', 'times']"
         title="Hide channel"
@@ -150,7 +157,8 @@ export default {
 }
 
 .unread,
-.hide {
+.hide,
+.starred {
   position: absolute;
   top:5px;
   right:5px;
@@ -198,12 +206,17 @@ export default {
   }
 }
 
-.hide {
+.hide,
+.starred {
   color: $appgrey;
   font-size: 11px;
   display: none;
   line-height: 22px;
   cursor: pointer;
+}
+
+.starred {
+  color: $appyellow;
 }
 
 .layer-item-wrap {
@@ -215,7 +228,8 @@ export default {
       background-color:rgba($appgrey,0.15);
       border-color:rgba($appgrey,0.5);
     }
-    .hide {
+    .hide,
+    .starred {
       display: inline-block;
     }
   }
