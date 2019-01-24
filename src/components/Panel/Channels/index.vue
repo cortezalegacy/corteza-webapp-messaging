@@ -16,7 +16,7 @@
         </ul>
       </div>
 
-      <group
+      <group v-if="pinnedChannels.length > 0"
         v-on="$listeners"
         :list="pinnedChannels"
         class="channel-group">Pinned</group>
