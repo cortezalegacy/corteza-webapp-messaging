@@ -18,6 +18,11 @@
 
       <group
         v-on="$listeners"
+        :list="pinnedChannels"
+        class="channel-group">Pinned</group>
+
+      <group
+        v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'public' } }"
         :list="publicChannels"
         class="channel-group">Public channels</group>
@@ -92,16 +97,20 @@ export default {
       ))
     },
 
+    pinnedChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isPinned()), this.sortByOnlineStatus)
+    },
+
     publicChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isPublic()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isPublic() && !c.isPinned()), this.sortChannelByName)
     },
 
     privateChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isPrivate()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isPrivate() && !c.isPinned()), this.sortChannelByName)
     },
 
     groupChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isGroup()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
     },
 
     version () {
@@ -133,17 +142,15 @@ export default {
         }
       }
 
-      const pinned = cc.filter(c => c.membershipFlag === 'pinned')
-      const unpinned = cc.filter(c => c.membershipFlag !== 'pinned')
-      const valid = unpinned.filter(c => c.isValid())
+      const valid = cc.filter(c => c.isValid())
       const validChan = valid.filter(c => !c.isGroup())
       const validDirectEveryoneOnline = valid.filter(c => c.isGroup() && presenceFilter(c, 'everyone'))
       const validDirectSomeOnline = valid.filter(c => c.isGroup() && presenceFilter(c, 'some'))
       const validDirectAllOffline = valid.filter(c => c.isGroup() && presenceFilter(c, 'none'))
-      const invalid = unpinned.filter(c => !c.isValid())
+      const invalid = cc.filter(c => !c.isValid())
 
       return [
-        ...pinned.sort(sortFn),
+        // ...pinned.sort(sortFn),
         ...validChan.sort(sortFn),
         ...validDirectEveryoneOnline.sort(sortFn),
         ...validDirectSomeOnline.sort(sortFn),

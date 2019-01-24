@@ -43,6 +43,10 @@ export class Channel {
     return this.type === 'group' && this.members.length === 2
   }
 
+  isPinned () {
+    return this.membershipFlag === 'pinned'
+  }
+
   isGroup () {
     return this.type === 'group'
   }

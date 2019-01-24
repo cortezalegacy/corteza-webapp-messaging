@@ -1,7 +1,7 @@
 <template>
   <section>
     <div>
-      <router-link :to="link">
+      <router-link v-if="link" :to="link">
         <i class="icon icon-left icon-plus btn"></i>
       </router-link>
       <a @click="expanded=!expanded">
@@ -33,7 +33,7 @@ export default {
     },
     link: {
       type: Object,
-      required: true,
+      required: false,
     },
   },
 
