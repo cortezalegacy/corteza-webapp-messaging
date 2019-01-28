@@ -112,9 +112,9 @@
             @click="onPart">
             <font-awesome-icon
               :icon="'door-open'"
-              title="Part channel"
+              title="Leave channel"
             ></font-awesome-icon>
-            Part channel
+            Leave channel
           </label>
           <label
             v-if="!isMember && channel.canJoin"
