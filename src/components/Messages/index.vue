@@ -127,7 +127,7 @@ export default {
         }
 
         const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
-        if (!hasScrollBar) {
+        if (!hasScrollBar && isNewMessage) {
           // Emit scrollTo bottom when there is no scrollbar on message update...
           this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
         }
