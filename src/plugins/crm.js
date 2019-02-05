@@ -7,7 +7,7 @@ import axios from 'axios'
 
 class CRM {
   constructor (baseLink) {
-    this.baseLink = baseLink || 'https://crm.api.latest.rustbucket.io'
+    this.baseLink = baseLink || 'https://crm.api.latest.crust.tech'
     this.headers = {
       'Content-Type': 'application/json',
     }

@@ -40,7 +40,7 @@ export default {
 
     Vue.prototype.$rest = {
       baseURL () {
-        return window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
+        return window.CrustConfig.messaging.baseUrl || 'https://sam.api.latest.crust.tech'
       },
 
       api () {

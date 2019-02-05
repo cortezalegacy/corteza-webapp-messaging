@@ -142,8 +142,8 @@ export function Attachment (a) {
   this.url = a.url
   this.previewUrl = a.previewUrl
 
-  if (window.CrustConfig.sam.baseUrl) {
-    this.downloadUrl = window.CrustConfig.sam.baseUrl + this.url + '?download=1'
+  if (window.CrustConfig.messaging.baseUrl) {
+    this.downloadUrl = window.CrustConfig.messaging.baseUrl + this.url + '?download=1'
   }
 }
 

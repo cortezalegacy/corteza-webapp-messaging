@@ -7,7 +7,7 @@ import axios from 'axios'
 
 class System {
   constructor (baseLink) {
-    this.baseLink = baseLink || 'https://system.api.latest.rustbucket.io'
+    this.baseLink = baseLink || 'https://system.api.latest.crust.tech'
     this.headers = {
       'Content-Type': 'application/json',
     }

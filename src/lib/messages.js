@@ -1,7 +1,7 @@
 import moment from 'moment'
 
 // Time window for consecutive messages in seconds
-const consecutiveMessagesTimeWindow = (window.CrustConfig.spa.content || {}).consecutiveMessagesTimeWindow || 3 * 60
+const consecutiveMessagesTimeWindow = (window.CrustConfig.webapp.content || {}).consecutiveMessagesTimeWindow || 3 * 60
 
 export function getFirstID (set) {
   return (set[0] || {}).ID

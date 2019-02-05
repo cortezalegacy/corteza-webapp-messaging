@@ -36,7 +36,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     // check if already connected
     if (this.connected()) return
 
-    const baseUrl = window.CrustConfig.sam.baseUrl || 'https://sam.api.latest.rustbucket.io'
+    const baseUrl = window.CrustConfig.messaging.baseUrl || 'https://sam.api.latest.crust.tech'
 
     const url = baseUrl.replace(/^http/, 'ws') + '/websocket/'
 

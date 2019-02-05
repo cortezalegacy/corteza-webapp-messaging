@@ -7,7 +7,7 @@ import axios from 'axios'
 
 class SAM {
   constructor (baseLink) {
-    this.baseLink = baseLink || 'https://sam.api.latest.rustbucket.io'
+    this.baseLink = baseLink || 'https://sam.api.latest.crust.tech'
     this.headers = {
       'Content-Type': 'application/json',
     }
@@ -429,7 +429,7 @@ class SAM {
 
 export default {
   install (Vue, store) {
-    const client = new SAM(window.CrustConfig.sam.baseUrl)
+    const client = new SAM(window.CrustConfig.messaging.baseUrl)
 
     Vue.prototype.$sam = client
   },
