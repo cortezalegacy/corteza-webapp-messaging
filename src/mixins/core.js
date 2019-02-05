@@ -77,7 +77,7 @@ export default {
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
         const currentUser = this.$store.getters['auth/user']
-        if (currentUser.ID !== msg.user.ID) {
+        if (currentUser.ID !== msg.user.ID && msg.type !== 'channelEvent') {
           // Count only new mesages, no updates, no replies
           this.$store.commit('unread/inc', msg)
         }
