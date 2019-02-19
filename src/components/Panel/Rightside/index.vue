@@ -1,5 +1,5 @@
 <template>
-  <div class="rightside-panel-container">
+  <div class="rightside-panel-container" v-on="$listeners">
     <div class="header">
       <span class="title"><slot name="header"></slot></span>
       <span class="subtitle"><slot name="subtitle"></slot></span>
