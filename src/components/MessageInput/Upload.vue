@@ -16,14 +16,14 @@
 
         <h2>Drop files to upload to<br>
           <span v-if="replyTo">thread</span>
-          <span v-else>#{{ channel.name || channel.ID }}</span>
+          <span v-else>{{ label(channel) }}</span>
         </h2>
       </vue-dropzone>
 
       <div class="button-group" v-if="queued">
         <h3>Your file is going to be uploaded to
           <span v-if="replyTo">thread</span>
-          <span v-else>#{{ channel.name || channel.ID }}.<br>
+          <span v-else>#{{ label(channel) }}.<br>
             You can switch the channel on your left.
           </span>
         </h3>
