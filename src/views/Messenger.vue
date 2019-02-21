@@ -78,7 +78,8 @@
       </div>
       <global-events
           @keydown.esc.exact="emojiPickerCallback=null"
-          @keydown.meta.k.exact="uiShowQuickSearch=!uiShowQuickSearch" />
+          @keydown.meta.k.exact="toggleQuickSearch"
+          @keydown.ctrl.k.exact="toggleQuickSearch" />
     </div>
 </template>
 <script>
@@ -306,6 +307,11 @@ export default {
       // We want to pin side panels when screen is wide enough.
       this.uiPinChannelSidePanel = this.uiIsWide()
       this.uiPinRightSidePanel = this.uiIsWide()
+    },
+
+    toggleQuickSearch (e) {
+      e.preventDefault()
+      this.uiShowQuickSearch = !this.uiShowQuickSearch
     },
   },
 
