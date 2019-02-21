@@ -22,9 +22,15 @@
       :key="message.ID">
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
-            <avatar :user="message.user" />
+            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
+              <avatar :user="message.user" />
+            </router-link>
           </em>
-          <em  v-if="!consecutive" class="author selectable">{{ label(message.user) }}</em>
+          <em  v-if="!consecutive" class="author selectable">
+            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
+              {{ label(message.user) }}
+            </router-link>
+          </em>
           <span class="date">
               {{ moment(message.createdAt).fromNow() }}
               <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
@@ -390,7 +396,13 @@ em{
   }
 }
 
-.author,
+.author{
+  a {
+    text-decoration: none;
+    color: $defaulttextcolor;
+  }
+}
+
 .date,
 .time,
 .day {

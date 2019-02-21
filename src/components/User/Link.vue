@@ -2,7 +2,8 @@
   <router-link
     @click="$emit('click', $event)"
     :to="linkProps" :class="{ 'current-user': highlight && ID === currentUser.ID }">
-    <slot>{{ label(user) }}</slot></router-link>
+    <slot>{{ label(user) }}</slot>
+  </router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -51,6 +52,7 @@ a{
   &.current-user{
     color: $appred;
   }
+
   &:before {
     content: "@";
   }
