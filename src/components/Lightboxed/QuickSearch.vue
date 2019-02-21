@@ -10,10 +10,12 @@
               <li v-if="query && filtered.length===0" class="no-results">
                 No matches found
               </li>
-              <li v-for="c in (query ? filtered : prefered).slice(0, 10)"
+              <li v-for="i in (query ? filtered : prefered).slice(0, 10)"
                   @click="onClose"
-                  :key="c.ID">
-                <channel-link :ID="c.ID" ></channel-link>
+                  :key="i.ID">
+
+                <user-link v-if="isInstanceOf(i) === 'User'" :ID="i.ID" ></user-link>
+                <channel-link v-else-if="isInstanceOf(i) === 'Channel'" :ID="i.ID" ></channel-link>
               </li>
           </ol>
       </main>
@@ -28,22 +30,36 @@ import { mapGetters } from 'vuex'
 import Lightbox from '@/components/Lightboxed/index.vue'
 import SearchInput from '@/components/SearchInput'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
+import labelsMixin from '@/mixins/labels'
 
 export default {
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
       channels: 'channels/list',
+      users: 'users/list',
     }),
 
     filtered () {
       const q = this.query.toLocaleLowerCase()
-      return this.channels.filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
+      return this.queryNames.filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
     },
 
     // List of prefered channels -- ones we're not members of
     prefered () {
       return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.currentUser.ID))
+    },
+
+    channelsAndUsers () {
+      return [...this.users.filter(i => i.ID !== this.currentUser.ID), ...this.channels.filter(i => i.members.length > 2)]
+    },
+
+    queryNames () {
+      return this.channelsAndUsers.map(i => ({
+        ID: i.ID,
+        name: this.label(i),
+        instance: i.constructor.name,
+      }))
     },
   },
 
@@ -61,6 +77,11 @@ export default {
     onSearchSubmit ({ query }) {
       this.search(query)
     },
+
+    isInstanceOf (o) {
+      if (o.instance) return o.instance
+      return 'Channel'
+    },
   },
 
   components: {
@@ -70,6 +91,7 @@ export default {
 
   mixins: [
     emitCloseOnEscape,
+    labelsMixin,
   ],
 }
 </script>
