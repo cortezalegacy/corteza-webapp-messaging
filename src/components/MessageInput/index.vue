@@ -65,6 +65,13 @@ import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
 
 export default {
+  components: {
+    TextInput,
+    EmojiPicker,
+    Activity,
+    ObserverFooter,
+  },
+
   props: {
     hideFileUpload: false,
 
@@ -94,12 +101,6 @@ export default {
 
       keepFocusOnSubmit: false,
     }
-  },
-
-  watch: {
-    channel () {
-      this.clearInputText()
-    },
   },
 
   computed: {
@@ -135,6 +136,12 @@ export default {
       }
 
       return ''
+    },
+  },
+
+  watch: {
+    channel () {
+      this.clearInputText()
     },
   },
 
@@ -247,13 +254,6 @@ export default {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
     },
-  },
-
-  components: {
-    TextInput,
-    EmojiPicker,
-    Activity,
-    ObserverFooter,
   },
 }
 </script>

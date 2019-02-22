@@ -30,6 +30,11 @@ import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
 
 export default {
+  components: {
+    Messages,
+    Empty,
+  },
+
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
@@ -41,11 +46,6 @@ export default {
   mounted () {
     this.$ws.getThreads()
     this.$store.dispatch('channels/setCurrent', null)
-  },
-
-  components: {
-    Messages,
-    Empty,
   },
 }
 </script>

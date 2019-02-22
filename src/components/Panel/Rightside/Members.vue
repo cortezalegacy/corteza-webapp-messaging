@@ -49,6 +49,13 @@ import SearchInput from '../../SearchInput'
 import ConfirmationToggle from '@/components/Form/ConfirmationToggle'
 
 export default {
+  components: {
+    SearchInput,
+    'user-avatar': Avatar,
+    BasePanel,
+    ConfirmationToggle,
+  },
+
   props: {
     channel: {
       type: Object,
@@ -75,13 +82,6 @@ export default {
     searchResults () {
       return this.users.filter(u => !this.channel.isMember(u.ID) && u.Match(this.userQuery))
     },
-  },
-
-  components: {
-    SearchInput,
-    'user-avatar': Avatar,
-    BasePanel,
-    ConfirmationToggle,
   },
 
   methods: {

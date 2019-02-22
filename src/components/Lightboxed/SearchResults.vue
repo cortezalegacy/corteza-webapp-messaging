@@ -40,6 +40,17 @@ import ChannelLink from '@/components/Channel/Link'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
 export default {
+  components: {
+    SearchInput,
+    Lightbox,
+    Messages,
+    ChannelLink,
+  },
+
+  mixins: [
+    emitCloseOnEscape,
+  ],
+
   props: {
     searchQuery: {
       type: String,
@@ -47,17 +58,17 @@ export default {
     },
   },
 
+  data () {
+    return {
+      results: [],
+    }
+  },
+
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
       findChannelByID: 'channels/findByID',
     }),
-  },
-
-  data () {
-    return {
-      results: [],
-    }
   },
 
   mounted () {
@@ -104,17 +115,6 @@ export default {
       this.search(query)
     },
   },
-
-  components: {
-    SearchInput,
-    Lightbox,
-    Messages,
-    ChannelLink,
-  },
-
-  mixins: [
-    emitCloseOnEscape,
-  ],
 }
 </script>
 

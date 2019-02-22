@@ -21,6 +21,11 @@ import BasePanel from '.'
 import Messages from '@/components/Messages'
 
 export default {
+  components: {
+    BasePanel,
+    Messages,
+  },
+
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
@@ -30,11 +35,6 @@ export default {
 
   mounted () {
     this.$ws.getMessages({ bookmarked: true })
-  },
-
-  components: {
-    BasePanel,
-    Messages,
   },
 }
 </script>

@@ -54,6 +54,11 @@ import Group from '@/components/Panel/Channels/Group'
 import SearchInput from '@/components/SearchInput'
 
 export default {
+  components: {
+    Group,
+    SearchInput,
+  },
+
   props: {
     searchQuery: {
       type: String,
@@ -169,11 +174,6 @@ export default {
       if (aLen !== bLen) return bLen - aLen
       return this.sortChannelByName(a, b)
     },
-  },
-
-  components: {
-    Group,
-    SearchInput,
   },
 }
 </script>

@@ -36,6 +36,11 @@ import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
 
 export default {
+  components: {
+    Messages,
+    Empty,
+  },
+
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
@@ -81,11 +86,6 @@ export default {
     markAllAsRead () {
       this.unreadChannels.forEach(this.markAsRead)
     },
-  },
-
-  components: {
-    Messages,
-    Empty,
   },
 }
 </script>

@@ -37,6 +37,10 @@ import Message from './Message'
 import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
 
 export default {
+  components: {
+    Message,
+  },
+
   props: {
     currentUser: {
       type: Object,
@@ -82,16 +86,6 @@ export default {
     highlightPinned: { type: Boolean, default: true },
   },
 
-  computed: {
-    getLastEditable () {
-      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.ID)
-    },
-
-    showEditor () {
-      return (message) => this.getLastEditable && this.getLastEditable.ID === message.ID
-    },
-  },
-
   data () {
     return {
       loadSuspended: false,
@@ -102,6 +96,16 @@ export default {
       // of new messages are added
       lastMessageID: null,
     }
+  },
+
+  computed: {
+    getLastEditable () {
+      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.ID)
+    },
+
+    showEditor () {
+      return (message) => this.getLastEditable && this.getLastEditable.ID === message.ID
+    },
   },
 
   watch: {
@@ -195,10 +199,6 @@ export default {
     getLastMessageByUserID: (set, userID) => {
       return [...set].reverse().find(m => m.user.ID === userID)
     },
-  },
-
-  components: {
-    Message,
   },
 }
 

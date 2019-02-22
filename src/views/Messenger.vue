@@ -100,6 +100,17 @@ const titleNtf = new TitleNotifications(document)
 
 export default {
   name: 'Messenger',
+  components: {
+    BaseSidePanel,
+    ChannelsPanel,
+    MembersPanel,
+    ThreadPanel,
+    PinnedMessagesPanel,
+    BookmarkedMessagesPanel,
+    Preview,
+    SearchResults,
+    QuickSearch,
+  },
   data () {
     return {
       searchQuery: null,
@@ -134,6 +145,19 @@ export default {
       users: 'users/list',
       getSettings: 'settings/get',
     }),
+  },
+
+  watch: {
+    'isAuthenticated' (isAuthenticated) {
+      if (isAuthenticated) {
+        this.$ws.connect()
+      }
+    },
+
+    'currentChannel' () {
+      // Channel change means title change
+      titleNtf.setChannelName(this.currentChannel ? this.currentChannel.name : null).update()
+    },
   },
 
   beforeCreate () {
@@ -233,19 +257,6 @@ export default {
     this.$bus.$off('ui.openEmojiPicker')
   },
 
-  watch: {
-    'isAuthenticated' (isAuthenticated) {
-      if (isAuthenticated) {
-        this.$ws.connect()
-      }
-    },
-
-    'currentChannel' () {
-      // Channel change means title change
-      titleNtf.setChannelName(this.currentChannel ? this.currentChannel.name : null).update()
-    },
-  },
-
   methods: {
     onPanelSearchSubmit (query) {
       // Take query we received from panel search input box
@@ -313,18 +324,6 @@ export default {
       e.preventDefault()
       this.uiShowQuickSearch = !this.uiShowQuickSearch
     },
-  },
-
-  components: {
-    BaseSidePanel,
-    ChannelsPanel,
-    MembersPanel,
-    ThreadPanel,
-    PinnedMessagesPanel,
-    BookmarkedMessagesPanel,
-    Preview,
-    SearchResults,
-    QuickSearch,
   },
 }
 </script>

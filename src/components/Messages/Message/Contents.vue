@@ -15,18 +15,18 @@ export default {
     },
   },
 
+  methods: {
+    editMessage (e) {
+      this.$emit('editMessage', { id: this.id })
+    },
+  },
+
   render (createElement) {
     const trimmed = this.content.trim()
 
     if (trimmed.length > 0) {
       return createElement('div', null, vdomifyEmojis(markdown2VDOM(trimmed).toVue(createElement), createElement))
     }
-  },
-
-  methods: {
-    editMessage (e) {
-      this.$emit('editMessage', { id: this.id })
-    },
   },
 }
 </script>

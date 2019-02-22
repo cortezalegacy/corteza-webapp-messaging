@@ -15,6 +15,14 @@ import Lightbox from './index.vue'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
 export default {
+  components: {
+    Lightbox,
+  },
+
+  mixins: [
+    emitCloseOnEscape,
+  ],
+
   props: {
     src: {
       type: String,
@@ -33,14 +41,6 @@ export default {
 
     noop () {},
   },
-
-  components: {
-    Lightbox,
-  },
-
-  mixins: [
-    emitCloseOnEscape,
-  ],
 }
 </script>
 

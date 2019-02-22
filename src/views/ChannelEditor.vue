@@ -132,6 +132,13 @@ import 'vue-simple-suggest/dist/styles.css'
 
 export default {
   name: 'channel-editor',
+
+  components: {
+    VueSimpleSuggest,
+    SearchInput,
+    ConfirmationRow,
+  },
+
   props: ['channelID', 'type'],
 
   data () {
@@ -241,12 +248,6 @@ export default {
       this.selectedMember = ''
       this.channel.members.push(user.ID)
     },
-  },
-
-  components: {
-    VueSimpleSuggest,
-    SearchInput,
-    ConfirmationRow,
   },
 }
 </script>

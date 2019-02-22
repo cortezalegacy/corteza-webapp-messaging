@@ -33,6 +33,22 @@ import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 import labelsMixin from '@/mixins/labels'
 
 export default {
+  components: {
+    SearchInput,
+    Lightbox,
+  },
+
+  mixins: [
+    emitCloseOnEscape,
+    labelsMixin,
+  ],
+
+  data () {
+    return {
+      query: '',
+    }
+  },
+
   computed: {
     ...mapGetters({
       currentUser: 'auth/user',
@@ -63,12 +79,6 @@ export default {
     },
   },
 
-  data () {
-    return {
-      query: '',
-    }
-  },
-
   methods: {
     onClose () {
       this.$emit('close')
@@ -83,16 +93,6 @@ export default {
       return 'Channel'
     },
   },
-
-  components: {
-    SearchInput,
-    Lightbox,
-  },
-
-  mixins: [
-    emitCloseOnEscape,
-    labelsMixin,
-  ],
 }
 </script>
 <style scoped lang="scss">

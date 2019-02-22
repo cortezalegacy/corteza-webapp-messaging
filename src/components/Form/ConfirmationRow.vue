@@ -9,12 +9,21 @@
 <script>
 import ConfirmationToggle from './ConfirmationToggle'
 export default {
+  components: {
+    ConfirmationToggle,
+  },
 
   props: {
     cta: String,
     ctaClass: { type: String, default: 'danger' },
     disabled: Boolean,
     error: String,
+  },
+
+  data () {
+    return {
+      inConfirmation: false,
+    }
   },
 
   computed: {
@@ -27,21 +36,11 @@ export default {
     },
   },
 
-  data () {
-    return {
-      inConfirmation: false,
-    }
-  },
-
   methods: {
     onConfirmation () {
       this.inConfirmation = false
       this.$emit('confirmed')
     },
-  },
-
-  components: {
-    ConfirmationToggle,
   },
 }
 </script>

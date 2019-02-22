@@ -16,6 +16,9 @@ import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
 
 export default {
+  components: {
+    quillEditor,
+  },
   props: {
     value: String,
     placeholder: {
@@ -36,18 +39,6 @@ export default {
     preset: String,
     focus: { type: Boolean, default: true },
     submitOnEnter: { type: Boolean, default: false },
-  },
-
-  computed: {
-    content: {
-      get () {
-        return this.internalValue
-      },
-
-      set (value) {
-        this.$emit('input', exportToMarkdown(this.$refs.quill.quill.getContents()))
-      },
-    },
   },
 
   data () {
@@ -128,6 +119,18 @@ export default {
     }
   },
 
+  computed: {
+    content: {
+      get () {
+        return this.internalValue
+      },
+
+      set (value) {
+        this.$emit('input', exportToMarkdown(this.$refs.quill.quill.getContents()))
+      },
+    },
+  },
+
   mounted () {
     if (this.$refs.quill !== undefined && this.focus) {
       const q = this.$refs.quill.quill
@@ -148,10 +151,6 @@ export default {
         }
       })
     },
-  },
-
-  components: {
-    quillEditor,
   },
 }
 </script>

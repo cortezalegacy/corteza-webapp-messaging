@@ -26,6 +26,10 @@
 import Channel from '@/components/Panel/Channels/Channel'
 
 export default {
+  components: {
+    Channel,
+  },
+
   props: {
     list: {
       type: Array,
@@ -45,10 +49,6 @@ export default {
   },
 
   computed: {},
-
-  components: {
-    Channel,
-  },
 }
 </script>
 <style scoped lang="scss">

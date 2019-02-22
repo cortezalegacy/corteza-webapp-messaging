@@ -46,6 +46,14 @@ import '@/assets/sass/file-upload.scss'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 
 export default {
+  components: {
+    vueDropzone,
+  },
+
+  mixins: [
+    emitCloseOnEscape,
+  ],
+
   props: {
     channelID: { type: String, required: true },
     replyTo: { type: String, required: false },
@@ -137,14 +145,6 @@ export default {
       }
     },
   },
-
-  components: {
-    vueDropzone,
-  },
-
-  mixins: [
-    emitCloseOnEscape,
-  ],
 }
 </script>
 

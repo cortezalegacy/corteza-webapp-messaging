@@ -18,6 +18,10 @@
 import { focus } from 'vue-focus'
 
 export default {
+  directives: {
+    focus,
+  },
+
   props: {
     value: String,
     placeholder: { type: String, default: 'Search' },
@@ -45,10 +49,6 @@ export default {
         this.$emit('input', value)
       },
     },
-  },
-
-  directives: {
-    focus,
   },
 }
 </script>

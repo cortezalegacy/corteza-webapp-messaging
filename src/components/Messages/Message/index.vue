@@ -104,6 +104,17 @@ import Avatar from '@/components/Avatar'
 import MessageInput from '@/components/MessageInput'
 
 export default {
+  components: {
+    Attachment,
+    Contents,
+    Avatar,
+    Reactions,
+    MessageInput,
+    EmbeddedBox,
+    Footnote,
+    Actions,
+  },
+
   props: {
     message: {
       type: Object,
@@ -217,17 +228,6 @@ export default {
         this.$emit('openThreadPanel', { message: this.message })
       }
     },
-  },
-
-  components: {
-    Attachment,
-    Contents,
-    Avatar,
-    Reactions,
-    MessageInput,
-    EmbeddedBox,
-    Footnote,
-    Actions,
   },
 }
 

@@ -36,8 +36,8 @@ if (window.CrustConfig === undefined) {
     name: 'crust-messenger',
     store,
     router,
-    template: '<div id="crust-messenger" class="crust"><router-view/></div>',
     mixins: [ core ],
+    template: '<div id="crust-messenger" class="crust"><router-view/></div>',
   }).$mount('#app')
 
   unsync()

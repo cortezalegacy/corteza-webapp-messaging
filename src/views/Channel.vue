@@ -51,6 +51,17 @@ import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
 
 export default {
+  components: {
+    Messages,
+    MessageInput,
+    Upload,
+    ChannelHeader,
+  },
+
+  mixins: [
+    mixinUnread,
+  ],
+
   props: {
     channelID: {
       type: String,
@@ -61,6 +72,22 @@ export default {
       // go-to-message will fill this prop.
       type: String,
     },
+  },
+
+  data () {
+    return {
+      showUploadArea: false,
+
+      // resetUnreadTimeout: null,
+      channel: null,
+
+      // Assists with on-scroll loading
+      previousFetchFirstMessageID: null,
+
+      // Controls if last message in the list
+      // should be have editing enabled or not
+      editLastMessage: false,
+    }
   },
 
   computed: {
@@ -87,22 +114,6 @@ export default {
     isMember () {
       return this.channel.isMember(this.user.ID)
     },
-  },
-
-  data () {
-    return {
-      showUploadArea: false,
-
-      // resetUnreadTimeout: null,
-      channel: null,
-
-      // Assists with on-scroll loading
-      previousFetchFirstMessageID: null,
-
-      // Controls if last message in the list
-      // should be have editing enabled or not
-      editLastMessage: false,
-    }
   },
 
   watch: {
@@ -167,17 +178,6 @@ export default {
       return { channelID: this.channel.ID }
     },
   },
-
-  components: {
-    Messages,
-    MessageInput,
-    Upload,
-    ChannelHeader,
-  },
-
-  mixins: [
-    mixinUnread,
-  ],
 }
 </script>
 <style lang="scss" scoped>

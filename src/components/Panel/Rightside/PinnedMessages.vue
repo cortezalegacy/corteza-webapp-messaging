@@ -23,6 +23,11 @@ import BasePanel from './.'
 import Messages from '@/components/Messages'
 
 export default {
+  components: {
+    BasePanel,
+    Messages,
+  },
+
   props: {
     channel: {
       type: Object,
@@ -43,11 +48,6 @@ export default {
 
   mounted () {
     this.$ws.getMessages({ pinned: true, channelID: this.channelID })
-  },
-
-  components: {
-    BasePanel,
-    Messages,
   },
 }
 </script>

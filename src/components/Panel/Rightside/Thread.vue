@@ -51,6 +51,17 @@ import Upload from '@/components/MessageInput/Upload'
 import mixinUnread from '@/mixins/unread'
 
 export default {
+  components: {
+    MessageInput,
+    Upload,
+    Messages,
+    BasePanel,
+  },
+
+  mixins: [
+    mixinUnread,
+  ],
+
   props: {
     repliesTo: {
       type: String,
@@ -58,16 +69,14 @@ export default {
     },
   },
 
-  watch: {
-    repliesTo (newRepliesTo, oldRepliesTo) {
-      if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
-        this.preload()
-      }
-    },
-  },
+  data () {
+    return {
+      // Controls if last message in the list
+      // should be have editing enabled or not
+      editLastMessage: false,
 
-  created () {
-    this.preload()
+      showUploadArea: false,
+    }
   },
 
   computed: {
@@ -96,14 +105,16 @@ export default {
     },
   },
 
-  data () {
-    return {
-      // Controls if last message in the list
-      // should be have editing enabled or not
-      editLastMessage: false,
+  watch: {
+    repliesTo (newRepliesTo, oldRepliesTo) {
+      if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
+        this.preload()
+      }
+    },
+  },
 
-      showUploadArea: false,
-    }
+  created () {
+    this.preload()
   },
 
   methods: {
@@ -121,16 +132,5 @@ export default {
       return { channelID: this.channel.ID, threadID: this.message.ID }
     },
   },
-
-  components: {
-    MessageInput,
-    Upload,
-    Messages,
-    BasePanel,
-  },
-
-  mixins: [
-    mixinUnread,
-  ],
 }
 </script>

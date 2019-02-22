@@ -11,6 +11,10 @@
 import { textToEmoji } from '@/lib/emoji'
 
 export default {
+  mixins: [
+    // emojis,
+  ],
+
   props: {
     reactions: {
       type: Array,
@@ -27,10 +31,6 @@ export default {
       return IDs.map(this.labelUser).join(', ')
     },
   },
-
-  mixins: [
-    // emojis,
-  ],
 }
 </script>
 <style scoped lang="scss">
