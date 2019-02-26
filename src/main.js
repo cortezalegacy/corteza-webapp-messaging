@@ -26,10 +26,6 @@ if (window.CrustConfig === undefined) {
     'background-color: #1397CB; color: white; padding: 3px 10px; border: 1px solid black; font: Courier',
   )
 
-  // Let the kids play
-  // @todo disable this when not in debug mode
-  window.$store = store
-
   const unsync = sync(store, router)
   /* eslint-disable no-new */
   new Vue({
