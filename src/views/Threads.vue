@@ -80,7 +80,7 @@ div > main {
 }
 
 hr {
-  background-color: $appwhite;
+  background-color: $appgrey;
   height: 1px;
   border: none;
 }
