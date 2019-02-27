@@ -13,9 +13,7 @@
               <li v-for="i in (query ? filtered : prefered).slice(0, 10)"
                   @click="onClose"
                   :key="i.ID">
-
-                <user-link v-if="isInstanceOf(i) === 'User'" :ID="i.ID" ></user-link>
-                <channel-link v-else-if="isInstanceOf(i) === 'Channel'" :ID="i.ID" ></channel-link>
+                <component :is="i.cmp" :ID="i.ID" ></component>
               </li>
           </ol>
       </main>
@@ -67,14 +65,22 @@ export default {
     },
 
     channelsAndUsers () {
-      return [...this.users.filter(i => i.ID !== this.currentUser.ID), ...this.channels.filter(i => i.members.length > 2)]
+      const cmp = (type) => (i) => {
+        i.cmp = `${type}-link`
+        return i
+      }
+
+      return [
+        ...this.users.filter(i => i.ID !== this.currentUser.ID).map(cmp('user')),
+        ...this.channels.filter(i => i.members.length > 2).map(cmp('channel')),
+      ]
     },
 
     queryNames () {
       return this.channelsAndUsers.map(i => ({
         ID: i.ID,
         name: this.label(i),
-        instance: i.constructor.name,
+        cmp: i.cmp,
       }))
     },
   },
@@ -86,11 +92,6 @@ export default {
 
     onSearchSubmit ({ query }) {
       this.search(query)
-    },
-
-    isInstanceOf (o) {
-      if (o.instance) return o.instance
-      return 'Channel'
     },
   },
 }
