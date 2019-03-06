@@ -20,7 +20,7 @@
     </router-link>
     <transition v-if="countUnread(channel) > 0"
                 name="slide-fade">
-        <span class="unread" v-if="countUnread(channel) > 9">9+</span>
+        <span class="unread" v-if="countUnread(channel) > 99">99+</span>
         <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
     </transition>
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
