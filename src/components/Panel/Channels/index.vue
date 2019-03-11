@@ -10,9 +10,9 @@
           <li @click="gotoAndClose({name: 'threads'})">
             <i class="icon icon-left icon-Fichier-2"></i>My threads
           </li>
-          <li @click="gotoAndClose({name: 'unreads'})">
-            <i class="icon icon-left icon-bell2"></i>All unreads
-          </li>
+          <!--<li @click="gotoAndClose({name: 'unreads'})">-->
+            <!--<i class="icon icon-left icon-bell2"></i>All unreads-->
+          <!--</li>-->
         </ul>
       </div>
 
@@ -94,8 +94,8 @@ export default {
         // Unless hidden, show channels we're members of
         (c.isMember(this.currentUser.ID) && c.membershipFlag !== 'hidden') ||
 
-        // Unless ignored, show channels with unread messages
-        (this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
+        // Unless ignored, show channels with unread messages we're members of
+        (c.isMember(this.currentUser.ID) && this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
 
         // and ignore the rest...
         false
