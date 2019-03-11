@@ -41,6 +41,7 @@
   & > div.main {
     flex: 1 100%;
     padding-top: 5px;
+    overflow-y: auto;
   }
 }
 </style>

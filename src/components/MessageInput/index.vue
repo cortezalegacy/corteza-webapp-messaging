@@ -338,7 +338,9 @@ $mobileInputWidth: 35px;
     }
 
   }
-
+}
+/deep/ .ql-editor {
+  max-height: 30vh;
 }
 
 @media (max-width: $wideminwidth) {
