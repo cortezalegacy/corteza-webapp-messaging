@@ -57,8 +57,19 @@
             </label>
           </div>
 
+          <div class="selected-members">
+            <label v-if="members.length > 0">Selected members</label>
+            <ul>
+              <li v-for="(u) in members" :key="u.ID">
+                <user-avatar :user="u" />
+                {{ label(u) }}
+                <button class="btn-i" @click.prevent="channel.removeMember(u)">X</button>
+              </li>
+            </ul>
+          </div>
+
           <div v-if="!channel.ID">
-            <label class="label-block">Members</label>
+            <label class="label-block">Add members</label>
             <vue-simple-suggest
               v-model="selectedMember"
               :list="nonMembers"
@@ -69,14 +80,7 @@
               @select="onMemberSelect"
               class="select-members"
               :destyled="true"
-              />
-
-            <ul>
-              <li v-for="(u) in members" :key="u.ID">
-                {{ label(u) }}
-                <button @click.prevent="channel.removeMember(u)">remove</button>
-              </li>
-            </ul>
+            />
           </div>
 
           <div class="actions">
@@ -129,6 +133,7 @@ import ConfirmationRow from '@/components/Form/ConfirmationRow'
 import SearchInput from '@/components/SearchInput'
 import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
 import 'vue-simple-suggest/dist/styles.css'
+import Avatar from '@/components/Avatar'
 
 export default {
   name: 'channel-editor',
@@ -137,6 +142,7 @@ export default {
     VueSimpleSuggest,
     SearchInput,
     ConfirmationRow,
+    'user-avatar': Avatar,
   },
 
   props: ['channelID', 'type'],
@@ -271,12 +277,15 @@ div.error {
 
 form, main > section {
   padding: 10px;
-  margin: 20px;
 }
 
 form {
   .actions {
-    text-align: right;
+    text-align: center;
+    margin-top: 15px;
+    .btn {
+      line-height: 16px;
+    }
   }
 }
 
@@ -316,25 +325,52 @@ section.toggle-state {
   font-size: 14px;
 }
 
-</style>
+ul {
+  padding: 0;
+  margin-top: 5px;
+  li {
+    list-style: none;
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: bottom;
+  }
+}
 
-<style lang="scss">
-  .select-members{
-    .input-wrapper{
-      input{
-        font-size: 16px;
-        width: 100%;
-        height: 42px;
-        padding: 0 0.5em;
-        border-radius: 3px;
-        border: solid 1px #90A3B1;
-        &::placeholder{
-          color: #90A3B1;
-        }
-        &:focus{
-          border: 1px solid #1397CB;
-        }
+.btn-i {
+  padding: 0 10px 0 0;
+  margin-top: -5px;
+}
+.select-members{
+  /deep/ .input-wrapper{
+    input{
+      font-size: 16px;
+      width: 100%;
+      height: 42px;
+      padding: 0 0.5em;
+      border-radius: 3px;
+      border: solid 1px #90A3B1;
+      &::placeholder{
+        color: #90A3B1;
+      }
+      &:focus{
+        border: 1px solid #1397CB;
       }
     }
   }
+  /deep/ .suggestions {
+    position: absolute;
+    background: $appcream;
+    padding: 0 10px 20px 10px;
+    overflow: scroll;
+    max-height: 100px;
+    .suggest-item {
+      cursor: pointer;
+      padding: 5px 0 0;
+        &:hover {
+          color: $appblue;
+        }
+    }
+  }
+}
+
 </style>

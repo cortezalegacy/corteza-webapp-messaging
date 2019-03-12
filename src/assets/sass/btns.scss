@@ -21,7 +21,6 @@ button structure :
   transition: color 0.2s, background-color 0.2s;
   background-color:transparent;
   margin:0 0.5em;
-  line-height:normal !important;
   font-family: $crustregular;
   cursor:pointer;
 
@@ -52,14 +51,17 @@ button structure :
     margin-left:-0.5em; // put icon more into the circle
     text-decoration: none;
   }
-  .btn-i, .btn-txt
-  {
-    background-color: transparent;
-    color: $appgrey;
-    display:inline-block;
-    vertical-align: middle;
-    text-decoration: none;
-  }
+}
+.btn-i, .btn-txt
+{
+  background-color: transparent;
+  color: $appgrey;
+  display:inline-block;
+  vertical-align: middle;
+  text-decoration: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
 }
 
 .btn-block
