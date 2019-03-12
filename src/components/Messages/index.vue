@@ -215,6 +215,7 @@ li {
 }
 
 .scrollable {
+  height: calc(100vh - 90px);
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -235,7 +236,7 @@ li {
 @media (min-width: $wideminwidth)
 {
   .scrollable {
-    /*height: calc(100vh - 135px);*/
+    height: calc(100vh - 135px);
   }
 }
 </style>
