@@ -16,6 +16,11 @@
         </ul>
       </div>
 
+      <group v-if="unreadChannels.length > 0"
+             v-on="$listeners"
+             :list="unreadChannels"
+             class="channel-group">Unread messages</group>
+
       <group v-if="pinnedChannels.length > 0"
         v-on="$listeners"
         :list="pinnedChannels"
@@ -103,19 +108,23 @@ export default {
     },
 
     pinnedChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPinned()), this.sortByOnlineStatus)
+    },
+
+    unreadChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) > 0), this.sortChannelByName)
     },
 
     publicChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isPublic() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPublic() && !c.isPinned()), this.sortChannelByName)
     },
 
     privateChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isPrivate() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
     },
 
     groupChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
     },
 
     version () {
