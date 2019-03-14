@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import { sync } from 'vuex-router-sync'
 import store from './store'
+import i18n from './i18next'
 import router from './router'
 import core from './mixins/core'
 import Favico from 'favico.js'
@@ -32,6 +33,7 @@ if (window.CrustConfig === undefined) {
     name: 'crust-messenger',
     store,
     router,
+    i18n,
     mixins: [ core ],
     template: '<div id="crust-messenger" class="crust"><router-view/></div>',
   }).$mount('#app')
