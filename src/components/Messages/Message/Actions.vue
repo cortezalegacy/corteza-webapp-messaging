@@ -3,16 +3,16 @@
   <div class="actions" >
     <div>
       <i class="action icon-smile"
-         title="Reaction"
+         :title="$t('message.reaction')"
          @click.stop="onReaction"
       ></i>
       <i class="action icon-message-circle-left-speak"
-         title="Reply in thread"
+         :title="$t('message.replyInThread')"
          v-if="message.canReply && !hideActionOpenThread"
          @click="$emit('openThreadPanel', { message })"
       ></i>
       <i class="action icon-circle-right"
-         title="Go to mesage"
+         :title="$t('message.goto')"
          v-if="!hideActionGoToMessage"
          @click="$emit('goToMessage', { message })"
       ></i>
@@ -21,7 +21,7 @@
         icon="thumbtack"
         v-if="!hidePinning && !readOnly"
         :class="{pinned:message.isPinned}"
-        title="Pin message for everyone to see"
+        :title="$t('message.pin')"
         @click="$bus.$emit('message.pin', { message })"
       ></font-awesome-icon>
       <font-awesome-icon
@@ -29,7 +29,7 @@
         :icon="['far', 'bookmark']"
         v-if="!hideBookmarking"
         :class="{bookmarked:message.isBookmarked}"
-        title="Bookmark message for personal reference"
+        :title="$t('message.bookmark')"
         @click="$bus.$emit('message.bookmark', { message })"
       ></font-awesome-icon>
       <i v-if="!isContextMenuOpen && isContextMenuEnabled"
@@ -43,13 +43,13 @@
             class="extra-action"
             @click="$emit('editMessage', { message });isContextMenuOpen=false">
             <i class="icon icon-edit"></i>
-            <span>edit message</span>
+            <span>{{ $t('message.edit') }}</span>
         </li>
         <li v-if="message.canDelete"
             class="extra-action"
             @click="$emit('deleteMessage', { message });isContextMenuOpen=false">
             <i class="icon icon-trash"></i>
-            <span>delete message</span>
+            <span>{{ $t('message.delete') }}</span>
         </li>
       </ul>
     </div>

@@ -8,7 +8,7 @@
       <div class="shortcuts">
         <ul>
           <li @click="gotoAndClose({name: 'threads'})">
-            <i class="icon icon-left icon-Fichier-2"></i>My threads
+            <i class="icon icon-left icon-Fichier-2"></i>{{ $t('panel.threads') }}
           </li>
           <!--<li @click="gotoAndClose({name: 'unreads'})">-->
             <!--<i class="icon icon-left icon-bell2"></i>All unreads-->
@@ -19,32 +19,32 @@
       <group v-if="unreadChannels.length > 0"
              v-on="$listeners"
              :list="unreadChannels"
-             class="channel-group">Unread messages</group>
+             class="channel-group">{{ $t('panel.unreadMessages') }}</group>
 
       <group v-if="pinnedChannels.length > 0"
         v-on="$listeners"
         :list="pinnedChannels"
-        class="channel-group">Pinned</group>
+        class="channel-group">{{ $t('panel.pinned') }}</group>
 
       <group
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'public' } }"
         :list="publicChannels"
-        class="channel-group">Public channels</group>
+        class="channel-group">{{ $t('panel.channel.public') }}</group>
 
       <div class="browse">
-        <a @click="$emit('openQuickSearch')">+ Browse all channels</a>
+        <a @click="$emit('openQuickSearch')">+ {{ $t('panel.channel.browse') }}</a>
       </div>
 
       <group
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'private' } }"
-        :list="privateChannels">Private channels</group>
+        :list="privateChannels">{{ $t('panel.channel.private') }}</group>
 
       <group
         v-on="$listeners"
         :link="{name: 'new-channel', params: { type: 'group' } }"
-        :list="groupChannels">Direct messages</group>
+        :list="groupChannels">{{ $t('panel.channel.group') }}</group>
 
       <pre
         class="version selectable" v-html="version"></pre>

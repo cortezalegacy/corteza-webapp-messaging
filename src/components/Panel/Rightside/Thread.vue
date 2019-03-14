@@ -4,9 +4,9 @@
     @dragover="showUploadArea=true"
     @dragenter="showUploadArea=true">
 
-    <template slot="header">Thread</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">in group chat with {{ label(channel) }}</template>
-    <template slot="subtitle" v-else>in #{{ label(channel) }}</template>
+    <template slot="header">{{ $t('panel.thread') }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: label(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: label(channel) }) }}</template>
     <template slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false"

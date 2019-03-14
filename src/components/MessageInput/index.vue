@@ -47,10 +47,10 @@
 
       </div>
       <div class="activity">
-        <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')">typing</activity>
+        <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
         <button class="btn float-right"
                 v-show="hasUnreads({ channelID, threadID: replyTo ? replyTo.ID : '0' })"
-                @click.prevent="$emit('markAsRead')">Mark as Read</button>
+                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }}</button>
       </div>
   </div>
 </template>

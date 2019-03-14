@@ -1,11 +1,15 @@
 <!-- template for the user avatar component -->
 <template>
     <span v-if="users.length > 0" class="typing">
-        <span v-for="(user, i) in users.slice(0, limit)" :key="user.ID" class="user">{{ i > 0 ? ', ' : '' }}{{ label(user) }}</span>
-        <span v-if="users.length > limit"> and {{users.length - limit}} others ... are </span>
-        <span v-else-if="users.length > 1"> are </span>
-        <span v-else> is </span>
-        <slot></slot>
+      <template v-if="users.length > limit">
+        {{ $t('message.activity.activityOverflow', { userList: users.slice(0, limit).map(u => label(u)).join(', '), count: users.length - limit, activity }) }}
+      </template>
+      <template v-else-if="users.length > 1">
+        {{ $t('message.activity.activityMultiple', { userList: users.map(u => label(u)).join(', '), activity }) }}
+      </template>
+      <template v-else>
+        {{ $t('message.activity.activityOne', { user: label(users[0]), activity }) }}
+      </template>
     </span>
 </template>
 <script>
@@ -21,6 +25,10 @@ export default {
       type: Number,
       required: false,
       default: 4,
+    },
+    activity: {
+      type: String,
+      required: true,
     },
   },
 }

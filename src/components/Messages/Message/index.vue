@@ -20,6 +20,9 @@
       }"
       ref="message"
       :key="message.ID">
+
+      <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
+
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
             <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
@@ -31,10 +34,14 @@
               {{ label(message.user) }}
             </router-link>
           </em>
-          <span class="date">
-              {{ moment(message.createdAt).fromNow() }}
-              <span v-if="!isToday(message.createdAt)">at {{ momentHourMinute(message.createdAt) }}</span>
+          <i18next path="message.postedDate" tag="span" class="date">
+            <span place="relative">{{ moment(message.createdAt).fromNow() }}</span>
+
+            <span place="time">
+              <template v-if="!isToday(message.createdAt)">{{ $t('message.relativeTime', { time: momentHourMinute(message.createdAt) }) }}</template>
             </span>
+          </i18next>
+
           <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
           <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
 
@@ -217,7 +224,7 @@ export default {
     },
 
     onDeleteMessage () {
-      if (confirm('Delete this message?')) {
+      if (confirm(this.$t('message.deleteConfirm'))) {
         // @todo a more slick, inline confirmation...
         this.$bus.$emit('message.delete', { message: this.message })
       }
@@ -243,16 +250,15 @@ em{
 
 .last-read {
   border-bottom: 1px solid $appred;
-  &::after{
-    content: "New messages";
+
+  .label {
     background: white;
     color: $appred;
     display: inline;
     position: absolute;
-    float: right;
     right: 16px;
+    bottom: -11px;
     line-height: 20px;
-    margin-top: -10px;
     padding: 0 10px;
     z-index: 1;
     border: 1px solid $appred;

@@ -16,6 +16,7 @@
 </template>
 <script>
 import { focus } from 'vue-focus'
+import i18next from 'i18next'
 
 export default {
   directives: {
@@ -24,7 +25,7 @@ export default {
 
   props: {
     value: String,
-    placeholder: { type: String, default: 'Search' },
+    placeholder: { type: String, default: i18next.t('general.label.search') },
     focus: false,
     preset: {
       type: String,

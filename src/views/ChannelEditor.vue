@@ -3,11 +3,11 @@
       <header class="header">
         <label class="closer"
                @click.prevent="$router.back()"
-               aria-label="Close"><i class="icon-close"></i></label>
-          <span class="title" v-if="channel.type === 'group' && channel.ID">Edit group</span>
-          <span class="title" v-else-if="channel.type === 'group'">Create new group</span>
-          <span class="title" v-else-if="channel.ID">Channel editor</span>
-          <span class="title" v-else>Create new channel</span>
+               :aria-label="$t('channel.editor.closeTooltip')"><i class="icon-close"></i></label>
+          <span class="title" v-if="channel.type === 'group' && channel.ID">{{ $t('channel.editor.editGroup') }}</span>
+          <span class="title" v-else-if="channel.type === 'group'">{{ $t('channel.editor.createGroup') }}</span>
+          <span class="title" v-else-if="channel.ID">{{ $t('channel.editor.editChannel') }}</span>
+          <span class="title" v-else>{{ $t('channel.editor.createChannel') }}</span>
       </header>
       <main class="container">
         <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.ID || channel.type !== 'group'">
@@ -21,7 +21,7 @@
           </div>
 -->
           <div v-if="channel.type !== 'group'" class="input-wrap">
-            <label class="label-block">Channel name *</label>
+            <label class="label-block">{{ $t('channel.editor.channelNameLabel') }} *</label>
             <input
               class="input-txt input-block name"
               name="name"
@@ -29,18 +29,18 @@
               required
               :disabled="!channel.canUpdate"
               autocomplete="channel-name"
-              placeholder="Make it short, make it sweet">
+              :placeholder="$t('channel.editor.channelNamePlaceholder')">
           </div>
 
           <div v-if="channel.type !== 'group'" class="input-wrap">
-            <label class="label-block">Topic</label>
+            <label class="label-block">{{ $t('channel.editor.channelTopicLabel') }}</label>
             <input
               class="input-txt input-block"
               name="topic"
               v-model.trim="channel.topic"
               :disabled="!channel.canUpdate"
               autocomplete="channel-topic"
-              placeholder="Things we talk about">
+              :placeholder="$t('channel.editor.channelTopicPlaceholder')">
           </div>
 
           <div class="form-check" v-if="channel.type !== 'group'">
@@ -53,27 +53,27 @@
               true-value="private"
               false-value="public">
             <label for="channel-type">
-                Make this channel private
+                {{ $t('channel.editor.channelPrivateLabel') }}
             </label>
           </div>
 
           <div class="selected-members">
-            <label v-if="members.length > 0">Selected members</label>
+            <label v-if="members.length > 0">{{ $t('channel.editor.selectedMemersLabel') }}</label>
             <ul>
               <li v-for="(u) in members" :key="u.ID">
                 <user-avatar :user="u" />
                 {{ label(u) }}
-                <button class="btn-i" @click.prevent="channel.removeMember(u)">X</button>
+                <button class="btn-i" @click.prevent="channel.removeMember(u)"><i class="icon-close"></i></button>
               </li>
             </ul>
           </div>
 
           <div v-if="!channel.ID">
-            <label class="label-block">Add members</label>
+            <label class="label-block">{{ $t('channel.editor.addMembersLabel') }}</label>
             <vue-simple-suggest
               v-model="selectedMember"
               :list="nonMembers"
-              placeholder="Find users to add as members"
+              :placeholder="$t('channel.editor.addMembersPlaceholder')"
               :filter-by-query="true"
               value-attribute="ID"
               display-attribute="name"
@@ -84,9 +84,9 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-green" v-if="channel.ID && channel.canUpdate">Update</button>
-            <button class="btn btn-green" v-if="!channel.ID">Create</button>
-            <button class="btn" @click.prevent="$router.back()">Close</button>
+            <button class="btn btn-green" v-if="channel.ID && channel.canUpdate">{{ $t('channel.editor.update') }}</button>
+            <button class="btn btn-green" v-if="!channel.ID">{{ $t('channel.editor.create') }}</button>
+            <button class="btn" @click.prevent="$router.back()">{{ $t('channel.editor.close') }}</button>
           </div>
         </form>
 
@@ -96,7 +96,7 @@
             v-if="!channel.archivedAt && channel.canArchive"
             @confirmed="updateChannelState('archive')"
             cta="Archive">
-            Archive this channel?
+            {{ $t('notification.channel.archiveChannel') }}
           </confirmation-row>
 
           <confirmation-row
@@ -104,7 +104,7 @@
             v-if="channel.archivedAt && channel.canArchive"
             @confirmed="updateChannelState('unarchive')"
             cta="Unarchive" ctaClass="info">
-            Unarchive this channel?
+            {{ $t('notification.channel.unArchive') }}
           </confirmation-row>
 
           <confirmation-row
@@ -112,7 +112,7 @@
             v-if="!channel.deletedAt && channel.canDelete"
             @confirmed="updateChannelState('delete')"
             cta="Delete">
-            Delete this channel?
+            {{ $t('notification.channel.delete') }}
           </confirmation-row>
 
           <confirmation-row
@@ -120,7 +120,7 @@
             v-if="channel.deletedAt && channel.canDelete"
             @confirmed="updateChannelState('undelete')"
             cta="Undelete" ctaClass="info">
-            Undelete this channel?
+            {{ $t('notification.channel.unDelete') }}
           </confirmation-row>
         </div>
       </main>

@@ -26,7 +26,7 @@ export default {
 
     stored () { return this.findByID(this.user.ID) || {} },
 
-    img () { return this.stored.avatar || 'N/A' },
+    img () { return this.stored.avatar || this.$t('general.label.na') },
 
     initials () {
       if (this.stored) {
@@ -47,7 +47,7 @@ export default {
         return this.stored.name || this.stored.username
       }
 
-      return 'N/A'
+      return this.$t('general.label.na')
     },
 
     isOnline () {

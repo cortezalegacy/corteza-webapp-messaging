@@ -1,3 +1,5 @@
+import i18next from 'i18next'
+
 // Event bus
 //
 // What kind of problems should event bus solve:
@@ -19,7 +21,7 @@
 export default {
   install (Vue, { eventbus }) {
     if (eventbus === undefined || eventbus.$emit === undefined) {
-      throw Error('Expecting eventbus to be passed as an option to bus plugin')
+      throw Error(i18next.t('notification.event.busNotDefined'))
     }
 
     Vue.prototype.$bus = eventbus

@@ -13,15 +13,18 @@
         <a v-bind:href="attachment.downloadUrl">
           <font-awesome-icon
             :icon="['far', 'file-'+ext]"
-            title="Open bookmarks"
+            :title="$t('message.openBookmarks')"
           ></font-awesome-icon>
-          <span>Download {{attachment.name}}</span><br>
-          <span class="meta">Size: {{ numeral(attachment.meta.original.size).format('0b') }}</span>
+          <span>{{ $t('message.file.download', { label: attachment.name }) }}</span><br>
+
+          <span class="meta">{{ $t('message.file.size', { size: numeral(attachment.meta.original.size).format('0b') }) }}</span>
         </a>
       </span>
       <!-- @todo : added file has no size so probably error, maybe other possible errors -->
       <span class="missing" v-else>
-        <i>Oups...<br/>{{attachment.name}} <br />is no longer here...</i>
+        <i18next path="message.file.missing" tag="i">
+          <template><br/>{{attachment.name}}<br/></template>
+        </i18next>
       </span>
   </div>
 </template>

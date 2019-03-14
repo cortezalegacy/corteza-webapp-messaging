@@ -14,6 +14,7 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
+import i18next from 'i18next'
 
 export default {
   components: {
@@ -23,7 +24,7 @@ export default {
     value: String,
     placeholder: {
       type: String,
-      default: 'Write a message',
+      default: i18next.t('message.newPlaceholder'),
     },
 
     channels: {

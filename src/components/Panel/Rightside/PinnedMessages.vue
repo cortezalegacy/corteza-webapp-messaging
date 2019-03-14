@@ -2,9 +2,9 @@
   <base-panel
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <template slot="header">Pinned messages</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">Public list of messages in group chat with {{ label(channel) }}</template>
-    <template slot="subtitle" v-else>Public list of messages in #{{ label(channel) }}</template>
+    <template slot="header">{{ $t('pannel.pinnedMessagesHeader') }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('pannel.pinnedGroupMessagesSubtitle', { label: label(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('pannel.pinnedMessagesSubtitle', { label: label(channel) }) }}</template>
 
     <template slot="main">
       <messages

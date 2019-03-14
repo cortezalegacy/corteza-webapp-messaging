@@ -3,8 +3,8 @@
     <a class="info"
        :class="{unread: countUnread(message)}"
        v-if="message.replies"
-       @click="$emit('openThreadPanel', { message })">{{message.replies}} {{ message.replies > 1 ? 'replies':'reply' }}</a>
-    <span class="info" v-if="message.updatedAt">edited</span>
+       @click="$emit('openThreadPanel', { message })">{{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}</a>
+    <span class="info" v-if="message.updatedAt">{{ $t('message.edited') }}</span>
   </div>
 </template>
 <script>

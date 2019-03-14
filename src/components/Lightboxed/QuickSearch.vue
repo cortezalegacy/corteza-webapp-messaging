@@ -5,10 +5,10 @@
       </header>
       <main class="quick-search">
           <search-input focus="true" v-model="query"
-          placeholder="Find channel, group or user..."  />
+          :placeholder="$t('search.quick.placeholder')"  />
           <ol>
               <li v-if="query && filtered.length===0" class="no-results">
-                No matches found
+                {{ $t('search.noMatchesFound') }}
               </li>
               <li v-for="i in (query ? filtered : prefered).slice(0, 10)"
                   @click="onClose"
@@ -17,9 +17,11 @@
               </li>
           </ol>
       </main>
-      <footer>
-        Search and select one of the channels. Close (and open) this dialog with <kbd>CTRL/CMD+K</kbd>
-      </footer>
+      <i18next path="search.quick.footnote" tag="footer">
+        <kbd>
+          {{ $t('search.quick.shortcut') }}
+        </kbd>
+      </i18next>
   </lightbox>
 </template>
 

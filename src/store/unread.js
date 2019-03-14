@@ -1,5 +1,6 @@
 // initial state
 import { Channel, Message } from '../types'
+import i18next from 'i18next'
 
 const state = {
   set: [],
@@ -8,10 +9,10 @@ const state = {
 class Unread {
   constructor (channelID, threadID, count, lastMessageID) {
     if (channelID === undefined || typeof channelID !== 'string') {
-      throw new Error('Expecting channelID param to be string')
+      throw new Error(i18next.t('notification.message.channelIDNotString'))
     }
     if (threadID !== undefined && typeof threadID !== 'string') {
-      throw new Error('Expecting threadID param to be string')
+      throw new Error(i18next.t('notification.message.threadIDNotString'))
     }
 
     this.channelID = channelID
@@ -41,11 +42,11 @@ function transform (o) {
 
   if (typeof o === 'object') {
     if (typeof o.channelID !== 'string') {
-      throw new Error('Expecting channelID property to be string')
+      throw new Error(i18next.t('notification.message.channelIDPropNotString'))
     }
 
     if (o.threadID !== undefined && typeof o.threadID !== 'string') {
-      throw new Error('Expecting threadID property to be string')
+      throw new Error(i18next.t('notification.message.threadIDPropNotString'))
     }
 
     return { channelID: o.channelID, threadID: o.threadID || '0' }
@@ -55,8 +56,7 @@ function transform (o) {
     return { channelID: o, threadID: '0' }
   }
 
-  throw new Error('Expecting input params for unread to be string, ' +
-    'Channel, Message or object containing channelID property')
+  throw new Error(i18next.t('notification.message.invalidUnreadParam'))
 }
 
 function delta (state, { channelID, threadID = '' }, delta = 0) {

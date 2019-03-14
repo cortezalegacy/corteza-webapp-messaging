@@ -1,3 +1,179 @@
 {
-  "test": "test.en"
+  "panel": {
+    "threads": "My threads",
+    "unreadMessages": "Unread messages",
+    "pinned": "Pinned",
+    "thread": "Thread",
+    "inGroupChat": "in group chat with {{label}}",
+    "inChannelChat": "in #{{label}}",
+
+    "pinnedMessagesHeader": "Pinned messages",
+    "pinnedGroupMessagesSubtitle": "Public list of messages in group chat with {{label}}",
+    "pinnedMessagesSubtitle": "Public list of messages in #{{label}}",
+
+    "membersHeader": "Members",
+    "membersGroupSubtitle": "in group chat with {{label}}",
+    "membersSubtitle": "in #{{label}}",
+
+    "remove": "Remove",
+    "add": "Add members",
+
+    "bookmarkedMessagesHeader": "Bookmarked messages",
+    "bookmarkedMessagesSubtitle": "Only you can see this list",
+
+    "removeStar": "Remove star",
+    "hideChannel": "Hide channel",
+
+    "channel": {
+      "browse": "Browse all channels",
+      "public": "Public channels",
+      "private": "Private channels",
+      "group": "Direct messages"
+    }
+  },
+  "search": {
+    "searchResultsIn": "Results in {{0}}",
+    "noMatchesFound": "No matches found",
+    "quick": {
+      "placeholder": "Find channel, group or user...",
+      "footnote": "Search and select one of the channels. Close (and open) this dialog with {{0}}",
+      "shortcut": "CTRL/CMD+K"
+    }
+  },
+  "channel": {
+    "online": "Online",
+    "offline": "Offline",
+    "private": "Private group",
+    "topic": "Topic: {{topic}}",
+    "memberListTooltip": "Members",
+    "memberList": "Member list {{count}}",
+    "editTooltip": "Edit channel info",
+    "edit": "Edit channel",
+    "pinTooltip": "Pin channel",
+    "pin": "Pin channel",
+    "hideTooltip": "Hide channel",
+    "hide": "Hide channel",
+    "ignoreTooltip": "Ignore channel",
+    "ignore": "Ignore channel",
+    "removeFlagTooltip": "Remove channel flag",
+    "removeFlag": "Remove channel flag",
+    "bookmarkedMessagesTooltip": "Open bookmarks",
+    "bookmarkedMessages": "Bookmarked messages",
+    "pinnedMessagesTooltip": "Open pinned messages",
+    "pinnedMessages": "Pinned messages",
+    "leaveTooltip": "Leave channel",
+    "leave": "Leave channel",
+    "joinTooltip": "Join channel",
+    "join": "Join channel",
+
+    "allThreads": "All Threads",
+    "noThreads": "No threads found",
+
+    "observing": "You are viewing #{{label}}",
+
+    "members": {
+      "label": "Members",
+      "remove": "remove",
+      "add": "add"
+    },
+    "editor": {
+      "closeTooltip": "$t(general.label.close)",
+      "editGroup": "Edit group",
+      "createGroup": "Create new group",
+      "editChannel": "Channel editor",
+      "createChannel": "Create new channel",
+      "channelNameLabel": "Channel name",
+      "channelNamePlaceholder": "Make it short, make it sweet",
+      "channelTopicLabel": "Topic",
+      "channelTopicPlaceholder": "Things we talk about",
+      "channelPrivateLabel": "Make this channel private",
+      "selectedMembersLabel": "Selected members",
+      "addMembersLabel": "Add members",
+      "addMembersPlaceholder": "Find users to add as members",
+      "update": "$t(general.label.update)",
+      "create": "$t(general.label.create)",
+      "close": "$t(general.label.close)"
+    }
+  },
+  "message": {
+    "reaction": "Reaction",
+    "replyInThread": "Reply in thread",
+    "goto": "Go to message",
+    "pin": "Pin message for everyone to see",
+    "bookmark": "Bookmark message for personal reference",
+    "edit": "Edit message",
+    "delete": "Delete message",
+    "deleteConfirm": "Delete this message?",
+    "replies": "(1){ {{count}} reply};(2-inf){ {{count}} replies}",
+    "edited": "edited",
+    "typing": "typing",
+    "markAsRead": "Mark as Read",
+
+    "unread": "Unread messages",
+    "markAllAsRead": "Mark all as read",
+    "noUnread": "No unread messages",
+    "postedDate": "{{relative}}{{time}}",
+    "relativeTime": " at {{time}}",
+
+    "openBookmarks": "Open bookmarks",
+
+    "newPlaceholder": "Write a message",
+
+    "newMessages": "New messages",
+
+    "activity": {
+      "activityOverflow": "{{userList}} and {{count}} others ... are {{activity}}",
+      "activityMultiple": "{{userList}} are {{activity}}",
+      "activityOne": "{{user}} is {{activity}}"
+    },
+
+    "file": {
+      "download": "Download {{label}}",
+      "size": "Size {{size}}",
+      "missing": "Oups... {{0}} is no longer here...",
+
+      "uploadHeader": "Drop files to upload to {{0}}",
+      "replyToThread": "thread",
+      "willUploadTo": "Your file is going to be uploaded to {{0}}",
+      "uploadedToThread": "$t(message.file.replyToThread)",
+      "uploadToChannel": "#{{label}}.",
+      "uploadTarget": "You can switch the channel on your left.",
+      "send": "Send",
+      "cancel": "$t(general.label.cancel)"
+    }
+  },
+
+  "notification": {
+    "event": {
+      "busNotDefined": "Expecting eventbus to be passed as an option to bus plugin"
+    },
+    "channel": {
+      "archiveChannel": "Archive this channel?",
+      "unArchive": "Un archive this channel?",
+      "delete": "Delete this channel",
+      "unDelete": "Un delete this channel"
+    },
+    "message": {
+      "channelIDNotString": "Expecting channelID param to be string",
+      "channelIDPropNotString": "Expecting channelID property to be string",
+      "threadIDNotString": "Expecting threadID param to be string",
+      "threadIDPropNotString": "Expecting threadID property to be string",
+      "invalidUnreadParam": "Expecting input params for unread to be string, Channel, Message or object containing channelID property"
+    }
+  },
+
+  "general": {
+    "label": {
+      "search": "Search",
+      "close": "Close",
+      "cancel": "Cancel",
+      "update": "Update",
+      "create": "Create",
+      "new": "New",
+      "header": "Header",
+      "na": "N/A",
+      "add": "Add",
+      "yes": "Yes"
+    }
+  }
 }

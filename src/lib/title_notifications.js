@@ -1,3 +1,5 @@
+import i18next from 'i18next'
+
 export default class {
   construct (brand = 'Crust') {
     this.brand = brand
@@ -21,11 +23,12 @@ export default class {
   }
 
   generateTitle ({ incNew = false }) {
+    // NOTE: Possible issue; should be `const brand = this.brand`?
     const brand = 'Crust'
     let title = []
 
     if (incNew) {
-      title.push('NEW')
+      title.push(i18next.t('general.label.new').toUpperCase())
     }
 
     if (this.channelName) {
