@@ -6,12 +6,14 @@ import VueI18Next from '@panter/vue-i18next'
 // Plugins for i18next
 import xhrBackend from 'i18next-xhr-backend'
 import lngDetector from 'i18next-browser-languagedetector'
+import intervalPlural from 'i18next-intervalplural-postprocessor'
 
 Vue.use(VueI18Next)
 
 i18next
   .use(xhrBackend)
   .use(lngDetector)
+  .use(intervalPlural)
   .init({
     fallbackLng: window.CrustConfig.webapp.defaultLocale || 'en',
     debug: process.env.NODE_ENV !== 'production',
