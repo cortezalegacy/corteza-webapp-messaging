@@ -4,8 +4,8 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
   base: '/messaging/',
+  mode: process.env.VUE_APP_ROUTER_MODE || 'history',
 
   routes: [
     { path: '/auth', name: 'auth', component: view('Auth') },
