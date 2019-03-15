@@ -20,19 +20,19 @@
     </router-link>
     <transition v-if="countUnread(channel) > 0"
                 name="slide-fade">
-        <span class="unread" v-if="countUnread(channel) > 99">99+</span>
+        <span class="unread" v-if="countUnread(channel) > maxUnread">{{ maxUnread }}+</span>
         <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
     </transition>
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
       <font-awesome-icon
         :icon="['fas', 'star']"
-        title="Remove star"
+        :title="$t('pannel.removeStar')"
       ></font-awesome-icon>
     </span>
     <span v-else class="hide" @click="onFlag('hidden')">
       <font-awesome-icon
         :icon="['fas', 'times']"
-        title="Hide channel"
+        :title="$t('pannel.hideChannel')"
       ></font-awesome-icon>
     </span>
   </li>
@@ -50,6 +50,11 @@ export default {
       type: Number,
       required: true,
     },
+  },
+  data () {
+    return {
+      maxUnread: 99,
+    }
   },
 
   computed: {

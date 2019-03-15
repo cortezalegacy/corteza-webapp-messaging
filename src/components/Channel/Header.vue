@@ -29,11 +29,11 @@
           </label>
         </span>
       </span>
-      <span v-if="isOnline" class="is-online">Online</span>
-      <span v-else-if="channel.isDirectMessage()" class="is-offline">Offline</span>
-      <span v-else-if="channel.isPrivate()" class="topic">Private group</span>
+      <span v-if="isOnline" class="is-online">{{ $t('channel.online') }}</span>
+      <span v-else-if="channel.isDirectMessage()" class="is-offline">{{ $t('channel.offline') }}</span>
+      <span v-else-if="channel.isPrivate()" class="topic">{{ $t('channel.private') }}</span>
       <span v-else-if="channel.topic" class="topic">
-        Topic: {{ channel.topic }}
+        {{ $t('channel.topic', { topic: channel.topic }) }}
       </span>
     </div>
 
@@ -50,43 +50,43 @@
           <div v-if="!channel.isDirectMessage()">
             <label
               @click="$emit('openMembersPanel')">
-              <i title="Members" aria-label="Members" class="icon icon-user"></i>
-              Member list ({{ channel.members.length }})
+              <i :title="$t('channel.memberListTooltip')" :aria-label="$t('channel.memberListTooltip')" class="icon icon-user"></i>
+              {{ $t('channel.memberList', { count: (channel.members || []).length }) }}
             </label>
             <label v-if="channel.canUpdate"
               @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
-              <i title="Edit channel info" aria-label="Edit channel info" class="icon icon-edit-3"></i>
-              Edit channel
+              <i :title="$t('channel.editTooltip')" :aria-label="$t('channel.editTooltip')" class="icon icon-edit-3"></i>
+              {{ $t('channel.edit') }}
             </label>
             <hr>
           </div>
             <label v-if="channel.membershipFlag!=='pinned' && isMember" @click="onFlag('pinned')">
               <font-awesome-icon
                 :icon="['fas', 'star']"
-                title="Pin channel"
+                :title="$t('channel.pinTooltip')"
               ></font-awesome-icon>
-              Pin channel
+              {{ $t('channel.pin') }}
             </label>
             <label v-if="channel.membershipFlag!=='hidden' && isMember" @click="onFlag('hidden')">
               <font-awesome-icon
                 :icon="['far', 'eye-slash']"
-                title="Hide channel"
+                :title="$t('channel.hideTooltip')"
               ></font-awesome-icon>
-              Hide channel
+              {{ $t('channel.hide') }}
             </label>
             <label v-if="channel.membershipFlag!=='ignored' && isMember" @click="onFlag('ignored')">
               <font-awesome-icon
                 :icon="['far', 'bell-slash']"
-                title="Ignore channel"
+                :title="$t('channel.ignoreTooltip')"
               ></font-awesome-icon>
-              Ignore channel
+              {{ $t('channel.ignore') }}
             </label>
             <label v-if="channel.membershipFlag" @click="onFlag('')">
               <font-awesome-icon
                 :icon="'eraser'"
-                title="Remove channel flag"
+                :title="$t('channel.removeFlagTooltip')"
               ></font-awesome-icon>
-              Remove channel flag
+              {{ $t('channel.removeFlag') }}
             </label>
           <hr v-if="isMember">
           <div class="open-sidebar">
@@ -94,17 +94,17 @@
               @click="$emit('openBookmarkedMessagesPanel')">
               <font-awesome-icon
                 :icon="['far', 'bookmark']"
-                title="Open bookmarks"
+                :title="$t('channel.bookmarkedMessagesTooltip')"
               ></font-awesome-icon>
-              Bookmarked messages
+              {{ $t('channel.bookmarkedMessages') }}
             </label>
             <label
               @click="$emit('openPinnedMessagesPanel')">
               <font-awesome-icon
                 icon="thumbtack"
-                title="Open pinned messages"
+                :title="$t('channel.pinnedMessagesTooltip')"
               ></font-awesome-icon>
-              Pinned messages
+              {{ $t('channel.pinnedMessages') }}
             </label>
           </div>
           <label
@@ -112,18 +112,18 @@
             @click="onPart">
             <font-awesome-icon
               :icon="'door-open'"
-              title="Leave channel"
+              :title="$t('channel.leaveTooltip')"
             ></font-awesome-icon>
-            Leave channel
+            {{ $t('channel.leave') }}
           </label>
           <label
             v-if="!isMember && channel.canJoin"
             @click="onJoin">
             <font-awesome-icon
               :icon="'door-open'"
-              title="Join channel"
+              :title="$t('channel.joinTooltip')"
             ></font-awesome-icon>
-            Join channel
+            {{ $t('channel.join') }}
           </label>
         </div>
       </div>

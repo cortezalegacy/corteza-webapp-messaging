@@ -5,7 +5,7 @@
         class="channel-toggle"
         @click="$emit('toggleChannelPanel', null)">
         <i class="icon-menu4"></i></label>
-      <span class="title">All Threads</span>
+      <span class="title">{{ $t('channel.AllThreads') }}</span>
     </header>
     <main v-if="getThreads.length > 0">
       <section v-for="(thread) in getThreads" :key="thread.ID">
@@ -21,7 +21,7 @@
         <hr/>
       </section>
     </main>
-    <empty v-else class="empty">No threads found</empty>
+    <empty v-else class="empty">{{ $t('channel.noThreads') }}</empty>
   </div>
 </template>
 <script>

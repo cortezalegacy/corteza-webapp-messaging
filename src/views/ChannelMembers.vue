@@ -1,12 +1,12 @@
 <template>
   <section class="members">
     <a @click="$router.back()" class="closer">&times;</a>
-    <h1>Members</h1>
+    <h1>{{ $t('channel.members.label') }}</h1>
     <table>
       <tr v-for="u in users" :key="u.ID">
         <td class="right">
-          <button @click="remove(u.ID)" v-if="isMember(u.ID)">remove</button>
-          <button @click="add(u.ID)" v-if="!isMember(u.ID)">add</button>
+          <button @click="remove(u.ID)" v-if="isMember(u.ID)">{{ $t('channel.members.remove') }}</button>
+          <button @click="add(u.ID)" v-if="!isMember(u.ID)">{{ $t('channel.members.add') }}</button>
         </td>
         <td>{{ label(u) }}</td>
       </tr>

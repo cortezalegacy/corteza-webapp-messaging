@@ -11,27 +11,35 @@
         @vdropzone-file-added="onFileAdded"
         @vdropzone-file-added-manually="onFileAdded"
         @vdropzone-complete="onComplete"
-        :useCustomSlot=true
+        :useCustomSlot="true"
         :options="options">
 
-        <h2>Drop files to upload to<br>
-          <span v-if="replyTo">thread</span>
-          <span v-else>{{ label(channel) }}</span>
-        </h2>
+        <i18next path="message.file.uploadHeader" tag="h2">
+          <span><br/>
+            <template v-if="replyTo">{{ $t('message.file.replyToThread') }}</template>
+            <template v-else>{{ label(channel) }}</template>
+          <br/></span>
+        </i18next>
       </vue-dropzone>
 
       <div class="button-group" v-if="queued">
-        <h3>Your file is going to be uploaded to
-          <span v-if="replyTo">thread</span>
-          <span v-else>#{{ label(channel) }}.<br>
-            You can switch the channel on your left.
+
+        <i18next path="message.file.willUploadTo" tag="h3">
+          <span>
+            <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
+
+            <template v-else>
+              {{ $t('message.file.uploadToChannel', { label: label(channel) }) }}<br/>
+              {{ $t('message.file.uploadTarget') }}
+            </template>
           </span>
-        </h3>
+        </i18next>
+
         <button class="btn btn-blue" @click="uploadFile">
-          Send
+          {{ $t('message.file.send') }}
         </button>
         <button class="btn" @click="resetUpload">
-          Cancel
+          {{ $t('message.file.cancel') }}
         </button>
       </div>
     </div>

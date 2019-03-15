@@ -2,8 +2,8 @@
   <base-panel
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <template slot="header">Bookmarked messages</template>
-    <template slot="subtitle">Only you can see this list</template>
+    <template slot="header">{{ $t('pannel.bookmarkedMessagesHeader') }}</template>
+    <template slot="subtitle">{{ $t('pannel.bookmarkedMessagesSubtitle') }}</template>
     <template slot="main">
       <messages
         :messages="bookmarked"
