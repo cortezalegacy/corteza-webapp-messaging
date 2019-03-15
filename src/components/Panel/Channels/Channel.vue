@@ -26,13 +26,13 @@
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
       <font-awesome-icon
         :icon="['fas', 'star']"
-        :title="$t('pannel.removeStar')"
+        :title="$t('panel.removeStar')"
       ></font-awesome-icon>
     </span>
     <span v-else class="hide" @click="onFlag('hidden')">
       <font-awesome-icon
         :icon="['fas', 'times']"
-        :title="$t('pannel.hideChannel')"
+        :title="$t('panel.hideChannel')"
       ></font-awesome-icon>
     </span>
   </li>

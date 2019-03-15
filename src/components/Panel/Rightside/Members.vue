@@ -2,9 +2,9 @@
   <base-panel
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.ID);">
-    <template slot="header">{{ $t('pannel.membersHeader') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('pannel.membersGroupSubtitle', { label: label(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('pannel.membersSubtitle', { label: label(channel) }) }}</template>
+    <template slot="header">{{ $t('panel.membersHeader') }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: label(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: label(channel) }) }}</template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">
@@ -16,7 +16,7 @@
             <span class="member-name">{{ label(u) }}</span>
             <confirmation-toggle
               @confirmed="remove(u.ID)"
-              :cta="$t('pannel.remove')"
+              :cta="$t('panel.remove')"
               v-if="channel.canChangeMembers && u.ID != currentUser.ID && channel.type !== 'group'"
               class="confirmation-buttons">
             </confirmation-toggle>
@@ -25,7 +25,7 @@
       </div>
       <div class="add-members" v-if="channel.canChangeMembers && channel.type !== 'group'">
         <div class="header">
-          <h1>{{ $t('pannel.add') }}</h1>
+          <h1>{{ $t('panel.add') }}</h1>
           <search-input v-model="userQuery" :focus="true"></search-input>
         </div>
         <ul v-if="searchResults">

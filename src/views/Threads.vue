@@ -5,7 +5,7 @@
         class="channel-toggle"
         @click="$emit('toggleChannelPanel', null)">
         <i class="icon-menu4"></i></label>
-      <span class="title">{{ $t('channel.AllThreads') }}</span>
+      <span class="title">{{ $t('channel.allThreads') }}</span>
     </header>
     <main v-if="getThreads.length > 0">
       <section v-for="(thread) in getThreads" :key="thread.ID">
