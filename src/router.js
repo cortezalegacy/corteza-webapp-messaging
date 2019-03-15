@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  base: '/messaging/',
+  base: process.env.VUE_APP_CORDOVA ? '' : '/messaging/',
   mode: process.env.VUE_APP_ROUTER_MODE || 'history',
 
   routes: [
