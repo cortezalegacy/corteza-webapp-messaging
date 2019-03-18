@@ -5,7 +5,7 @@
             orientation="left"
             :width="260"
             :pinned="uiPinChannelSidePanel"
-            :hidden="uiHideChannelSidePanel">
+            :hidden.sync="uiHideChannelSidePanel">
               <channels-panel
                   @close="hideChannelSidePanel"
                   @openQuickSearch="uiShowQuickSearch=true"
