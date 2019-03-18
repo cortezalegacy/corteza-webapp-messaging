@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import './ui'
+import './gesture'
 import VueNativeNotification from 'vue-native-notification'
 import ChannelLink from '@/components/Channel/Link'
 import GlobalEvents from 'vue-global-events'
