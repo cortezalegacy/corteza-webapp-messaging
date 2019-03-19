@@ -33,6 +33,7 @@ export default {
       panDir: null,
       ignorePan: false,
       openThreshold: 25,
+      transitioning: false,
 
       openedBy: {
         left: 'panright',
@@ -69,6 +70,7 @@ export default {
       let c = {
         unpinned: !this.pinned,
         hidden: this.hidden,
+        transitioning: this.transitioning,
       }
 
       c[this.orientation] = true // assign orientation class left/right...
@@ -96,27 +98,33 @@ export default {
       this.$emit('update:hidden', false)
       this.ignorePan = true
       this.dx = 0
+      this.transitioning = true
     },
     panelHide () {
       console.debug('pan:left.hide')
       this.$emit('update:hidden', true)
       this.ignorePan = true
       this.dx = 0
+      this.transitioning = true
     },
     abortShow () {
       console.debug('pan:right.show.abort')
       this.$emit('update:hidden', true)
       this.ignorePan = false
       this.dx = 0
+      this.transitioning = true
     },
     abortHide () {
       console.debug('pan:left.hide.abort')
       this.$emit('update:hidden', false)
       this.ignorePan = false
       this.dx = 0
+      this.transitioning = true
     },
 
     panStart ({ e, clientWidth }) {
+      this.transitioning = false
+
       // Conditions to ignore gesture
       const { changedTouches = new TouchList() } = e
       if (changedTouches.length > 1) {
@@ -184,6 +192,10 @@ aside {
   width: var(--width);
   max-width: 100%;
   background-color: $menupanebgcolor;
+
+  &.transitioning {
+    transition: all .3s;
+  }
 
   div {
     height: 100vh;
