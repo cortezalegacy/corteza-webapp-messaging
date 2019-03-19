@@ -32,6 +32,16 @@ export default {
       dx: 0,
       panDir: null,
       ignorePan: false,
+      openThreshold: 25,
+
+      openedBy: {
+        left: 'panright',
+        right: 'panleft',
+      },
+      closedBy: {
+        left: 'panleft',
+        right: 'panright',
+      },
     }
   },
 
@@ -42,14 +52,14 @@ export default {
       }
 
       if (this.dx) {
-        let l = this.dx < 0 ? this.dx : -this.width + this.dx
-        if (l < 0) {
-          l = Math.max(l, -this.width)
-        } else {
-          l = Math.min(0, -this.width + this.dx)
+        // Based on panel orientation, determine it's positions
+        let base = this.orientation === 'left' ? this.dx : -this.dx
+        let l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
+        if (this.orientation === 'right') {
+          l *= -1
         }
 
-        s.left = l + 'px'
+        s[this.orientation] = l + 'px'
       }
 
       return s
@@ -80,59 +90,79 @@ export default {
   },
 
   methods: {
-    panStart (e) {
+    // Helpers for gestures
+    panelShow () {
+      console.debug('pan:right.show')
+      this.$emit('update:hidden', false)
+      this.ignorePan = true
+      this.dx = 0
+    },
+    panelHide () {
+      console.debug('pan:left.hide')
+      this.$emit('update:hidden', true)
+      this.ignorePan = true
+      this.dx = 0
+    },
+    abortShow () {
+      console.debug('pan:right.show.abort')
+      this.$emit('update:hidden', true)
+      this.ignorePan = false
+      this.dx = 0
+    },
+    abortHide () {
+      console.debug('pan:left.hide.abort')
+      this.$emit('update:hidden', false)
+      this.ignorePan = false
+      this.dx = 0
+    },
+
+    panStart ({ e, clientWidth }) {
       // Conditions to ignore gesture
       const { changedTouches = new TouchList() } = e
       if (changedTouches.length > 1) {
         this.ignorePan = true
+        return
       }
 
       const [ t ] = changedTouches
-      if (this.hidden && t.pageX > 25) {
-        this.ignorePan = true
+      if (this.hidden) {
+        // Check if gesture started in an allowed area based on orientation
+        this.ignorePan = (this.orientation === 'left' && t.pageX > this.openThreshold) ||
+          (this.orientation === 'right' && clientWidth - t.pageX > this.openThreshold)
       }
     },
 
-    panMove (e) {
+    panMove ({ e, clientWidth }) {
       if (this.ignorePan) return
-
       const { deltaX } = e
 
+      // Determine overall pan direction
       if (this.dx + deltaX > 0) {
         this.panDir = 'panright'
       } else {
         this.panDir = 'panleft'
       }
 
-      if (!this.ignorePan && ((this.hidden && this.panDir === 'panright') || (!this.hidden && this.panDir === 'panleft'))) {
+      if ((this.hidden && this.panDir === this.openedBy[this.orientation]) || (!this.hidden && this.panDir === this.closedBy[this.orientation])) {
         this.dx += deltaX
       }
 
-      if (this.hidden && this.panDir === 'panright' && this.dx > this.width / 2) {
-        console.debug('pan:right.show')
-        this.$emit('update:hidden', false)
-        this.ignorePan = true
-        this.dx = 0
-      }
-      if (!this.hidden && this.panDir === 'panleft' && this.dx < -this.width / 2) {
-        console.debug('pan:left.hide')
-        this.$emit('update:hidden', true)
-        this.ignorePan = true
-        this.dx = 0
+      if (Math.abs(this.dx) > this.width / 2) {
+        if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
+          this.panelShow()
+        } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
+          this.panelHide()
+        }
       }
     },
 
-    panEnd (e) {
-      if (this.hidden && this.dx > 0 && this.panDir === 'panright' && this.dx < this.width / 2) {
-        console.debug('pan:right.show.abort')
-        this.$emit('update:hidden', true)
-        this.ignorePan = false
-        this.dx = -this.width
-      } else if (!this.hidden && this.dx < 0 && this.panDir === 'panleft' && this.dx > -this.width / 2) {
-        console.debug('pan:left.hide.abort')
-        this.$emit('update:hidden', false)
-        this.ignorePan = false
-        this.dx = 0
+    panEnd ({ e }) {
+      if (Math.abs(this.dx) > 0 && Math.abs(this.dx) < this.width / 2) {
+        if (this.hidden && this.openedBy[this.orientation]) {
+          this.abortShow()
+        } else if (!this.hidden && this.closedBy[this.orientation]) {
+          this.abortHide()
+        }
       }
 
       this.ignorePan = false
