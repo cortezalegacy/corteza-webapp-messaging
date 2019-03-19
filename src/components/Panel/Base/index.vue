@@ -33,6 +33,8 @@ export default {
       panDir: null,
       ignorePan: false,
       openThreshold: 25,
+      speedThreshold: 0.4,
+      panStarted: null,
       transitioning: false,
 
       openedBy: {
@@ -123,6 +125,7 @@ export default {
     },
 
     panStart ({ e, clientWidth }) {
+      this.panStarted = e.timeStamp
       this.transitioning = false
 
       // Conditions to ignore gesture
@@ -154,18 +157,18 @@ export default {
       if ((this.hidden && this.panDir === this.openedBy[this.orientation]) || (!this.hidden && this.panDir === this.closedBy[this.orientation])) {
         this.dx += deltaX
       }
+    },
 
-      if (Math.abs(this.dx) > this.width / 2) {
+    panEnd ({ e }) {
+      // If user flicked & it was fast enaugh, use that instead
+      const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
+      if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
         if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
           this.panelShow()
         } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
           this.panelHide()
         }
-      }
-    },
-
-    panEnd ({ e }) {
-      if (Math.abs(this.dx) > 0 && Math.abs(this.dx) < this.width / 2) {
+      } else if (Math.abs(this.dx) > 0) {
         if (this.hidden && this.openedBy[this.orientation]) {
           this.abortShow()
         } else if (!this.hidden && this.closedBy[this.orientation]) {
