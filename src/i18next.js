@@ -27,4 +27,7 @@ i18next
     },
   })
 
+i18next.on('loaded', () => Vue.prototype.$bus.$emit('$t.loaded'))
+i18next.on('languageChanged', () => Vue.prototype.$bus.$emit('$t.languageChanged'))
+
 export default new VueI18Next(i18next)

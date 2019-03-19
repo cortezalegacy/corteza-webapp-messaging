@@ -8,7 +8,7 @@
             ref="input"
             type="text"
             v-model="query"
-            :placeholder="placeholder"
+            :placeholder="getPlaceholder"
             autocomplete="true"
             class="txt no-border">
       </span>
@@ -16,7 +16,6 @@
 </template>
 <script>
 import { focus } from 'vue-focus'
-import i18next from 'i18next'
 
 export default {
   directives: {
@@ -25,7 +24,7 @@ export default {
 
   props: {
     value: String,
-    placeholder: { type: String, default: i18next.t('general.label.search') },
+    placeholder: { type: String },
     focus: false,
     preset: {
       type: String,
@@ -49,6 +48,10 @@ export default {
         this.internalValue = value
         this.$emit('input', value)
       },
+    },
+
+    getPlaceholder () {
+      return this.placeholder || this.$t('general.label.search')
     },
   },
 }
