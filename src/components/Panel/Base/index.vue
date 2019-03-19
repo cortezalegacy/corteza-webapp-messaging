@@ -1,9 +1,11 @@
 <template>
-  <aside :style="styles" :class="classes">
+  <aside :style="styles" :class="classes" ref="panel">
     <div><slot></slot></div>
   </aside>
 </template>
 <script>
+import anime from 'animejs'
+
 export default {
   props: {
     pinned: {
@@ -94,31 +96,22 @@ export default {
   },
 
   methods: {
+    animate (properties = {}, ...targets) {
+      const opt = { targets, easing: 'easeOutCubic', ...properties }
+      anime(opt)
+    },
+
     // Helpers for gestures
-    panelShow () {
-      console.debug('pan:right.show')
-      this.$emit('update:hidden', false)
+    panelShow (hidden, properties, ...targets) {
       this.ignorePan = true
-      this.dx = 0
-      this.transitioning = true
+      this.animate({ ...properties,
+        complete: () => {
+          this.$emit('update:hidden', hidden)
+          this.dx = 0
+        } }, ...targets)
     },
-    panelHide () {
-      console.debug('pan:left.hide')
-      this.$emit('update:hidden', true)
-      this.ignorePan = true
-      this.dx = 0
-      this.transitioning = true
-    },
-    abortShow () {
-      console.debug('pan:right.show.abort')
-      this.$emit('update:hidden', true)
-      this.ignorePan = false
-      this.dx = 0
-      this.transitioning = true
-    },
-    abortHide () {
-      console.debug('pan:left.hide.abort')
-      this.$emit('update:hidden', false)
+    panelAbort (hidden) {
+      this.$emit('update:hidden', hidden)
       this.ignorePan = false
       this.dx = 0
       this.transitioning = true
@@ -130,20 +123,15 @@ export default {
 
       // Conditions to ignore gesture
       const { changedTouches = new TouchList() } = e
-      if (changedTouches.length > 1) {
-        this.ignorePan = true
-        return
-      }
-
       const [ t ] = changedTouches
-      if (this.hidden) {
+      if (t && this.hidden) {
         // Check if gesture started in an allowed area based on orientation
         this.ignorePan = (this.orientation === 'left' && t.pageX > this.openThreshold) ||
           (this.orientation === 'right' && clientWidth - t.pageX > this.openThreshold)
       }
     },
 
-    panMove ({ e, clientWidth }) {
+    panMove ({ e }) {
       if (this.ignorePan) return
       const { deltaX } = e
 
@@ -160,24 +148,31 @@ export default {
     },
 
     panEnd ({ e }) {
-      // If user flicked & it was fast enaugh, use that instead
-      const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
-      if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
-        if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
-          this.panelShow()
-        } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
-          this.panelHide()
-        }
-      } else if (Math.abs(this.dx) > 0) {
-        if (this.hidden && this.openedBy[this.orientation]) {
-          this.abortShow()
-        } else if (!this.hidden && this.closedBy[this.orientation]) {
-          this.abortHide()
+      if (!this.ignorePan) {
+        // Open panel based on the amount of work done or by the speed
+        const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
+        const distLeft = this.width - Math.abs(this.dx)
+        const duration = distLeft / speed
+        let properties = { duration }
+
+        if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
+          if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
+            properties[this.orientation] = `+=${distLeft}px`
+            this.panelShow(false, properties, this.$refs.panel)
+          } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
+            properties[this.orientation] = `-=${distLeft}px`
+            this.panelShow(true, properties, this.$refs.panel)
+          }
+        } else if (Math.abs(this.dx) > 0) {
+          if (this.hidden && this.openedBy[this.orientation]) {
+            this.panelAbort(true)
+          } else if (!this.hidden && this.closedBy[this.orientation]) {
+            this.panelAbort(false)
+          }
         }
       }
 
       this.ignorePan = false
-      this.dx = 0
     },
   },
 }
