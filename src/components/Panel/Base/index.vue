@@ -27,6 +27,11 @@ export default {
       type: Number,
       default: 360,
     },
+
+    disableGestures: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data () {
@@ -118,6 +123,8 @@ export default {
     },
 
     panStart ({ e, clientWidth }) {
+      if (this.disableGestures) return
+
       this.panStarted = e.timeStamp
       this.transitioning = false
 
@@ -132,7 +139,7 @@ export default {
     },
 
     panMove ({ e }) {
-      if (this.ignorePan) return
+      if (this.ignorePan || this.disableGestures) return
       const { deltaX } = e
 
       // Determine overall pan direction
@@ -148,6 +155,8 @@ export default {
     },
 
     panEnd ({ e }) {
+      if (this.disableGestures) return
+
       if (!this.ignorePan) {
         // Open panel based on the amount of work done or by the speed
         const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
