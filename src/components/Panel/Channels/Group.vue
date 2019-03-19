@@ -1,7 +1,7 @@
 <template>
   <section>
     <div>
-      <router-link v-if="link" :to="link">
+      <router-link v-if="link" :to="link" @click.native="$emit('close')">
         <i class="icon icon-left icon-plus btn"></i>
       </router-link>
       <a @click="expanded=!expanded">
