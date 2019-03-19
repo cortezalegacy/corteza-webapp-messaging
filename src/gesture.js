@@ -1,12 +1,13 @@
 import Vue from 'vue'
 import AlloyFinger from 'alloyfinger'
 
-const emitGesture = (ev) => {
-  Vue.prototype.$bus.$emit(`gesture:${ev.type}`, ev)
+const target = document.getElementsByTagName('BODY')[0]
+const emitGesture = (e) => {
+  Vue.prototype.$bus.$emit(`gesture:${e.type}`, { e, clientWidth: target.clientWidth })
 }
 
 /* eslint-disable no-unused-vars */
-let af = new AlloyFinger(document.getElementsByTagName('BODY')[0], {
+let af = new AlloyFinger(target, {
   touchStart: emitGesture,
   touchMove: emitGesture,
   touchEnd: emitGesture,
