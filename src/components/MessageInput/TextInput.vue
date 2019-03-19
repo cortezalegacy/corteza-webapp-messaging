@@ -14,7 +14,6 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
-import i18next from 'i18next'
 
 export default {
   components: {
@@ -22,10 +21,7 @@ export default {
   },
   props: {
     value: String,
-    placeholder: {
-      type: String,
-      default: i18next.t('message.newPlaceholder'),
-    },
+    placeholder: { type: String },
 
     channels: {
       type: Array,
@@ -52,7 +48,6 @@ export default {
 
       options: {
         debug: false,
-        placeholder: this.placeholder,
         theme: 'bubble',
         formats: ['italic', 'bold', 'strike', 'mention'],
         modules: {
@@ -132,6 +127,16 @@ export default {
     },
   },
 
+  created () {
+    this.$bus.$on('$t.loaded', this.updatePlaceholder)
+    this.$bus.$on('$t.languageChanged', this.updatePlaceholder)
+  },
+
+  beforeDestroy () {
+    this.$bus.$off('$t.loaded', this.updatePlaceholder)
+    this.$bus.$off('$t.languageChanged', this.updatePlaceholder)
+  },
+
   mounted () {
     if (this.$refs.quill !== undefined && this.focus) {
       const q = this.$refs.quill.quill
@@ -144,6 +149,11 @@ export default {
   },
 
   methods: {
+    updatePlaceholder () {
+      // Quill doesn't have a setter; so we need to do it like this
+      this.$refs.quill.quill.root.dataset.placeholder = this.placeholder || this.$t('message.newPlaceholder')
+    },
+
     onQuillReady (quill) {
       quill.root.addEventListener('keydown', ev => {
         // on arrow-up but only on empty input!
@@ -151,6 +161,8 @@ export default {
           this.$emit('editLastMessage', {})
         }
       })
+
+      this.updatePlaceholder()
     },
   },
 }
