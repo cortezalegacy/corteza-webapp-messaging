@@ -1,13 +1,14 @@
 <template>
   <div class="channel"
-    @dragover="showUploadArea=true"
-    @dragenter="showUploadArea=true"
+    @dragover="handleShow($event, () => showUploadArea = true)"
+    @dragenter="handleShow($event, () => showUploadArea = true)"
     v-if="channel">
     <upload
       v-show="showUploadArea"
-      @close="showUploadArea=false"
+      @close="showUploadArea=false; uploadFileTypeSupported=true"
       @show="showUploadArea=true"
       :channelID="channel.ID"
+      :typeSupported.sync="uploadFileTypeSupported"
       ref="upload" />
 
     <channel-header
@@ -49,6 +50,7 @@ import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
+import mixinUpload from '@/mixins/upload'
 
 export default {
   components: {
@@ -60,6 +62,7 @@ export default {
 
   mixins: [
     mixinUnread,
+    mixinUpload,
   ],
 
   props: {
@@ -77,6 +80,7 @@ export default {
   data () {
     return {
       showUploadArea: false,
+      uploadFileTypeSupported: true,
 
       // resetUnreadTimeout: null,
       channel: null,

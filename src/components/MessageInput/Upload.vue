@@ -6,8 +6,10 @@
 
     <div class="message-confirm">
       <vue-dropzone
+        v-if="typeSupported"
         ref="dropzone"
         id="dropzone"
+        @vdropzone-drop="onDrop"
         @vdropzone-file-added="onFileAdded"
         @vdropzone-file-added-manually="onFileAdded"
         @vdropzone-complete="onComplete"
@@ -22,8 +24,14 @@
         </i18next>
       </vue-dropzone>
 
-      <div class="button-group" v-if="queued">
+      <div v-else class="dz-message unsupported">
+          <h2>{{ $t('message.file.unsupportedType') }}</h2>
+          <button class="btn btn-blue" @click="$emit('close')">
+            {{ $t('message.file.ok') }}
+          </button>
+        </div>
 
+      <div class="button-group" v-if="queued && typeSupported">
         <i18next path="message.file.willUploadTo" tag="h3">
           <span>
             <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
@@ -65,6 +73,7 @@ export default {
   props: {
     channelID: { type: String, required: true },
     replyTo: { type: String, required: false },
+    typeSupported: { type: Boolean, default: true },
   },
 
   data () {
@@ -115,6 +124,10 @@ export default {
   },
 
   methods: {
+    onDrop (e) {
+      // Check if files are valid; folders won't have a type
+      if (![...e.dataTransfer.files].filter(f => f.type).length) this.$emit('update:typeSupported', false)
+    },
 
     // toggleDisabled ({ disabled }) {
     //   this.disabled = disabled
@@ -173,6 +186,13 @@ export default {
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
   z-index: 10;
+
+  .unsupported {
+    text-align: center;
+    h2 {
+      color: $appred;
+    }
+  }
 }
 
 .vue-dropzone .dz-preview .dz-remove{

@@ -132,6 +132,7 @@
       "size": "Size {{size}}",
       "missing": "Oups... {{0}} is no longer here...",
 
+      "unsupportedType": "Unsupported file type",
       "uploadHeader": "Drop files to upload to {{0}}",
       "replyToThread": "thread",
       "willUploadTo": "Your file is going to be uploaded to {{0}}",
@@ -139,7 +140,8 @@
       "uploadToChannel": "#{{label}}.",
       "uploadTarget": "You can switch the channel on your left.",
       "send": "Send",
-      "cancel": "$t(general.label.cancel)"
+      "cancel": "$t(general.label.cancel)",
+      "ok": "$t(general.label.ok)"
     }
   },
 
@@ -164,6 +166,7 @@
 
   "general": {
     "label": {
+      "ok": "Ok",
       "search": "Search",
       "close": "Close",
       "cancel": "Cancel",
