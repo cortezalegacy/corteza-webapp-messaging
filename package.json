@@ -20,6 +20,7 @@
     "alloyfinger": "^0.1.16",
     "animejs": "^3.0.1",
     "axios": "^0.17.1",
+    "crust-api-client": "crusttech/crust-api-client.js.git#master",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",
     "favico.js": "^0.3.10",
