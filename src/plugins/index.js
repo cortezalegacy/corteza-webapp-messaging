@@ -7,11 +7,12 @@ import system from '@/plugins/system'
 import commands from '@/plugins/commands'
 import triggers from '@/plugins/triggers'
 import logger from '@/plugins/logger'
-import auth from 'crust-common.vue/src/plugins/auth'
+import messaging from '@/plugins/messaging'
 
 const eventbus = new Vue()
 
 Vue.use(logger)
+Vue.use(messaging)
 Vue.use(bus, { eventbus })
 Vue.use(system)
 Vue.use(rest)
