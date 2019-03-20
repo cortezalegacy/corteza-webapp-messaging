@@ -1,18 +1,19 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @dragover="showUploadArea=true"
-    @dragenter="showUploadArea=true">
+    @dragover="handleShow($event, () => showUploadArea = true)"
+    @dragenter="handleShow($event, () => showUploadArea = true)">
 
     <template slot="header">{{ $t('panel.thread') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: label(channel) }) }}</template>
     <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: label(channel) }) }}</template>
     <template slot="main">
       <upload v-show="channel && showUploadArea"
-        @close="showUploadArea=false"
+        @close="showUploadArea=false; uploadFileTypeSupported=true"
         @show="showUploadArea=true"
         :channelID="channel.ID"
         :replyTo="repliesTo"
+        :typeSupported.sync="uploadFileTypeSupported"
         ref="upload" />
 
       <messages
@@ -49,6 +50,7 @@ import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import mixinUnread from '@/mixins/unread'
+import mixinUpload from '@/mixins/upload'
 
 export default {
   components: {
@@ -60,6 +62,7 @@ export default {
 
   mixins: [
     mixinUnread,
+    mixinUpload,
   ],
 
   props: {
@@ -76,6 +79,7 @@ export default {
       editLastMessage: false,
 
       showUploadArea: false,
+      uploadFileTypeSupported: true,
     }
   },
 
