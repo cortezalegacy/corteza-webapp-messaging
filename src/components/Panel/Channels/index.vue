@@ -1,7 +1,7 @@
 <template>
   <nav>
     <search-input
-      :focus="true"
+      :focus="false"
       v-on="$listeners" />
 
     <div class="scrollable">
