@@ -78,6 +78,8 @@ export default {
 
   data () {
     return {
+      logo: require('@/assets/images/crust-logo-with-tagline.png'),
+      loaded: false,
       searchQuery: null,
 
       // UI control
@@ -138,6 +140,10 @@ export default {
       this.$store.dispatch('users/load')
       this.$store.dispatch('users/loadStatuses')
       this.$store.dispatch('suggestions/loadCommands')
+
+      setTimeout(() => {
+        this.loaded = true
+      }, 1000)
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
@@ -273,6 +279,39 @@ export default {
     bottom: 80px;
     right: 15px;
   }
+}
+
+@keyframes flickerAnimation {
+  0% { opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  background-color: #efefef;
+
+  img {
+    align-self: center;
+    width: 80%;
+    opacity: 0;
+    animation: flickerAnimation 3s infinite;
+  }
+}
+
+.fade-enter-to, .fade-leave-active {
+  transition: opacity .4s;
+}
+.fade-enter-to, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0.1;
 }
 
 div.helper {
