@@ -1,89 +1,97 @@
 <template>
-  <div v-if="$auth.is()">
-      <div class="flex-grid">
-          <base-side-panel
-            orientation="left"
-            :width="260"
-            :pinned="isChannelPanelPined"
-            :hidden.sync="uiHideChannelSidePanel"
-            :disableGestures="!!uiRightSidePanelContent">
-              <channels-panel
-                  @close="hideChannelSidePanel"
-                  @openQuickSearch="uiShowQuickSearch=true"
-                  @searchSubmit="onPanelSearchSubmit" />
-          </base-side-panel>
+  <div>
+    <div v-if="$auth.is()">
+        <div class="flex-grid">
+            <base-side-panel
+              orientation="left"
+              :width="260"
+              :pinned="isChannelPanelPined"
+              :hidden.sync="uiHideChannelSidePanel"
+              :disableGestures="!!uiRightSidePanelContent">
+                <channels-panel
+                    @close="hideChannelSidePanel"
+                    @openQuickSearch="uiShowQuickSearch=true"
+                    @searchSubmit="onPanelSearchSubmit" />
+            </base-side-panel>
 
-          <!-- no use in displaying messages if no channel -->
-          <div class="main">
-            <router-view
-                @toggleChannelPanel="toggleChannelSidePanel()"
-                @openThreadPanel="switchRightSidePanel('thread', $event)"
-                @openMembersPanel="switchRightSidePanel('members', $event)"
-                @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
-                @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)" />
+            <!-- no use in displaying messages if no channel -->
+            <div class="main">
+              <router-view
+                  @toggleChannelPanel="toggleChannelSidePanel()"
+                  @openThreadPanel="switchRightSidePanel('thread', $event)"
+                  @openMembersPanel="switchRightSidePanel('members', $event)"
+                  @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
+                  @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)" />
+            </div>
+
+            <base-side-panel
+              v-if="uiRightSidePanelContent"
+              :hidden="uiHideRightSidePanel"
+              orientation="right"
+              :width="400"
+              :pinned="uiPinRightSidePanel"
+              @update:hidden="hideRightPanel">
+                <members-panel
+                    v-if="uiRightSidePanelContent === 'members'"
+                    :channel="currentChannel"
+                    @close="switchRightSidePanel()" />
+
+                <thread-panel
+                    v-if="uiRightSidePanelContent === 'thread'"
+                    @close="switchRightSidePanel()"
+                    :repliesTo="uiRightSidePanelThreadMessageID" />
+
+                <pinned-messages-panel
+                    v-if="currentChannel && uiRightSidePanelContent === 'pinnedMessages'"
+                    :channel="currentChannel"
+                    @openThreadPanel="switchRightSidePanel('thread', $event)"
+                    @close="switchRightSidePanel()" />
+
+                <bookmarked-messages-panel
+                    v-if="uiRightSidePanelContent === 'bookmarkedMessages'"
+                    @openThreadPanel="switchRightSidePanel('thread', $event)"
+                    @close="switchRightSidePanel()" />
+            </base-side-panel>
           </div>
+          <div class="helpers">
+              <search-results
+                  v-if="searchQuery"
+                  @close="searchQuery=null"
+                  @goToMessage="onGoToMessage"
+                  :searchQuery="searchQuery" />
 
-          <base-side-panel
-            v-if="uiRightSidePanelContent"
-            :hidden="uiHideRightSidePanel"
-            orientation="right"
-            :width="400"
-            :pinned="uiPinRightSidePanel"
-            @update:hidden="hideRightPanel">
-              <members-panel
-                  v-if="uiRightSidePanelContent === 'members'"
-                  :channel="currentChannel"
-                  @close="switchRightSidePanel()" />
+              <preview
+                  v-if="uiShowPreview"
+                  @close="uiShowPreview=null"
+                  :src="uiShowPreview.src" />
 
-              <thread-panel
-                  v-if="uiRightSidePanelContent === 'thread'"
-                  @close="switchRightSidePanel()"
-                  :repliesTo="uiRightSidePanelThreadMessageID" />
+              <quick-search
+                  v-if="uiShowQuickSearch"
+                  @close="uiShowQuickSearch=false"></quick-search>
 
-              <pinned-messages-panel
-                  v-if="currentChannel && uiRightSidePanelContent === 'pinnedMessages'"
-                  :channel="currentChannel"
-                  @openThreadPanel="switchRightSidePanel('thread', $event)"
-                  @close="switchRightSidePanel()" />
-
-              <bookmarked-messages-panel
-                  v-if="uiRightSidePanelContent === 'bookmarkedMessages'"
-                  @openThreadPanel="switchRightSidePanel('thread', $event)"
-                  @close="switchRightSidePanel()" />
-          </base-side-panel>
+              <component
+                  :is="emojiPickerLoader"
+                  v-show="emojiPickerCallback"
+                  @select="onEmojiSelect"
+                  :style="{ position: 'absolute', bottom: '80px', right: uiRightSidePanelContent ? '415px' : '15px' }"
+                  :showSkinTones="false"
+                  :showPreview="false"
+                  :sheetSize="32"
+                  set="apple"
+                  :infiniteScroll="false" />
+          </div>
+          <global-events
+              @keydown.esc.exact="emojiPickerCallback=null"
+              @keydown.meta.k.exact="toggleQuickSearch"
+              @keydown.ctrl.k.exact="toggleQuickSearch" />
       </div>
-      <div class="helpers">
-          <search-results
-              v-if="searchQuery"
-              @close="searchQuery=null"
-              @goToMessage="onGoToMessage"
-              :searchQuery="searchQuery" />
 
-          <preview
-              v-if="uiShowPreview"
-              @close="uiShowPreview=null"
-              :src="uiShowPreview.src" />
-
-          <quick-search
-              v-if="uiShowQuickSearch"
-              @close="uiShowQuickSearch=false"></quick-search>
-
-          <component
-              :is="emojiPickerLoader"
-              v-show="emojiPickerCallback"
-              @select="onEmojiSelect"
-              :style="{ position: 'absolute', bottom: '80px', right: uiRightSidePanelContent ? '415px' : '15px' }"
-              :showSkinTones="false"
-              :showPreview="false"
-              :sheetSize="32"
-              set="apple"
-              :infiniteScroll="false" />
-      </div>
-      <global-events
-          @keydown.esc.exact="emojiPickerCallback=null"
-          @keydown.meta.k.exact="toggleQuickSearch"
-          @keydown.ctrl.k.exact="toggleQuickSearch" />
-    </div>
+      <transition name="fade">
+        <div class="loader" v-if="!loaded">
+          <img :src="logo" />
+        </div>
+      </transition>
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
@@ -120,6 +128,8 @@ export default {
 
   data () {
     return {
+      logo: require('@/assets/images/crust-logo-with-tagline.png'),
+      loaded: false,
       searchQuery: null,
 
       // UI control
@@ -189,6 +199,10 @@ export default {
       this.$store.dispatch('users/load')
       this.$store.dispatch('users/loadStatuses')
       this.$store.dispatch('suggestions/loadCommands')
+
+      setTimeout(() => {
+        this.loaded = true
+      }, 1000)
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
@@ -370,6 +384,39 @@ div.flex-grid {
     height: 100vh;
     overflow: hidden;
   }
+}
+
+@keyframes flickerAnimation {
+  0% { opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  background-color: #efefef;
+
+  img {
+    align-self: center;
+    width: 80%;
+    opacity: 0;
+    animation: flickerAnimation 3s infinite;
+  }
+}
+
+.fade-enter-to, .fade-leave-active {
+  transition: opacity .4s;
+}
+.fade-enter-to, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0.1;
 }
 
 div.helper {

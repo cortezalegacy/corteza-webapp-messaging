@@ -10,6 +10,7 @@ div {
   width: 100%;
   background: url('../assets/images/crust-logo-with-tagline.png') no-repeat #efefef;
   background-position: 50% 50%;
+  background-size: 80%;
   opacity: 0.25;
 }
 </style>
