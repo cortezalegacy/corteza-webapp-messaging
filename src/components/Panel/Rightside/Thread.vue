@@ -123,7 +123,7 @@ export default {
   methods: {
     // Preloads all thread data
     preload () {
-      this.$ws.getReplies(this.repliesTo)
+      this.$store.dispatch('history/load', { channelID: this.channelID, messageID: this.repliesTo })
     },
 
     onOpenFilePicker () {

@@ -33,6 +33,7 @@ export default {
   },
 
   mounted () {
+    // TODO: Move this to rest client
     this.$ws.getMessages({ bookmarked: true })
   },
 }

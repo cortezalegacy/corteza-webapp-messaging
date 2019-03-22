@@ -69,11 +69,8 @@ export default {
     loadUnreadMessages () {
       // @todo unread -- port this
       this.unreadChannels.forEach(u => {
-        if (u.lastMessageID) {
-          this.$ws.getMessages({ channelID: u.channelID, firstID: u.lastMessageID })
-        } else {
-          this.$ws.getMessages({ channelID: u.channelID })
-        }
+        // BUG: firstMessageID not available yet!
+        this.$store.dispatch('history/load', { channelID: u.channelID, firstMessageID: u.lastMessageID })
       })
     },
 
