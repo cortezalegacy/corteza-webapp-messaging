@@ -166,9 +166,10 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.$ws.getMessages({
+        // BUG: Messaging.messageHistory doesn't work correctly with lastMessageID; returns messages from that id forth.
+        this.$store.dispatch('history/load', {
           channelID: this.channel.ID,
-          lastID: messageID,
+          lastMessageID: messageID,
         })
       }
     },

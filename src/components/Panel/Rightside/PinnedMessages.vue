@@ -46,6 +46,7 @@ export default {
   },
 
   mounted () {
+    // TODO: Move this to rest client
     this.$ws.getMessages({ pinned: true, channelID: this.channelID })
   },
 }

@@ -232,6 +232,7 @@ export default {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
 
+      // TODO: Move these to rest clients
       switch (true) {
         case value.text.length === 0:
           break

@@ -44,12 +44,25 @@ export default function (Messaging) {
     },
 
     actions: {
-      async load ({ commit }, { channelID, lastMessageID }) {
+      async load ({ commit }, { channelID, lastMessageID, firstMessageID, messageID }) {
         commit(types.pending)
-        Messaging.messageHistory({ channelID, lastMessageID }).then((messages) => {
-          commit(types.updateSet, messages.map(message => new Message(message)))
-          commit(types.completed)
-        })
+        // If messageID set, then fetch replies.
+        if (messageID) {
+          Messaging.messageReplyGet({ channelID, messageID }).then((messages) => {
+            commit(types.updateSet, messages.map(message => new Message(message)))
+            commit(types.completed)
+          })
+        } else {
+          // Remove undefined params
+          let params = { channelID, lastMessageID, firstMessageID }
+          Object.keys(params).forEach(key => !params[key] ? delete params[key] : '')
+
+          // NOTE: Add support for firstMessageID!
+          Messaging.messageHistory(params).then((messages) => {
+            commit(types.updateSet, messages.map(message => new Message(message)))
+            commit(types.completed)
+          })
+        }
       },
 
       async delete ({ commit, state }, { channelID, messageID }) {
