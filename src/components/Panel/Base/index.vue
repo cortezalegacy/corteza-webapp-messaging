@@ -1,9 +1,11 @@
 <template>
-  <aside :style="styles" :class="classes">
+  <aside :style="styles" :class="classes" ref="panel">
     <div><slot></slot></div>
   </aside>
 </template>
 <script>
+import anime from 'animejs'
+
 export default {
   props: {
     pinned: {
@@ -25,12 +27,49 @@ export default {
       type: Number,
       default: 360,
     },
+
+    disableGestures: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data () {
+    return {
+      dx: 0,
+      panDir: null,
+      ignorePan: false,
+      openThreshold: 25,
+      speedThreshold: 0.4,
+      panStarted: null,
+      transitioning: false,
+
+      openedBy: {
+        left: 'panright',
+        right: 'panleft',
+      },
+      closedBy: {
+        left: 'panleft',
+        right: 'panright',
+      },
+    }
   },
 
   computed: {
     styles () {
       let s = {
         '--width': this.width + 'px',
+      }
+
+      if (this.dx) {
+        // Based on panel orientation, determine it's positions
+        let base = this.orientation === 'left' ? this.dx : -this.dx
+        let l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
+        if (this.orientation === 'right') {
+          l *= -1
+        }
+
+        s[this.orientation] = l + 'px'
       }
 
       return s
@@ -40,11 +79,109 @@ export default {
       let c = {
         unpinned: !this.pinned,
         hidden: this.hidden,
+        transitioning: this.transitioning,
       }
 
       c[this.orientation] = true // assign orientation class left/right...
 
       return c
+    },
+  },
+
+  created () {
+    this.$bus.$on('gesture:touchstart', this.panStart)
+    this.$bus.$on('gesture:touchmove', this.panMove)
+    this.$bus.$on('gesture:touchend', this.panEnd)
+  },
+
+  beforeDestroy () {
+    this.$bus.$off('gesture:touchstart', this.panStart)
+    this.$bus.$off('gesture:touchmove', this.panMove)
+    this.$bus.$off('gesture:touchend', this.panEnd)
+  },
+
+  methods: {
+    animate (properties = {}, ...targets) {
+      const opt = { targets, easing: 'easeOutCubic', ...properties }
+      anime(opt)
+    },
+
+    // Helpers for gestures
+    panelShow (hidden, properties, ...targets) {
+      this.ignorePan = true
+      this.animate({ ...properties,
+        complete: () => {
+          this.$emit('update:hidden', hidden)
+          this.dx = 0
+        } }, ...targets)
+    },
+    panelAbort (hidden) {
+      this.$emit('update:hidden', hidden)
+      this.ignorePan = false
+      this.dx = 0
+      this.transitioning = true
+    },
+
+    panStart ({ e, clientWidth }) {
+      if (this.disableGestures) return
+
+      this.panStarted = e.timeStamp
+      this.transitioning = false
+
+      // Conditions to ignore gesture
+      const { changedTouches = new TouchList() } = e
+      const [ t ] = changedTouches
+      if (t && this.hidden) {
+        // Check if gesture started in an allowed area based on orientation
+        this.ignorePan = (this.orientation === 'left' && t.pageX > this.openThreshold) ||
+          (this.orientation === 'right' && clientWidth - t.pageX > this.openThreshold)
+      }
+    },
+
+    panMove ({ e }) {
+      if (this.ignorePan || this.disableGestures) return
+      const { deltaX } = e
+
+      // Determine overall pan direction
+      if (this.dx + deltaX > 0) {
+        this.panDir = 'panright'
+      } else {
+        this.panDir = 'panleft'
+      }
+
+      if ((this.hidden && this.panDir === this.openedBy[this.orientation]) || (!this.hidden && this.panDir === this.closedBy[this.orientation])) {
+        this.dx += deltaX
+      }
+    },
+
+    panEnd ({ e }) {
+      if (this.disableGestures) return
+
+      if (!this.ignorePan) {
+        // Open panel based on the amount of work done or by the speed
+        const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
+        const distLeft = this.width - Math.abs(this.dx)
+        const duration = distLeft / speed
+        let properties = { duration }
+
+        if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
+          if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
+            properties[this.orientation] = `+=${distLeft}px`
+            this.panelShow(false, properties, this.$refs.panel)
+          } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
+            properties[this.orientation] = `-=${distLeft}px`
+            this.panelShow(true, properties, this.$refs.panel)
+          }
+        } else if (Math.abs(this.dx) > 0) {
+          if (this.hidden && this.openedBy[this.orientation]) {
+            this.panelAbort(true)
+          } else if (!this.hidden && this.closedBy[this.orientation]) {
+            this.panelAbort(false)
+          }
+        }
+      }
+
+      this.ignorePan = false
     },
   },
 }
@@ -62,6 +199,10 @@ aside {
   width: var(--width);
   max-width: 100%;
   background-color: $menupanebgcolor;
+
+  &.transitioning {
+    transition: all .3s;
+  }
 
   div {
     height: 100vh;

@@ -17,6 +17,8 @@
     "@fortawesome/free-solid-svg-icons": "^5.5.0",
     "@fortawesome/vue-fontawesome": "^0.1.5",
     "@panter/vue-i18next": "^0.15.0",
+    "alloyfinger": "^0.1.16",
+    "animejs": "^3.0.1",
     "axios": "^0.17.1",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",

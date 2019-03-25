@@ -5,7 +5,8 @@
             orientation="left"
             :width="260"
             :pinned="uiPinChannelSidePanel"
-            :hidden="uiHideChannelSidePanel">
+            :hidden.sync="uiHideChannelSidePanel"
+            :disableGestures="!!uiRightSidePanelContent">
               <channels-panel
                   @close="hideChannelSidePanel"
                   @openQuickSearch="uiShowQuickSearch=true"
@@ -24,9 +25,11 @@
 
           <base-side-panel
             v-if="uiRightSidePanelContent"
+            :hidden="uiHideRightSidePanel"
             orientation="right"
             :width="400"
-            :pinned="uiPinRightSidePanel">
+            :pinned="uiPinRightSidePanel"
+            @update:hidden="hideRightPanel">
               <members-panel
                   v-if="uiRightSidePanelContent === 'members'"
                   :channel="currentChannel"
@@ -123,6 +126,7 @@ export default {
       uiPinChannelSidePanel: null,
       uiHideChannelSidePanel: false,
       uiPinRightSidePanel: null,
+      uiHideRightSidePanel: true,
 
       // What to do when emoji is picked
       emojiPickerCallback: null,
@@ -258,6 +262,13 @@ export default {
   },
 
   methods: {
+    hideRightPanel (hide) {
+      if (hide) {
+        this.uiRightSidePanelContent = null
+        this.uiHideRightSidePanel = true
+      }
+    },
+
     onPanelSearchSubmit (query) {
       // Take query we received from panel search input box
       // and push it to search result component
@@ -290,6 +301,8 @@ export default {
         // Close channels when opening right panel and screen is not wide enough
         this.uiHideChannelSidePanel = true
       }
+
+      this.uiHideRightSidePanel = !this.uiRightSidePanelContent
 
       switch (panel) {
         case 'thread':
