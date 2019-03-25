@@ -4,7 +4,7 @@
           <base-side-panel
             orientation="left"
             :width="260"
-            :pinned="uiPinChannelSidePanel"
+            :pinned="isChannelPanelPined"
             :hidden.sync="uiHideChannelSidePanel"
             :disableGestures="!!uiRightSidePanelContent">
               <channels-panel
@@ -134,6 +134,10 @@ export default {
   },
 
   computed: {
+    isChannelPanelPined () {
+      return this.uiPinChannelSidePanel || this.$route.name === 'landing'
+    },
+
     emojiPickerLoader () {
       // eslint-disable-next-line
       return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
