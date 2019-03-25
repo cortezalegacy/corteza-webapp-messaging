@@ -36,6 +36,7 @@ export default {
 
   data () {
     return {
+      // Parameters used for gestures
       dx: 0,
       panDir: null,
       ignorePan: false,
@@ -43,7 +44,6 @@ export default {
       speedThreshold: 0.4,
       panStarted: null,
       transitioning: false,
-
       openedBy: {
         left: 'panright',
         right: 'panleft',
@@ -61,8 +61,8 @@ export default {
         '--width': this.width + 'px',
       }
 
+      // If mid-gesture, determine panel's position based on orientation
       if (this.dx) {
-        // Based on panel orientation, determine it's positions
         let base = this.orientation === 'left' ? this.dx : -this.dx
         let l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
         if (this.orientation === 'right') {
@@ -122,6 +122,7 @@ export default {
       this.transitioning = true
     },
 
+    // Sets start paramaters for pan gesture & determines if it should be handeled
     panStart ({ e, clientWidth }) {
       if (this.disableGestures) return
 
@@ -132,12 +133,13 @@ export default {
       const { changedTouches = new TouchList() } = e
       const [ t ] = changedTouches
       if (t && this.hidden) {
-        // Check if gesture started in an allowed area based on orientation
+        // Check if gesture is allowed based on start touch & panel orientation
         this.ignorePan = (this.orientation === 'left' && t.pageX > this.openThreshold) ||
           (this.orientation === 'right' && clientWidth - t.pageX > this.openThreshold)
       }
     },
 
+    // Handeles panel's position while pan gesture is active
     panMove ({ e }) {
       if (this.ignorePan || this.disableGestures) return
       const { deltaX } = e
@@ -150,20 +152,23 @@ export default {
       }
 
       if ((this.hidden && this.panDir === this.openedBy[this.orientation]) || (!this.hidden && this.panDir === this.closedBy[this.orientation])) {
+        // Accumulate dx, used for panel's position
         this.dx += deltaX
       }
     },
 
+    // Determine what to do when users stopps panning
     panEnd ({ e }) {
       if (this.disableGestures) return
 
       if (!this.ignorePan) {
-        // Open panel based on the amount of work done or by the speed
+        // Calculate distance & speed used for final can open/close check & animation duration
         const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
         const distLeft = this.width - Math.abs(this.dx)
         const duration = distLeft / speed
         let properties = { duration }
 
+        // Checks if it should open
         if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
           if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
             properties[this.orientation] = `+=${distLeft}px`
@@ -173,6 +178,7 @@ export default {
             this.panelShow(true, properties, this.$refs.panel)
           }
         } else if (Math.abs(this.dx) > 0) {
+          // Checks if it should close
           if (this.hidden && this.openedBy[this.orientation]) {
             this.panelAbort(true)
           } else if (!this.hidden && this.closedBy[this.orientation]) {
