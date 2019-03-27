@@ -1,6 +1,17 @@
 <template>
   <div></div>
 </template>
+
+<script>
+export default {
+  beforeCreate () {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      this.$router.push({ name: 'mobile' })
+    }
+  },
+}
+</script>
+
 <style lang="scss" scoped>
 @import '@/assets/sass/_0.commons.scss';
 

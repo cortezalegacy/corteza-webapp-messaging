@@ -30,6 +30,11 @@ export default new Router({
       path: '*',
       redirect: { name: 'root' },
     },
+    {
+      path: '/mobile',
+      name: 'mobile',
+      component: view('LandingMobile'),
+    },
   ],
 })
 
