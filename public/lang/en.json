@@ -169,6 +169,14 @@
     }
   },
 
+  "configure": {
+    "label": "Configure",
+    "header": "Configure client",
+    "selectExisting": "Select existing domain",
+    "configureDomain": "Set new domain",
+    "domainExample": "Example: latest.crust.tech",
+    "or": "or"
+  },
   "general": {
     "label": {
       "ok": "Ok",
