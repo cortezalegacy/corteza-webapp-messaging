@@ -145,6 +145,11 @@
     }
   },
 
+  "commands": {
+    "muteAllDescription": "Mute all notifications",
+    "unmuteAllDescription": "Unmute all notifications"
+  },
+
   "notification": {
     "event": {
       "busNotDefined": "Expecting eventbus to be passed as an option to bus plugin"

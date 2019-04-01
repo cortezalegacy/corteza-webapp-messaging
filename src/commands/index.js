@@ -1,3 +1,5 @@
+import i18next from 'i18next'
+
 export default [
   // @todo refactor triggers a bit...
   // {
@@ -11,7 +13,7 @@ export default [
   // },
   {
     command: 'mute',
-    description: 'Mute all notifications',
+    description: i18next.t('commands.muteAllDescription'),
     handler: (vm) => {
       console.debug('Setting mute.all to true')
       vm.$store.commit('settings/set', { key: 'mute.all', value: true })
@@ -20,7 +22,7 @@ export default [
 
   {
     command: 'unmute',
-    description: 'Mute all notifications',
+    description: i18next.t('commands.unmuteAllDescription'),
     handler: (vm) => {
       console.debug('Setting mute.all to false')
       vm.$store.commit('settings/set', { key: 'mute.all', value: false })

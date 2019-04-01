@@ -42,7 +42,7 @@
         <label class="dropbtn">
           <font-awesome-icon
             :icon="['fas', 'ellipsis-v']"
-            title="Open bookmarks"
+            :title="$t('channel.bookmarkedMessagesTooltip')"
             class="dropbtn"
           ></font-awesome-icon>
         </label>

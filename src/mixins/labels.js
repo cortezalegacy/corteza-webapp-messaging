@@ -13,7 +13,7 @@ export default {
 
       if (!c) {
         console.trace('Could not load channel %o', c)
-        return 'N/A'
+        return this.$t('general.label.na')
       }
 
       if (c.type === 'group') {
@@ -39,7 +39,7 @@ export default {
 
       if (!u) {
         console.trace('Could not load user %o', u)
-        return 'N/A'
+        return this.$t('general.label.na')
       }
 
       return u.name || u.username || u.handle || u.email || `<@${u.ID}>`
