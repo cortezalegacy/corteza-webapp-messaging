@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Messaging from '@/api/messaging'
+import System from '@/api/system'
 import channels from './channels'
 import users from './users'
 import history from './history'
@@ -15,7 +16,7 @@ const store = new Vuex.Store({
   modules: {
     channels: channels(Messaging),
     history: history(Messaging),
-    users: users(Messaging),
+    users: users(Messaging, System),
     settings: settings(Messaging),
     suggestions: suggestions(Messaging),
     unread: unread(Messaging),

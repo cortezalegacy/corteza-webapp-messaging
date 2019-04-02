@@ -1,3 +1,16 @@
+import { User } from '@/types'
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  resetList: 'resetList',
+  connections: 'connections',
+
+  active: 'active',
+  inactive: 'inactive',
+  cleanup: 'cleanup',
+}
+
 // How much time (in seconds) should we keep the activity
 const activityTTL = 5
 
@@ -22,10 +35,11 @@ class Activity {
   }
 }
 
-export default function (Messaging) {
+export default function (Messaging, System) {
   return {
     namespaced: true,
     state: {
+      pending: false,
       list: [],
 
       // Keeps user presence & channel activity
@@ -39,6 +53,7 @@ export default function (Messaging) {
       findByUsername: (state) => (username) => {
         return state.list.filter(user => user.username === username)[0] || undefined
       },
+      pending: (state) => state.pending,
 
       isPresent:
         (state) =>
@@ -53,16 +68,28 @@ export default function (Messaging) {
           },
     },
     actions: {
-      resetList ({ commit }, list) {
-        commit('resetList', list)
+      async load  ({ commit }) {
+        commit(types.pending)
+        System.userList().then((users) => {
+          commit(types.resetList, users.map(u => new User(u)))
+          commit(types.completed)
+        })
       },
     },
     mutations: {
-      resetList (state, users) {
+      [types.pending] (state) {
+        state.pending = true
+      },
+
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.resetList] (state, users) {
         state.list = users
       },
 
-      connections (state, { ID, delta = undefined, value = undefined }) {
+      [types.connections] (state, { ID, delta = undefined, value = undefined }) {
         const i = state.list.findIndex(u => u.ID === ID)
         if (i > -1) {
           const user = state.list[i]
@@ -82,7 +109,7 @@ export default function (Messaging) {
         }
       },
 
-      active (state, props) {
+      [types.active] (state, props) {
         const i = state.activity.findIndex(activityFinder(props))
         if (i > -1) {
           state.activity.splice(i, 1, state.activity[i].update())
@@ -92,13 +119,13 @@ export default function (Messaging) {
       },
 
       // Removes all activities that match
-      inactive (state, { userID, channelID, kind }) {
+      [types.inactive] (state, { userID, channelID, kind }) {
         state.activity = [...state.activity.filter((a) =>
           !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
       },
 
       // Removes all stale activity
-      cleanup (state, { ttl }) {
+      [types.cleanup] (state, { ttl }) {
         state.activity = state.activity.filter(a => a.isStale(ttl))
       },
     },

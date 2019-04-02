@@ -1,6 +1,16 @@
 import { Channel, Message } from '../types'
 import i18next from 'i18next'
 
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  set: 'set',
+  unset: 'unset',
+  inc: 'inc',
+  dec: 'dec',
+  delta: 'delta',
+}
+
 class Unread {
   constructor (channelID, threadID, count, lastMessageID) {
     if (channelID === undefined || typeof channelID !== 'string') {
@@ -71,9 +81,12 @@ function delta (state, { channelID, threadID = '' }, delta = 0) {
 export default function (Messaging) {
   return {
     namespaced: true,
+
     state: {
+      pending: false,
       set: [],
     },
+
     getters: {
       // Return number of unread messages in channel/thread. Default to 0
       count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
@@ -85,36 +98,57 @@ export default function (Messaging) {
 
       // Total unread count
       total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
+      pending: (state) => state.pending,
     },
-    actions: {},
-    mutations: {
-      set (state, { channelID, threadID = '', count = 0, lastMessageID = '' }) {
-        const u = new Unread(channelID, threadID, count, lastMessageID)
-        const i = state.set.findIndex(filter(u))
 
-        if (i > -1) {
-          state.set.splice(i, 1, u)
-        } else {
-          state.set.push(u)
+    actions: {
+      markAsRead ({ commit }, { channelID, lastReadMessageID, threadID }) {
+        commit(types.pending)
+        Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
+          commit(types.set, { channelID, threadID, count, lastMessageID: lastReadMessageID })
+          commit(types.completed)
+        })
+      },
+    },
+
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
+
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.set] (state, ...unreads) {
+        for (const { channelID, threadID = '', count = 0, lastMessageID = '' } of unreads) {
+          const u = new Unread(channelID, threadID, count, lastMessageID)
+          const i = state.set.findIndex(filter(u))
+
+          if (i > -1) {
+            state.set.splice(i, 1, u)
+          } else {
+            state.set.push(u)
+          }
         }
       },
 
-      unset (state, input) {
+      [types.unset] (state, input) {
         const i = state.set.findIndex(filter(transform(input)))
         if (i > -1) {
           state.set.splice(i, 1)
         }
       },
 
-      inc (state, input) {
+      [types.inc] (state, input) {
         delta(state, transform(input), 1)
       },
 
-      dec (state, input) {
+      [types.dec] (state, input) {
         delta(state, transform(input), -1)
       },
 
-      delta (state, { channelID, threadID = '', delta = 0 }) {
+      [types.delta] (state, { channelID, threadID = '', delta = 0 }) {
         const i = state.set.findIndex(filter({ channelID, threadID }))
         if (i > -1) {
           const u = state.set[i]

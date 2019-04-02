@@ -1,12 +1,28 @@
+import { Channel } from '@/types'
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  setCurrent: 'setCurrent',
+  resetList: 'resetList',
+  updateList: 'updateList',
+  removeFromList: 'removeFromList',
+  updateLastMessage: 'updateLastMessage',
+}
+
 export default function (Messaging) {
   return {
     namespaced: true,
+
     state: {
       current: null,
+      pending: false,
       list: [],
       lastMessages: [], // set of channelID-messageId pairs
     },
+
     getters: {
+      pending: (state) => state.pending,
       // Finds last message id for a specific channel
       lastMessage: (state) => (channelID) => {
         const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
@@ -49,17 +65,29 @@ export default function (Messaging) {
         return ch.members.filter(memberID => memberID !== userID)
       },
     },
+
     actions: {
-      setCurrent ({ commit }, channel) {
-        commit('setCurrent', channel)
-      },
+      // Loads all channels, returns a promise, can be used to update unreads.
+      async load ({ commit }) {
+        commit(types.pending)
+        return new Promise((resolve) => {
+          Messaging.channelList().then((channels) => {
+            const cc = []
+            const unreads = []
+            console.debug('Prefeched %d channels', channels.length)
+            channels.forEach((c) => {
+              cc.push(new Channel(c))
 
-      resetList ({ commit }, list) {
-        commit('resetList', list)
-      },
+              if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
+                unreads.push({ channelID: c.ID, ...c.unread })
+              }
+            })
 
-      updateList ({ commit }, channel) {
-        commit('updateList', channel)
+            commit(types.resetList, cc)
+            commit(types.completed)
+            resolve({ unreads })
+          })
+        })
       },
 
       join ({ commit, getters }, { channelID, userID }) {
@@ -72,6 +100,7 @@ export default function (Messaging) {
         }
       },
 
+      // Remove user from channel
       part ({ commit, getters }, { channelID, userID }) {
         const ch = getters.findByID(channelID)
 
@@ -81,17 +110,13 @@ export default function (Messaging) {
             const i = ch.members.findIndex(m => m === userID)
             if (i > -1) {
               ch.members.splice(i, 1)
-              commit('updateList', ch)
+              commit(types.updateList, ch)
             }
           } else {
             // Remove non-public channels, groups from the list
-            commit('removeFromList', ch)
+            commit(types.removeFromList, ch)
           }
         }
-      },
-
-      removeFromList ({ commit }, channel) {
-        commit('removeFromList', channel)
       },
 
       incUnreadMessageCount ({ commit, getters }, channelID) {
@@ -99,7 +124,7 @@ export default function (Messaging) {
 
         if (ch) {
           ch.view.newMessagesCount++
-          commit('updateList', ch)
+          commit(types.updateList, ch)
         }
       },
 
@@ -108,20 +133,28 @@ export default function (Messaging) {
 
         if (ch) {
           ch.view.newMessagesCount = 0
-          commit('updateList', ch)
+          commit(types.updateList, ch)
         }
       },
     },
+
     mutations: {
-      setCurrent (state, channel) {
+      [types.pending] (state) {
+        state.pending = true
+      },
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.setCurrent] (state, channel) {
         state.current = channel
       },
 
-      resetList (state, channels) {
+      [types.resetList] (state, channels) {
         state.list = channels
       },
 
-      updateList (state, channel) {
+      [types.updateList] (state, channel) {
         const l = state.list
         const i = l.findIndex(c => c.ID === channel.ID)
 
@@ -134,11 +167,11 @@ export default function (Messaging) {
         state.list = [...l]
       },
 
-      removeFromList (state, channel) {
-        state.list = [...state.list.filter(ch => channel.ID !== ch.ID)]
+      [types.removeFromList] (state, { ID }) {
+        state.list = [...state.list.filter(ch => ID !== ch.ID)]
       },
 
-      updateLastMessage (state, { channelID, messageId }) {
+      [types.updateLastMessage] (state, { channelID, messageId }) {
         const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
         if (ci < 0) {
           state.lastMessages.push({ channelID, messageId })

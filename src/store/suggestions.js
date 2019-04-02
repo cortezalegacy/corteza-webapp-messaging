@@ -1,3 +1,10 @@
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  setCommands: 'setCommands',
+}
+
 export default function (Messaging) {
   return {
     namespaced: true,
@@ -5,6 +12,7 @@ export default function (Messaging) {
       suggestions: [],
       suggestionsOpened: false,
       commands: [],
+      pending: false,
     },
     getters: {
       getSuggestions: (state) => state.suggestions,
@@ -12,10 +20,19 @@ export default function (Messaging) {
 
       getCommands: (state) => state.commands,
       getCommand: (state) => (command) => state.commands.find(c => c.command === command),
+      pending: (state) => state.pending,
     },
     actions: {},
     mutations: {
-      setCommands (state, commands) {
+      [types.pending] (state) {
+        state.pending = true
+      },
+
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.setCommands] (state, commands) {
         state.commands = commands
       },
     },
