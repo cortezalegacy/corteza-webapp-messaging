@@ -110,7 +110,7 @@ export default {
     })
 
     this.$bus.$on('$ws.commands', (commands) => {
-      this.$store.commit('suggestions/setCommands', commands.map(c => {
+      this.$store.commit('suggestions/set', commands.map(c => {
         return {
           command: c.name,
           description: c.description,
