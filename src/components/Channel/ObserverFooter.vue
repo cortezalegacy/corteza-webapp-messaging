@@ -15,7 +15,7 @@ export default {
 
   methods: {
     onJoin () {
-      this.$rest.addMember(this.channel.ID, this.$auth.user.ID)
+      this.$messaging.channelJoin({ channelID: this.channel.ID, userID: this.$auth.user.ID })
     },
   },
 }

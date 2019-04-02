@@ -106,9 +106,9 @@ export default {
     },
     onFlag (flag) {
       if (flag) {
-        this.$rest.setMembershipFlag(this.channel.ID, flag)
+        this.$messaging.channelSetFlag({ channelID: this.channel.ID, flag })
       } else {
-        this.$rest.removeMembershipFlag(this.channel.ID)
+        this.$messaging.channelRemoveFlag({ channelID: this.channel.ID })
       }
     },
   },

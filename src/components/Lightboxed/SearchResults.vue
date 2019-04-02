@@ -78,7 +78,7 @@ export default {
   methods: {
     search (query) {
       this.results = []
-      this.$rest.searchMessages(query).then(mm => {
+      this.$messaging.searchMessages({ query }).then(mm => {
         this.results = this.groupByChannel(mm)
       })
     },

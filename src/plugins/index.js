@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import store from '@/store'
-import rest from '@/plugins/rest'
 import ws from '@/plugins/ws'
 import bus from '@/plugins/bus'
 import system from '@/plugins/system'
@@ -15,7 +14,6 @@ Vue.use(logger)
 Vue.use(messaging)
 Vue.use(bus, { eventbus })
 Vue.use(system)
-Vue.use(rest)
 Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
 Vue.use(auth)

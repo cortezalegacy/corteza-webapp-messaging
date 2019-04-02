@@ -162,18 +162,19 @@ export default {
 
   methods: {
     onPart () {
-      this.$rest.removeMember(this.channel.ID, this.$auth.user.ID)
+
+      this.$messaging.channelPart({ channelID: this.channel.ID, userID: this.$auth.user.ID })
     },
 
     onJoin () {
-      this.$rest.addMember(this.channel.ID, this.$auth.user.ID)
+      this.$messaging.channelJoin({ channelID: this.channel.ID, userID: this.$auth.user.ID })
     },
 
     onFlag (flag) {
       if (flag) {
-        this.$rest.setMembershipFlag(this.channel.ID, flag)
+        this.$messaging.channelSetFlag({ channelID: this.channel.ID, flag })
       } else {
-        this.$rest.removeMembershipFlag(this.channel.ID)
+        this.$messaging.channelRemoveFlag({ channelID: this.channel.ID })
       }
     },
   },
