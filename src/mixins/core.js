@@ -109,6 +109,7 @@ export default {
       }
     })
 
+    // TODO: Crust client
     this.$bus.$on('$ws.commands', (commands) => {
       this.$store.commit('suggestions/set', commands.map(c => {
         return {
@@ -117,6 +118,7 @@ export default {
           params: [],
           meta: {},
           handler: (vm, { channel, params, input }) => {
+            // TODO: Crust client
             vm.$ws.exec(channel.ID, c.name, {}, input)
           },
         }
