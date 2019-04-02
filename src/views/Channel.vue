@@ -97,8 +97,6 @@ export default {
   computed: {
     ...mapGetters({
       channelByID: 'channels/findByID',
-
-      unread: 'unread/channel',
       lastReadMessageID: 'unread/last',
 
       channelHistory: 'history/getByChannelID',
