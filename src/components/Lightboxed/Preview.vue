@@ -4,7 +4,7 @@
       <span class="closer" @click="onClose()">&times;</span>
     </header>
     <main @click="onClose()">
-      <img ref="img" :src="src" :title="caption" @click.stop="noop()">
+      <img ref="img" :src="src" :title="caption" @click.stop>
     </main>
     <footer></footer>
   </lightbox>
@@ -38,8 +38,6 @@ export default {
     onClose () {
       this.$emit('close')
     },
-
-    noop () {},
   },
 }
 </script>
