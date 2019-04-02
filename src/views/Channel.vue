@@ -44,7 +44,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import ChannelHeader from '@/components/Channel/Header'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
@@ -136,6 +136,8 @@ export default {
   methods: {
     ...mapActions({
       clearHistory: 'history/clear',
+    }),
+    ...mapMutations({
       setCurrentChannel: 'channels/setCurrent',
     }),
 

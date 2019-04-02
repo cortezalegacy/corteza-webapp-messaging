@@ -98,7 +98,7 @@ export default {
         // @todo make maxFilesize configurable
         maxFilesize: 10, // mb
         url: () => {
-          return `${this.$rest.baseURL()}/channels/${this.channelID}/attach`
+          return `${this.$messaging.baseURL}/channels/${this.channelID}/attach`
         },
         params: { replyTo: this.replyTo },
         thumbnailMethod: 'contain',

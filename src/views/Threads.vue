@@ -44,7 +44,7 @@ export default {
 
   mounted () {
     this.$ws.getThreads()
-    this.$store.dispatch('channels/setCurrent', null)
+    this.$store.commit('channels/setCurrent', null)
   },
 }
 </script>
