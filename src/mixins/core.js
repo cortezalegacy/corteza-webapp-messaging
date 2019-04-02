@@ -25,7 +25,7 @@ export default {
     )
 
     this.$bus.$on('$ws.channel', (channel) => {
-      this.$store.mutate('channels/updateList', new Channel(channel))
+      this.$store.commit('channels/updateList', new Channel(channel))
     })
 
     this.$bus.$on('$ws.channelJoin', (join) => {
@@ -71,44 +71,41 @@ export default {
         //   lastMessageID: (c.view || {}).lastMessageID,
         // })
       }
-      this.$store.dispatch('history/update', [msg])
+      this.$store.commit('history/updateSet', [msg])
 
       // Assume activity stopped
       this.$store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
     })
 
-    // This serves a sole purpose of handling callback to getMessage calls to $ws
-    this.$bus.$on('$ws.messages', messages => this.$store.dispatch('history/update', messages.map(message => new Message(message))))
-
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
-        msg.addReaction({ userID, reaction })
-        this.$store.commit('history/update', [msg])
+        this.$store.commit('history/addReaction', { msg, userID, reaction })
+        this.$store.commit('history/updateSet', [msg])
       }
     })
 
     this.$bus.$on('$ws.messageReactionRemoved', ({ userID, messageID, reaction }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
-        msg.removeReaction({ userID, reaction })
-        this.$store.commit('history/update', [msg])
+        this.$store.commit('history/removeReaction', { msg, userID, reaction })
+        this.$store.commit('history/updateSet', [msg])
       }
     })
 
     this.$bus.$on('$ws.messagePin', ({ userID, messageID }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
-        msg.isPinned = true
-        this.$store.commit('history/update', [msg])
+        this.$store.commit('history/setPin', { msg, isPinned: true })
+        this.$store.commit('history/updateSet', [msg])
       }
     })
 
     this.$bus.$on('$ws.messagePinRemoved', ({ userID, messageID }) => {
       const msg = this.$store.getters['history/getByID'](messageID)
       if (msg) {
-        msg.isPinned = false
-        this.$store.commit('history/update', [msg])
+        this.$store.commit('history/setPin', { msg, isPinned: false })
+        this.$store.commit('history/updateSet', [msg])
       }
     })
 
@@ -129,7 +126,7 @@ export default {
     // Handling requests for message pins
     this.$bus.$on('message.delete', ({ message }) => {
       // Response is broadcasted via WS
-      this.$rest.deleteMessage(message.channelID, message.ID)
+      this.$store.dispatch('history/delete', { channelID: message.channelID, messageID: message.ID })
     })
 
     // Handling requests for last read message
@@ -140,26 +137,25 @@ export default {
     // Handling requests for message pins
     this.$bus.$on('message.pin', ({ message }) => {
       // Response is broadcasted via WS
-      this.$rest.pinMessage(message.channelID, message.ID, message.isPinned)
+      this.$store.dispatch('history/pin', { channelID: message.channelID, messageID: message.ID, isPinned: message.isPinned })
     })
 
     // Handling requests for message bookmark
     this.$bus.$on('message.bookmark', ({ message }) => {
       // API does not send bookmark notifications back via WS, so we're on our own..
-      this.$rest.bookmarkMessage(message.channelID, message.ID, message.isBookmarked).then(() => {
-        const msg = this.$store.getters['history/getByID'](message.ID)
-        if (msg) {
-          msg.isBookmarked = !msg.isBookmarked
-          this.$store.commit('history/update', [msg])
-        }
-      })
+      this.$store.dispatch('history/bookmark', { channelID: message.channelID, messageID: message.ID, isBookmarked: message.isBookmarked })
     })
 
     // Handling Message reaction requests
     this.$bus.$on('message.reaction', ({ message, reaction }) => {
       const existing = message.reactions.find(r => r.reaction === reaction)
       const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.ID) !== -1
-      this.$rest.reactionToMessage(message.channelID, message.ID, reaction, existing && ours)
+
+      if (existing && ours) {
+        this.$messaging.messageReactionRemove({ channelID: message.channelID, messageID: message.ID, reaction })
+      } else {
+        this.$messaging.messageReactionCreate({ channelID: message.channelID, messageID: message.ID, reaction })
+      }
     })
 
     // Activity cleanup interval
@@ -170,7 +166,7 @@ export default {
     // Activity cleanup interval
     autheticationRecheckInterval = window.setInterval(() => {
       this.$system.authCheck().catch((err) => {
-        // When logout (or a problem) is detected, redurect user
+        // When logout (or a problem) is detected, redirect user
         console.error(err)
         this.$router.push({ name: 'signin' })
       })
