@@ -65,7 +65,7 @@ export default {
 
   methods: {
     prefixAttachmentUrl (url) {
-      return this.$rest.baseURL() + url
+      return this.$messaging.baseURL + url
     },
 
     onClick () {

@@ -198,10 +198,10 @@ export default {
 
     load (channelID) {
       if (channelID) {
-        this.$rest.getChannel(channelID).then((ch) => {
+        this.$messaging.channelRead({ channelID }).then((ch) => {
           this.channel = ch
 
-          this.$rest.getMembers(channelID).then((members) => {
+          this.$messaging.channelMembers({ channelID }).then((members) => {
             console.debug('Chanel member info loaded into editor', members)
             this.channel.members = members.map((m) => {
               return m.user.ID
@@ -222,7 +222,7 @@ export default {
 
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
-      this.$rest.updateChannelState(this.channel.ID, state).then((ch) => {
+      this.$messaging.channelState({ channelID: this.channel.ID, state }).then((ch) => {
         this.channel = ch
       }).catch(({ message }) => {
         this.error = message
@@ -232,7 +232,7 @@ export default {
     onSubmit () {
       if (this.channel.ID) {
         console.debug('Updating channel', this.channel)
-        this.$rest.updateChannel(this.channel).then((ch) => {
+        this.$messaging.channelUpdate({ ...this.channel, channelID: this.channel.ID }).then((ch) => {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
@@ -240,7 +240,7 @@ export default {
         })
       } else {
         console.debug('Creating channel', this.channel)
-        this.$rest.createChannel(this.channel).then((ch) => {
+        this.$messaging.channelCreate(this.channel).then((ch) => {
           console.debug('Channel created', ch)
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch(({ error }) => {
