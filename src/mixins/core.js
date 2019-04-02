@@ -1,4 +1,4 @@
-import { Channel, Message, User } from '@/types'
+import { Channel, Message } from '@/types'
 import localCommands from '@/commands'
 import Favico from 'favico.js'
 
@@ -24,22 +24,8 @@ export default {
       },
     )
 
-    this.$bus.$on('$ws.channels', (channels) => {
-      let cc = []
-      console.debug('Prefeched %d channels', channels.length)
-      channels.forEach((c) => {
-        cc.push(new Channel(c))
-
-        if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
-          this.$store.commit('unread/set', { channelID: c.ID, ...c.unread })
-        }
-      })
-
-      this.$store.dispatch('channels/resetList', cc)
-    })
-
     this.$bus.$on('$ws.channel', (channel) => {
-      this.$store.dispatch('channels/updateList', new Channel(channel))
+      this.$store.mutate('channels/updateList', new Channel(channel))
     })
 
     this.$bus.$on('$ws.channelJoin', (join) => {
@@ -55,11 +41,6 @@ export default {
         // Store activity only if someone else is active...
         this.$store.commit('users/active', activity)
       }
-    })
-
-    // Handle users payload when it gets back
-    this.$bus.$on('$ws.users', (users) => {
-      this.$store.dispatch('users/resetList', users.map(u => new User(u)))
     })
 
     this.$bus.$on('$ws.clientConnected', ({ uid }) => {
@@ -153,14 +134,7 @@ export default {
 
     // Handling requests for last read message
     this.$bus.$on('message.markAsLastRead', ({ channelID, messageID, threadID }) => {
-      this.$rest.markMessageAsRead({ channelID, lastReadMessageID: messageID, threadID }).then(count => {
-        this.$store.commit('unread/set', {
-          channelID,
-          threadID,
-          count,
-          lastMessageID: messageID,
-        })
-      })
+      this.$store.dispatch('unread/markAsRead', { channelID, lastReadMessageID: messageID, threadID })
     })
 
     // Handling requests for message pins

@@ -183,6 +183,11 @@ export default {
 
   methods: {
     init () {
+      this.$store.dispatch('channels/load').then(({ unreads }) => {
+        this.$store.commit('unread/set', ...unreads)
+      })
+      this.$store.dispatch('users/load')
+
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
 

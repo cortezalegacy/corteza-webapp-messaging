@@ -193,10 +193,10 @@ export default {
         return false
       } else if (this.message) {
         // Doing update
-        this.$rest.updateMessage(this.message.channelID, this.message.ID, value).then(stdResponse)
+        this.$messaging.messageEdit({ channelID: this.message.channelID, messageID: this.message.ID, message: value }).then(stdResponse)
       } else if (this.replyTo) {
         // Sending reply
-        this.$rest.sendReply(this.replyTo.channelID, this.replyTo.ID, value).then(stdResponse)
+        this.$messaging.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.ID, message: value }).then(stdResponse)
       } else if (this.channel) {
         this.keepFocusOnSubmit = true
 
@@ -207,7 +207,7 @@ export default {
           return
         }
 
-        this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
+        this.$messaging.messageCreate({ channelID: this.channel.ID, message: value }).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
     },
