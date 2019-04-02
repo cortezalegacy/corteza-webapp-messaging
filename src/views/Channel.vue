@@ -44,7 +44,7 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ChannelHeader from '@/components/Channel/Header'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
@@ -137,9 +137,6 @@ export default {
     ...mapActions({
       clearHistory: 'history/clear',
     }),
-    ...mapMutations({
-      setCurrentChannel: 'channels/setCurrent',
-    }),
 
     changeChannel (channel) {
       if (!channel) return
@@ -147,7 +144,7 @@ export default {
       this.editLastMessage = false
       this.channel = channel
 
-      this.setCurrentChannel(this.channel)
+      this.$store.commit('channels/setCurrent', this.channel)
 
       this.previousFetchFirstMessageID = null
 
@@ -156,7 +153,7 @@ export default {
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
+      this.$store.dispatch('history/load', { channelID: this.channel.ID, lastMessageID: this.messageID })
     },
 
     onOpenFilePicker () {

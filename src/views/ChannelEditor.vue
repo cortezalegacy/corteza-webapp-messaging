@@ -128,7 +128,7 @@
 </template>
 <script>
 import { Channel } from '@/types'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import ConfirmationRow from '@/components/Form/ConfirmationRow'
 import SearchInput from '@/components/SearchInput'
 import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
@@ -192,7 +192,7 @@ export default {
   },
 
   methods: {
-    ...mapActions({
+    ...mapMutations({
       removeChannelFromList: 'channels/removeFromList',
     }),
 
