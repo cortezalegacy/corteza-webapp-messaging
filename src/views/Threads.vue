@@ -43,7 +43,7 @@ export default {
   },
 
   mounted () {
-    // NOTE: Move this to rest client
+    // TODO: Crust client
     this.$ws.getThreads()
     this.$store.commit('channels/setCurrent', null)
   },

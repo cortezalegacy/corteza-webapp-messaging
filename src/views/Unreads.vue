@@ -67,7 +67,6 @@ export default {
     }),
 
     loadUnreadMessages () {
-      // @todo unread -- port this
       this.unreadChannels.forEach(u => {
         // BUG: firstMessageID not available yet!
         this.$store.dispatch('history/load', { channelID: u.channelID, firstMessageID: u.lastMessageID })
