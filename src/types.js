@@ -161,6 +161,17 @@ export class User {
   Match (q) {
     return this.fts.indexOf(q) > -1
   }
+
+  SetConnections ({ value, delta }) {
+    if (value !== undefined) {
+      this.connections = value
+      return true
+    } else if (delta !== undefined) {
+      this.connections += delta
+      return true
+    }
+    return false
+  }
 }
 
 export function Member (m) {
