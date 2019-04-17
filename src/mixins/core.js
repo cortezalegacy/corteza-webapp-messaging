@@ -49,10 +49,12 @@ export default {
       }
     })
 
+    // NOTE: These uid should become ID
     this.$bus.$on('$ws.clientConnected', ({ uid }) => {
       this.$store.commit('users/connections', { ID: uid, delta: 1 })
     })
 
+    // NOTE: These uid should become ID
     this.$bus.$on('$ws.clientDisconnected', ({ uid }) => {
       this.$store.commit('users/connections', { ID: uid, delta: -1 })
     })
@@ -117,7 +119,6 @@ export default {
 
     // TODO: Make WS send new commands; currently it loads all of them
     this.$bus.$on('$ws.commands', (commands) => {
-      console.warn(commands)
       this.$store.commit('suggestions/updateCommands', commands)
     })
 
