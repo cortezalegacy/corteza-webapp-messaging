@@ -1,5 +1,4 @@
 import { Channel, Message } from '@/types'
-import localCommands from '@/commands'
 import Favico from 'favico.js'
 
 const userActivityTTL = 1000 * 5 // microseconds
@@ -109,20 +108,10 @@ export default {
       }
     })
 
-    // TODO: Crust client
+    // TODO: Make WS send new commands; currently it loads all of them
     this.$bus.$on('$ws.commands', (commands) => {
-      this.$store.commit('suggestions/set', commands.map(c => {
-        return {
-          command: c.name,
-          description: c.description,
-          params: [],
-          meta: {},
-          handler: (vm, { channel, params, input }) => {
-            // TODO: Crust client
-            vm.$ws.exec(channel.ID, c.name, {}, input)
-          },
-        }
-      }).concat(localCommands))
+      console.warn(commands)
+      this.$store.commit('suggestions/updateCommands', commands)
     })
 
     // Handling requests for message pins
