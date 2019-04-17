@@ -238,15 +238,15 @@ export default {
           break
 
         case this.message !== undefined:
-          this.$ws.send({ messageActivity: { channelID: this.message.channelID, messageID: this.message.ID, kind: 'editing' } })
+          this.$messaging.messageActivity(({ channelID: this.message.channelID, messageID: this.message.ID, kind: 'editing' }))
           break
 
         case this.replyTo !== undefined:
-          this.$ws.send({ messageActivity: { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: 'replying' } })
+          this.$messaging.messageActivity(({ channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: 'replying' }))
           break
 
         default:
-          this.$ws.send({ channelActivity: { ID: this.channelID, kind: 'typing' } })
+          this.$messaging.channelActivity(({ ID: this.channelID, kind: 'typing' }))
           break
       }
     }, 2000),
