@@ -35,6 +35,13 @@ export default {
       this.$store.dispatch('channels/part', part)
     })
 
+    // TODO: Add userConnections to $ws - initial connections for users; potential rename.
+    this.$bus.$on('$ws.userConnections', (connections) => {
+      connections.forEach(conn => {
+        this.$store.commit('users/connections', conn)
+      })
+    })
+
     this.$bus.$on('$ws.channelActivity', (activity) => {
       if (this.$auth.user.ID !== activity.userID) {
         // Store activity only if someone else is active...

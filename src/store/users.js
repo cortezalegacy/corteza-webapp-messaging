@@ -3,8 +3,9 @@ import { User } from '@/types'
 const types = {
   pending: 'pending',
   completed: 'completed',
-  resetList: 'resetList',
+  updateList: 'updateList',
   connections: 'connections',
+  connectionsUpdate: 'connectionsUpdate',
 
   active: 'active',
   inactive: 'inactive',
@@ -44,6 +45,7 @@ export default function (Messaging, System) {
 
       // Keeps user presence & channel activity
       activity: [], // []Activity
+      connections: [],
     },
     getters: {
       list: (state) => state.list,
@@ -71,7 +73,7 @@ export default function (Messaging, System) {
       async load  ({ commit }) {
         commit(types.pending)
         System.userList().then((users) => {
-          commit(types.resetList, users.map(u => new User(u)))
+          commit(types.updateList, users)
           commit(types.completed)
         })
       },
@@ -85,27 +87,74 @@ export default function (Messaging, System) {
         state.pending = false
       },
 
-      [types.resetList] (state, users) {
-        state.list = users
+      [types.updateList] (state, users) {
+        users = users.map(u => {
+          // Check connections...
+          const { userID } = u
+          const user = new User(u)
+          const i = state.connections.findIndex(c => c.ID === userID)
+          if (i >= 0) {
+            user.SetConnections(state.connections[i])
+            state.connections.splice(i, 1)
+          }
+
+          return user
+        })
+
+        if (state.list.length === 0) {
+          state.list = users
+        } else {
+          users.forEach(usr => {
+            // Replaces given user due to an update
+            const n = state.list.findIndex(u => u.ID === usr.ID)
+
+            // Doesn't yet exist -- add it
+            if (n < 0) {
+              state.list.push(usr)
+            } else {
+              usr.connections = (state.list[n] || {}).connections || 0
+              state.list.splice(n, 1, usr)
+            }
+          })
+        }
       },
 
       [types.connections] (state, { ID, delta = undefined, value = undefined }) {
         const i = state.list.findIndex(u => u.ID === ID)
         if (i > -1) {
           const user = state.list[i]
-          if (value !== undefined) {
-            user.connections = value
-          } else if (delta !== undefined) {
-            user.connections += delta
 
-            if (user.connections < 0) {
-              user.connections = 0
-            }
-          } else {
+          // If setConnections fails, break out
+          if (!user.SetConnections({ value, delta })) {
             return
           }
 
           state.list.splice(i, 1, user)
+
+          // If user doesn't exist, store this data until the user arrives.
+          // NOTE: This can also be an indicator of when to pull new users
+        } else {
+          const i = state.connections.findIndex(c => c.ID === ID)
+
+          if (value !== undefined && value <= 0) {
+            if (i >= 0) {
+              state.connections.splice(i, 1)
+            }
+          } else {
+            let conn
+            if (i >= 0) {
+              conn = state.connections[i]
+              state.connections.splice(i, 1)
+            }
+
+            if (delta === undefined) {
+              delta = conn.delta
+            } else {
+              delta += conn.delta || 0
+            }
+
+            state.connections.push = { ID, delta, value }
+          }
         }
       },
 
