@@ -166,11 +166,10 @@ export default {
   computed: {
     ...mapGetters({
       users: 'users/list',
-      currentUser: 'auth/user',
     }),
 
     nonMembers () {
-      return this.users.filter(u => !this.channel.isMember(u.ID) && u.ID !== this.currentUser.ID)
+      return this.users.filter(u => !this.channel.isMember(u.ID) && u.ID !== this.$auth.user.ID)
     },
 
     members () {

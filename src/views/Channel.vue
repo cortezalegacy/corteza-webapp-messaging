@@ -19,7 +19,7 @@
       <messages
         ref="messages"
         :messages="messages"
-        :currentUser="currentUser"
+        :currentUser="$auth.user"
         :origin="channel"
         :scrollable="true"
         :consecutive="true"
@@ -101,9 +101,6 @@ export default {
       unread: 'unread/channel',
       lastReadMessageID: 'unread/last',
 
-      user: 'auth/user',
-      currentUser: 'auth/user',
-
       channelHistory: 'history/getByChannelID',
     }),
 
@@ -116,7 +113,7 @@ export default {
     },
 
     isMember () {
-      return this.channel.isMember(this.user.ID)
+      return this.channel.isMember(this.$auth.user.ID)
     },
   },
 

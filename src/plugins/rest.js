@@ -40,7 +40,7 @@ export default {
 
     Vue.prototype.$rest = {
       baseURL () {
-        return window.CrustConfig.messaging.baseUrl || 'https://sam.api.latest.crust.tech'
+        return window.CrustMessagingAPI || 'https://messaging.api.latest.crust.tech'
       },
 
       api () {
@@ -49,6 +49,7 @@ export default {
           baseURL: this.baseURL(),
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('auth.jwt')
           },
         })
       },
@@ -139,7 +140,7 @@ export default {
       async sendMessage (channelID, message) {
         return new Promise((resolve, reject) => {
           this.api().post(
-            `/channels/${channelID}/messages`,
+            `/channels/${channelID}/messages/`,
             { message }
           ).then(stdMessageResolve(resolve, reject), stdRejection(reject))
         })

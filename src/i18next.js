@@ -15,7 +15,7 @@ i18next
   .use(lngDetector)
   .use(intervalPlural)
   .init({
-    fallbackLng: window.CrustConfig.webapp.defaultLocale || 'en',
+    fallbackLng: 'en',
     debug: process.env.NODE_ENV !== 'production',
     detection: {
       // to overwrite, to use user defined, to guess user's lang

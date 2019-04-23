@@ -7,6 +7,7 @@ export default new Router({
   mode: 'history',
 
   routes: [
+    { path: '/auth', name: 'auth', component: view('Auth') },
     {
       path: '',
       name: 'root',
@@ -22,16 +23,6 @@ export default new Router({
         { path: 'threads', name: 'threads', component: view('Threads') },
         { path: 'unreads', name: 'unreads', component: view('Unreads') },
         { path: '*', name: 'landing', component: view('Landing') },
-      ],
-    },
-    {
-      path: 'auth',
-      component: view('IndexNested'),
-      redirect: 'signin',
-
-      children: [
-        { path: 'signin', name: 'signin', component: view('Auth/SignIn') },
-        { path: 'signout', name: 'signout', component: view('Auth/SignOut') },
       ],
     },
     {

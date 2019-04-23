@@ -51,8 +51,7 @@ export default {
     })
 
     this.$bus.$on('$ws.channelActivity', (activity) => {
-      const currentUser = this.$store.getters['auth/user']
-      if (currentUser.ID !== activity.userID) {
+      if (this.$auth.user.ID !== activity.userID) {
         // Store activity only if someone else is active...
         this.$store.commit('users/active', activity)
       }
@@ -76,8 +75,7 @@ export default {
       const msg = new Message(message)
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
-        const currentUser = this.$store.getters['auth/user']
-        if (currentUser.ID !== msg.user.ID && msg.type !== 'channelEvent') {
+        if (this.$auth.user.ID !== msg.user.ID && msg.type !== 'channelEvent') {
           // Count only new mesages, no updates, no replies
           this.$store.commit('unread/inc', msg)
         }
@@ -185,9 +183,8 @@ export default {
 
     // Handling Message reaction requests
     this.$bus.$on('message.reaction', ({ message, reaction }) => {
-      const currentUser = this.$store.getters['auth/user']
       const existing = message.reactions.find(r => r.reaction === reaction)
-      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(currentUser.ID) !== -1
+      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.ID) !== -1
       this.$rest.reactionToMessage(message.channelID, message.ID, reaction, existing && ours)
     })
 

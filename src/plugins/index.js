@@ -7,6 +7,7 @@ import system from '@/plugins/system'
 import commands from '@/plugins/commands'
 import triggers from '@/plugins/triggers'
 import logger from '@/plugins/logger'
+import auth from 'crust-common.vue/src/plugins/auth'
 
 const eventbus = new Vue()
 
@@ -16,6 +17,7 @@ Vue.use(system)
 Vue.use(rest)
 Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
+Vue.use(auth)
 Vue.use(triggers, {
   userByID: store.getters['users/findByID'],
   userList: store.getters['users/listOnDemand'],

@@ -17,7 +17,7 @@
             <confirmation-toggle
               @confirmed="remove(u.ID)"
               :cta="$t('panel.remove')"
-              v-if="channel.canChangeMembers && u.ID != currentUser.ID && channel.type !== 'group'"
+              v-if="channel.canChangeMembers && u.ID != $auth.user.ID && channel.type !== 'group'"
               class="confirmation-buttons">
             </confirmation-toggle>
           </li>
@@ -72,7 +72,6 @@ export default {
   computed: {
     ...mapGetters({
       users: 'users/list',
-      currentUser: 'auth/user',
     }),
 
     members () {

@@ -33,6 +33,21 @@ class System {
     }
   }
 
+  setJWT (jwt) {
+    if (this.isValidJWT(jwt)) {
+      this.jwt = jwt
+      this.headers['Authorization'] = 'Bearer ' + jwt
+    } else {
+      console.error('JWT value too short', { jwt })
+    }
+
+    return this
+  }
+
+  isValidJWT (jwt) {
+    return jwt && jwt.length > 100
+  }
+
   async authCheck () {
     const endpoint = `${this.baseLink}/auth/check`
     return new Promise((resolve, reject) => {
@@ -449,7 +464,7 @@ class System {
 
 export default {
   install (Vue, store) {
-    const client = new System(window.CrustConfig.system.baseUrl)
+    const client = new System(window.CrustSystemAPI)
 
     Vue.prototype.$system = client
   },

@@ -11,7 +11,7 @@
       :readOnly="readOnly"
       :message="msg"
       :consecutive="consecutive && isConsecutive(messages, index)"
-      :currentUser="currentUser"
+      :currentUser="$auth.user"
       :key="msg.ID"
       :isUnread="!!lastReadMessageID && lastReadMessageID < msg.ID"
       :isLastRead="lastReadMessageID === msg.ID"
@@ -100,7 +100,7 @@ export default {
 
   computed: {
     getLastEditable () {
-      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.ID)
+      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.$auth.user.ID)
     },
 
     showEditor () {
@@ -121,7 +121,7 @@ export default {
   updated () {
     const lastMessage = this.messages.length === 0 ? null : this.messages[this.messages.length - 1]
     const isNewMessage = lastMessage && this.lastMessageID < lastMessage.ID
-    const isOwnerOfLastMessage = lastMessage && lastMessage.user.ID === this.currentUser.ID
+    const isOwnerOfLastMessage = lastMessage && lastMessage.user.ID === this.$auth.user.ID
 
     this.$nextTick(() => {
       if (this.scrollable) {

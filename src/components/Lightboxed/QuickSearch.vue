@@ -51,7 +51,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       channels: 'channels/list',
       users: 'users/list',
     }),
@@ -63,7 +62,7 @@ export default {
 
     // List of prefered channels -- ones we're not members of
     prefered () {
-      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.currentUser.ID))
+      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.ID))
     },
 
     channelsAndUsers () {
@@ -73,7 +72,7 @@ export default {
       }
 
       return [
-        ...this.users.filter(i => i.ID !== this.currentUser.ID).map(cmp('user')),
+        ...this.users.filter(i => i.ID !== this.$auth.user.ID).map(cmp('user')),
         ...this.channels.filter(i => i.members.length > 2).map(cmp('channel')),
       ]
     },

@@ -63,7 +63,6 @@ export default {
       countUnread: 'unread/count',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
-      currentUser: 'auth/user',
     }),
 
     cssClass () {
@@ -93,7 +92,7 @@ export default {
 
       if (this.channel.members.length === 2) {
         // Direct message to a single user, find this user and see if he's online
-        memberID = this.channel.members.find(ID => ID !== this.currentUser.ID) || {}
+        memberID = this.channel.members.find(ID => ID !== this.$auth.user.ID) || {}
       }
 
       return (this.findUserByID(memberID) || {}).connections > 0

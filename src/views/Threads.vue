@@ -13,7 +13,7 @@
           <messages
             ref="messages"
             :messages="getThread(thread.ID)"
-            :currentUser="currentUser"
+            :currentUser="$auth.user"
             origin="threads"
             :scrollable="false"
             v-on="$listeners" />
@@ -37,7 +37,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       getThreads: 'history/getThreads',
       getThread: 'history/getThread',
     }),

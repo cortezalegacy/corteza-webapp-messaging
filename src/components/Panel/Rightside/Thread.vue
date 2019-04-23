@@ -21,7 +21,7 @@
         ref="messages"
         :readOnly="!channel.canSendMessages"
         :messages="messages"
-        :currentUser="currentUser"
+        :currentUser="$auth.user"
         :origin="message"
         :scrollable="true"
         :hideActionOpenThread="true"
@@ -85,7 +85,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       getMessageByID: 'history/getByID',
       getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',

@@ -147,27 +147,26 @@ export default {
   computed: {
     ...mapGetters({
       isPresent: 'users/isPresent',
-      currentUser: 'auth/user',
     }),
 
     isOnline () {
       if (this.channel.isDirectMessage()) {
-        return this.isPresent(this.channel.members.find(ID => ID !== this.currentUser.ID))
+        return this.isPresent(this.channel.members.find(ID => ID !== this.$auth.user.ID))
       }
     },
 
     isMember () {
-      return !!this.channel.members.find(ID => ID === this.currentUser.ID)
+      return !!this.channel.members.find(ID => ID === this.$auth.user.ID)
     },
   },
 
   methods: {
     onPart () {
-      this.$rest.removeMember(this.channel.ID, this.currentUser.ID)
+      this.$rest.removeMember(this.channel.ID, this.$auth.user.ID)
     },
 
     onJoin () {
-      this.$rest.addMember(this.channel.ID, this.currentUser.ID)
+      this.$rest.addMember(this.channel.ID, this.$auth.user.ID)
     },
 
     onFlag (flag) {

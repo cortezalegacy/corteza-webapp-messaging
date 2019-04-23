@@ -19,7 +19,7 @@
           <messages
             ref="messages"
             :messages="unreadInChannel(unread.channelID, unread.lastMessageID)"
-            :currentUser="currentUser"
+            :currentUser="$auth.user"
             origin="unreads"
             :scrollable="false"
             v-on="$listeners" />
@@ -43,7 +43,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       // @todo unread -- port this
       unreadChannels: 'unread/channels',
       findChannelByID: 'channels/findByID',

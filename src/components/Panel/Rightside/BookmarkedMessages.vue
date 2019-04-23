@@ -7,7 +7,7 @@
     <template slot="main">
       <messages
         :messages="bookmarked"
-        :currentUser="currentUser"
+        :currentUser="$auth.user"
         origin="bookmarked"
         :scrollable="false"
         :highlightBookmarked="false"
@@ -28,7 +28,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       bookmarked: 'history/getBookmarked',
     }),
   },

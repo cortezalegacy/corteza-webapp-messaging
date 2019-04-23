@@ -11,6 +11,12 @@ class SAM {
     this.headers = {
       'Content-Type': 'application/json',
     }
+
+    const jwt = localStorage.getItem('auth.jwt')
+
+    if (this.isValidJWT(jwt)) {
+      this.setJWT(jwt)
+    }
   }
 
   baseURL () {
@@ -31,6 +37,21 @@ class SAM {
         resolve(response.data.response)
       }
     }
+  }
+
+  setJWT (jwt) {
+    if (this.isValidJWT(jwt)) {
+      this.jwt = jwt
+      this.headers['Authorization'] = 'Bearer ' + jwt
+    } else {
+      console.error('JWT value too short', { jwt })
+    }
+
+    return this
+  }
+
+  isValidJWT (jwt) {
+    return jwt && jwt.length > 100
   }
 
   async channelList () {

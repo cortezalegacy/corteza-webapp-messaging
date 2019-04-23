@@ -9,7 +9,7 @@
     <template slot="main">
       <messages
         :messages="pinned"
-        :currentUser="currentUser"
+        :currentUser="$auth.user"
         origin="pinned"
         :scrollable="false"
         :highlightPinned="false"
@@ -37,7 +37,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       allPinned: 'history/getPinned',
     }),
 

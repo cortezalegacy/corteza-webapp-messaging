@@ -17,9 +17,7 @@ export default {
       }
 
       if (c.type === 'group') {
-        const currentUser = this.$store.getters['auth/user']
-
-        return this.$store.getters['channels/otherMembersOf'](c.ID, currentUser.ID)
+        return this.$store.getters['channels/otherMembersOf'](c.ID, this.$auth.user.ID)
           // Make sure user exists
           .filter(o => this.$store.getters['users/findByID'](o) !== undefined)
           .map(this.labelUser).join(', ')

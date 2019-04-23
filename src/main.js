@@ -5,14 +5,13 @@ import { sync } from 'vuex-router-sync'
 import store from './store'
 import i18n from './i18next'
 import router from './router'
-import core from './mixins/core'
 import Favico from 'favico.js'
 
 import './global'
 import './plugins'
 import './main.scss'
 
-if (window.CrustConfig === undefined) {
+if (window.CrustMessagingAPI === undefined) {
   alert('Unexisting or invalid configuration. Make sure there is a public/config.js configuration file.')
 } else {
   window.favicon = new Favico({
@@ -34,7 +33,6 @@ if (window.CrustConfig === undefined) {
     store,
     router,
     i18n,
-    mixins: [ core ],
     template: '<div id="crust-messenger" class="crust"><router-view/></div>',
   }).$mount('#app')
 

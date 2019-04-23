@@ -86,7 +86,6 @@ export default {
       findUserByID: 'users/findByID',
       current: 'channels/current',
       channels: 'channels/list',
-      currentUser: 'auth/user',
       countUnread: 'unread/count',
       lastUnread: 'unread/last',
     }),
@@ -97,10 +96,10 @@ export default {
         (this.current && this.current.ID === c.ID) ||
 
         // Unless hidden, show channels we're members of
-        (c.isMember(this.currentUser.ID) && c.membershipFlag !== 'hidden') ||
+        (c.isMember(this.$auth.user.ID) && c.membershipFlag !== 'hidden') ||
 
         // Unless ignored, show channels with unread messages we're members of
-        (c.isMember(this.currentUser.ID) && this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
+        (c.isMember(this.$auth.user.ID) && this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
 
         // and ignore the rest...
         false

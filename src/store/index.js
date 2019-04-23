@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import auth from './auth'
 import channels from './channels'
 import users from './users'
 import history from './history'
@@ -15,7 +14,6 @@ const store = new Vuex.Store({
     channels,
     history,
     users,
-    auth,
     settings,
     suggestions,
     unread,

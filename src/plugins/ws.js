@@ -36,9 +36,9 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     // check if already connected
     if (this.connected()) return
 
-    const baseUrl = window.CrustConfig.messaging.baseUrl || 'https://sam.api.latest.crust.tech'
+    const baseUrl = window.CrustMessagingAPI
 
-    const url = baseUrl.replace(/^http/, 'ws') + '/websocket/'
+    const url = baseUrl.replace(/^http/, 'ws') + '/websocket/?jwt=' + localStorage.getItem('auth.jwt')
 
     this.conn = new ReconnectingWebSocket(url)
     this.conn.debug = true

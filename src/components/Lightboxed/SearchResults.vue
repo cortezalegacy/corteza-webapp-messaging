@@ -15,7 +15,7 @@
               <messages
                   ref="messages"
                   :messages="r.messages"
-                  :currentUser="currentUser"
+                  :currentUser="$auth.user"
                   :hideActionGoToMessage="false"
                   :hideActionOpenThread="true"
                   :hideActionsMenu="true"
@@ -67,7 +67,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      currentUser: 'auth/user',
       findChannelByID: 'channels/findByID',
     }),
   },

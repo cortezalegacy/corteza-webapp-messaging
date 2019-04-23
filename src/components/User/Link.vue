@@ -1,7 +1,7 @@
 <template>
   <router-link
     @click="$emit('click', $event)"
-    :to="linkProps" :class="{ 'current-user': highlight && ID === currentUser.ID }">
+    :to="linkProps" :class="{ 'current-user': highlight && ID === $auth.user.ID }">
     <slot>{{ label(user) }}</slot>
   </router-link>
 </template>
@@ -24,11 +24,10 @@ export default {
     ...mapGetters({
       findUserByID: 'users/findByID',
       findChannelByMembership: 'channels/findByMembership',
-      currentUser: 'auth/user',
     }),
 
     linkProps () {
-      let ch = this.findChannelByMembership(this.ID, this.currentUser.ID)
+      let ch = this.findChannelByMembership(this.ID, this.$auth.user.ID)
       if (ch) {
         return { name: 'channel', params: { channelID: ch.ID } }
       } else {

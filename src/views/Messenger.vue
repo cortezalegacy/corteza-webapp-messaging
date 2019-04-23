@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isAuthenticated">
+  <div v-if="$auth.is()">
       <div class="flex-grid">
           <base-side-panel
             orientation="left"
@@ -98,6 +98,7 @@ import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
+import core from '@/mixins/core'
 
 const titleNtf = new TitleNotifications(document)
 
@@ -114,6 +115,9 @@ export default {
     SearchResults,
     QuickSearch,
   },
+
+  mixins: [ core ],
+
   data () {
     return {
       searchQuery: null,
@@ -144,8 +148,6 @@ export default {
     },
 
     ...mapGetters({
-      isAuthenticated: 'auth/isAuthenticated',
-      currentUser: 'auth/user',
       currentChannel: 'channels/current',
       findChannelByID: 'channels/findByID',
       channels: 'channels/list',
@@ -156,105 +158,19 @@ export default {
   },
 
   watch: {
-    'isAuthenticated' (isAuthenticated) {
-      if (isAuthenticated) {
-        this.$ws.connect()
-      }
-    },
-
     'currentChannel' () {
       // Channel change means title change
       titleNtf.setChannelName(this.currentChannel ? this.currentChannel.name : null).update()
     },
   },
 
-  beforeCreate () {
-    this.$system.authCheck().then((check) => {
-      this.$store.commit('auth/setUser', check.user)
-    }).catch((err) => {
-      this.$store.commit('auth/clean')
-      console.error(err)
-      this.$router.push({ name: 'signin' })
-    })
-  },
-
   created () {
-    this.windowResizeHandler()
-    window.addEventListener('resize', this.windowResizeHandler)
-
-    window.addEventListener('focus', this.titleNotificationsHandler)
-
-    titleNtf.update()
-
-    this.$bus.$on('$core.newMessage', ({ message }) => {
-      if (!this.currentUser || this.currentUser.ID === (message.user || {}).ID) {
-        console.debug('Not notifying, same user')
-        // Ignore messages we've authored
-        return
-      }
-
-      if (this.currentChannel && this.currentChannel.ID === message.channelID && document.hasFocus()) {
-        console.debug('Not notifying, in channel, focused')
-        // We're already paying atention
-        return
-      }
-
-      // Set window title so user maybe notice the action in the channel (notifications mixin)
-      // @todo not very stable & consistent...
-      // titleNtf.flashNew()
-
-      const ch = this.findChannelByID(message.channelID)
-      if (!ch) {
-        return
-      }
-
-      if (ch.membershipFlag === 'ignored') {
-        return
-      }
-
-      if (ch.isGroup() && ch.isMember(this.currentUser.ID)) {
-        console.debug('Notifying, message sent to our group', { message })
-      } else if (!message.isMentioned(this.currentUser.ID)) {
-        console.debug('Not notifying, not mentioned')
-        // User is not mentioned.
-        // @todo this needs to be a bit more intelegent, take user's settings into account etc...
-        return
-      }
-
-      if (this.getSettings('mute.all')) {
-        console.debug('Suppressing notification due to user settings', { message })
-        return
-      }
-
-      const body = cleanMentions(message.message, this.users, this.channels)
-      const msgChannel = this.findChannelByID(message.channelID)
-
-      console.debug('Sending notification about new message', { message })
-
-      // Please note that this will not work on non secure domains. "http://localhost" is an exception.
-      this.$notification.show(`${this.labelUser(message.user)} in ${msgChannel.name} | Crust`, {
-        body: body.length > 200 ? body.substring(0, 200) + '...' : body,
-      }, {
-        onclick: () => {
-          this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
-        },
-      })
-    })
-
-    this.$bus.$on('$message.previewAttachment', (attachment) => {
-      this.uiShowPreview = {
-        src: this.$rest.baseURL() + attachment.url,
-        caption: attachment.name,
-      }
-    })
-
-    // Assigns callback to emojiPickerCallback or sets it to null (of it's already opened)
-    this.$bus.$on('ui.openEmojiPicker', ({ callback }) => {
-      this.emojiPickerCallback = !this.emojiPickerCallback ? callback : null
-    })
-
-    this.$bus.$on('ui.closeEmojiPicker', () => {
-      this.emojiPickerCallback = null
+    this.$auth.check(this.$system).then(() => {
+      this.init()
+      this.$ws.connect()
+    }).catch((err) => {
+      console.log(err)
+      window.location = '/auth'
     })
   },
 
@@ -266,6 +182,86 @@ export default {
   },
 
   methods: {
+    init () {
+      this.windowResizeHandler()
+      window.addEventListener('resize', this.windowResizeHandler)
+
+      window.addEventListener('focus', this.titleNotificationsHandler)
+
+      titleNtf.update()
+
+      this.$bus.$on('$core.newMessage', ({ message }) => {
+        if (!this.$auth.user || this.$auth.user.ID === (message.user || {}).ID) {
+          console.debug('Not notifying, same user')
+          // Ignore messages we've authored
+          return
+        }
+
+        if (this.currentChannel && this.currentChannel.ID === message.channelID && document.hasFocus()) {
+          console.debug('Not notifying, in channel, focused')
+          // We're already paying atention
+          return
+        }
+
+        // Set window title so user maybe notice the action in the channel (notifications mixin)
+        // @todo not very stable & consistent...
+        // titleNtf.flashNew()
+
+        const ch = this.findChannelByID(message.channelID)
+        if (!ch) {
+          return
+        }
+
+        if (ch.membershipFlag === 'ignored') {
+          return
+        }
+
+        if (ch.isGroup() && ch.isMember(this.$auth.user.ID)) {
+          console.debug('Notifying, message sent to our group', { message })
+        } else if (!message.isMentioned(this.$auth.user.ID)) {
+          console.debug('Not notifying, not mentioned')
+          // User is not mentioned.
+          // @todo this needs to be a bit more intelegent, take user's settings into account etc...
+          return
+        }
+
+        if (this.getSettings('mute.all')) {
+          console.debug('Suppressing notification due to user settings', { message })
+          return
+        }
+
+        const body = cleanMentions(message.message, this.users, this.channels)
+        const msgChannel = this.findChannelByID(message.channelID)
+
+        console.debug('Sending notification about new message', { message })
+
+        // Please note that this will not work on non secure domains. "http://localhost" is an exception.
+        this.$notification.show(`${this.labelUser(message.user)} in ${msgChannel.name} | Crust`, {
+          body: body.length > 200 ? body.substring(0, 200) + '...' : body,
+        }, {
+          onclick: () => {
+            this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
+          },
+        })
+      })
+
+      this.$bus.$on('$message.previewAttachment', (attachment) => {
+        this.uiShowPreview = {
+          src: this.$rest.baseURL() + attachment.url,
+          caption: attachment.name,
+        }
+      })
+
+      // Assigns callback to emojiPickerCallback or sets it to null (of it's already opened)
+      this.$bus.$on('ui.openEmojiPicker', ({ callback }) => {
+        this.emojiPickerCallback = !this.emojiPickerCallback ? callback : null
+      })
+
+      this.$bus.$on('ui.closeEmojiPicker', () => {
+        this.emojiPickerCallback = null
+      })
+    },
+
     hideRightPanel (hide) {
       if (hide) {
         this.uiRightSidePanelContent = null

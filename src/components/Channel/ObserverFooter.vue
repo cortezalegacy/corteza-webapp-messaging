@@ -5,8 +5,6 @@
   </footer>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   props: {
     channel: {
@@ -16,12 +14,8 @@ export default {
   },
 
   methods: {
-    ...mapGetters({
-      user: 'auth/user',
-    }),
-
     onJoin () {
-      this.$rest.addMember(this.channel.ID, this.user().ID)
+      this.$rest.addMember(this.channel.ID, this.$auth.user.ID)
     },
   },
 }
