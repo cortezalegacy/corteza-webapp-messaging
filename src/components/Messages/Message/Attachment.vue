@@ -10,7 +10,7 @@
       </div>
       <!-- file has size but not image -->
       <span v-else-if="attachment.meta.original">
-        <a v-bind:href="attachment.downloadUrl">
+        <a v-bind:href="prefixAttachmentUrl(attachment.downloadUrl)">
           <font-awesome-icon
             :icon="['far', 'file-'+ext]"
             :title="$t('message.openBookmarks')"

@@ -141,10 +141,7 @@ export function Attachment (a) {
   this.meta = a.meta
   this.url = a.url
   this.previewUrl = a.previewUrl
-
-  if (window.CrustConfig.messaging.baseUrl) {
-    this.downloadUrl = window.CrustConfig.messaging.baseUrl + this.url + '?download=1'
-  }
+  this.downloadUrl = a.url + '&download=1'
 }
 
 export class User {
