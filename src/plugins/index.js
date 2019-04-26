@@ -16,7 +16,6 @@ Vue.use(bus, { eventbus })
 Vue.use(system)
 Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
-Vue.use(auth)
 Vue.use(triggers, {
   userByID: store.getters['users/findByID'],
   userList: store.getters['users/listOnDemand'],
