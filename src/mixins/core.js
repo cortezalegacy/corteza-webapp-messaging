@@ -117,11 +117,6 @@ export default {
       }
     })
 
-    // TODO: Make WS send new commands; currently it loads all of them
-    this.$bus.$on('$ws.commands', (commands) => {
-      this.$store.commit('suggestions/updateCommands', commands)
-    })
-
     // Handling requests for message pins
     this.$bus.$on('message.delete', ({ message }) => {
       // Response is broadcasted via WS
