@@ -141,7 +141,10 @@ export function Attachment (a) {
   this.meta = a.meta
   this.url = a.url
   this.previewUrl = a.previewUrl
-  this.downloadUrl = a.url + '&download=1'
+
+  if (window.CrustMessagingAPI) {
+    this.downloadUrl = window.CrustMessagingAPI + this.url + '?download=1'
+  }
 }
 
 export class User {
