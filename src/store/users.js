@@ -135,13 +135,12 @@ export default function (Messaging, System) {
           // NOTE: This can also be an indicator of when to pull new users
         } else {
           const i = state.connections.findIndex(c => c.ID === ID)
-
           if (value !== undefined && value <= 0) {
             if (i >= 0) {
               state.connections.splice(i, 1)
             }
           } else {
-            let conn
+            let conn = { delta: 0 }
             if (i >= 0) {
               conn = state.connections[i]
               state.connections.splice(i, 1)
@@ -153,7 +152,7 @@ export default function (Messaging, System) {
               delta += conn.delta || 0
             }
 
-            state.connections.push = { ID, delta, value }
+            state.connections.push({ ID, delta, value })
           }
         }
       },
