@@ -6,6 +6,8 @@ const types = {
   setCurrent: 'setCurrent',
   resetList: 'resetList',
   updateList: 'updateList',
+  channelJoin: 'channelJoin',
+  channelPart: 'channelPart',
   removeFromList: 'removeFromList',
   updateLastMessage: 'updateLastMessage',
 }
@@ -90,35 +92,6 @@ export default function (Messaging) {
         })
       },
 
-      join ({ commit, getters }, { channelID, userID }) {
-        const ch = getters.findByID(channelID)
-        if (ch) {
-          if (ch.members.findIndex(m => m === userID) > -1) {
-            ch.members.push(userID)
-            commit('updateList', ch)
-          }
-        }
-      },
-
-      // Remove user from channel
-      part ({ commit, getters }, { channelID, userID }) {
-        const ch = getters.findByID(channelID)
-
-        if (ch) {
-          if (ch.type === 'public') {
-            // Keep public channels in the list
-            const i = ch.members.findIndex(m => m === userID)
-            if (i > -1) {
-              ch.members.splice(i, 1)
-              commit(types.updateList, ch)
-            }
-          } else {
-            // Remove non-public channels, groups from the list
-            commit(types.removeFromList, ch)
-          }
-        }
-      },
-
       incUnreadMessageCount ({ commit, getters }, channelID) {
         const ch = getters.findByID(channelID)
 
@@ -165,6 +138,36 @@ export default function (Messaging) {
         }
 
         state.list = [...l]
+      },
+
+      [types.channelJoin] (state, { channelID, userID }) {
+        const ch = state.list.findIndex(c => c.ID === channelID)
+
+        if (ch >= 0) {
+          const channel = state.list[ch]
+          if (channel.members.findIndex(m => m === userID) < 0) {
+            channel.members.push(userID)
+            state.list.splice(ch, 1, channel)
+          }
+        }
+      },
+
+      [types.channelPart] (state, { channelID, userID }) {
+        const ch = state.list.findIndex(c => c.ID === channelID)
+
+        if (ch >= 0) {
+          const channel = state.list[ch]
+          const i = channel.members.findIndex(m => m === userID)
+          if (i > -1) {
+            channel.members.splice(i, 1)
+            state.list.splice(ch, 1, channel)
+          }
+
+          // Remove non-public channels, groups from the list
+          if (channel.type !== 'public') {
+            state.list.splice(ch, 1)
+          }
+        }
       },
 
       [types.removeFromList] (state, { ID }) {

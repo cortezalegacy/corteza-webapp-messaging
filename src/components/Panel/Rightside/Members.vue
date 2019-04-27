@@ -89,9 +89,7 @@ export default {
     },
 
     remove (userID) {
-      this.$messaging.removeMember({ channelID: this.channel.ID, userID }).then(() => {
-        this.channel.removeMember(userID)
-      })
+      this.$messaging.channelPart({ channelID: this.channel.ID, userID })
     },
 
     isMember (userID) {

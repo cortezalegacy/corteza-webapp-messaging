@@ -31,11 +31,11 @@ export default {
     })
 
     this.$bus.$on('$ws.channelJoin', (join) => {
-      this.$store.dispatch('channels/join', join)
+      this.$store.commit('channels/channelJoin', join)
     })
 
     this.$bus.$on('$ws.channelPart', (part) => {
-      this.$store.dispatch('channels/part', part)
+      this.$store.commit('channels/channelPart', part)
     })
 
     let activitySet = new Set()
