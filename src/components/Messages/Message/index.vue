@@ -58,7 +58,7 @@
         </section>
         <div
           class="selectable"
-          :class="{ from_me: (message.user || {}).ID === $auth.user.ID,
+          :class="{ from_me: (message.user || {}).ID === currentUser.ID,
           'message' : !inEditing,
            }">
           <attachment
