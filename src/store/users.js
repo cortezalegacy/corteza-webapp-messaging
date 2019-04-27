@@ -107,6 +107,14 @@ export default function (Messaging, System) {
           commit(types.completed)
         })
       },
+
+      async loadStatuses ({ commit }) {
+        commit(types.pending)
+        Messaging.statusList().then((statuses) => {
+          commit(types.statusSet, statuses)
+          commit(types.completed)
+        })
+      },
     },
     mutations: {
       [types.pending] (state) {
