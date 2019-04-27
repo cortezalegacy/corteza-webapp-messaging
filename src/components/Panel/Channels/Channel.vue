@@ -63,13 +63,15 @@ export default {
       countUnread: 'unread/count',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
+      isPresent: 'users/isPresent',
     }),
 
     cssClass () {
       let set = [this.channel.type]
 
       if (this.channel.type === 'group') {
-        const online = this.channel.members.filter(memberID => (this.findUserByID(memberID) || {}).connections > 0).length
+        let online = 0
+        this.channel.members.forEach(userID => { if (this.isPresent(userID)) online++ })
         const total = this.channel.members.length
 
         if (online === total) {
@@ -82,20 +84,6 @@ export default {
       }
 
       return set
-    },
-
-    isGroupMemberOnline () {
-      // We don't care about other types or multi-member groups...
-      if (this.channel.type !== 'group' || this.channel.members.length > 2) return false
-
-      let memberID = this.channel.members[0]
-
-      if (this.channel.members.length === 2) {
-        // Direct message to a single user, find this user and see if he's online
-        memberID = this.channel.members.find(ID => ID !== this.$auth.user.ID) || {}
-      }
-
-      return (this.findUserByID(memberID) || {}).connections > 0
     },
   },
 
