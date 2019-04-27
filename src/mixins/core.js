@@ -1,12 +1,13 @@
 import { Channel } from '@/types'
 import { messagesProcess } from '@/lib/messanger'
 import Favico from 'favico.js'
+import { throttle } from 'lodash'
 
 const userActivityTTL = 1000 * 5 // microseconds
+const onlineTTL = 1000 * 20 // microseconds
 const autheticationRecheck = 1000 * 15 * 60 // microseconds
 
-let userActivityInterval
-let autheticationRecheckInterval
+let userActivityInterval, autheticationRecheckInterval
 
 export default {
   beforeCreate () {
@@ -36,29 +37,44 @@ export default {
       this.$store.dispatch('channels/part', part)
     })
 
-    // TODO: Add userConnections to $ws - initial connections for users; potential rename.
-    this.$bus.$on('$ws.userConnections', (connections) => {
-      connections.forEach(conn => {
-        this.$store.commit('users/connections', conn)
-      })
-    })
+    let activitySet = new Set()
+    const userGetter = this.$store.getters['users/findByID']
+
+    // Processes unique activities & resets the list
+    const updateActivity = throttle(() => {
+      const activities = Array.from(activitySet)
+      console.debug('updateActivity', { activities })
+      activitySet = new Set()
+
+      if (activities.length) {
+        // Check for existing members
+        const existing = activities.filter(userID => !!userGetter(userID))
+
+        // No new users; update activity
+        for (const userID of activities) {
+          this.$store.commit('users/active', { userID, channelID: null, kind: 'online' })
+        }
+
+        // New users; pull all of them
+        if (existing.length !== activities.length) {
+          this.$store.dispatch('users/load')
+        }
+      }
+    }, 2000)
 
     this.$bus.$on('$ws.activity', (activity) => {
       console.debug('activity.received', { activity })
+
+      // Ignore self
       if (this.$auth.user.ID !== activity.userID) {
-        // Store activity only if someone else is active...
-        this.$store.commit('users/active', activity)
+        activitySet.add(activity.userID)
+        updateActivity()
+
+        // Online won't have a kind; online handled by updateActivity
+        if (activity.kind) {
+          this.$store.commit('users/active', activity)
+        }
       }
-    })
-
-    // NOTE: These uid should become ID
-    this.$bus.$on('$ws.clientConnected', ({ uid }) => {
-      this.$store.commit('users/connections', { ID: uid, delta: 1 })
-    })
-
-    // NOTE: These uid should become ID
-    this.$bus.$on('$ws.clientDisconnected', ({ uid }) => {
-      this.$store.commit('users/connections', { ID: uid, delta: -1 })
     })
 
     // Handles single-message updates that gets from the backend
@@ -156,7 +172,7 @@ export default {
 
     // Activity cleanup interval
     userActivityInterval = window.setInterval(() => {
-      this.$store.commit('users/cleanup', { ttl: userActivityTTL })
+      this.$store.commit('users/cleanup', { ttl: userActivityTTL, online: onlineTTL })
     }, userActivityTTL)
 
     // Activity cleanup interval

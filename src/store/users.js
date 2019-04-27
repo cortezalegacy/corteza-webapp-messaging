@@ -4,8 +4,7 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   updateList: 'updateList',
-  connections: 'connections',
-  connectionsUpdate: 'connectionsUpdate',
+  updateActivity: 'updateActivity',
 
   active: 'active',
   inactive: 'inactive',
@@ -13,7 +12,8 @@ const types = {
 }
 
 // How much time (in seconds) should we keep the activity
-const activityTTL = 5
+const activityTTL = 5000
+const onlineTTL = 20000
 
 const activityFinder = ({ userID, channelID, kind }) =>
   (a) => a.userID === userID && a.channelID === channelID && a.kind === kind
@@ -25,9 +25,15 @@ class Activity {
     this.update()
   }
 
-  isStale (ttl = activityTTL) {
+  isStale (ttl = activityTTL, onlineTtl = onlineTTL) {
     const now = (new Date()).getTime()
-    return now - (ttl * 1000) > this.updatedAt
+    let use = ttl
+
+    // Online activity should last longer
+    if (this.kind === 'online') {
+      use = onlineTtl
+    }
+    return now - use > this.updatedAt
   }
 
   update () {
@@ -45,7 +51,6 @@ export default function (Messaging, System) {
 
       // Keeps user presence & channel activity
       activity: [], // []Activity
-      connections: [],
     },
     getters: {
       list: (state) => state.list,
@@ -59,8 +64,9 @@ export default function (Messaging, System) {
 
       isPresent:
         (state) =>
-          (ID) =>
-            (state.list.find(a => a.ID === ID) || {}).connections > 0,
+          (userID) => {
+            return state.activity.findIndex((a) => a.userID === userID) >= 0
+          },
 
       channelActivity:
         (state) =>
@@ -70,7 +76,7 @@ export default function (Messaging, System) {
           },
     },
     actions: {
-      async load  ({ commit }) {
+      async load ({ commit }) {
         commit(types.pending)
         System.userList().then((users) => {
           commit(types.updateList, users)
@@ -88,19 +94,7 @@ export default function (Messaging, System) {
       },
 
       [types.updateList] (state, users) {
-        users = users.map(u => {
-          // Check connections...
-          const { userID } = u
-          const user = new User(u)
-          const i = state.connections.findIndex(c => c.ID === userID)
-          if (i >= 0) {
-            user.SetConnections(state.connections[i])
-            state.connections.splice(i, 1)
-          }
-
-          return user
-        })
-
+        users = users.map(u => { return new User(u) })
         if (state.list.length === 0) {
           state.list = users
         } else {
@@ -112,48 +106,9 @@ export default function (Messaging, System) {
             if (n < 0) {
               state.list.push(usr)
             } else {
-              usr.connections = (state.list[n] || {}).connections || 0
               state.list.splice(n, 1, usr)
             }
           })
-        }
-      },
-
-      [types.connections] (state, { ID, delta = undefined, value = undefined }) {
-        const i = state.list.findIndex(u => u.ID === ID)
-        if (i > -1) {
-          const user = state.list[i]
-
-          // If setConnections fails, break out
-          if (!user.SetConnections({ value, delta })) {
-            return
-          }
-
-          state.list.splice(i, 1, user)
-
-          // If user doesn't exist, store this data until the user arrives.
-          // NOTE: This can also be an indicator of when to pull new users
-        } else {
-          const i = state.connections.findIndex(c => c.ID === ID)
-          if (value !== undefined && value <= 0) {
-            if (i >= 0) {
-              state.connections.splice(i, 1)
-            }
-          } else {
-            let conn = { delta: 0 }
-            if (i >= 0) {
-              conn = state.connections[i]
-              state.connections.splice(i, 1)
-            }
-
-            if (delta === undefined) {
-              delta = conn.delta
-            } else {
-              delta += conn.delta || 0
-            }
-
-            state.connections.push({ ID, delta, value })
-          }
         }
       },
 
@@ -166,15 +121,14 @@ export default function (Messaging, System) {
         }
       },
 
-      // Removes all activities that match
       [types.inactive] (state, { userID, channelID, kind }) {
         state.activity = [...state.activity.filter((a) =>
           !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
       },
 
       // Removes all stale activity
-      [types.cleanup] (state, { ttl }) {
-        state.activity = state.activity.filter(a => a.isStale(ttl))
+      [types.cleanup] (state, { ttl, onlineTtl }) {
+        state.activity = state.activity.filter(a => !a.isStale(ttl, onlineTtl))
       },
     },
   }
