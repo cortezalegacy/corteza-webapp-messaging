@@ -20,7 +20,6 @@ const messagesLoad = async function (api, uGetter, opts = {}) {
     } else {
       // Remove undefined params
       let params = { channelID: opts.channelID, toMessageID: opts.toMessageID, fromMessageID: opts.fromMessageID }
-      console.warn({ params })
       Object.keys(params).forEach(key => !params[key] ? delete params[key] : '')
 
       api.searchMessages(params).then((messages) => {
