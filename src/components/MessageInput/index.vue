@@ -57,7 +57,7 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import _ from 'lodash'
+import { throttle } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
@@ -234,7 +234,7 @@ export default {
     // },
 
     // Update channel activity once in a while while typing
-    onChange: _.throttle(function (value) {
+    onChange: throttle(function (value) {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
 
