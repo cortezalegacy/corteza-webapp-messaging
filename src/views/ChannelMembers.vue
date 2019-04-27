@@ -30,6 +30,10 @@ export default {
     ...mapGetters({
       users: 'users/list',
     }),
+
+    isMember () {
+      return (userID) => !!this.members.find(m => m.userID === userID)
+    },
   },
 
   mounted () {
@@ -49,15 +53,11 @@ export default {
 
     remove (userID) {
       this.$messaging.channelPart({ channelID: this.channelID, userID }).then(() => {
-        const i = this.members.findIndex(m => m.user.ID === userID)
+        const i = this.members.findIndex(m => m.userID === userID)
         if (i > 0) {
           this.members.splice(i, 1)
         }
       })
-    },
-
-    isMember (userID) {
-      return !!this.members.find(m => m.user.ID === userID)
     },
   },
 }
