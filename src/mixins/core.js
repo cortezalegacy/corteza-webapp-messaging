@@ -1,4 +1,5 @@
-import { Channel, Message } from '@/types'
+import { Channel } from '@/types'
+import { messagesProcess } from '@/lib/messanger'
 import Favico from 'favico.js'
 
 const userActivityTTL = 1000 * 5 // microseconds
@@ -42,7 +43,8 @@ export default {
       })
     })
 
-    this.$bus.$on('$ws.channelActivity', (activity) => {
+    this.$bus.$on('$ws.activity', (activity) => {
+      console.debug('activity.received', { activity })
       if (this.$auth.user.ID !== activity.userID) {
         // Store activity only if someone else is active...
         this.$store.commit('users/active', activity)
@@ -61,7 +63,7 @@ export default {
 
     // Handles single-message updates that gets from the backend
     this.$bus.$on('$ws.message', (message) => {
-      const msg = new Message(message)
+      const [ msg ] = messagesProcess(this.$store.getters['users/findByID'], [message])
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
         if (this.$auth.user.ID !== msg.user.ID && msg.type !== 'channelEvent') {

@@ -1,5 +1,3 @@
-import { Message } from '@/types'
-
 const types = {
   pending: 'pending',
   completed: 'completed',
@@ -44,27 +42,6 @@ export default function (Messaging) {
     },
 
     actions: {
-      async load ({ commit }, { channelID, lastMessageID, firstMessageID, messageID }) {
-        commit(types.pending)
-        // If messageID set, then fetch replies.
-        if (messageID) {
-          Messaging.messageReplyGet({ channelID, messageID }).then((messages) => {
-            commit(types.updateSet, messages.map(message => new Message(message)))
-            commit(types.completed)
-          })
-        } else {
-          // Remove undefined params
-          let params = { channelID, lastMessageID, firstMessageID }
-          Object.keys(params).forEach(key => !params[key] ? delete params[key] : '')
-
-          // NOTE: Add support for firstMessageID!
-          Messaging.messageHistory(params).then((messages) => {
-            commit(types.updateSet, messages.map(message => new Message(message)))
-            commit(types.completed)
-          })
-        }
-      },
-
       async delete ({ commit, state }, { channelID, messageID }) {
         commit(types.pending)
         Messaging.messageDelete({ channelID, messageID }).then(() => {
@@ -113,7 +90,7 @@ export default function (Messaging) {
       },
 
       update ({ commit, state }, messages) {
-        commit('updateSet', messages)
+        commit(types.updateSet, messages)
       },
 
       clear ({ commit }) {

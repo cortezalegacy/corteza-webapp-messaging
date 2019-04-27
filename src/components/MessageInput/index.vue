@@ -64,6 +64,12 @@ import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
 
+const kinds = {
+  editing: 'editing',
+  replying: 'replying',
+  typing: 'typing',
+}
+
 export default {
   components: {
     TextInput,
@@ -232,22 +238,20 @@ export default {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
 
-      // TODO: Move these to rest clients
-      switch (true) {
-        case value.text.length === 0:
-          break
+      let params
+      if (value.text.length === 0) {
+        return
+      } else if (this.message !== undefined) {
+        params = { channelID: this.message.channelID, messageID: this.message.ID, kind: kinds.editing }
+      } else if (this.replyTo !== undefined) {
+        params = { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: kinds.replying }
+      } else {
+        params = { channelID: this.channelID, kind: kinds.typing }
+      }
 
-        case this.message !== undefined:
-          this.$messaging.messageActivity(({ channelID: this.message.channelID, messageID: this.message.ID, kind: 'editing' }))
-          break
-
-        case this.replyTo !== undefined:
-          this.$messaging.messageActivity(({ channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: 'replying' }))
-          break
-
-        default:
-          this.$messaging.channelActivity(({ ID: this.channelID, kind: 'typing' }))
-          break
+      if (params) {
+        console.debug('activity.send', { params })
+        this.$messaging.activitySend(params)
       }
     }, 2000),
 
