@@ -63,7 +63,7 @@
               <li v-for="(u) in members" :key="u.ID">
                 <user-avatar :user="u" />
                 {{ label(u) }}
-                <button class="btn-i" @click.prevent="channel.removeMember(u)"><i class="icon-close"></i></button>
+                <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-close"></i></button>
               </li>
             </ul>
           </div>
@@ -135,6 +135,11 @@ import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
 import 'vue-simple-suggest/dist/styles.css'
 import Avatar from '@/components/Avatar'
 
+const action = {
+  add: 'add',
+  remove: 'remove',
+}
+
 export default {
   name: 'channel-editor',
 
@@ -151,6 +156,8 @@ export default {
     return {
       channel: new Channel(),
       error: null,
+
+      actionsUser: {},
 
       selectedMember: null,
       autoCompleteStyle: {
@@ -196,6 +203,15 @@ export default {
       removeChannelFromList: 'channels/removeFromList',
     }),
 
+    removeMember (u) {
+      if (!this.actionsUser[u.ID]) {
+        this.$set(this.actionsUser, u.ID, [])
+      }
+
+      this.actionsUser[u.ID].push(action.remove)
+      this.channel.removeMember(u)
+    },
+
     load (channelID) {
       if (channelID) {
         this.$messaging.channelRead({ channelID }).then((ch) => {
@@ -223,9 +239,19 @@ export default {
     },
 
     onSubmit () {
-      if (this.channel.ID) {
+      const channelID = this.channel.ID
+      if (channelID) {
         console.debug('Updating channel', this.channel)
-        this.$messaging.channelUpdate({ ...this.channel, channelID: this.channel.ID }).then((ch) => {
+        // Update member list; if the list was altered
+        const actions = Object.entries(this.actionsUser)
+        if (actions.length) {
+          for (const [ userID ] of actions) {
+            // @note When we allow memer adding in this interface; this should be updated
+            this.$messaging.channelPart({ channelID, userID })
+          }
+        }
+        // Update channel
+        this.$messaging.channelUpdate({ ...this.channel, channelID: channelID }).then((ch) => {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
