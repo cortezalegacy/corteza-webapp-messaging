@@ -90,7 +90,7 @@ export default {
       let gindex = {}
 
       for (const message of mm) {
-        const channelID = message.channelID
+        const { channelID } = message
 
         if (gindex[channelID] === undefined) {
           const channel = this.findChannelByID(channelID)

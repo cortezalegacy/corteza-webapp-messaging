@@ -73,7 +73,7 @@ export default {
 
       return [
         ...this.users.filter(i => i.ID !== this.$auth.user.ID).map(cmp('user')),
-        ...this.channels.filter(i => i.members.length > 2).map(cmp('channel')),
+        ...this.channels.filter(i => i.members.length >= 2).map(cmp('channel')),
       ]
     },
 
