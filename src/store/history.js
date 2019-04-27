@@ -92,10 +92,6 @@ export default function (Messaging) {
       update ({ commit, state }, messages) {
         commit(types.updateSet, messages)
       },
-
-      clear ({ commit }) {
-        commit('clearSet')
-      },
     },
 
     mutations: {
