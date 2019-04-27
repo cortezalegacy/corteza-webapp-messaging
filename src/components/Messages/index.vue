@@ -32,7 +32,7 @@
   </ul>
 </template>
 <script>
-import _ from 'lodash'
+import { throttle } from 'lodash'
 import Message from './Message'
 import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
 
@@ -151,7 +151,7 @@ export default {
       this.allowAutoScroll = true
     },
 
-    onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 1500),
+    onScrollThrottled: throttle(function (e) { this.onScroll(e) }, 1500),
     onScroll ({ target }) {
       if (!target || !this.scrollable) return
 
