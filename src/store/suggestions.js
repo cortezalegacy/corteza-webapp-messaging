@@ -24,13 +24,12 @@ export default function (Messaging) {
       pending: (state) => state.pending,
     },
     actions: {
-      async load ({ commit }) {
-        // TODO: Add endpoint for loading commands
-        // commit(types.pending)
-        // Messaging.commandList().then((commands) => {
-        //   commit(types.updateCommands, ...commands)
-        //   commit(types.completed)
-        // })
+      async loadCommands ({ commit }) {
+        commit(types.pending)
+        Messaging.commandsList().then((commands) => {
+          commit(types.updateCommands, commands)
+          commit(types.completed)
+        })
       },
     },
     mutations: {
@@ -49,8 +48,7 @@ export default function (Messaging) {
           params: [],
           meta: {},
           handler: (vm, { channel, params, input }) => {
-            // TODO: Add a endpoint to Crust-client
-            Messaging.commandExec({ channelID: channel.ID, command: c.name, input })
+            Messaging.messageExecuteCommand({ channelID: channel.ID, command: c.name, input, params })
           },
         })).concat(localCommands)
 
