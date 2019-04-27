@@ -31,4 +31,18 @@ const messagesLoad = async function (api, uGetter, opts = {}) {
   })
 }
 
-export { messagesProcess, messagesLoad }
+// Load & process thread messages; messages available on promise resolve
+const messagesThreadLoad = async function (api, uGetter, opts = {}) {
+  console.debug('messanger.thread.loading', { opts })
+  return new Promise((resolve, reject) => {
+    let params = { channelID: opts.channelID }
+    Object.keys(params).forEach(key => !params[key] ? delete params[key] : '')
+
+    api.searchThreads(params).then((messages) => {
+      console.debug('messanger.thread.completed', { opts })
+      resolve(messagesProcess(uGetter, messages))
+    })
+  })
+}
+
+export { messagesProcess, messagesLoad, messagesThreadLoad }
