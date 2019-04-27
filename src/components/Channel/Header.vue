@@ -162,7 +162,6 @@ export default {
 
   methods: {
     onPart () {
-
       this.$messaging.channelPart({ channelID: this.channel.ID, userID: this.$auth.user.ID })
     },
 
