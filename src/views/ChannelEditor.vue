@@ -199,7 +199,6 @@ export default {
     load (channelID) {
       if (channelID) {
         this.$messaging.channelRead({ channelID }).then((ch) => {
-
           this.channel = new Channel(ch)
         }).catch((error) => {
           console.error('Failed to load channel info', { error })
@@ -217,7 +216,7 @@ export default {
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
       this.$messaging.channelState({ channelID: this.channel.ID, state }).then((ch) => {
-        this.channel = ch
+        this.channel = new Channel(ch)
       }).catch(({ message }) => {
         this.error = message
       })
@@ -244,6 +243,7 @@ export default {
     },
 
     onMemberSelect (user) {
+      if (!user) return
       this.selectedMember = ''
       this.channel.members.push(user.ID)
     },
