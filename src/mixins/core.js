@@ -4,7 +4,8 @@ import Favico from 'favico.js'
 import { throttle } from 'lodash'
 
 const userActivityTTL = 1000 * 5 // microseconds
-const onlineTTL = 1000 * 20 // microseconds
+// const statusTTL = 1000 * 35 // microseconds
+const statusThrottle = 1000 * 2 // microseconds
 const userRePull = 1000 * 60 * 30 // microseconds -> 30min
 const autheticationRecheck = 1000 * 15 * 60 // microseconds
 
@@ -55,10 +56,9 @@ export default {
         // Check for existing members
         const existing = activities.filter(userID => !!userGetter(userID))
 
-        // No new users; update activity
-        for (const userID of activities) {
-          this.$store.commit('users/active', { userID, channelID: null, kind: 'online' })
-        }
+        // Update statuses
+        const statuses = activities.map(userID => ({ userID, status: 'online' }))
+        this.$store.commit('users/statusSet', statuses)
 
         // New users; pull all of them
         if (existing.length !== activities.length) {
@@ -68,7 +68,7 @@ export default {
           })
         }
       }
-    }, 2000)
+    }, statusThrottle)
 
     this.$bus.$on('$ws.activity', (activity) => {
       console.debug('activity.received', { activity })
@@ -81,10 +81,10 @@ export default {
         }
 
         if (activity.kind === 'disconnected' && !activity.present) {
-          this.$store.commit('users/inactive', { userID: activity.userID, channelID: null, kind: 'online' })
+          this.$store.commit('users/statusRemove', { userID: activity.userID, status: 'online' })
         } else if (activity.kind) {
           // Online wont have a kind; online handled by updateActivity
-          this.$store.commit('users/active', activity)
+          this.$store.commit('users/active', [ activity ])
         }
       }
     })
@@ -184,7 +184,7 @@ export default {
 
     // Activity cleanup interval
     userActivityInterval = window.setInterval(() => {
-      this.$store.commit('users/cleanup', { ttl: userActivityTTL, online: onlineTTL })
+      this.$store.commit('users/cleanup', { ttl: userActivityTTL })
     }, userActivityTTL)
 
     // User re pull interval; handles cases where user has updated there profile

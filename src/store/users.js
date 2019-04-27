@@ -5,6 +5,9 @@ const types = {
   completed: 'completed',
   updateList: 'updateList',
   updateActivity: 'updateActivity',
+  statusSet: 'statusSet',
+  statusRemove: 'statusRemove',
+  statusCleanup: 'statusCleanup',
 
   active: 'active',
   inactive: 'inactive',
@@ -13,7 +16,10 @@ const types = {
 
 // How much time (in seconds) should we keep the activity
 const activityTTL = 5000
-const onlineTTL = 20000
+const statusTTL = 35000
+
+const statusFinder = ({ userID, status }) =>
+  (s) => s.userID === userID && s.status === status
 
 const activityFinder = ({ userID, channelID, kind }) =>
   (a) => a.userID === userID && a.channelID === channelID && a.kind === kind
@@ -25,14 +31,31 @@ class Activity {
     this.update()
   }
 
-  isStale (ttl = activityTTL, onlineTtl = onlineTTL) {
+  isStale (ttl = activityTTL) {
     const now = (new Date()).getTime()
-    let use = ttl
+    return now - ttl > this.updatedAt
+  }
 
-    // Online activity should last longer
-    if (this.kind === 'online') {
-      use = onlineTtl
-    }
+  update () {
+    this.updatedAt = (new Date()).getTime()
+    return this
+  }
+}
+
+class Status {
+  constructor (props = {}) {
+    this.permanent = false
+    Object.assign(this, props)
+    this.createdAt = (new Date()).getTime()
+    this.update()
+  }
+
+  // ttl contains ttl based on status type
+  isStale (ttl = {}) {
+    if (this.permanent) return false
+
+    const now = (new Date()).getTime()
+    let use = ttl[this.status] || statusTTL
     return now - use > this.updatedAt
   }
 
@@ -51,6 +74,7 @@ export default function (Messaging, System) {
 
       // Keeps user presence & channel activity
       activity: [], // []Activity
+      status: [],
     },
     getters: {
       list: (state) => state.list,
@@ -65,7 +89,7 @@ export default function (Messaging, System) {
       isPresent:
         (state) =>
           (userID) => {
-            return state.activity.findIndex((a) => a.userID === userID) >= 0
+            return state.status.findIndex((s) => s.userID === userID) >= 0
           },
 
       channelActivity:
@@ -112,12 +136,14 @@ export default function (Messaging, System) {
         }
       },
 
-      [types.active] (state, props) {
-        const i = state.activity.findIndex(activityFinder(props))
-        if (i > -1) {
-          state.activity.splice(i, 1, state.activity[i].update())
-        } else {
-          state.activity.push(new Activity(props))
+      [types.active] (state, activities) {
+        for (const activity of activities) {
+          const i = state.activity.findIndex(activityFinder(activity))
+          if (i > -1) {
+            state.activity.splice(i, 1, state.activity[i].update())
+          } else {
+            state.activity.push(new Activity(activity))
+          }
         }
       },
 
@@ -127,8 +153,28 @@ export default function (Messaging, System) {
       },
 
       // Removes all stale activity
-      [types.cleanup] (state, { ttl, onlineTtl }) {
-        state.activity = state.activity.filter(a => !a.isStale(ttl, onlineTtl))
+      [types.cleanup] (state, { ttl }) {
+        state.activity = state.activity.filter(a => !a.isStale(ttl))
+      },
+
+      [types.statusSet] (state, statuses) {
+        for (const status of statuses) {
+          const i = state.status.findIndex(statusFinder(status))
+          if (i > -1) {
+            state.status.splice(i, 1, state.status[i].update())
+          } else {
+            state.status.push(new Status(status))
+          }
+        }
+      },
+
+      [types.statusRemove] (state, { userID, status }) {
+        state.status = [...state.status.filter((s) =>
+          !(s.userID === userID && s.status === status))]
+      },
+
+      [types.statusCleanup] (state, { ttl }) {
+        state.status = state.status.filter(s => !s.isStale(ttl))
       },
     },
   }
