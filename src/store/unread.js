@@ -94,7 +94,8 @@ export default function (Messaging) {
       has: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID !== '0',
 
       // All unread channels
-      channels: (state) => state.set.filter(u => !u.threadID && u.count > 0),
+      // eslint-disable-next-line eqeqeq
+      channels: (state) => state.set.filter(u => (!u.threadID || u.threadID == 0) && u.count > 0),
 
       // Total unread count
       total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
@@ -105,7 +106,7 @@ export default function (Messaging) {
       markAsRead ({ commit }, { channelID, lastReadMessageID, threadID }) {
         commit(types.pending)
         Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
-          commit(types.set, { channelID, threadID, count, lastMessageID: lastReadMessageID })
+          commit(types.set, [{ channelID, threadID, count, lastMessageID: lastReadMessageID }])
           commit(types.completed)
         })
       },
@@ -120,7 +121,7 @@ export default function (Messaging) {
         state.pending = false
       },
 
-      [types.set] (state, ...unreads) {
+      [types.set] (state, unreads = []) {
         for (const { channelID, threadID = '', count = 0, lastMessageID = '' } of unreads) {
           const u = new Unread(channelID, threadID, count, lastMessageID)
           const i = state.set.findIndex(filter(u))
