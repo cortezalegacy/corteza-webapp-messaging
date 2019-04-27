@@ -199,12 +199,8 @@ export default {
     load (channelID) {
       if (channelID) {
         this.$messaging.channelRead({ channelID }).then((ch) => {
-          this.channel = ch
 
-          this.$messaging.channelMembers({ channelID }).then((members) => {
-            console.debug('Chanel member info loaded into editor', members)
-            this.channel.members = members.map((m) => m.user.ID)
-          })
+          this.channel = new Channel(ch)
         }).catch((error) => {
           console.error('Failed to load channel info', { error })
         }).finally(() => {
