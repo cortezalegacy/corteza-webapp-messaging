@@ -75,11 +75,15 @@ export default {
 
       // Ignore self
       if (this.$auth.user.ID !== activity.userID) {
-        activitySet.add(activity.userID)
-        updateActivity()
+        if (activity.kind !== 'disconnected') {
+          activitySet.add(activity.userID)
+          updateActivity()
+        }
 
-        // Online won't have a kind; online handled by updateActivity
-        if (activity.kind) {
+        if (activity.kind === 'disconnected' && !activity.present) {
+          this.$store.commit('users/inactive', { userID: activity.userID, channelID: null, kind: 'online' })
+        } else if (activity.kind) {
+          // Online wont have a kind; online handled by updateActivity
           this.$store.commit('users/active', activity)
         }
       }
