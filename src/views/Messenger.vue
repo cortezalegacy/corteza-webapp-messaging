@@ -187,6 +187,7 @@ export default {
         this.$store.commit('unread/set', unreads)
       })
       this.$store.dispatch('users/load')
+      this.$store.dispatch('users/loadStatuses')
       this.$store.dispatch('suggestions/loadCommands')
 
       this.windowResizeHandler()
