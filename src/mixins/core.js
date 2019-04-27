@@ -5,9 +5,10 @@ import { throttle } from 'lodash'
 
 const userActivityTTL = 1000 * 5 // microseconds
 const onlineTTL = 1000 * 20 // microseconds
+const userRePull = 1000 * 60 * 30 // microseconds -> 30min
 const autheticationRecheck = 1000 * 15 * 60 // microseconds
 
-let userActivityInterval, autheticationRecheckInterval
+let userActivityInterval, userRePullInterval, autheticationRecheckInterval
 
 export default {
   beforeCreate () {
@@ -40,6 +41,10 @@ export default {
     let activitySet = new Set()
     const userGetter = this.$store.getters['users/findByID']
 
+    const userRePullHandler = () => {
+      this.$store.dispatch('users/load')
+    }
+
     // Processes unique activities & resets the list
     const updateActivity = throttle(() => {
       const activities = Array.from(activitySet)
@@ -57,7 +62,10 @@ export default {
 
         // New users; pull all of them
         if (existing.length !== activities.length) {
-          this.$store.dispatch('users/load')
+          if (userRePullInterval) window.clearInterval(userRePullInterval)
+          this.$store.dispatch('users/load').then(() => {
+            userRePullInterval = window.setInterval(userRePullHandler, userRePull)
+          })
         }
       }
     }, 2000)
@@ -175,6 +183,9 @@ export default {
       this.$store.commit('users/cleanup', { ttl: userActivityTTL, online: onlineTTL })
     }, userActivityTTL)
 
+    // User re pull interval; handles cases where user has updated there profile
+    userRePullInterval = window.setInterval(userRePullHandler, userRePull)
+
     // Activity cleanup interval
     autheticationRecheckInterval = window.setInterval(() => {
       this.$system.authCheck().catch((err) => {
@@ -187,6 +198,7 @@ export default {
 
   destroyed () {
     if (userActivityInterval) window.clearInterval(userActivityInterval)
+    if (userRePullInterval) window.clearInterval(userRePullInterval)
     if (autheticationRecheckInterval) window.clearInterval(autheticationRecheckInterval)
   },
 }
