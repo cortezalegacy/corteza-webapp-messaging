@@ -51,6 +51,7 @@ import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
+import { messagesLoad } from '@/lib/messanger'
 
 export default {
   components: {
@@ -123,7 +124,9 @@ export default {
   methods: {
     // Preloads all thread data
     preload () {
-      this.$store.dispatch('history/load', { channelID: this.channelID, messageID: this.repliesTo })
+      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channelID, threadID: this.repliesTo }).then((msgs) => {
+        this.$store.commit('history/updateSet', msgs)
+      })
     },
 
     onOpenFilePicker () {

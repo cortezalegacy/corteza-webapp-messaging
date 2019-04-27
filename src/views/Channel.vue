@@ -51,6 +51,7 @@ import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
+import { messagesLoad } from '@/lib/messanger'
 
 export default {
   components: {
@@ -151,7 +152,9 @@ export default {
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      this.$store.dispatch('history/load', { channelID: this.channel.ID, lastMessageID: this.messageID })
+      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, fromMessageID: this.messageID }).then((msgs) => {
+        this.$store.commit('history/updateSet', msgs)
+      })
     },
 
     onOpenFilePicker () {
@@ -164,10 +167,8 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        // BUG: Messaging.messageHistory doesn't work correctly with lastMessageID; returns messages from that id forth.
-        this.$store.dispatch('history/load', {
-          channelID: this.channel.ID,
-          lastMessageID: messageID,
+        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, toMessageID: messageID }).then((msgs) => {
+          this.$store.commit('history/updateSet', msgs)
         })
       }
     },

@@ -19,6 +19,7 @@
 import { mapGetters } from 'vuex'
 import BasePanel from '.'
 import Messages from '@/components/Messages'
+import { messagesLoad } from '@/lib/messanger'
 
 export default {
   components: {
@@ -33,8 +34,9 @@ export default {
   },
 
   mounted () {
-    // TODO: Crust client
-    this.$ws.getMessages({ bookmarked: true })
+    messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { bookmarkedOnly: true }).then((msgs) => {
+      this.$store.commit('history/updateSet', msgs)
+    })
   },
 }
 </script>

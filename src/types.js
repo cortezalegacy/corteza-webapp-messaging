@@ -70,7 +70,7 @@ export class Message {
       return
     }
 
-    this.ID = m.ID || m.id // cover both cases (BC)
+    this.ID = m.messageID || m.ID || m.id // cover both cases (BC)
     this.message = m.message
     this.type = m.type
     this.channelID = m.channelID
