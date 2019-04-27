@@ -17,14 +17,16 @@ export default {
   name: 'avatar',
   // require user param
   props: {
-    user: Object,
-    required: true,
+    user: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   computed: {
     ...mapGetters({ findByID: 'users/findByID', isPresent: 'users/isPresent' }),
 
-    stored () { return this.findByID(this.user.ID) || {} },
+    stored () { return this.user || {} },
 
     img () { return this.stored.avatar || this.$t('general.label.na') },
 
