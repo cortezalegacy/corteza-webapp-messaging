@@ -7,7 +7,7 @@
     <template slot="header">{{ $t('panel.thread') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: label(channel) }) }}</template>
     <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: label(channel) }) }}</template>
-    <template slot="main">
+    <template v-if="message" slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false; uploadFileTypeSupported=true"
         @show="showUploadArea=true"
@@ -31,7 +31,7 @@
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
     </template>
-    <template slot="footer">
+    <template v-if="message" slot="footer">
       <div class="footer">
         <message-input
           @markAsRead="onMarkAsRead"
@@ -97,7 +97,7 @@ export default {
     },
 
     channelID () {
-      return this.message.channelID
+      return (this.message || {}).channelID
     },
 
     channel () {
@@ -110,6 +110,13 @@ export default {
   },
 
   watch: {
+    message (newVal) {
+      // If root msg was deleted, then the thread should close
+      if (!newVal) {
+        this.$emit('close')
+      }
+    },
+
     repliesTo (newRepliesTo, oldRepliesTo) {
       if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
         this.preload()
