@@ -58,7 +58,7 @@
           </div>
 
           <div class="selected-members">
-            <label v-if="members.length > 0">{{ $t('channel.editor.selectedMemersLabel') }}</label>
+            <label v-if="members.length > 0">{{ $t('channel.editor.selectedMembersLabel') }}</label>
             <ul>
               <li v-for="(u) in members" :key="u.ID">
                 <user-avatar :user="u" />
