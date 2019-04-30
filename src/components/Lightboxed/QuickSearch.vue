@@ -32,6 +32,11 @@ import SearchInput from '@/components/SearchInput'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
 import labelsMixin from '@/mixins/labels'
 
+const cmp = (type) => (i) => {
+  i.cmp = `${type}-link`
+  return i
+}
+
 export default {
   components: {
     SearchInput,
@@ -57,32 +62,23 @@ export default {
 
     filtered () {
       const q = this.query.toLocaleLowerCase()
-      return this.queryNames.filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
+      return this.targetNames(this.channelsAndUsers).filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
     },
 
     // List of prefered channels -- ones we're not members of
     prefered () {
-      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.ID))
+      return this.targetNames(this.preferedChannels)
+    },
+
+    preferedChannels () {
+      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.ID)).map(cmp('channel'))
     },
 
     channelsAndUsers () {
-      const cmp = (type) => (i) => {
-        i.cmp = `${type}-link`
-        return i
-      }
-
       return [
         ...this.users.filter(i => i.ID !== this.$auth.user.ID).map(cmp('user')),
         ...this.channels.filter(i => i.members.length > 2).map(cmp('channel')),
       ]
-    },
-
-    queryNames () {
-      return this.channelsAndUsers.map(i => ({
-        ID: i.ID,
-        name: this.label(i),
-        cmp: i.cmp,
-      }))
     },
   },
 
@@ -93,6 +89,14 @@ export default {
 
     onSearchSubmit ({ query }) {
       this.search(query)
+    },
+
+    targetNames (target) {
+      return target.map(i => ({
+        ID: i.ID,
+        name: this.label(i),
+        cmp: i.cmp,
+      }))
     },
   },
 }
