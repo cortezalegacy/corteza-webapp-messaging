@@ -34,7 +34,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
-import { messagesLoad } from '@/lib/messanger'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {

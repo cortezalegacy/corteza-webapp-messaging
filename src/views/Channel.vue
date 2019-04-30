@@ -51,7 +51,7 @@ import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
-import { messagesLoad } from '@/lib/messanger'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
