@@ -1,5 +1,5 @@
 import { Channel } from '@/types'
-import { messagesProcess } from '@/lib/messanger'
+import { messagesProcess } from '@/lib/messenger'
 import Favico from 'favico.js'
 import { throttle } from 'lodash'
 

@@ -28,7 +28,7 @@
 import { mapGetters } from 'vuex'
 import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
-import { messagesThreadLoad } from '@/lib/messanger'
+import { messagesThreadLoad } from '@/lib/messenger'
 
 export default {
   components: {

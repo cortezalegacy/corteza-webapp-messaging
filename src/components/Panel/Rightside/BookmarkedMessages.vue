@@ -19,7 +19,7 @@
 import { mapGetters } from 'vuex'
 import BasePanel from '.'
 import Messages from '@/components/Messages'
-import { messagesLoad } from '@/lib/messanger'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
