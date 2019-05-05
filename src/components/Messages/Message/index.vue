@@ -50,6 +50,8 @@
             v-if="!hideActions && !inEditing"
             v-bind="$props"
             @editMessage="inEditing=true"
+            @pinMessage="onPinMessage"
+            @bookmarkMessage="onBookmarkMessage"
             @deleteMessage="onDeleteMessage"
             v-on="$listeners" />
         </section>
@@ -100,6 +102,7 @@
     </li>
 </template>
 <script>
+import { mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
@@ -194,6 +197,12 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      pinMessage: 'history/pin',
+      bookmarkMessage: 'history/bookmark',
+      deleteMessage: 'history/delete',
+    }),
+
     onInputSubmit ({ value }) {
       this.showEditor = false
     },
@@ -223,10 +232,18 @@ export default {
       this.$bus.$emit('message.reaction', { message: this.message, reaction })
     },
 
+    onPinMessage () {
+      this.pinMessage(this.message)
+    },
+
+    onBookmarkMessage () {
+      this.bookmarkMessage(this.message)
+    },
+
     onDeleteMessage () {
+      // @todo a more slick, inline confirmation...
       if (confirm(this.$t('message.deleteConfirm'))) {
-        // @todo a more slick, inline confirmation...
-        this.$bus.$emit('message.delete', { message: this.message })
+        this.deleteMessage(this.message)
       }
     },
 

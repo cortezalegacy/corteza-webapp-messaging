@@ -1,7 +1,6 @@
 const types = {
   pending: 'pending',
   completed: 'completed',
-  notFound: 'notFound',
   updateSet: 'updateSet',
   setPin: 'setPin',
   setBookmark: 'setBookmark',
@@ -14,78 +13,107 @@ const types = {
 // Basic message filtering
 const isValid = (msg) => msg.deletedAt === null
 
-export default function (Messaging) {
+export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
       pending: false,
-      warning: null,
       set: [],
     },
     getters: {
       pending: (state) => state.pending,
-      getByID: (state) => (ID) => state.set.find(m => isValid(m) && m.ID === ID),
+      getByID: (state) => (ID) => state.set.find(m => isValid(m) && m.messageID === ID),
       getByChannelID: (state) => (channelID) => state.set.filter(m => isValid(m) && !m.replyTo && m.channelID === channelID),
       getPinned: (state) => state.set.filter(m => isValid(m) && m.isPinned),
       getBookmarked: (state) => state.set.filter(m => isValid(m) && m.isBookmarked),
 
       unreadInChannel: (state) =>
         (channelID, firstMessageID) =>
-          state.set.filter(m => isValid(m) && !m.replyTo && m.channelID === channelID && (firstMessageID || 0) <= m.ID),
+          state.set.filter(m => isValid(m) && !m.replyTo && m.channelID === channelID && (firstMessageID || 0) <= m.messageID),
 
-      getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.ID === messageID || m.replyTo === messageID)),
+      getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.messageID === messageID || m.replyTo === messageID)),
 
       getThreads: (state) =>
         // @todo this should be sorted by date/id of the last message in the thread
         [...state.set.filter(m => isValid(m) && !m.replyTo && m.replies > 0)]
-          .sort((a, b) => b.ID - a.ID),
+          .sort((a, b) => b.messageID - a.messageID),
     },
 
     actions: {
-      async delete ({ commit, state }, { channelID, messageID }) {
+      delete ({ commit, state }, { channelID, messageID }) {
         commit(types.pending)
-        Messaging.messageDelete({ channelID, messageID }).then(() => {
+        MessagingAPI.messageDelete({ channelID, messageID }).then(() => {
           commit(types.removeFromSet, messageID)
           commit(types.completed)
         })
       },
 
-      async pin ({ commit, getters }, { channelID, messageID, isPinned }) {
+      pin ({ commit, getters }, { channelID, messageID, isPinned }) {
         commit(types.pending)
         const response = () => {
-          const msg = getters.getByID(messageID)
-          if (msg) {
-            commit(types.setPin, { msg, isPinned: !isPinned })
-            commit(types.updateSet, [msg])
-          } else {
-            commit(types.notFound)
+          const message = getters.getByID(messageID)
+          if (message) {
+            commit(types.setPin, { message, isPinned: !isPinned })
           }
           commit(types.completed)
         }
 
         if (isPinned) {
-          Messaging.messagePinRemove({ channelID, messageID }).then(response)
+          MessagingAPI.messagePinRemove({ channelID, messageID }).then(response)
         } else {
-          Messaging.messagePinCreate({ channelID, messageID }).then(response)
+          MessagingAPI.messagePinCreate({ channelID, messageID }).then(response)
         }
       },
 
-      async bookmark ({ commit, getters }, { channelID, messageID, isBookmarked }) {
+      // Called from pin() and websocket handler
+      pinned ({ commit, getters }, { messageID }) {
+        const message = getters.getByID(messageID)
+
+        if (message) {
+          commit(types.setPin, { message, isPinned: true })
+        }
+      },
+
+      // Called from pin() and websocket handler
+      unpinned ({ commit, getters }, { messageID }) {
+        const message = getters.getByID(messageID)
+
+        if (message) {
+          commit(types.setPin, { message, isPinned: false })
+        }
+      },
+
+      reactionAdded ({ commit, getters }, { messageID, userID, reaction }) {
+        const message = getters.getByID(messageID)
+
+        if (message) {
+          commit(types.addReaction, { message, userID, reaction })
+        }
+      },
+
+      reactionRemoved ({ commit, getters }, { messageID, userID, reaction }) {
+        const message = getters.getByID(messageID)
+
+        if (message) {
+          commit(types.removeReaction, { message, userID, reaction })
+        }
+      },
+
+      bookmark ({ commit, getters }, { channelID, messageID, isBookmarked }) {
         commit(types.pending)
         const response = () => {
-          const msg = getters.getByID(messageID)
-          if (msg) {
-            commit(types.setBookmark, { msg, isBookmarked: !isBookmarked })
-            commit(types.updateSet, [msg])
-          } else {
-            commit(types.notFound)
+          const message = getters.getByID(messageID)
+          if (message) {
+            isBookmarked = !isBookmarked
+            commit(types.setBookmark, { message, isBookmarked })
           }
           commit(types.completed)
         }
+
         if (isBookmarked) {
-          Messaging.messageBookmarkRemove({ channelID, messageID }).then(response)
+          MessagingAPI.messageBookmarkRemove({ channelID, messageID }).then(response)
         } else {
-          Messaging.messageBookmarkCreate({ channelID, messageID }).then(response)
+          MessagingAPI.messageBookmarkCreate({ channelID, messageID }).then(response)
         }
       },
 
@@ -103,54 +131,64 @@ export default function (Messaging) {
         state.pending = false
       },
 
-      [types.notFound] (state) {
-        state.warning = true
-      },
-
       [types.updateSet] (state, set) {
-        if (state.set.length === 0) {
-          // Plain & simple
-          state.set = set
-        } else {
-          set.forEach(msg => {
-            // Replaces given msg due to an update
-            const n = state.set.findIndex(m => m.ID === msg.ID)
-
-            // Doesn't yet exist -- add it
-            if (n < 0) {
-              state.set.push(msg)
-            } else {
-              state.set.splice(n, 1, msg)
-            }
-          })
-        }
-
-        state.set.sort((a, b) => a.ID.localeCompare(b.ID))
+        updateSet(state, set)
       },
 
-      [types.setPin] (state, { msg, isPinned }) {
-        msg.isPinned = isPinned
+      [types.setPin] (state, { message, isPinned }) {
+        message.isPinned = isPinned
+        updateSet(state, [message])
       },
 
-      [types.setBookmark] (state, { msg, isBookmarked }) {
-        msg.isBookmarked = isBookmarked
+      [types.setBookmark] (state, { message, isBookmarked }) {
+        message.isBookmarked = isBookmarked
+        updateSet(state, [message])
       },
 
-      [types.addReaction] (state, { msg, userID, reaction }) {
-        msg.addReaction({ userID, reaction })
+      [types.addReaction] (state, { message, userID, reaction }) {
+        message.addReaction({ userID, reaction })
+        updateSet(state, [message])
       },
 
-      [types.removeReaction] (state, { msg, userID, reaction }) {
-        msg.removeReaction({ userID, reaction })
+      [types.removeReaction] (state, { message, userID, reaction }) {
+        message.removeReaction({ userID, reaction })
+        updateSet(state, [message])
       },
 
       [types.clearSet] (state) {
         state.set.splice(0)
       },
 
-      [types.removeFromSet] (state, ...IDs) {
-        state.set = [...state.set.filter(m => IDs.indexOf(m.ID) < 0)]
+      [types.removeFromSet] (state, ...messageIDs) {
+        state.set = [...state.set.filter(m => messageIDs.indexOf(m.messageID) < 0)]
       },
     },
+  }
+}
+
+const updateSet = (state, set) => {
+  let sort = false
+
+  if (state.set.length === 0) {
+    // Plain & simple
+    state.set = set
+    sort = true
+  } else {
+    set.forEach(msg => {
+      // Replaces given msg due to an update
+      const n = state.set.findIndex(m => m.messageID === msg.messageID)
+
+      // Doesn't yet exist -- add it
+      if (n < 0) {
+        state.set.push(msg)
+        sort = true
+      } else {
+        state.set.splice(n, 1, msg)
+      }
+    })
+  }
+
+  if (sort) {
+    state.set.sort((a, b) => a.messageID.localeCompare(b.messageID))
   }
 }

@@ -116,58 +116,24 @@ export default {
     })
 
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        this.$store.commit('history/addReaction', { msg, userID, reaction })
-        this.$store.commit('history/updateSet', [msg])
-      }
+      this.$store.dispatch('history/reactionAdded', { userID, messageID, reaction })
     })
 
     this.$bus.$on('$ws.messageReactionRemoved', ({ userID, messageID, reaction }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        this.$store.commit('history/removeReaction', { msg, userID, reaction })
-        this.$store.commit('history/updateSet', [msg])
-      }
+      this.$store.dispatch('history/reactionRemoved', { userID, messageID, reaction })
     })
 
-    this.$bus.$on('$ws.messagePin', ({ userID, messageID }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        this.$store.commit('history/setPin', { msg, isPinned: true })
-        this.$store.commit('history/updateSet', [msg])
-      }
+    this.$bus.$on('$ws.messagePin', ({ messageID }) => {
+      this.$store.dispatch('history/pinned', { messageID })
     })
 
-    this.$bus.$on('$ws.messagePinRemoved', ({ userID, messageID }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        this.$store.commit('history/setPin', { msg, isPinned: false })
-        this.$store.commit('history/updateSet', [msg])
-      }
-    })
-
-    // Handling requests for message pins
-    this.$bus.$on('message.delete', ({ message }) => {
-      // Response is broadcasted via WS
-      this.$store.dispatch('history/delete', { channelID: message.channelID, messageID: message.ID })
+    this.$bus.$on('$ws.messagePinRemoved', ({ messageID }) => {
+      this.$store.dispatch('history/unpinned', { messageID })
     })
 
     // Handling requests for last read message
     this.$bus.$on('message.markAsLastRead', ({ channelID, messageID, threadID }) => {
       this.$store.dispatch('unread/markAsRead', { channelID, lastReadMessageID: messageID, threadID })
-    })
-
-    // Handling requests for message pins
-    this.$bus.$on('message.pin', ({ message }) => {
-      // Response is broadcasted via WS
-      this.$store.dispatch('history/pin', { channelID: message.channelID, messageID: message.ID, isPinned: message.isPinned })
-    })
-
-    // Handling requests for message bookmark
-    this.$bus.$on('message.bookmark', ({ message }) => {
-      // API does not send bookmark notifications back via WS, so we're on our own..
-      this.$store.dispatch('history/bookmark', { channelID: message.channelID, messageID: message.ID, isBookmarked: message.isBookmarked })
     })
 
     // Handling Message reaction requests
@@ -176,9 +142,9 @@ export default {
       const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.ID) !== -1
 
       if (existing && ours) {
-        this.$messaging.messageReactionRemove({ channelID: message.channelID, messageID: message.ID, reaction })
+        this.$messaging.messageReactionRemove({ ...message, reaction })
       } else {
-        this.$messaging.messageReactionCreate({ channelID: message.channelID, messageID: message.ID, reaction })
+        this.$messaging.messageReactionCreate({ ...message, reaction })
       }
     })
 
