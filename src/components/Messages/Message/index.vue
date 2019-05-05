@@ -1,6 +1,6 @@
 <template>
     <li
-      :id="message.ID"
+      :id="message.messageID"
       @click.alt.exact.prevent="$emit('markAsUnread')"
       @click.meta.exact.prevent="onOpenThread"
       class="message-n-meta"
@@ -19,19 +19,19 @@
         'last' : isLast && !isFirst,
       }"
       ref="message"
-      :key="message.ID">
+      :key="message.messageID">
 
       <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
 
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
-            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
-              <avatar :user="message.user" />
+            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+              <avatar :userID="message.userID" />
             </router-link>
           </em>
           <em  v-if="!consecutive" class="author selectable">
-            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
-              {{ label(message.user) }}
+            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+              {{ labelUser(message.userID) }}
             </router-link>
           </em>
           <i18next path="message.postedDate" tag="span" class="date">
@@ -50,6 +50,8 @@
             v-if="!hideActions && !inEditing"
             v-bind="$props"
             @editMessage="inEditing=true"
+            @pinMessage="onPinMessage"
+            @bookmarkMessage="onBookmarkMessage"
             @deleteMessage="onDeleteMessage"
             v-on="$listeners" />
         </section>
@@ -58,7 +60,7 @@
         </section>
         <div
           class="selectable"
-          :class="{ from_me: (message.user || {}).ID === $auth.user.ID,
+          :class="{ from_me: (message.user || {}).ID === currentUser.ID,
           'message' : !inEditing,
            }">
           <attachment
@@ -79,7 +81,7 @@
           <contents
             v-if="!inEditing"
             class="message-content"
-            :id="message.ID"
+            :id="message.messageID"
             :content="message.message" />
 
           <embedded-box
@@ -100,6 +102,7 @@
     </li>
 </template>
 <script>
+import { mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
@@ -194,6 +197,12 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      pinMessage: 'history/pin',
+      bookmarkMessage: 'history/bookmark',
+      deleteMessage: 'history/delete',
+    }),
+
     onInputSubmit ({ value }) {
       this.showEditor = false
     },
@@ -223,10 +232,18 @@ export default {
       this.$bus.$emit('message.reaction', { message: this.message, reaction })
     },
 
+    onPinMessage () {
+      this.pinMessage(this.message)
+    },
+
+    onBookmarkMessage () {
+      this.bookmarkMessage(this.message)
+    },
+
     onDeleteMessage () {
+      // @todo a more slick, inline confirmation...
       if (confirm(this.$t('message.deleteConfirm'))) {
-        // @todo a more slick, inline confirmation...
-        this.$bus.$emit('message.delete', { message: this.message })
+        this.deleteMessage(this.message)
       }
     },
 

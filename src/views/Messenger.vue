@@ -183,6 +183,13 @@ export default {
 
   methods: {
     init () {
+      this.$store.dispatch('channels/load').then(({ unreads }) => {
+        this.$store.commit('unread/set', unreads)
+      })
+      this.$store.dispatch('users/load')
+      this.$store.dispatch('users/loadStatuses')
+      this.$store.dispatch('suggestions/loadCommands')
+
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
 
@@ -247,7 +254,7 @@ export default {
 
       this.$bus.$on('$message.previewAttachment', (attachment) => {
         this.uiShowPreview = {
-          src: this.$rest.baseURL() + attachment.url,
+          src: this.$messaging.baseURL + attachment.url,
           caption: attachment.name,
         }
       })

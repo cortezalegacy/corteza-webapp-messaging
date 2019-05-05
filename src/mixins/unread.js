@@ -54,9 +54,6 @@ export default {
 
       if (!payload.threadID) delete payload.threadID
 
-      // Update store, set pointer to the ast message id
-      this.$store.commit('unread/set', payload)
-
       this.$unread.lastMessageID = lastReadMessageID
 
       // Tell the backend we've read it all..

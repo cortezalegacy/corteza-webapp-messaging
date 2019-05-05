@@ -21,6 +21,7 @@
 import { mapGetters } from 'vuex'
 import BasePanel from './.'
 import Messages from '@/components/Messages'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
@@ -46,7 +47,9 @@ export default {
   },
 
   mounted () {
-    this.$ws.getMessages({ pinned: true, channelID: this.channelID })
+    messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { pinnedOnly: true, channelID: this.channelID }).then((msgs) => {
+      this.$store.commit('history/updateSet', msgs)
+    })
   },
 }
 </script>

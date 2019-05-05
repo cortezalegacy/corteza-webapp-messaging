@@ -63,7 +63,7 @@
               <li v-for="(u) in members" :key="u.ID">
                 <user-avatar :user="u" />
                 {{ label(u) }}
-                <button class="btn-i" @click.prevent="channel.removeMember(u)"><i class="icon-close"></i></button>
+                <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-close"></i></button>
               </li>
             </ul>
           </div>
@@ -128,12 +128,17 @@
 </template>
 <script>
 import { Channel } from '@/types'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import ConfirmationRow from '@/components/Form/ConfirmationRow'
 import SearchInput from '@/components/SearchInput'
 import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
 import 'vue-simple-suggest/dist/styles.css'
 import Avatar from '@/components/Avatar'
+
+const action = {
+  add: 'add',
+  remove: 'remove',
+}
 
 export default {
   name: 'channel-editor',
@@ -151,6 +156,8 @@ export default {
     return {
       channel: new Channel(),
       error: null,
+
+      actionsUser: {},
 
       selectedMember: null,
       autoCompleteStyle: {
@@ -192,21 +199,23 @@ export default {
   },
 
   methods: {
-    ...mapActions({
+    ...mapMutations({
       removeChannelFromList: 'channels/removeFromList',
     }),
 
+    removeMember (u) {
+      if (!this.actionsUser[u.ID]) {
+        this.$set(this.actionsUser, u.ID, [])
+      }
+
+      this.actionsUser[u.ID].push(action.remove)
+      this.channel.removeMember(u)
+    },
+
     load (channelID) {
       if (channelID) {
-        this.$rest.getChannel(channelID).then((ch) => {
-          this.channel = ch
-
-          this.$rest.getMembers(channelID).then((members) => {
-            console.debug('Chanel member info loaded into editor', members)
-            this.channel.members = members.map((m) => {
-              return m.user.ID
-            })
-          })
+        this.$messaging.channelRead({ channelID }).then((ch) => {
+          this.channel = new Channel(ch)
         }).catch((error) => {
           console.error('Failed to load channel info', { error })
         }).finally(() => {
@@ -222,17 +231,27 @@ export default {
 
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
-      this.$rest.updateChannelState(this.channel.ID, state).then((ch) => {
-        this.channel = ch
+      this.$messaging.channelState({ channelID: this.channel.ID, state }).then((ch) => {
+        this.channel = new Channel(ch)
       }).catch(({ message }) => {
         this.error = message
       })
     },
 
     onSubmit () {
-      if (this.channel.ID) {
+      const channelID = this.channel.ID
+      if (channelID) {
         console.debug('Updating channel', this.channel)
-        this.$rest.updateChannel(this.channel).then((ch) => {
+        // Update member list; if the list was altered
+        const actions = Object.entries(this.actionsUser)
+        if (actions.length) {
+          for (const [ userID ] of actions) {
+            // @note When we allow memer adding in this interface; this should be updated
+            this.$messaging.channelPart({ channelID, userID })
+          }
+        }
+        // Update channel
+        this.$messaging.channelUpdate({ ...this.channel, channelID: channelID }).then((ch) => {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
@@ -240,7 +259,7 @@ export default {
         })
       } else {
         console.debug('Creating channel', this.channel)
-        this.$rest.createChannel(this.channel).then((ch) => {
+        this.$messaging.channelCreate(this.channel).then((ch) => {
           console.debug('Channel created', ch)
           this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
         }).catch(({ error }) => {
@@ -250,6 +269,7 @@ export default {
     },
 
     onMemberSelect (user) {
+      if (!user) return
       this.selectedMember = ''
       this.channel.members.push(user.ID)
     },

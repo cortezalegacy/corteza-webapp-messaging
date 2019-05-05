@@ -30,10 +30,14 @@ export default {
     ...mapGetters({
       users: 'users/list',
     }),
+
+    isMember () {
+      return (userID) => !!this.members.find(m => m.userID === userID)
+    },
   },
 
   mounted () {
-    this.$rest.getMembers(this.channelID).then(members => {
+    this.$messaging.channelMembers({ channelID: this.channelID }).then(members => {
       this.members = members
     }).catch(error => {
       console.error('Failed to load channel members', { error })
@@ -42,22 +46,18 @@ export default {
 
   methods: {
     add (userID) {
-      this.$rest.addMember(this.channelID, userID).then((members) => {
+      this.$messaging.channelJoin({ channelID: this.channelID, userID }).then((members) => {
         this.members = this.members.concat(members)
       })
     },
 
     remove (userID) {
-      this.$rest.removeMember(this.channelID, userID).then(() => {
-        const i = this.members.findIndex(m => m.user.ID === userID)
+      this.$messaging.channelPart({ channelID: this.channelID, userID }).then(() => {
+        const i = this.members.findIndex(m => m.userID === userID)
         if (i > 0) {
           this.members.splice(i, 1)
         }
       })
-    },
-
-    isMember (userID) {
-      return !!this.members.find(m => m.user.ID === userID)
     },
   },
 }

@@ -44,13 +44,14 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import ChannelHeader from '@/components/Channel/Header'
 import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
@@ -97,8 +98,6 @@ export default {
   computed: {
     ...mapGetters({
       channelByID: 'channels/findByID',
-
-      unread: 'unread/channel',
       lastReadMessageID: 'unread/last',
 
       channelHistory: 'history/getByChannelID',
@@ -134,9 +133,8 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      clearHistory: 'history/clear',
-      setCurrentChannel: 'channels/setCurrent',
+    ...mapMutations({
+      clearHistory: 'history/clearSet',
     }),
 
     changeChannel (channel) {
@@ -145,7 +143,7 @@ export default {
       this.editLastMessage = false
       this.channel = channel
 
-      this.setCurrentChannel(this.channel)
+      this.$store.commit('channels/setCurrent', this.channel)
 
       this.previousFetchFirstMessageID = null
 
@@ -154,7 +152,9 @@ export default {
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      this.$ws.getMessages({ channelID: this.channel.ID, fromID: this.messageID })
+      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, fromMessageID: this.messageID }).then((msgs) => {
+        this.$store.commit('history/updateSet', msgs)
+      })
     },
 
     onOpenFilePicker () {
@@ -167,9 +167,8 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.$ws.getMessages({
-          channelID: this.channel.ID,
-          lastID: messageID,
+        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, toMessageID: messageID }).then((msgs) => {
+          this.$store.commit('history/updateSet', msgs)
         })
       }
     },

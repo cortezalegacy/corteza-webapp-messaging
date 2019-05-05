@@ -12,7 +12,7 @@ export default {
     // Only creating messaging channel in the background and redirecting user...
     // later this can be extended to actual profile page
 
-    this.$rest.createChannel({ type: 'group', members: [this.userID] }).then((ch) => {
+    this.$messaging.channelCreate({ type: 'group', members: [this.userID] }).then((ch) => {
       console.debug('Direct message channel created', ch)
       this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
     }).catch(({ error }) => {

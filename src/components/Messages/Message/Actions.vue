@@ -22,7 +22,7 @@
         v-if="!hidePinning && !readOnly"
         :class="{pinned:message.isPinned}"
         :title="$t('message.pin')"
-        @click="$bus.$emit('message.pin', { message })"
+        @click="$emit('pinMessage', { message })"
       ></font-awesome-icon>
       <font-awesome-icon
         class="action"
@@ -30,7 +30,7 @@
         v-if="!hideBookmarking"
         :class="{bookmarked:message.isBookmarked}"
         :title="$t('message.bookmark')"
-        @click="$bus.$emit('message.bookmark', { message })"
+        @click="$emit('bookmarkMessage', { message })"
       ></font-awesome-icon>
       <i v-if="!isContextMenuOpen && isContextMenuEnabled"
         class="action icon-plus" @click="onContextMenuOpen()"></i>
@@ -56,7 +56,6 @@
   </div>
 </template>
 <script>
-
 export default {
   props: {
     message: {

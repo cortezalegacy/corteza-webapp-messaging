@@ -1,13 +1,25 @@
-// initial state
-const state = {
-  list: [],
+import { User } from '@/types'
 
-  // Keeps user presence & channel activity
-  activity: [], // []Activity
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  updateList: 'updateList',
+  updateActivity: 'updateActivity',
+  statusSet: 'statusSet',
+  statusRemove: 'statusRemove',
+  statusCleanup: 'statusCleanup',
+
+  active: 'active',
+  inactive: 'inactive',
+  cleanup: 'cleanup',
 }
 
 // How much time (in seconds) should we keep the activity
-const activityTTL = 5
+const activityTTL = 5000
+const statusTTL = 35000
+
+const statusFinder = ({ userID, status }) =>
+  (s) => s.userID === userID && s.status === status
 
 const activityFinder = ({ userID, channelID, kind }) =>
   (a) => a.userID === userID && a.channelID === channelID && a.kind === kind
@@ -21,7 +33,7 @@ class Activity {
 
   isStale (ttl = activityTTL) {
     const now = (new Date()).getTime()
-    return now - (ttl * 1000) > this.updatedAt
+    return now - ttl > this.updatedAt
   }
 
   update () {
@@ -30,86 +42,148 @@ class Activity {
   }
 }
 
-// getters
-const getters = {
-  list: (state) => state.list,
-  listOnDemand: (state) => () => state.list,
-  length: (state) => state.list.length,
-  findByID: (state) => (ID) => state.list.find(u => ID === u.ID),
-  findByUsername: (state) => (username) => {
-    return state.list.filter(user => user.username === username)[0] || undefined
-  },
+class Status {
+  constructor (props = {}) {
+    this.permanent = false
+    Object.assign(this, props)
+    this.createdAt = (new Date()).getTime()
+    this.update()
+  }
 
-  isPresent:
-    (state) =>
-      (ID) =>
-        (state.list.find(a => a.ID === ID) || {}).connections > 0,
+  // ttl contains ttl based on status type
+  isStale (ttl = {}) {
+    if (this.permanent) return false
 
-  channelActivity:
-    (state) =>
-      (channelID, kind) => {
-        const IDs = state.activity.filter(a => a.channelID === channelID && a.kind === kind).map(a => a.userID)
-        return state.list.filter(u => IDs.includes(u.ID))
+    const now = (new Date()).getTime()
+    let use = ttl[this.status] || statusTTL
+    return now - use > this.updatedAt
+  }
+
+  update () {
+    this.updatedAt = (new Date()).getTime()
+    return this
+  }
+}
+
+export default function (Messaging, System) {
+  return {
+    namespaced: true,
+    state: {
+      pending: false,
+      list: [],
+
+      // Keeps user presence & channel activity
+      activity: [], // []Activity
+      status: [],
+    },
+    getters: {
+      list: (state) => state.list,
+      listOnDemand: (state) => () => state.list,
+      length: (state) => state.list.length,
+      findByID: (state) => (ID) => state.list.find(u => ID === u.userID),
+      findByUsername: (state) => (username) => {
+        return state.list.filter(user => user.username === username)[0] || undefined
       },
-}
-// actions
-const actions = {
-  resetList ({ commit }, list) {
-    commit('resetList', list)
-  },
-}
+      pending: (state) => state.pending,
 
-// mutations
-const mutations = {
-  resetList (state, users) {
-    state.list = users
-  },
+      isPresent:
+        (state) =>
+          (userID) => {
+            return state.status.findIndex((s) => s.userID === userID) >= 0
+          },
 
-  connections (state, { ID, delta = undefined, value = undefined }) {
-    const i = state.list.findIndex(u => u.ID === ID)
-    if (i > -1) {
-      const user = state.list[i]
-      if (value !== undefined) {
-        user.connections = value
-      } else if (delta !== undefined) {
-        user.connections += delta
+      channelActivity:
+        (state) =>
+          (channelID, kind) => {
+            const IDs = state.activity.filter(a => a.channelID === channelID && a.kind === kind).map(a => a.userID)
+            return state.list.filter(u => IDs.includes(u.userID))
+          },
+    },
+    actions: {
+      async load ({ commit }) {
+        commit(types.pending)
+        System.userList().then((users) => {
+          commit(types.updateList, users)
+          commit(types.completed)
+        })
+      },
 
-        if (user.connections < 0) {
-          user.connections = 0
+      async loadStatuses ({ commit }) {
+        commit(types.pending)
+        Messaging.statusList().then((statuses) => {
+          commit(types.statusSet, statuses)
+          commit(types.completed)
+        })
+      },
+    },
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
+
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.updateList] (state, users) {
+        users = users.map(u => { return new User(u) })
+        if (state.list.length === 0) {
+          state.list = users
+        } else {
+          users.forEach(usr => {
+            // Replaces given user due to an update
+            const n = state.list.findIndex(u => u.userID === usr.userID)
+
+            // Doesn't yet exist -- add it
+            if (n < 0) {
+              state.list.push(usr)
+            } else {
+              state.list.splice(n, 1, usr)
+            }
+          })
         }
-      } else {
-        return
-      }
+      },
 
-      state.list.splice(i, 1, user)
-    }
-  },
+      [types.active] (state, activities) {
+        for (const activity of activities) {
+          const i = state.activity.findIndex(activityFinder(activity))
+          if (i > -1) {
+            state.activity.splice(i, 1, state.activity[i].update())
+          } else {
+            state.activity.push(new Activity(activity))
+          }
+        }
+      },
 
-  active (state, props) {
-    const i = state.activity.findIndex(activityFinder(props))
-    if (i > -1) {
-      state.activity.splice(i, 1, state.activity[i].update())
-    } else {
-      state.activity.push(new Activity(props))
-    }
-  },
+      [types.inactive] (state, { userID, channelID, kind }) {
+        state.activity = [...state.activity.filter((a) =>
+          !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
+      },
 
-  // Removes all activities that match
-  inactive (state, { userID, channelID, kind }) {
-    state.activity = [...state.activity.filter((a) =>
-      !(a.userID === userID && a.channelID === channelID && a.kind === kind))]
-  },
+      // Removes all stale activity
+      [types.cleanup] (state, { ttl }) {
+        state.activity = state.activity.filter(a => !a.isStale(ttl))
+      },
 
-  // Removes all stale activity
-  cleanup (state, { ttl }) {
-    state.activity = state.activity.filter(a => a.isStale(ttl))
-  },
-}
+      [types.statusSet] (state, statuses) {
+        for (const status of statuses) {
+          const i = state.status.findIndex(statusFinder(status))
+          if (i > -1) {
+            state.status.splice(i, 1, state.status[i].update())
+          } else {
+            state.status.push(new Status(status))
+          }
+        }
+      },
 
-export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations,
+      [types.statusRemove] (state, { userID, status }) {
+        state.status = [...state.status.filter((s) =>
+          !(s.userID === userID && s.status === status))]
+      },
+
+      [types.statusCleanup] (state, { ttl }) {
+        state.status = state.status.filter(s => !s.isStale(ttl))
+      },
+    },
+  }
 }

@@ -11,10 +11,10 @@
       :readOnly="readOnly"
       :message="msg"
       :consecutive="consecutive && isConsecutive(messages, index)"
-      :currentUser="$auth.user"
-      :key="msg.ID"
-      :isUnread="!!lastReadMessageID && lastReadMessageID < msg.ID"
-      :isLastRead="lastReadMessageID === msg.ID"
+      :currentUser="currentUser"
+      :key="msg.messageID"
+      :isUnread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
+      :isLastRead="lastReadMessageID === msg.messageID"
       :isFirst="index === 0"
       :showEditor="showEditor(msg)"
       :hideActions="hideActions"
@@ -32,7 +32,7 @@
   </ul>
 </template>
 <script>
-import _ from 'lodash'
+import { throttle } from 'lodash'
 import Message from './Message'
 import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
 
@@ -100,11 +100,11 @@ export default {
 
   computed: {
     getLastEditable () {
-      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.$auth.user.ID)
+      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.userID)
     },
 
     showEditor () {
-      return (message) => this.getLastEditable && this.getLastEditable.ID === message.ID
+      return ({ messageID }) => this.getLastEditable && this.getLastEditable.messageID === messageID
     },
   },
 
@@ -120,8 +120,8 @@ export default {
 
   updated () {
     const lastMessage = this.messages.length === 0 ? null : this.messages[this.messages.length - 1]
-    const isNewMessage = lastMessage && this.lastMessageID < lastMessage.ID
-    const isOwnerOfLastMessage = lastMessage && lastMessage.user.ID === this.$auth.user.ID
+    const isNewMessage = lastMessage && this.lastMessageID < lastMessage.messageID
+    const isOwnerOfLastMessage = lastMessage && lastMessage.userID === this.currentUser.userID
 
     this.$nextTick(() => {
       if (this.scrollable) {
@@ -140,7 +140,7 @@ export default {
 
     if (isNewMessage) {
       // Store this for next lookup
-      this.lastMessageID = lastMessage.ID
+      this.lastMessageID = lastMessage.messageID
     }
   },
 
@@ -151,7 +151,7 @@ export default {
       this.allowAutoScroll = true
     },
 
-    onScrollThrottled: _.throttle(function (e) { this.onScroll(e) }, 1500),
+    onScrollThrottled: throttle(function (e) { this.onScroll(e) }, 1500),
     onScroll ({ target }) {
       if (!target || !this.scrollable) return
 
@@ -178,14 +178,15 @@ export default {
         return
       }
 
-      const m = this.messages[index - 1]
+      const { messageID, channelID, replyTo } = this.messages[index - 1]
       let payload = {
-        channelID: m.channelID,
-        messageID: m.ID,
+        channelID,
+        messageID,
       }
+
       switch (this.origin.constructor.name) {
         case 'Message':
-          payload.threadID = m.replyTo || m.ID
+          payload.threadID = replyTo || messageID
           break
         case 'Channel':
           break
@@ -197,7 +198,7 @@ export default {
     },
 
     getLastMessageByUserID: (set, userID) => {
-      return [...set].reverse().find(m => m.user.ID === userID)
+      return [...set].reverse().find(m => m.userID === userID)
     },
   },
 }

@@ -1,161 +1,187 @@
-// initial state
-const state = {
-  current: null,
-  list: [],
-  lastMessages: [], // set of channelID-messageId pairs
+import { Channel } from '@/types'
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  setCurrent: 'setCurrent',
+  resetList: 'resetList',
+  updateList: 'updateList',
+  channelJoin: 'channelJoin',
+  channelPart: 'channelPart',
+  removeFromList: 'removeFromList',
+  updateLastMessage: 'updateLastMessage',
 }
 
-// getters
-const getters = {
-  // Finds last message id for a specific channel
-  lastMessage: (state) => (channelID) => {
-    const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
-    return ci < 0 ? 0 : state.lastMessages[ci].messageId
-  },
-  current: (state) => state.current,
+export default function (Messaging) {
+  return {
+    namespaced: true,
 
-  // Return all but deleted
-  list: (state) => state.list.filter(c => c.canJoin || c.canObserve),
-  listOnDemand: (state) => () => state.list.filter(c => !c.deletedAt && !c.archivedAt),
+    state: {
+      current: null,
+      pending: false,
+      list: [],
+      lastMessages: [], // set of channelID-messageId pairs
+    },
 
-  // Return private & public channels
-  byType: (state, getters) => (type) => getters.list.filter(c => c.type === type),
+    getters: {
+      pending: (state) => state.pending,
+      // Finds last message id for a specific channel
+      lastMessage: (state) => (channelID) => {
+        const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
+        return ci < 0 ? 0 : state.lastMessages[ci].messageId
+      },
+      current: (state) => state.current,
 
-  // Find channel by ID
-  findByID: (state, getters) => (ID) => {
-    return getters.list.filter(c => c.ID === ID)[0] || undefined
-  },
+      // Return all but deleted
+      list: (state) => state.list.filter(c => c.canJoin || c.canObserve),
+      listOnDemand: (state) => () => state.list.filter(c => !c.deletedAt && !c.archivedAt),
 
-  // Find direct/group channel for a specific set of members
-  findByMembership: (state, getters) => (...userIDs) => {
-    const userCount = userIDs.length
-    const uidstr = JSON.stringify(userIDs.sort())
-    const eq = (members) => JSON.stringify([...members].sort()) === uidstr
+      // Return private & public channels
+      byType: (state, getters) => (type) => getters.list.filter(c => c.type === type),
 
-    return getters.list.find(c => c.type === 'group' && c.members.length === userCount && eq(c.members))
-  },
+      // Find channel by ID
+      findByID: (state, getters) => (ID) => {
+        return getters.list.filter(c => c.ID === ID)[0] || undefined
+      },
 
-  otherMembersOf: (state, getters) => (channelID, userID) => {
-    const ch = getters.findByID(channelID)
+      // Find direct/group channel for a specific set of members
+      findByMembership: (state, getters) => (...userIDs) => {
+        const userCount = userIDs.length
+        const uidstr = JSON.stringify(userIDs.sort())
+        const eq = (members) => JSON.stringify([...members].sort()) === uidstr
 
-    if (!ch) {
-      return []
-    }
+        return getters.list.find(c => c.type === 'group' && c.members.length === userCount && eq(c.members))
+      },
 
-    if (ch.members.length === 1) {
-      return ch.members
-    }
+      otherMembersOf: (state, getters) => (channelID, userID) => {
+        const ch = getters.findByID(channelID)
 
-    return ch.members.filter(memberID => memberID !== userID)
-  },
-}
-
-// actions
-const actions = {
-  setCurrent ({ commit }, channel) {
-    commit('setCurrent', channel)
-  },
-
-  resetList ({ commit }, list) {
-    commit('resetList', list)
-  },
-
-  updateList ({ commit }, channel) {
-    commit('updateList', channel)
-  },
-
-  join ({ commit, getters }, { channelID, userID }) {
-    const ch = getters.findByID(channelID)
-    if (ch) {
-      if (ch.members.findIndex(m => m === userID) > -1) {
-        ch.members.push(userID)
-        commit('updateList', ch)
-      }
-    }
-  },
-
-  part ({ commit, getters }, { channelID, userID }) {
-    const ch = getters.findByID(channelID)
-
-    if (ch) {
-      if (ch.type === 'public') {
-        // Keep public channels in the list
-        const i = ch.members.findIndex(m => m === userID)
-        if (i > -1) {
-          ch.members.splice(i, 1)
-          commit('updateList', ch)
+        if (!ch) {
+          return []
         }
-      } else {
-        // Remove non-public channels, groups from the list
-        commit('removeFromList', ch)
-      }
-    }
-  },
 
-  removeFromList ({ commit }, channel) {
-    commit('removeFromList', channel)
-  },
+        if (ch.members.length === 1) {
+          return ch.members
+        }
 
-  incUnreadMessageCount ({ commit, getters }, channelID) {
-    const ch = getters.findByID(channelID)
+        return ch.members.filter(memberID => memberID !== userID)
+      },
+    },
 
-    if (ch) {
-      ch.view.newMessagesCount++
-      commit('updateList', ch)
-    }
-  },
+    actions: {
+      // Loads all channels, returns a promise, can be used to update unreads.
+      async load ({ commit }) {
+        commit(types.pending)
+        return new Promise((resolve) => {
+          Messaging.channelList().then((channels) => {
+            const cc = []
+            const unreads = []
+            console.debug('Prefeched %d channels', channels.length)
+            channels.forEach((c) => {
+              cc.push(new Channel(c))
 
-  resetUnreadMessageCount ({ commit, getters }, channelID) {
-    const ch = getters.findByID(channelID)
+              if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
+                unreads.push({ channelID: c.ID, ...c.unread })
+              }
+            })
 
-    if (ch) {
-      ch.view.newMessagesCount = 0
-      commit('updateList', ch)
-    }
-  },
-}
+            commit(types.resetList, cc)
+            commit(types.completed)
+            resolve({ unreads })
+          })
+        })
+      },
 
-// mutations
-const mutations = {
-  setCurrent (state, channel) {
-    state.current = channel
-  },
+      incUnreadMessageCount ({ commit, getters }, channelID) {
+        const ch = getters.findByID(channelID)
 
-  resetList (state, channels) {
-    state.list = channels
-  },
+        if (ch) {
+          ch.view.newMessagesCount++
+          commit(types.updateList, ch)
+        }
+      },
 
-  updateList (state, channel) {
-    const l = state.list
-    const i = l.findIndex(c => c.ID === channel.ID)
+      resetUnreadMessageCount ({ commit, getters }, channelID) {
+        const ch = getters.findByID(channelID)
 
-    if (i === -1) {
-      l.unshift(channel)
-    } else {
-      l[i] = channel
-    }
+        if (ch) {
+          ch.view.newMessagesCount = 0
+          commit(types.updateList, ch)
+        }
+      },
+    },
 
-    state.list = [...l]
-  },
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
+      [types.completed] (state) {
+        state.pending = false
+      },
 
-  removeFromList (state, channel) {
-    state.list = [...state.list.filter(ch => channel.ID !== ch.ID)]
-  },
+      [types.setCurrent] (state, channel) {
+        state.current = channel
+      },
 
-  updateLastMessage (state, { channelID, messageId }) {
-    const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
-    if (ci < 0) {
-      state.lastMessages.push({ channelID, messageId })
-    } else {
-      state.lastMessages.splice(ci, 1, { channelID, messageId })
-    }
-  },
-}
+      [types.resetList] (state, channels) {
+        state.list = channels
+      },
 
-export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations,
+      [types.updateList] (state, channel) {
+        const l = state.list
+        const i = l.findIndex(c => c.ID === channel.ID)
+
+        if (i === -1) {
+          l.unshift(channel)
+        } else {
+          l[i] = channel
+        }
+
+        state.list = [...l]
+      },
+
+      [types.channelJoin] (state, { channelID, userID }) {
+        const ch = state.list.findIndex(c => c.ID === channelID)
+
+        if (ch >= 0) {
+          const channel = state.list[ch]
+          if (channel.members.findIndex(m => m === userID) < 0) {
+            channel.members.push(userID)
+            state.list.splice(ch, 1, channel)
+          }
+        }
+      },
+
+      [types.channelPart] (state, { channelID, userID }) {
+        const ch = state.list.findIndex(c => c.ID === channelID)
+
+        if (ch >= 0) {
+          const channel = state.list[ch]
+          const i = channel.members.findIndex(m => m === userID)
+          if (i > -1) {
+            channel.members.splice(i, 1)
+            state.list.splice(ch, 1, channel)
+          }
+
+          // Remove non-public channels, groups from the list
+          if (channel.type !== 'public') {
+            state.list.splice(ch, 1)
+          }
+        }
+      },
+
+      [types.removeFromList] (state, { ID }) {
+        state.list = [...state.list.filter(ch => ID !== ch.ID)]
+      },
+
+      [types.updateLastMessage] (state, { channelID, messageId }) {
+        const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
+        if (ci < 0) {
+          state.lastMessages.push({ channelID, messageId })
+        } else {
+          state.lastMessages.splice(ci, 1, { channelID, messageId })
+        }
+      },
+    },
+  }
 }

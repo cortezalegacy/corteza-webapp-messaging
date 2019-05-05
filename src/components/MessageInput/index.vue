@@ -57,12 +57,18 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import _ from 'lodash'
+import { throttle } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
+
+const kinds = {
+  editing: 'editing',
+  replying: 'replying',
+  typing: 'typing',
+}
 
 export default {
   components: {
@@ -193,10 +199,10 @@ export default {
         return false
       } else if (this.message) {
         // Doing update
-        this.$rest.updateMessage(this.message.channelID, this.message.ID, value).then(stdResponse)
+        this.$messaging.messageEdit({ channelID: this.message.channelID, messageID: this.message.ID, message: value }).then(stdResponse)
       } else if (this.replyTo) {
         // Sending reply
-        this.$rest.sendReply(this.replyTo.channelID, this.replyTo.ID, value).then(stdResponse)
+        this.$messaging.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.ID, message: value }).then(stdResponse)
       } else if (this.channel) {
         this.keepFocusOnSubmit = true
 
@@ -207,7 +213,7 @@ export default {
           return
         }
 
-        this.$rest.sendMessage(this.channel.ID, value).then(stdResponse)
+        this.$messaging.messageCreate({ channelID: this.channel.ID, message: value }).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
     },
@@ -228,25 +234,24 @@ export default {
     // },
 
     // Update channel activity once in a while while typing
-    onChange: _.throttle(function (value) {
+    onChange: throttle(function (value) {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
 
-      switch (true) {
-        case value.text.length === 0:
-          break
+      let params
+      if (value.text.length === 0) {
+        return
+      } else if (this.message !== undefined) {
+        params = { channelID: this.message.channelID, messageID: this.message.ID, kind: kinds.editing }
+      } else if (this.replyTo !== undefined) {
+        params = { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: kinds.replying }
+      } else {
+        params = { channelID: this.channelID, kind: kinds.typing }
+      }
 
-        case this.message !== undefined:
-          this.$ws.send({ messageActivity: { channelID: this.message.channelID, messageID: this.message.ID, kind: 'editing' } })
-          break
-
-        case this.replyTo !== undefined:
-          this.$ws.send({ messageActivity: { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: 'replying' } })
-          break
-
-        default:
-          this.$ws.send({ channelActivity: { ID: this.channelID, kind: 'typing' } })
-          break
+      if (params) {
+        console.debug('activity.send', { params })
+        this.$messaging.activitySend(params)
       }
     }, 2000),
 

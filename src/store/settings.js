@@ -1,33 +1,40 @@
-// initial state
-const state = {
-  settings: [],
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  set: 'set',
 }
 
-// getters
-const getters = {
-  get: (state) => (key) => (state.settings.find(s => s.key === key) || {}).value,
-}
+export default function (Messaging) {
+  return {
+    namespaced: true,
+    state: {
+      settings: [],
+      pending: false,
+    },
+    getters: {
+      get: (state) => (key) => (state.settings.find(s => s.key === key) || {}).value,
+      pending: (state) => state.pending,
+    },
+    actions: {},
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
 
-// actions
-const actions = {}
+      [types.completed] (state) {
+        state.pending = false
+      },
 
-// mutations
-const mutations = {
-  set (state, { key, value }) {
-    const i = state.settings.findIndex(s => s.key === key)
+      [types.set] (state, { key, value }) {
+        const i = state.settings.findIndex(s => s.key === key)
 
-    if (i > -1) {
-      state.settings.splice(i, 1, { key, value })
-    } else {
-      state.settings.push({ key, value })
-    }
-  },
-}
-
-export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations,
+        if (i > -1) {
+          state.settings.splice(i, 1, { key, value })
+        } else {
+          state.settings.push({ key, value })
+        }
+      },
+    },
+  }
 }

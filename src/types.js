@@ -70,7 +70,8 @@ export class Message {
       return
     }
 
-    this.ID = m.ID || m.id // cover both cases (BC)
+    this.messageID = m.messageID
+    this.userID = m.userID
     this.message = m.message
     this.type = m.type
     this.channelID = m.channelID
@@ -89,7 +90,6 @@ export class Message {
     this.canEdit = !!m.canEdit
     this.canDelete = !!m.canDelete
 
-    this.user = new User(m.user)
     this.attachment = m.att ? new Attachment(m.att) : null
   }
 
@@ -135,25 +135,27 @@ class MessageReaction {
 }
 
 export function Attachment (a) {
-  this.ID = a.ID || a.id // cover both cases (BC)
+  this.attachmentID = a.ID
   this.userID = a.userID
   this.name = a.name
   this.meta = a.meta
   this.url = a.url
   this.previewUrl = a.previewUrl
-  this.downloadUrl = a.url + '&download=1'
+
+  if (window.CrustMessagingAPI) {
+    this.downloadUrl = window.CrustMessagingAPI + this.url + '?download=1'
+  }
 }
 
 export class User {
   constructor (u) {
     u = u || {}
 
-    this.ID = u.ID || u.id || '' // cover both cases (BC)
+    this.userID = u.userID || ''
     this.username = u.username || ''
     this.handle = u.handle || ''
     this.name = u.name || ''
     this.email = u.email || ''
-    this.connections = u.connections || 0
 
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.ID).toLocaleLowerCase()
   }
@@ -168,7 +170,7 @@ export function Member (m) {
     return
   }
 
-  this.user = new User(m.user)
+  this.userID = m.userID
   this.type = m.type
   this.channelID = m.channelID
   this.createdAt = m.createdAt || null

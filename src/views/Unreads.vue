@@ -34,6 +34,7 @@
 import { mapGetters, mapActions } from 'vuex'
 import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
@@ -58,7 +59,7 @@ export default {
 
   mounted () {
     this.loadUnreadMessages()
-    this.$store.dispatch('channels/setCurrent', null)
+    this.$store.commit('channels/setCurrent', null)
   },
 
   methods: {
@@ -67,13 +68,12 @@ export default {
     }),
 
     loadUnreadMessages () {
-      // @todo unread -- port this
+      if (!this.unreadChannels) return
+
       this.unreadChannels.forEach(u => {
-        if (u.lastMessageID) {
-          this.$ws.getMessages({ channelID: u.channelID, firstID: u.lastMessageID })
-        } else {
-          this.$ws.getMessages({ channelID: u.channelID })
-        }
+        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: u.channelID, fromMessageID: u.lastMessageID }).then((msgs) => {
+          this.$store.commit('history/updateSet', msgs)
+        })
       })
     },
 

@@ -85,13 +85,11 @@ export default {
 
   methods: {
     add (userID) {
-      this.$rest.addMember(this.channel.ID, userID)
+      this.$messaging.channelJoin({ channelID: this.channel.ID, userID })
     },
 
     remove (userID) {
-      this.$rest.removeMember(this.channel.ID, userID).then(() => {
-        this.channel.removeMember(userID)
-      })
+      this.$messaging.channelPart({ channelID: this.channel.ID, userID })
     },
 
     isMember (userID) {

@@ -89,51 +89,6 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     })
   },
 
-  async send (msg) {
-    if (this.echoMessages) {
-      console.debug('$ws.send', msg)
-    }
-
-    if (typeof msg !== 'string') {
-      msg = JSON.stringify(msg)
-    }
-
-    return new Promise((resolve) => {
-      if (this.connected()) {
-        this.conn.send(msg)
-      } else {
-        console.count('Offline, add message to queue', msg)
-        this.queue.push(msg)
-      }
-
-      resolve()
-    })
-  },
-
-  async getChannels () {
-    return this.send({ channels: {} })
-  },
-
-  async exec (channelID, command, params, input) {
-    return this.send({ exec: { channelID, command, params, input } })
-  },
-
-  async getMessages ({ channelID, firstID, lastID, fromID, pinned, bookmarked }) {
-    return this.send({ messages: { channelID, firstID, lastID, fromID, pinned, bookmarked } })
-  },
-
-  async getReplies (repliesTo) {
-    return this.send({ messages: { repliesTo } })
-  },
-
-  async getThreads ({ channelID } = {}) {
-    return this.send({ messageThreads: { channelID } })
-  },
-
-  async users () {
-    return this.send({ getUsers: {} })
-  },
-
   close () {
     this.conn.close()
   },

@@ -7,7 +7,7 @@
     <template slot="header">{{ $t('panel.thread') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: label(channel) }) }}</template>
     <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: label(channel) }) }}</template>
-    <template slot="main">
+    <template v-if="message" slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false; uploadFileTypeSupported=true"
         @show="showUploadArea=true"
@@ -31,7 +31,7 @@
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
     </template>
-    <template slot="footer">
+    <template v-if="message" slot="footer">
       <div class="footer">
         <message-input
           @markAsRead="onMarkAsRead"
@@ -51,6 +51,7 @@ import MessageInput from '@/components/MessageInput'
 import Upload from '@/components/MessageInput/Upload'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
+import { messagesLoad } from '@/lib/messenger'
 
 export default {
   components: {
@@ -96,7 +97,7 @@ export default {
     },
 
     channelID () {
-      return this.message.channelID
+      return (this.message || {}).channelID
     },
 
     channel () {
@@ -109,6 +110,13 @@ export default {
   },
 
   watch: {
+    message (newVal) {
+      // If root msg was deleted, then the thread should close
+      if (!newVal) {
+        this.$emit('close')
+      }
+    },
+
     repliesTo (newRepliesTo, oldRepliesTo) {
       if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
         this.preload()
@@ -123,7 +131,9 @@ export default {
   methods: {
     // Preloads all thread data
     preload () {
-      this.$ws.getReplies(this.repliesTo)
+      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channelID, threadID: this.repliesTo }).then((msgs) => {
+        this.$store.commit('history/updateSet', msgs)
+      })
     },
 
     onOpenFilePicker () {

@@ -28,6 +28,7 @@
 import { mapGetters } from 'vuex'
 import Messages from '@/components/Messages'
 import Empty from '@/components/Empty'
+import { messagesThreadLoad } from '@/lib/messenger'
 
 export default {
   components: {
@@ -43,8 +44,10 @@ export default {
   },
 
   mounted () {
-    this.$ws.getThreads()
-    this.$store.dispatch('channels/setCurrent', null)
+    this.$store.commit('channels/setCurrent', null)
+    messagesThreadLoad(this.$messaging, this.$store.getters['users/findByID'], {}).then((msgs) => {
+      this.$store.commit('history/updateSet', msgs)
+    })
   },
 }
 </script>

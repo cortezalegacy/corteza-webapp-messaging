@@ -1,12 +1,15 @@
-import { Channel, Message, User } from '@/types'
-import localCommands from '@/commands'
+import { Channel } from '@/types'
+import { messagesProcess } from '@/lib/messenger'
 import Favico from 'favico.js'
+import { throttle } from 'lodash'
 
 const userActivityTTL = 1000 * 5 // microseconds
+// const statusTTL = 1000 * 35 // microseconds
+const statusThrottle = 1000 * 2 // microseconds
+const userRePull = 1000 * 60 * 30 // microseconds -> 30min
 const autheticationRecheck = 1000 * 15 * 60 // microseconds
 
-let userActivityInterval
-let autheticationRecheckInterval
+let userActivityInterval, userRePullInterval, autheticationRecheckInterval
 
 export default {
   beforeCreate () {
@@ -24,55 +27,71 @@ export default {
       },
     )
 
-    this.$bus.$on('$ws.channels', (channels) => {
-      let cc = []
-      console.debug('Prefeched %d channels', channels.length)
-      channels.forEach((c) => {
-        cc.push(new Channel(c))
-
-        if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
-          this.$store.commit('unread/set', { channelID: c.ID, ...c.unread })
-        }
-      })
-
-      this.$store.dispatch('channels/resetList', cc)
-    })
-
     this.$bus.$on('$ws.channel', (channel) => {
-      this.$store.dispatch('channels/updateList', new Channel(channel))
+      this.$store.commit('channels/updateList', new Channel(channel))
     })
 
     this.$bus.$on('$ws.channelJoin', (join) => {
-      this.$store.dispatch('channels/join', join)
+      this.$store.commit('channels/channelJoin', join)
     })
 
     this.$bus.$on('$ws.channelPart', (part) => {
-      this.$store.dispatch('channels/part', part)
+      this.$store.commit('channels/channelPart', part)
     })
 
-    this.$bus.$on('$ws.channelActivity', (activity) => {
-      if (this.$auth.user.ID !== activity.userID) {
-        // Store activity only if someone else is active...
-        this.$store.commit('users/active', activity)
+    let activitySet = new Set()
+    const userGetter = this.$store.getters['users/findByID']
+
+    const userRePullHandler = () => {
+      this.$store.dispatch('users/load')
+    }
+
+    // Processes unique activities & resets the list
+    const updateActivity = throttle(() => {
+      const activities = Array.from(activitySet)
+      console.debug('updateActivity', { activities })
+      activitySet = new Set()
+
+      if (activities.length) {
+        // Check for existing members
+        const existing = activities.filter(userID => !!userGetter(userID))
+
+        // Update statuses
+        const statuses = activities.map(userID => ({ userID, status: 'online' }))
+        this.$store.commit('users/statusSet', statuses)
+
+        // New users; pull all of them
+        if (existing.length !== activities.length) {
+          if (userRePullInterval) window.clearInterval(userRePullInterval)
+          this.$store.dispatch('users/load').then(() => {
+            userRePullInterval = window.setInterval(userRePullHandler, userRePull)
+          })
+        }
       }
-    })
+    }, statusThrottle)
 
-    // Handle users payload when it gets back
-    this.$bus.$on('$ws.users', (users) => {
-      this.$store.dispatch('users/resetList', users.map(u => new User(u)))
-    })
+    this.$bus.$on('$ws.activity', (activity) => {
+      console.debug('activity.received', { activity })
 
-    this.$bus.$on('$ws.clientConnected', ({ uid }) => {
-      this.$store.commit('users/connections', { ID: uid, delta: 1 })
-    })
+      // Ignore self
+      if (this.$auth.user.ID !== activity.userID) {
+        if (activity.kind !== 'disconnected') {
+          activitySet.add(activity.userID)
+          updateActivity()
+        }
 
-    this.$bus.$on('$ws.clientDisconnected', ({ uid }) => {
-      this.$store.commit('users/connections', { ID: uid, delta: -1 })
+        if (activity.kind === 'disconnected' && !activity.present) {
+          this.$store.commit('users/statusRemove', { userID: activity.userID, status: 'online' })
+        } else if (activity.kind) {
+          // Online wont have a kind; online handled by updateActivity
+          this.$store.commit('users/active', [ activity ])
+        }
+      }
     })
 
     // Handles single-message updates that gets from the backend
     this.$bus.$on('$ws.message', (message) => {
-      const msg = new Message(message)
+      const [ msg ] = messagesProcess(this.$store.getters['users/findByID'], [message])
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
         if (this.$auth.user.ID !== msg.user.ID && msg.type !== 'channelEvent') {
@@ -90,102 +109,43 @@ export default {
         //   lastMessageID: (c.view || {}).lastMessageID,
         // })
       }
-      this.$store.dispatch('history/update', [msg])
+      this.$store.commit('history/updateSet', [msg])
 
       // Assume activity stopped
       this.$store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
     })
 
-    // This serves a sole purpose of handling callback to getMessage calls to $ws
-    this.$bus.$on('$ws.messages', messages => this.$store.dispatch('history/update', messages.map(message => new Message(message))))
-
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        msg.addReaction({ userID, reaction })
-        this.$store.commit('history/update', [msg])
-      }
+      this.$store.dispatch('history/reactionAdded', { userID, messageID, reaction })
     })
 
     this.$bus.$on('$ws.messageReactionRemoved', ({ userID, messageID, reaction }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        msg.removeReaction({ userID, reaction })
-        this.$store.commit('history/update', [msg])
-      }
+      this.$store.dispatch('history/reactionRemoved', { userID, messageID, reaction })
     })
 
-    this.$bus.$on('$ws.messagePin', ({ userID, messageID }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        msg.isPinned = true
-        this.$store.commit('history/update', [msg])
-      }
+    this.$bus.$on('$ws.messagePin', ({ messageID }) => {
+      this.$store.dispatch('history/pinned', { messageID })
     })
 
-    this.$bus.$on('$ws.messagePinRemoved', ({ userID, messageID }) => {
-      const msg = this.$store.getters['history/getByID'](messageID)
-      if (msg) {
-        msg.isPinned = false
-        this.$store.commit('history/update', [msg])
-      }
-    })
-
-    this.$bus.$on('$ws.commands', (commands) => {
-      this.$store.commit('suggestions/setCommands', commands.map(c => {
-        return {
-          command: c.name,
-          description: c.description,
-          params: [],
-          meta: {},
-          handler: (vm, { channel, params, input }) => {
-            vm.$ws.exec(channel.ID, c.name, {}, input)
-          },
-        }
-      }).concat(localCommands))
-    })
-
-    // Handling requests for message pins
-    this.$bus.$on('message.delete', ({ message }) => {
-      // Response is broadcasted via WS
-      this.$rest.deleteMessage(message.channelID, message.ID)
+    this.$bus.$on('$ws.messagePinRemoved', ({ messageID }) => {
+      this.$store.dispatch('history/unpinned', { messageID })
     })
 
     // Handling requests for last read message
     this.$bus.$on('message.markAsLastRead', ({ channelID, messageID, threadID }) => {
-      this.$rest.markMessageAsRead({ channelID, lastReadMessageID: messageID, threadID }).then(count => {
-        this.$store.commit('unread/set', {
-          channelID,
-          threadID,
-          count,
-          lastMessageID: messageID,
-        })
-      })
-    })
-
-    // Handling requests for message pins
-    this.$bus.$on('message.pin', ({ message }) => {
-      // Response is broadcasted via WS
-      this.$rest.pinMessage(message.channelID, message.ID, message.isPinned)
-    })
-
-    // Handling requests for message bookmark
-    this.$bus.$on('message.bookmark', ({ message }) => {
-      // API does not send bookmark notifications back via WS, so we're on our own..
-      this.$rest.bookmarkMessage(message.channelID, message.ID, message.isBookmarked).then(() => {
-        const msg = this.$store.getters['history/getByID'](message.ID)
-        if (msg) {
-          msg.isBookmarked = !msg.isBookmarked
-          this.$store.commit('history/update', [msg])
-        }
-      })
+      this.$store.dispatch('unread/markAsRead', { channelID, lastReadMessageID: messageID, threadID })
     })
 
     // Handling Message reaction requests
     this.$bus.$on('message.reaction', ({ message, reaction }) => {
       const existing = message.reactions.find(r => r.reaction === reaction)
       const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.ID) !== -1
-      this.$rest.reactionToMessage(message.channelID, message.ID, reaction, existing && ours)
+
+      if (existing && ours) {
+        this.$messaging.messageReactionRemove({ ...message, reaction })
+      } else {
+        this.$messaging.messageReactionCreate({ ...message, reaction })
+      }
     })
 
     // Activity cleanup interval
@@ -193,10 +153,13 @@ export default {
       this.$store.commit('users/cleanup', { ttl: userActivityTTL })
     }, userActivityTTL)
 
+    // User re pull interval; handles cases where user has updated there profile
+    userRePullInterval = window.setInterval(userRePullHandler, userRePull)
+
     // Activity cleanup interval
     autheticationRecheckInterval = window.setInterval(() => {
       this.$system.authCheck().catch((err) => {
-        // When logout (or a problem) is detected, redurect user
+        // When logout (or a problem) is detected, redirect user
         console.error(err)
         this.$router.push({ name: 'signin' })
       })
@@ -205,6 +168,7 @@ export default {
 
   destroyed () {
     if (userActivityInterval) window.clearInterval(userActivityInterval)
+    if (userRePullInterval) window.clearInterval(userRePullInterval)
     if (autheticationRecheckInterval) window.clearInterval(autheticationRecheckInterval)
   },
 }

@@ -1,9 +1,14 @@
-// initial state
 import { Channel, Message } from '../types'
 import i18next from 'i18next'
 
-const state = {
-  set: [],
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  set: 'set',
+  unset: 'unset',
+  inc: 'inc',
+  dec: 'dec',
+  delta: 'delta',
 }
 
 class Unread {
@@ -73,69 +78,89 @@ function delta (state, { channelID, threadID = '' }, delta = 0) {
   }
 }
 
-// getters
-const getters = {
-  // Return number of unread messages in channel/thread. Default to 0
-  count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
-  last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID,
-  has: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID !== '0',
+export default function (Messaging) {
+  return {
+    namespaced: true,
 
-  // All unread channels
-  channels: (state) => state.set.filter(u => !u.threadID && u.count > 0),
+    state: {
+      pending: false,
+      set: [],
+    },
 
-  // Total unread count
-  total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
-}
+    getters: {
+      // Return number of unread messages in channel/thread. Default to 0
+      count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
+      last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID,
+      has: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID !== '0',
 
-// actions
-const actions = {}
+      // All unread channels
+      // eslint-disable-next-line eqeqeq
+      channels: (state) => state.set.filter(u => (!u.threadID || u.threadID == 0) && u.count > 0),
 
-// mutations
-const mutations = {
-  set (state, { channelID, threadID = '', count = 0, lastMessageID = '' }) {
-    const u = new Unread(channelID, threadID, count, lastMessageID)
-    const i = state.set.findIndex(filter(u))
+      // Total unread count
+      total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
+      pending: (state) => state.pending,
+    },
 
-    if (i > -1) {
-      state.set.splice(i, 1, u)
-    } else {
-      state.set.push(u)
-    }
-  },
+    actions: {
+      markAsRead ({ commit }, { channelID, lastReadMessageID, threadID }) {
+        commit(types.pending)
+        Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
+          commit(types.set, [{ channelID, threadID, count, lastMessageID: lastReadMessageID }])
+          commit(types.completed)
+        })
+      },
+    },
 
-  unset (state, input) {
-    const i = state.set.findIndex(filter(transform(input)))
-    if (i > -1) {
-      state.set.splice(i, 1)
-    }
-  },
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
 
-  inc (state, input) {
-    delta(state, transform(input), 1)
-  },
+      [types.completed] (state) {
+        state.pending = false
+      },
 
-  dec (state, input) {
-    delta(state, transform(input), -1)
-  },
+      [types.set] (state, unreads = []) {
+        for (const { channelID, threadID = '', count = 0, lastMessageID = '' } of unreads) {
+          const u = new Unread(channelID, threadID, count, lastMessageID)
+          const i = state.set.findIndex(filter(u))
 
-  delta (state, { channelID, threadID = '', delta = 0 }) {
-    const i = state.set.findIndex(filter({ channelID, threadID }))
-    if (i > -1) {
-      const u = state.set[i]
-      u.count += delta
-      state.set.splice(i, 1, u)
-    }
-  },
-  //
-  // setIgnoreChannel (state, ID) {
-  //   state.ignoreChannel = ID
-  // },
-}
+          if (i > -1) {
+            state.set.splice(i, 1, u)
+          } else {
+            state.set.push(u)
+          }
+        }
+      },
 
-export default {
-  namespaced: true,
-  state,
-  getters,
-  actions,
-  mutations,
+      [types.unset] (state, input) {
+        const i = state.set.findIndex(filter(transform(input)))
+        if (i > -1) {
+          state.set.splice(i, 1)
+        }
+      },
+
+      [types.inc] (state, input) {
+        delta(state, transform(input), 1)
+      },
+
+      [types.dec] (state, input) {
+        delta(state, transform(input), -1)
+      },
+
+      [types.delta] (state, { channelID, threadID = '', delta = 0 }) {
+        const i = state.set.findIndex(filter({ channelID, threadID }))
+        if (i > -1) {
+          const u = state.set[i]
+          u.count += delta
+          state.set.splice(i, 1, u)
+        }
+      },
+      //
+      // setIgnoreChannel (state, ID) {
+      //   state.ignoreChannel = ID
+      // },
+    },
+  }
 }

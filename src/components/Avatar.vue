@@ -17,25 +17,34 @@ export default {
   name: 'avatar',
   // require user param
   props: {
-    user: Object,
-    required: true,
+    userID: {
+      type: String,
+      required: true,
+    },
   },
 
   computed: {
-    ...mapGetters({ findByID: 'users/findByID', isPresent: 'users/isPresent' }),
+    ...mapGetters({
+      findByID: 'users/findByID',
+      isPresent: 'users/isPresent',
+    }),
 
-    stored () { return this.findByID(this.user.ID) || {} },
+    user () {
+      return this.findByID(this.userID) || {}
+    },
 
-    img () { return this.stored.avatar || this.$t('general.label.na') },
+    img () {
+      return this.user.avatar || this.$t('general.label.na')
+    },
 
     initials () {
-      if (this.stored) {
-        if (this.stored.name) {
-          return this.stored.name[0]
+      if (this.user) {
+        if (this.user.name) {
+          return this.user.name[0]
         }
 
-        if (this.stored.username) {
-          return this.stored.username[0]
+        if (this.user.username) {
+          return this.user.username[0]
         }
       }
 
@@ -43,15 +52,15 @@ export default {
     },
 
     title () {
-      if (!this.stored) {
-        return this.stored.name || this.stored.username
+      if (!this.user) {
+        return this.user.name || this.user.username
       }
 
       return this.$t('general.label.na')
     },
 
     isOnline () {
-      return !!this.isPresent(this.user.ID)
+      return !!this.isPresent(this.userID)
     },
   },
 }

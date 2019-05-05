@@ -39,6 +39,7 @@ import SearchInput from '@/components/SearchInput'
 import Messages from '@/components/Messages'
 import ChannelLink from '@/components/Channel/Link'
 import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
+import { Message } from '@/types'
 
 export default {
   components: {
@@ -68,6 +69,7 @@ export default {
   computed: {
     ...mapGetters({
       findChannelByID: 'channels/findByID',
+      findUserByID: 'users/findByID',
     }),
   },
 
@@ -78,7 +80,7 @@ export default {
   methods: {
     search (query) {
       this.results = []
-      this.$rest.searchMessages(query).then(mm => {
+      this.$messaging.searchMessages({ query }).then(mm => {
         this.results = this.groupByChannel(mm)
       })
     },
@@ -87,8 +89,8 @@ export default {
       let groups = []
       let gindex = {}
 
-      for (let i in mm) {
-        const channelID = mm[i].channelID
+      for (const message of mm) {
+        const { channelID } = message
 
         if (gindex[channelID] === undefined) {
           const channel = this.findChannelByID(channelID)
@@ -101,7 +103,7 @@ export default {
           groups.push({ messages: [], channel })
         }
 
-        groups[gindex[channelID]].messages.push(mm[i])
+        groups[gindex[channelID]].messages.push(new Message({ ...message, user: this.findUserByID(message.userID) }))
       }
 
       return groups
