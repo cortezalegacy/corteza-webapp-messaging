@@ -5,6 +5,7 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
+  base: '/messaging/',
 
   routes: [
     { path: '/auth', name: 'auth', component: view('Auth') },
