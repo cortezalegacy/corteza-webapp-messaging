@@ -1,6 +1,6 @@
 <template>
     <li
-      :id="message.ID"
+      :id="message.messageID"
       @click.alt.exact.prevent="$emit('markAsUnread')"
       @click.meta.exact.prevent="onOpenThread"
       class="message-n-meta"
@@ -19,19 +19,19 @@
         'last' : isLast && !isFirst,
       }"
       ref="message"
-      :key="message.ID">
+      :key="message.messageID">
 
       <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
 
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
-            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
-              <avatar :user="message.user" />
+            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+              <avatar :userID="message.userID" />
             </router-link>
           </em>
           <em  v-if="!consecutive" class="author selectable">
-            <router-link :to="{ name: 'profile', params: { userID: message.user.ID } }">
-              {{ label(message.user) }}
+            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+              {{ labelUser(message.userID) }}
             </router-link>
           </em>
           <i18next path="message.postedDate" tag="span" class="date">
@@ -79,7 +79,7 @@
           <contents
             v-if="!inEditing"
             class="message-content"
-            :id="message.ID"
+            :id="message.messageID"
             :content="message.message" />
 
           <embedded-box

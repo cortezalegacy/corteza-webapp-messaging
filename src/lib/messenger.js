@@ -4,7 +4,8 @@ import { Message } from '@/types'
 
 const messagesProcess = function (uGetter, messages = []) {
   // Append actual user & convert to internal object
-  return messages.map((m) => new Message({ ...m, user: uGetter(m.userID) }))
+  // return messages.map((m) => new Message({ ...m, user: uGetter(m.userID) }))
+  return messages.map((m) => new Message(m))
 }
 
 // Load & process messages; messages available on promise resolve

@@ -80,7 +80,7 @@ export default function (Messaging, System) {
       list: (state) => state.list,
       listOnDemand: (state) => () => state.list,
       length: (state) => state.list.length,
-      findByID: (state) => (ID) => state.list.find(u => ID === u.ID),
+      findByID: (state) => (ID) => state.list.find(u => ID === u.userID),
       findByUsername: (state) => (username) => {
         return state.list.filter(user => user.username === username)[0] || undefined
       },
@@ -96,7 +96,7 @@ export default function (Messaging, System) {
         (state) =>
           (channelID, kind) => {
             const IDs = state.activity.filter(a => a.channelID === channelID && a.kind === kind).map(a => a.userID)
-            return state.list.filter(u => IDs.includes(u.ID))
+            return state.list.filter(u => IDs.includes(u.userID))
           },
     },
     actions: {
@@ -132,7 +132,7 @@ export default function (Messaging, System) {
         } else {
           users.forEach(usr => {
             // Replaces given user due to an update
-            const n = state.list.findIndex(u => u.ID === usr.ID)
+            const n = state.list.findIndex(u => u.userID === usr.userID)
 
             // Doesn't yet exist -- add it
             if (n < 0) {
