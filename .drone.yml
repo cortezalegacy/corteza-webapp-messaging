@@ -22,12 +22,13 @@ steps:
 
   - name: trigger
     image: plugins/downstream
-    wait: true
-    server: https://drone.crust.tech
-    token:
+    settings:
+      fork: true
+      server: https://drone.crust.tech
+      token:
         from_secret: drone_token
-    repositories:
-      - crusttech/webapp@${DRONE_BRANCH}
+      repositories:
+        - crusttech/webapp@${DRONE_BRANCH}
 
 trigger:
   branch:
