@@ -250,7 +250,6 @@ export default {
       }
 
       if (params) {
-        console.debug('activity.send', { params })
         this.$messaging.activitySend(params)
       }
     }, 2000),

@@ -71,8 +71,6 @@ export default {
     }, statusThrottle)
 
     this.$bus.$on('$ws.activity', (activity) => {
-      console.debug('activity.received', { activity })
-
       // Ignore self
       if (this.$auth.user.userID !== activity.userID) {
         if (activity.kind !== 'disconnected') {

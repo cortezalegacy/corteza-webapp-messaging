@@ -12,7 +12,6 @@ export default {
       }
 
       if (!c) {
-        console.trace('Could not load channel %o', c)
         return this.$t('general.label.na')
       }
 
@@ -36,7 +35,6 @@ export default {
       }
 
       if (!u) {
-        console.trace('Could not load user %o', u)
         return this.$t('general.label.na')
       }
 
