@@ -71,12 +71,12 @@ export default {
     },
 
     preferedChannels () {
-      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.ID)).map(cmp('channel'))
+      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.userID)).map(cmp('channel'))
     },
 
     channelsAndUsers () {
       return [
-        ...this.users.filter(i => i.ID !== this.$auth.user.ID).map(cmp('user')),
+        ...this.users.filter(i => i.userID !== this.$auth.user.userID).map(cmp('user')),
         ...this.channels.filter(i => i.members.length >= 2).map(cmp('channel')),
       ]
     },
@@ -93,7 +93,7 @@ export default {
 
     targetNames (target) {
       return target.map(i => ({
-        ID: i.ID,
+        ID: i.channelID || i.userID,
         name: this.label(i),
         cmp: i.cmp,
       }))

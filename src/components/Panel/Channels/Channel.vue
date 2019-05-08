@@ -2,7 +2,7 @@
   <li class="layer-item-wrap" :class="cssClass" @click="$emit('close')">
     <router-link v-if="channel.membershipFlag==='ignored'"
                  class="ignored layer-item layer-selectable channel-name"
-                 :to="{name:'channel', params:{channelID:channel.ID}}">
+                 :to="{name:'channel', params:{channelID:channel.channelID}}">
       <label>
         <font-awesome-icon
           :icon="['far', 'bell-slash']"
@@ -13,9 +13,9 @@
     <router-link v-else
                  class="layer-item layer-selectable channel-name"
                  :class="[channelColor(index),
-        { current: (current||{}).ID === channel.ID },
+        { current: (current||{}).channelID === channel.channelID },
       ]"
-      :to="{name:'channel', params:{channelID:channel.ID}}">
+      :to="{name:'channel', params:{channelID:channel.channelID}}">
                   {{ labelChannel(channel) }}
     </router-link>
     <transition v-if="countUnread(channel) > 0"
@@ -94,9 +94,9 @@ export default {
     },
     onFlag (flag) {
       if (flag) {
-        this.$messaging.channelSetFlag({ channelID: this.channel.ID, flag })
+        this.$messaging.channelSetFlag({ channelID: this.channel.channelID, flag })
       } else {
-        this.$messaging.channelRemoveFlag({ channelID: this.channel.ID })
+        this.$messaging.channelRemoveFlag({ channelID: this.channel.channelID })
       }
     },
   },

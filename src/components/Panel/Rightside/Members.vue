@@ -1,7 +1,7 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.ID);">
+    @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.membersHeader') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: label(channel) }) }}</template>
     <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: label(channel) }) }}</template>
@@ -10,14 +10,14 @@
         <ul v-if="members">
           <li
             v-for="u in members"
-            :key="u.ID"
-            @click="$emit('openDirectMessage', u.ID);">
+            :key="u.userID"
+            @click="$emit('openDirectMessage', u.userID);">
             <user-avatar :user="u" />
             <span class="member-name">{{ label(u) }}</span>
             <confirmation-toggle
-              @confirmed="remove(u.ID)"
+              @confirmed="remove(u.userID)"
               :cta="$t('panel.remove')"
-              v-if="channel.canChangeMembers && u.ID != $auth.user.ID && channel.type !== 'group'"
+              v-if="channel.canChangeMembers && u.userID != $auth.user.userID && channel.type !== 'group'"
               class="confirmation-buttons">
             </confirmation-toggle>
           </li>
@@ -31,10 +31,10 @@
         <ul v-if="searchResults">
           <li
             v-for="u in searchResults"
-            :key="u.ID">
+            :key="u.userID">
             <user-avatar :user="u" />
             <span class="member-name">{{ label(u) }}</span>
-            <button @click="add(u.ID)" class="btn">{{ $t('general.label.add') }}</button>
+            <button @click="add(u.userID)" class="btn">{{ $t('general.label.add') }}</button>
           </li>
         </ul>
       </div>
@@ -75,25 +75,25 @@ export default {
     }),
 
     members () {
-      return this.users.filter(u => this.channel.isMember(u.ID))
+      return this.users.filter(u => this.channel.isMember(u.userID))
     },
 
     searchResults () {
-      return this.users.filter(u => !this.channel.isMember(u.ID) && u.Match(this.userQuery))
+      return this.users.filter(u => !this.channel.isMember(u.userID) && u.Match(this.userQuery))
     },
   },
 
   methods: {
     add (userID) {
-      this.$messaging.channelJoin({ channelID: this.channel.ID, userID })
+      this.$messaging.channelJoin({ channelID: this.channel.channelID, userID })
     },
 
     remove (userID) {
-      this.$messaging.channelPart({ channelID: this.channel.ID, userID })
+      this.$messaging.channelPart({ channelID: this.channel.channelID, userID })
     },
 
     isMember (userID) {
-      return !!this.members.find(m => m.user.ID === userID)
+      return !!this.members.find(m => m.user.userID === userID)
     },
   },
 }

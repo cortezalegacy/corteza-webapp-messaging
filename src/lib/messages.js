@@ -4,11 +4,11 @@ import moment from 'moment'
 const consecutiveMessagesTimeWindow = 3 * 60 // 3 minutes
 
 export function getFirstID (set) {
-  return (set[0] || {}).ID
+  return (set[0] || {}).messageID
 }
 
 export function getLastID (set, ID) {
-  return (set[set.length - 1] || {}).ID
+  return (set[set.length - 1] || {}).messageID
 }
 
 export function isConsecutive (set, index = 0) {
@@ -28,7 +28,7 @@ export function isConsecutive (set, index = 0) {
     return false
   }
 
-  if ((pm.user || {}).ID !== (cm.user || {}).ID) {
+  if ((pm.user || {}).userID !== (cm.user || {}).userID) {
     // Different user
     return false
   }

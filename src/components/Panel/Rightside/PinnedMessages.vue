@@ -1,7 +1,7 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.ID);">
+    @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.pinnedMessagesHeader') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.pinnedGroupMessagesSubtitle', { label: label(channel) }) }}</template>
     <template slot="subtitle" v-else>{{ $t('panel.pinnedMessagesSubtitle', { label: label(channel) }) }}</template>
@@ -42,7 +42,7 @@ export default {
     }),
 
     pinned () {
-      return this.allPinned.filter(m => m.channelID === this.channel.ID)
+      return this.allPinned.filter(m => m.channelID === this.channel.channelID)
     },
   },
 

@@ -11,7 +11,7 @@
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false; uploadFileTypeSupported=true"
         @show="showUploadArea=true"
-        :channelID="channel.ID"
+        :channelID="channel.channelID"
         :replyTo="repliesTo"
         :typeSupported.sync="uploadFileTypeSupported"
         ref="upload" />
@@ -142,7 +142,7 @@ export default {
 
     // Prepares payload for unread resetting
     unreadResetPayload () {
-      return { channelID: this.channel.ID, threadID: this.message.ID }
+      return { channelID: this.channel.channelID, threadID: this.message.messageID }
     },
   },
 }

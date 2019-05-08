@@ -17,13 +17,13 @@ export default {
       }
 
       if (c.type === 'group') {
-        return this.$store.getters['channels/otherMembersOf'](c.ID, this.$auth.user.ID)
+        return this.$store.getters['channels/otherMembersOf'](c.channelID, this.$auth.user.userID)
           // Make sure user exists
           .filter(o => this.$store.getters['users/findByID'](o) !== undefined)
           .map(this.labelUser).join(', ')
       }
 
-      return c.name || `<#${c.ID}>`
+      return c.name || `<#${c.channelID}>`
     },
 
     labelUser (u) {
@@ -40,7 +40,7 @@ export default {
         return this.$t('general.label.na')
       }
 
-      return u.name || u.username || u.handle || u.email || `<@${u.ID}>`
+      return u.name || u.username || u.handle || u.email || `<@${u.userID}>`
     },
 
     label (o) {

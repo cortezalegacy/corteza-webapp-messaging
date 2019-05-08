@@ -93,13 +93,13 @@ export default {
     filteredChannels () {
       return this.channels.filter(c => c && (
         // Always show current channel on the list
-        (this.current && this.current.ID === c.ID) ||
+        (this.current && this.current.channelID === c.channelID) ||
 
         // Unless hidden, show channels we're members of
-        (c.isMember(this.$auth.user.ID) && c.membershipFlag !== 'hidden') ||
+        (c.isMember(this.$auth.user.userID) && c.membershipFlag !== 'hidden') ||
 
         // Unless ignored, show channels with unread messages we're members of
-        (c.isMember(this.$auth.user.ID) && this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
+        (c.isMember(this.$auth.user.userID) && this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
 
         // and ignore the rest...
         false

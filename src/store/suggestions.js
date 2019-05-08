@@ -48,7 +48,7 @@ export default function (Messaging) {
           params: [],
           meta: {},
           handler: (vm, { channel, params, input }) => {
-            Messaging.messageExecuteCommand({ channelID: channel.ID, command: c.name, input, params })
+            Messaging.messageExecuteCommand({ channelID: channel.channelID, command: c.name, input, params })
           },
         })).concat(localCommands)
 

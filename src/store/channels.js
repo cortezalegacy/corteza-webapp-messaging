@@ -41,7 +41,7 @@ export default function (Messaging) {
 
       // Find channel by ID
       findByID: (state, getters) => (ID) => {
-        return getters.list.filter(c => c.ID === ID)[0] || undefined
+        return getters.list.filter(c => c.channelID === ID)[0] || undefined
       },
 
       // Find direct/group channel for a specific set of members
@@ -81,7 +81,7 @@ export default function (Messaging) {
               cc.push(new Channel(c))
 
               if (c.unread && (c.unread.count > 0 || c.unread.lastMessageID !== undefined)) {
-                unreads.push({ channelID: c.ID, ...c.unread })
+                unreads.push({ channelID: c.channelID, ...c.unread })
               }
             })
 
@@ -129,7 +129,7 @@ export default function (Messaging) {
 
       [types.updateList] (state, channel) {
         const l = state.list
-        const i = l.findIndex(c => c.ID === channel.ID)
+        const i = l.findIndex(c => c.channelID === channel.channelID)
 
         if (i === -1) {
           l.unshift(channel)
@@ -141,7 +141,7 @@ export default function (Messaging) {
       },
 
       [types.channelJoin] (state, { channelID, userID }) {
-        const ch = state.list.findIndex(c => c.ID === channelID)
+        const ch = state.list.findIndex(c => c.channelID === channelID)
 
         if (ch >= 0) {
           const channel = state.list[ch]
@@ -153,7 +153,7 @@ export default function (Messaging) {
       },
 
       [types.channelPart] (state, { channelID, userID }) {
-        const ch = state.list.findIndex(c => c.ID === channelID)
+        const ch = state.list.findIndex(c => c.channelID === channelID)
 
         if (ch >= 0) {
           const channel = state.list[ch]
@@ -171,7 +171,7 @@ export default function (Messaging) {
       },
 
       [types.removeFromList] (state, { ID }) {
-        state.list = [...state.list.filter(ch => ID !== ch.ID)]
+        state.list = [...state.list.filter(ch => ID !== ch.channelID)]
       },
 
       [types.updateLastMessage] (state, { channelID, messageId }) {

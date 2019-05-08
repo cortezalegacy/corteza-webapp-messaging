@@ -7,7 +7,7 @@ export class Channel {
       return
     }
 
-    this.ID = c.ID || c.id || undefined // cover both cases (BC)
+    this.channelID = c.channelID
     this.name = c.name
     this.topic = c.topic
     this.type = c.type
@@ -35,7 +35,7 @@ export class Channel {
   }
 
   removeMember (user) {
-    const ID = (user || {}).ID || user
+    const ID = (user || {}).userID || user
     this.members = this.members.filter(m => m !== ID)
   }
 
@@ -135,7 +135,7 @@ class MessageReaction {
 }
 
 export function Attachment (a) {
-  this.attachmentID = a.ID
+  this.attachmentID = a.attachmentID
   this.userID = a.userID
   this.name = a.name
   this.meta = a.meta
@@ -157,7 +157,7 @@ export class User {
     this.name = u.name || ''
     this.email = u.email || ''
 
-    this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.ID).toLocaleLowerCase()
+    this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
   }
 
   Match (q) {

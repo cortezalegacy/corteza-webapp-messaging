@@ -8,11 +8,11 @@
       <span class="title">{{ $t('channel.allThreads') }}</span>
     </header>
     <main v-if="getThreads.length > 0">
-      <section v-for="(thread) in getThreads" :key="thread.ID">
+      <section v-for="(thread) in getThreads" :key="thread.messageID">
         <section>
           <messages
             ref="messages"
-            :messages="getThread(thread.ID)"
+            :messages="getThread(thread.messageID)"
             :currentUser="$auth.user"
             origin="threads"
             :scrollable="false"

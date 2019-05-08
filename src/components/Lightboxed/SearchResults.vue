@@ -7,10 +7,10 @@
           </section>
       </header>
       <main>
-          <section v-for="(r) in results" :key="r.channel.ID">
+          <section v-for="(r) in results" :key="r.channel.channelID">
 
             <i18next path="search.searchResultsIn" tag="h2">
-              <channel-link :ID="r.channel.ID" @click="onClose"></channel-link>
+              <channel-link :ID="r.channel.channelID" @click="onClose"></channel-link>
             </i18next>
               <messages
                   ref="messages"

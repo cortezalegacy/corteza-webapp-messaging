@@ -54,7 +54,7 @@
               {{ $t('channel.memberList', { count: (channel.members || []).length }) }}
             </label>
             <label v-if="channel.canUpdate"
-              @click="$router.push({name: 'edit-channel', params: {channelID: channel.ID}})">
+              @click="$router.push({name: 'edit-channel', params: {channelID: channel.channelID}})">
               <i :title="$t('channel.editTooltip')" :aria-label="$t('channel.editTooltip')" class="icon icon-edit-3"></i>
               {{ $t('channel.edit') }}
             </label>
@@ -151,29 +151,29 @@ export default {
 
     isOnline () {
       if (this.channel.isDirectMessage()) {
-        return this.isPresent(this.channel.members.find(ID => ID !== this.$auth.user.ID))
+        return this.isPresent(this.channel.members.find(ID => ID !== this.$auth.user.userID))
       }
     },
 
     isMember () {
-      return !!this.channel.members.find(ID => ID === this.$auth.user.ID)
+      return !!this.channel.members.find(ID => ID === this.$auth.user.userID)
     },
   },
 
   methods: {
     onPart () {
-      this.$messaging.channelPart({ channelID: this.channel.ID, userID: this.$auth.user.ID })
+      this.$messaging.channelPart({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
     },
 
     onJoin () {
-      this.$messaging.channelJoin({ channelID: this.channel.ID, userID: this.$auth.user.ID })
+      this.$messaging.channelJoin({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
     },
 
     onFlag (flag) {
       if (flag) {
-        this.$messaging.channelSetFlag({ channelID: this.channel.ID, flag })
+        this.$messaging.channelSetFlag({ channelID: this.channel.channelID, flag })
       } else {
-        this.$messaging.channelRemoveFlag({ channelID: this.channel.ID })
+        this.$messaging.channelRemoveFlag({ channelID: this.channel.channelID })
       }
     },
   },

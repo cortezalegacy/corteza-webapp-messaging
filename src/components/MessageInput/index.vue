@@ -49,7 +49,7 @@
       <div class="activity">
         <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
         <button class="btn float-right"
-                v-show="hasUnreads({ channelID, threadID: replyTo ? replyTo.ID : '0' })"
+                v-show="hasUnreads({ channelID, threadID: replyTo ? replyTo.messageID : '0' })"
                 @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }}</button>
       </div>
   </div>
@@ -120,15 +120,15 @@ export default {
 
     channelID () {
       // Returns channelID from one of the provided params
-      return (this.channel || {}).ID || (this.message || {}).channelID || (this.replyTo || {}).channelID
+      return (this.channel || {}).channelID || (this.message || {}).channelID || (this.replyTo || {}).channelID
     },
 
     channelSuggestions () {
-      return this.channels.map(c => { return { id: c.ID, value: c.name || c.ID || '' } })
+      return this.channels.map(c => { return { id: c.channelID, value: c.name || c.channelID || '' } })
     },
 
     userSuggestions () {
-      return this.users.map(u => { return { id: u.ID, value: u.name || u.ID || '' } })
+      return this.users.map(u => { return { id: u.userID, value: u.name || u.userID || '' } })
     },
 
     showFileUpload () {
@@ -199,10 +199,10 @@ export default {
         return false
       } else if (this.message) {
         // Doing update
-        this.$messaging.messageEdit({ channelID: this.message.channelID, messageID: this.message.ID, message: value }).then(stdResponse)
+        this.$messaging.messageEdit({ channelID: this.message.channelID, messageID: this.message.messageID, message: value }).then(stdResponse)
       } else if (this.replyTo) {
         // Sending reply
-        this.$messaging.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.ID, message: value }).then(stdResponse)
+        this.$messaging.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, message: value }).then(stdResponse)
       } else if (this.channel) {
         this.keepFocusOnSubmit = true
 
@@ -213,7 +213,7 @@ export default {
           return
         }
 
-        this.$messaging.messageCreate({ channelID: this.channel.ID, message: value }).then(stdResponse)
+        this.$messaging.messageCreate({ channelID: this.channel.channelID, message: value }).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
     },
@@ -242,9 +242,9 @@ export default {
       if (value.text.length === 0) {
         return
       } else if (this.message !== undefined) {
-        params = { channelID: this.message.channelID, messageID: this.message.ID, kind: kinds.editing }
+        params = { channelID: this.message.channelID, messageID: this.message.messageID, kind: kinds.editing }
       } else if (this.replyTo !== undefined) {
-        params = { channelID: this.replyTo.channelID, messageID: this.replyTo.ID, kind: kinds.replying }
+        params = { channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, kind: kinds.replying }
       } else {
         params = { channelID: this.channelID, kind: kinds.typing }
       }

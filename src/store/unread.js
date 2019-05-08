@@ -34,11 +34,11 @@ function filter ({ channelID, threadID = '' }) {
 function transform (o) {
   if (o instanceof Channel) {
     // Channel always tranforms to channel
-    return { channelID: o.ID, threadID: '0' }
+    return { channelID: o.channelID, threadID: '0' }
   } else if (o instanceof Message) {
     if (o.replies > 0 || o.replyTo) {
       // Reply or the original (first) thread message transform to thread
-      return { channelID: o.channelID, threadID: o.replyTo || o.ID }
+      return { channelID: o.channelID, threadID: o.replyTo || o.messageID }
     } else {
       // Other messages always transform to channel
       return { channelID: o.channelID, threadID: '0' }

@@ -1,7 +1,7 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.ID);">
+    @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.bookmarkedMessagesHeader') }}</template>
     <template slot="subtitle">{{ $t('panel.bookmarkedMessagesSubtitle') }}</template>
     <template slot="main">

@@ -4,13 +4,13 @@
         <label class="closer"
                @click.prevent="$router.back()"
                :aria-label="$t('channel.editor.closeTooltip')"><i class="icon-close"></i></label>
-          <span class="title" v-if="channel.type === 'group' && channel.ID">{{ $t('channel.editor.editGroup') }}</span>
+          <span class="title" v-if="channel.type === 'group' && channel.channelID">{{ $t('channel.editor.editGroup') }}</span>
           <span class="title" v-else-if="channel.type === 'group'">{{ $t('channel.editor.createGroup') }}</span>
-          <span class="title" v-else-if="channel.ID">{{ $t('channel.editor.editChannel') }}</span>
+          <span class="title" v-else-if="channel.channelID">{{ $t('channel.editor.editChannel') }}</span>
           <span class="title" v-else>{{ $t('channel.editor.createChannel') }}</span>
       </header>
       <main class="container">
-        <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.ID || channel.type !== 'group'">
+        <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.channelID || channel.type !== 'group'">
           <div v-if="error" class="error">
             {{error}}
           </div>
@@ -60,7 +60,7 @@
           <div class="selected-members">
             <label v-if="members.length > 0">{{ $t('channel.editor.selectedMembersLabel') }}</label>
             <ul>
-              <li v-for="(u) in members" :key="u.ID">
+              <li v-for="(u) in members" :key="u.userID">
                 <user-avatar :user="u" />
                 {{ label(u) }}
                 <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-close"></i></button>
@@ -68,7 +68,7 @@
             </ul>
           </div>
 
-          <div v-if="!channel.ID">
+          <div v-if="!channel.channelID">
             <label class="label-block">{{ $t('channel.editor.addMembersLabel') }}</label>
             <vue-simple-suggest
               v-model="selectedMember"
@@ -84,13 +84,13 @@
           </div>
 
           <div class="actions">
-            <button class="btn btn-green" v-if="channel.ID && channel.canUpdate">{{ $t('channel.editor.update') }}</button>
-            <button class="btn btn-green" v-if="!channel.ID">{{ $t('channel.editor.create') }}</button>
+            <button class="btn btn-green" v-if="channel.channelID && channel.canUpdate">{{ $t('channel.editor.update') }}</button>
+            <button class="btn btn-green" v-if="!channel.channelID">{{ $t('channel.editor.create') }}</button>
             <button class="btn" @click.prevent="$router.back()">{{ $t('channel.editor.close') }}</button>
           </div>
         </form>
 
-        <div v-if="channel.ID">
+        <div v-if="channel.channelID">
           <confirmation-row
             class="toggle-state"
             v-if="!channel.archivedAt && channel.canArchive"
@@ -176,11 +176,11 @@ export default {
     }),
 
     nonMembers () {
-      return this.users.filter(u => !this.channel.isMember(u.ID) && u.ID !== this.$auth.user.ID)
+      return this.users.filter(u => !this.channel.isMember(u.userID) && u.userID !== this.$auth.user.userID)
     },
 
     members () {
-      return this.users.filter(u => this.channel.isMember(u.ID))
+      return this.users.filter(u => this.channel.isMember(u.userID))
     },
   },
 
@@ -190,7 +190,7 @@ export default {
     },
 
     'type' (newType) {
-      if (!this.channel.ID) this.channel.type = newType
+      if (!this.channel.channelID) this.channel.type = newType
     },
   },
 
@@ -204,11 +204,11 @@ export default {
     }),
 
     removeMember (u) {
-      if (!this.actionsUser[u.ID]) {
-        this.$set(this.actionsUser, u.ID, [])
+      if (!this.actionsUser[u.userID]) {
+        this.$set(this.actionsUser, u.userID, [])
       }
 
-      this.actionsUser[u.ID].push(action.remove)
+      this.actionsUser[u.userID].push(action.remove)
       this.channel.removeMember(u)
     },
 
@@ -231,7 +231,7 @@ export default {
 
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
-      this.$messaging.channelState({ channelID: this.channel.ID, state }).then((ch) => {
+      this.$messaging.channelState({ channelID: this.channel.channelID, state }).then((ch) => {
         this.channel = new Channel(ch)
       }).catch(({ message }) => {
         this.error = message
@@ -239,7 +239,7 @@ export default {
     },
 
     onSubmit () {
-      const channelID = this.channel.ID
+      const channelID = this.channel.channelID
       if (channelID) {
         console.debug('Updating channel', this.channel)
         // Update member list; if the list was altered
@@ -261,7 +261,7 @@ export default {
         console.debug('Creating channel', this.channel)
         this.$messaging.channelCreate(this.channel).then((ch) => {
           console.debug('Channel created', ch)
-          this.$router.push({ name: 'channel', params: { channelID: ch.ID } })
+          this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
         }).catch(({ error }) => {
           this.error = error
         })
@@ -271,7 +271,7 @@ export default {
     onMemberSelect (user) {
       if (!user) return
       this.selectedMember = ''
-      this.channel.members.push(user.ID)
+      this.channel.members.push(user.userID)
     },
   },
 }

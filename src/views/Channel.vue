@@ -7,7 +7,7 @@
       v-show="showUploadArea"
       @close="showUploadArea=false; uploadFileTypeSupported=true"
       @show="showUploadArea=true"
-      :channelID="channel.ID"
+      :channelID="channel.channelID"
       :typeSupported.sync="uploadFileTypeSupported"
       ref="upload" />
 
@@ -104,7 +104,7 @@ export default {
     }),
 
     messages () {
-      return this.channelHistory(this.channel.ID)
+      return this.channelHistory(this.channel.channelID)
     },
 
     currentChannel () {
@@ -112,7 +112,7 @@ export default {
     },
 
     isMember () {
-      return this.channel.isMember(this.$auth.user.ID)
+      return this.channel.isMember(this.$auth.user.userID)
     },
   },
 
@@ -147,12 +147,12 @@ export default {
 
       this.previousFetchFirstMessageID = null
 
-      // @todo unread this.ignoreChannelUnreadCount(this.channel.ID)
+      // @todo unread this.ignoreChannelUnreadCount(this.channel.channelID)
 
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, fromMessageID: this.messageID }).then((msgs) => {
+      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, fromMessageID: this.messageID }).then((msgs) => {
         this.$store.commit('history/updateSet', msgs)
       })
     },
@@ -167,7 +167,7 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.ID, toMessageID: messageID }).then((msgs) => {
+        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, toMessageID: messageID }).then((msgs) => {
           this.$store.commit('history/updateSet', msgs)
         })
       }
@@ -175,7 +175,7 @@ export default {
 
     // Prepares payload for unread resetting
     unreadResetPayload () {
-      return { channelID: this.channel.ID }
+      return { channelID: this.channel.channelID }
     },
   },
 }

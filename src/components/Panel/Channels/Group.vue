@@ -15,7 +15,7 @@
     <ul v-if="list && expanded">
       <channel
         v-for="(ch, index) in list"
-        :key="ch.ID"
+        :key="ch.channelID"
         :channel="ch"
         :index="index"
         v-on="$listeners" />

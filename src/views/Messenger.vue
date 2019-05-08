@@ -198,15 +198,15 @@ export default {
       titleNtf.update()
 
       this.$bus.$on('$core.newMessage', ({ message }) => {
-        if (!this.$auth.user || this.$auth.user.ID === (message.user || {}).ID) {
+        if (!this.$auth.user || this.$auth.user.userID === message.userID) {
           console.debug('Not notifying, same user')
           // Ignore messages we've authored
           return
         }
 
-        if (this.currentChannel && this.currentChannel.ID === message.channelID && document.hasFocus()) {
+        if (this.currentChannel && this.currentchannel.channelID === message.channelID && document.hasFocus()) {
           console.debug('Not notifying, in channel, focused')
-          // We're already paying atention
+          // We're already paying attention
           return
         }
 
@@ -223,9 +223,9 @@ export default {
           return
         }
 
-        if (ch.isGroup() && ch.isMember(this.$auth.user.ID)) {
+        if (ch.isGroup() && ch.isMember(this.$auth.user.userID)) {
           console.debug('Notifying, message sent to our group', { message })
-        } else if (!message.isMentioned(this.$auth.user.ID)) {
+        } else if (!message.isMentioned(this.$auth.user.userID)) {
           console.debug('Not notifying, not mentioned')
           // User is not mentioned.
           // @todo this needs to be a bit more intelegent, take user's settings into account etc...
@@ -289,7 +289,7 @@ export default {
       this.searchQuery = null
 
       // go to channel
-      this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.ID } })
+      this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.messageID } })
     },
 
     onEmojiSelect (emoji) {
@@ -313,7 +313,7 @@ export default {
 
       switch (panel) {
         case 'thread':
-          this.uiRightSidePanelThreadMessageID = $event.message.ID
+          this.uiRightSidePanelThreadMessageID = $event.message.messageID
       }
     },
 

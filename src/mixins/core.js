@@ -74,7 +74,7 @@ export default {
       console.debug('activity.received', { activity })
 
       // Ignore self
-      if (this.$auth.user.ID !== activity.userID) {
+      if (this.$auth.user.userID !== activity.userID) {
         if (activity.kind !== 'disconnected') {
           activitySet.add(activity.userID)
           updateActivity()
@@ -94,8 +94,8 @@ export default {
       const [ msg ] = messagesProcess(this.$store.getters['users/findByID'], [message])
 
       if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
-        if (this.$auth.user.ID !== msg.user.ID && msg.type !== 'channelEvent') {
-          // Count only new mesages, no updates, no replies
+        if (this.$auth.user.userID !== msg.userID && msg.type !== 'channelEvent') {
+          // Count only new messages, no updates, no replies
           this.$store.commit('unread/inc', msg)
         }
 
@@ -104,7 +104,7 @@ export default {
 
       if (msg.replyTo) {
         // this.$store.commit('unread/set', {
-        //   channelID: c.ID,
+        //   channelID: c.channelID,
         //   count: (c.view || {}).newMessagesCount,
         //   lastMessageID: (c.view || {}).lastMessageID,
         // })
@@ -112,7 +112,7 @@ export default {
       this.$store.commit('history/updateSet', [msg])
 
       // Assume activity stopped
-      this.$store.commit('users/inactive', { channelID: msg.channelID, userID: msg.user.ID, kind: 'typing' })
+      this.$store.commit('users/inactive', { channelID: msg.channelID, userID: msg.userID, kind: 'typing' })
     })
 
     this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
@@ -139,7 +139,7 @@ export default {
     // Handling Message reaction requests
     this.$bus.$on('message.reaction', ({ message, reaction }) => {
       const existing = message.reactions.find(r => r.reaction === reaction)
-      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.ID) !== -1
+      const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.userID) !== -1
 
       if (existing && ours) {
         this.$messaging.messageReactionRemove({ ...message, reaction })

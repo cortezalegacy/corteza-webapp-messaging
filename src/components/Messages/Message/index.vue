@@ -60,7 +60,7 @@
         </section>
         <div
           class="selectable"
-          :class="{ from_me: (message.user || {}).ID === currentUser.ID,
+          :class="{ from_me: message.userID === currentUser.userID,
           'message' : !inEditing,
            }">
           <attachment
