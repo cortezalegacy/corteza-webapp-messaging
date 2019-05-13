@@ -28,7 +28,7 @@ export function isConsecutive (set, index = 0) {
     return false
   }
 
-  if ((pm.user || {}).userID !== (cm.user || {}).userID) {
+  if (pm.userID !== cm.userID) {
     // Different user
     return false
   }
