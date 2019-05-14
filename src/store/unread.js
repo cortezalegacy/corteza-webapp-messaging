@@ -9,6 +9,7 @@ const types = {
   inc: 'inc',
   dec: 'dec',
   delta: 'delta',
+  updateApi: 'updateApi',
 }
 
 class Unread {
@@ -83,6 +84,7 @@ export default function (Messaging) {
     namespaced: true,
 
     state: {
+      Messaging,
       pending: false,
       set: [],
     },
@@ -103,9 +105,9 @@ export default function (Messaging) {
     },
 
     actions: {
-      markAsRead ({ commit }, { channelID, lastReadMessageID, threadID }) {
+      markAsRead ({ commit, state }, { channelID, lastReadMessageID, threadID }) {
         commit(types.pending)
-        Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
+        state.Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
           commit(types.set, [{ channelID, threadID, count, lastMessageID: lastReadMessageID }])
           commit(types.completed)
         })
@@ -113,6 +115,10 @@ export default function (Messaging) {
     },
 
     mutations: {
+      [types.updateApi] (state, { Messaging }) {
+        state.Messaging = Messaging
+      },
+
       [types.pending] (state) {
         state.pending = true
       },
