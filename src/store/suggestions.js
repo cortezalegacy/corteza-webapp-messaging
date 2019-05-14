@@ -4,12 +4,14 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   updateCommands: 'updateCommands',
+  updateApi: 'updateApi',
 }
 
 export default function (Messaging) {
   return {
     namespaced: true,
     state: {
+      Messaging,
       suggestions: [],
       suggestionsOpened: false,
       commands: [],
@@ -24,15 +26,19 @@ export default function (Messaging) {
       pending: (state) => state.pending,
     },
     actions: {
-      async loadCommands ({ commit }) {
+      async loadCommands ({ commit, state }) {
         commit(types.pending)
-        Messaging.commandsList().then((commands) => {
+        state.Messaging.commandsList().then((commands) => {
           commit(types.updateCommands, commands)
           commit(types.completed)
         })
       },
     },
     mutations: {
+      [types.updateApi] (state, { Messaging }) {
+        state.Messaging = Messaging
+      },
+
       [types.pending] (state) {
         state.pending = true
       },
@@ -48,7 +54,7 @@ export default function (Messaging) {
           params: [],
           meta: {},
           handler: (vm, { channel, params, input }) => {
-            Messaging.messageExecuteCommand({ channelID: channel.channelID, command: c.name, input, params })
+            state.Messaging.messageExecuteCommand({ channelID: channel.channelID, command: c.name, input, params })
           },
         })).concat(localCommands)
 

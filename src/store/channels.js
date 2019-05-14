@@ -10,6 +10,7 @@ const types = {
   channelPart: 'channelPart',
   removeFromList: 'removeFromList',
   updateLastMessage: 'updateLastMessage',
+  updateApi: 'updateApi',
 }
 
 export default function (Messaging) {
@@ -17,6 +18,7 @@ export default function (Messaging) {
     namespaced: true,
 
     state: {
+      Messaging,
       current: null,
       pending: false,
       list: [],
@@ -70,10 +72,10 @@ export default function (Messaging) {
 
     actions: {
       // Loads all channels, returns a promise, can be used to update unreads.
-      async load ({ commit }) {
+      async load ({ commit, state }) {
         commit(types.pending)
         return new Promise((resolve) => {
-          Messaging.channelList().then((channels) => {
+          state.Messaging.channelList().then((channels) => {
             const cc = []
             const unreads = []
             console.debug('Prefeched %d channels', channels.length)
@@ -112,6 +114,10 @@ export default function (Messaging) {
     },
 
     mutations: {
+      [types.updateApi] (state, { Messaging }) {
+        state.Messaging = Messaging
+      },
+
       [types.pending] (state) {
         state.pending = true
       },

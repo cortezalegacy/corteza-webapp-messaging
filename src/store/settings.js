@@ -3,12 +3,14 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   set: 'set',
+  updateApi: 'updateApi',
 }
 
 export default function (Messaging) {
   return {
     namespaced: true,
     state: {
+      Messaging,
       settings: [],
       pending: false,
     },
@@ -18,6 +20,10 @@ export default function (Messaging) {
     },
     actions: {},
     mutations: {
+      [types.updateApi] (state, { Messaging }) {
+        state.Messaging = Messaging
+      },
+
       [types.pending] (state) {
         state.pending = true
       },

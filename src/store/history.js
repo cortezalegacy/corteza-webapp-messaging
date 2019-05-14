@@ -8,6 +8,7 @@ const types = {
   removeReaction: 'removeReaction',
   clearSet: 'clearSet',
   removeFromSet: 'removeFromSet',
+  updateApi: 'updateApi',
 }
 
 // Basic message filtering
@@ -17,6 +18,7 @@ export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
+      MessagingAPI,
       pending: false,
       set: [],
     },
@@ -42,13 +44,13 @@ export default function (MessagingAPI) {
     actions: {
       delete ({ commit, state }, { channelID, messageID }) {
         commit(types.pending)
-        MessagingAPI.messageDelete({ channelID, messageID }).then(() => {
+        state.MessagingAPI.messageDelete({ channelID, messageID }).then(() => {
           commit(types.removeFromSet, messageID)
           commit(types.completed)
         })
       },
 
-      pin ({ commit, getters }, { channelID, messageID, isPinned }) {
+      pin ({ commit, getters, state }, { channelID, messageID, isPinned }) {
         commit(types.pending)
         const response = () => {
           const message = getters.getByID(messageID)
@@ -59,9 +61,9 @@ export default function (MessagingAPI) {
         }
 
         if (isPinned) {
-          MessagingAPI.messagePinRemove({ channelID, messageID }).then(response)
+          state.MessagingAPI.messagePinRemove({ channelID, messageID }).then(response)
         } else {
-          MessagingAPI.messagePinCreate({ channelID, messageID }).then(response)
+          state.MessagingAPI.messagePinCreate({ channelID, messageID }).then(response)
         }
       },
 
@@ -99,7 +101,7 @@ export default function (MessagingAPI) {
         }
       },
 
-      bookmark ({ commit, getters }, { channelID, messageID, isBookmarked }) {
+      bookmark ({ commit, getters, state }, { channelID, messageID, isBookmarked }) {
         commit(types.pending)
         const response = () => {
           const message = getters.getByID(messageID)
@@ -111,9 +113,9 @@ export default function (MessagingAPI) {
         }
 
         if (isBookmarked) {
-          MessagingAPI.messageBookmarkRemove({ channelID, messageID }).then(response)
+          state.MessagingAPI.messageBookmarkRemove({ channelID, messageID }).then(response)
         } else {
-          MessagingAPI.messageBookmarkCreate({ channelID, messageID }).then(response)
+          state.MessagingAPI.messageBookmarkCreate({ channelID, messageID }).then(response)
         }
       },
 
@@ -123,6 +125,10 @@ export default function (MessagingAPI) {
     },
 
     mutations: {
+      [types.updateApi] (state, { Messaging }) {
+        state.Messaging = Messaging
+      },
+
       [types.pending] (state) {
         state.pending = true
       },

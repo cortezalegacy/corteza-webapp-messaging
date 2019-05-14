@@ -12,6 +12,7 @@ const types = {
   active: 'active',
   inactive: 'inactive',
   cleanup: 'cleanup',
+  updateApi: 'updateApi',
 }
 
 // How much time (in seconds) should we keep the activity
@@ -69,6 +70,8 @@ export default function (Messaging, System) {
   return {
     namespaced: true,
     state: {
+      Messaging,
+      System,
       pending: false,
       list: [],
 
@@ -100,23 +103,28 @@ export default function (Messaging, System) {
           },
     },
     actions: {
-      async load ({ commit }) {
+      async load ({ commit, state }) {
         commit(types.pending)
-        System.userList().then((users) => {
+        state.System.userList().then((users) => {
           commit(types.updateList, users)
           commit(types.completed)
         })
       },
 
-      async loadStatuses ({ commit }) {
+      async loadStatuses ({ commit, state }) {
         commit(types.pending)
-        Messaging.statusList().then((statuses) => {
+        state.Messaging.statusList().then((statuses) => {
           commit(types.statusSet, statuses)
           commit(types.completed)
         })
       },
     },
     mutations: {
+      [types.updateApi] (state, { Messaging, System }) {
+        state.Messaging = Messaging
+        state.System = System
+      },
+
       [types.pending] (state) {
         state.pending = true
       },
