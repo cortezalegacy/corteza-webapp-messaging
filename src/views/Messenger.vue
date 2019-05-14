@@ -175,12 +175,17 @@ export default {
   },
 
   created () {
+    if (window.invalid) {
+      this.$router.push({ name: 'login' })
+    }
+
     this.$auth.check(this.$system).then(() => {
-      this.init()
       this.$ws.connect()
+      this.init()
     }).catch((err) => {
       console.log(err)
-      window.location = '/auth'
+      this.loaded = true
+      this.$router.push({ name: 'login' })
     })
   },
 
@@ -193,16 +198,16 @@ export default {
 
   methods: {
     init () {
-      this.$store.dispatch('channels/load').then(({ unreads }) => {
-        this.$store.commit('unread/set', unreads)
+      Promise.all([
+        this.$store.dispatch('channels/load').then(({ unreads }) => {
+          this.$store.commit('unread/set', unreads)
+        }),
+        this.$store.dispatch('users/load'),
+        this.$store.dispatch('users/loadStatuses'),
+        this.$store.dispatch('suggestions/loadCommands'),
+      ]).then(() => {
+        setTimeout(() => { this.loaded = true }, 2000)
       })
-      this.$store.dispatch('users/load')
-      this.$store.dispatch('users/loadStatuses')
-      this.$store.dispatch('suggestions/loadCommands')
-
-      setTimeout(() => {
-        this.loaded = true
-      }, 1000)
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)

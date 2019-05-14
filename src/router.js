@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { ChangePassword, ConfirmEmail, Logout, RequestPasswordReset, ResetPassword, ViewProfile, Login, Signup } from 'crust-auth'
 
 Vue.use(Router)
 
@@ -8,7 +9,50 @@ export default new Router({
   mode: process.env.VUE_APP_ROUTER_MODE || 'history',
 
   routes: [
-    { path: '/auth', name: 'auth', component: view('Auth') },
+    {
+      path: '/auth',
+      name: 'auth',
+      component: view('Auth'),
+      children: [
+        { path: 'login',
+          name: 'login',
+          component: Login },
+
+        { path: 'logout',
+          name: 'logout',
+          component: Logout },
+
+        { path: 'signup',
+          name: 'signup',
+          component: Signup },
+
+        {
+          path: 'request-password-reset',
+          name: 'request-password-reset',
+          component: RequestPasswordReset },
+
+        {
+          path: 'reset-password',
+          name: 'reset-password',
+          component: ResetPassword },
+
+        { path: 'confirm-email',
+          name: 'confirm-email',
+          component: ConfirmEmail },
+
+        { path: 'profile',
+          name: 'profile',
+          component: ViewProfile },
+
+        { path: 'change-password',
+          name: 'change-password',
+          component: ChangePassword },
+
+        { path: '*',
+          redirect: { name: 'login' } },
+      ],
+    },
+
     {
       path: '',
       name: 'root',
