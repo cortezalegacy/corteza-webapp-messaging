@@ -48,6 +48,9 @@
 
       <pre
         class="version selectable" v-html="version"></pre>
+
+      <br />
+      <router-link class="logout" :to="{ name: 'logout' }">Logout</router-link>
     </div>
 
   </nav>
@@ -249,6 +252,11 @@ nav {
     padding: 10px;
     color: $appgrey;
     font-size: 70%;
+  }
+
+  .logout {
+    margin: 30px 0 0 0;
+    padding: 10px;
   }
 }
 
