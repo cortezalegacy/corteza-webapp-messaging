@@ -1,92 +1,322 @@
 <template>
-  <main>
-    <h1>Hello Crust developer.</h1>
+  <div class="auth-container">
+    <div class="error" v-if="error">{{ error }}</div>
 
-    <p><b>It looks like you need to login</b></p>
+    <main v-else-if="!processing && configured">
+      <img alt="Crust logo" class="logo" src="../assets/images/crust-logo-with-tagline.png">
+      <section>
+        <h1>{{ t(`dialog.${$route.name}.title`) }}</h1>
+        <router-view
+          :afterLogin="updatePlugins"
+          :afterSignup="updatePlugins"
+          :afterConfirmEmail="afterConfirmEmail"
+          :afterLogout="afterLogout"
+          v-bind="settings"/>
 
-    <p>In a production environment, you would be redirected to <code>/auth</code> and be presented with the login UI.</p>
+      </section>
+    </main>
 
-    <p>
-      Due to some limitations in the dev env, please copy your JWT manually. Go to the logged in instance and
-      find it in your local-storage or by running <code>localStorage.getItem('auth.jwt')</code> in the browser
-      console and paste it to the input box below.
-    </p>
-
-    <p>
-      Crust System API:<br/>
-      <code>{{ backend }}</code>
-    </p>
-
-    Manage your JWT here:
-    <textarea placeholder="your.jwt.string" rows="5" v-model.trim="newJWT"></textarea>
-    <button @click="check" :disabled="!this.newJWT">Check & store</button> &nbsp;
-
-    <br />
-    <br />
-
-    <span v-if="checkRsp">Response: <code>{{ checkRsp }}</code></span>
-
-    <pre v-if="$auth.user">User data: {{ $auth.user }}</pre>
-
-    <hr />
-
-    <a href="/">&laquo; Back</a>
-  </main>
+    <div class="loader" v-else-if="configured">
+      <img :src="logo" />
+    </div>
+  </div>
 </template>
+
 <script>
+import updatePlugins from '../plugins/update'
+import updateState from '../store/update'
+
 export default {
+  name: 'Auth',
+
   data () {
     return {
-      checkRsp: '',
-      newJWT: '',
+      logo: require('@/assets/images/crust-logo-with-tagline.png'),
+
+      configured: false,
+      processing: false,
+      error: null,
+
+      settings: {
+        internalEnabled: null,
+        internalPasswordResetEnabled: null,
+        internalSignUpEmailConfirmationRequired: null,
+        internalSignUpEnabled: null,
+
+        externalEnabled: null,
+        externalProviders: [],
+      },
     }
   },
 
   computed: {
-    backend () {
-      return window.CrustSystemAPI
+    route () {
+      return this.$route.name
+    },
+
+    t () {
+      return (k) => ({
+        'dialog.change-password.title': 'Change your password',
+        'dialog.confirm-email.title': 'Email confirmation',
+        'dialog.login.title': 'Login',
+        'dialog.logout.title': 'Logout',
+        'dialog.request-password-reset.title': 'Request password reset link',
+        'dialog.reset-password.title': 'Reset your password',
+        'dialog.sign-up.title': 'Sign up',
+        'dialog.profile.title': 'Your Crust profile',
+      }[k] || k)
+    },
+  },
+
+  watch: {
+    route: {
+      handler: function (newVal, oldVal) {
+        console.debug({ newVal })
+        this.attemptConfig()
+      },
     },
   },
 
   created () {
-    if (process.env.NODE_ENV !== 'development') {
-      // Not in development mode, move away from here
-      window.location = '/auth'
+    if (!process.env.VUE_APP_CORDOVA) {
+      this.configured = true
+      this.loadSettings()
+      return
     }
 
-    this.newJWT = this.$auth.JWT
+    this.attemptConfig()
   },
 
   methods: {
-    check () {
-      this.$auth.check(this.$system, this.newJWT).then(() => {
-        this.checkRsp = 'Valid JWT.'
-      }).catch(({ message }) => {
-        this.checkRsp = message
+    // Checks & configures client if needed
+    attemptConfig () {
+      this.configured = false
+      let cd = localStorage.getItem('crust.domain')
+      console.debug({ cd })
+      if (!cd || cd === 'null') {
+        window.crustHybrid.configureClient()
+          .then(({ config, domain }) => {
+            // Update config
+            Object.assign(window, config)
+            delete window.invalid
+
+            this.$system.baseURL = window.CrustSystemAPI
+            this.configured = true
+            this.loadSettings()
+          })
+      } else {
+        // No config needed
+        this.configured = true
+        this.loadSettings()
+      }
+    },
+
+    afterLogout () {
+      localStorage.removeItem('crust.domain')
+      this.$router.push({ name: 'login' })
+    },
+
+    updatePlugins () {
+      updatePlugins(this, null)
+      updateState(this, null)
+      this.$router.push({ name: 'landing' })
+    },
+
+    afterConfirmEmail () {
+      window.setTimeout(() => {
+        this.updatePlugins()
+      }, 3000)
+    },
+
+    loadSettings () {
+      this.error = null
+      this.processing = true
+
+      this.$system.authSettings().then(ss => {
+        for (var k in this.settings) {
+          if (ss[k] !== undefined) {
+            this.settings[k] = ss[k]
+          }
+        }
+
+        // For now, sort by label just to have a stable order
+        // we'll support custom sort order of external providers later.
+        if (Array.isArray(this.settings.externalProviders)) {
+          this.settings.externalProviders = this.settings.externalProviders.sort((a, b) => {
+            return a.label.localeCompare(b.label)
+          })
+        }
+      }).catch(({ message } = {}) => {
+        if (message !== 'Network Error') {
+          this.$auth.JWT = null
+          this.$auth.user = null
+        }
+
+        this.error = message
+      }).finally(() => {
+        this.processing = false
       })
     },
   },
 }
 </script>
-<style lang="scss">
-#crust-messenger {
-  position: inherit;
+<style lang="scss" scoped>
+@keyframes flickerAnimation {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.1; }
+  100% { opacity: 0.6; }
 }
-</style>
-<style scoped lang="scss">
-main {
-  font-size: 16px;
-  width: 800px;
-  padding: 60px;
-  position: absolute;
-  text-align: left;
-  color: black;
 
-  textarea {
-    font-size: 10px;
-    width: 100%;
-    font-family: monospace;
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+  img {
+    align-self: center;
+    opacity: 0.7;
+    animation: flickerAnimation 3s infinite;
   }
 }
 
+.error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #E85568;
+  font-size: 24px;
+  background-color: #FFFFFF;
+  height: 20vh;
+  top: 40vh;
+  text-align: center;
+}
+
+main {
+  h1 {
+    margin: 0;
+    padding: 0 0 20px 0;
+    font-size: 18px;
+  }
+
+  position: relative;
+  max-width: 320px;
+
+  section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  }
+
+  img.logo {
+    max-width: 80%;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+</style>
+
+<style lang="scss">
+.auth-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 0;
+
+  .error {
+    margin-top: 5px;
+    color: #E85568;
+  }
+
+  h2 {
+    font-size: 15px;
+  }
+
+  input {
+    border-radius: 3px;
+    width: calc(100% - 10px);
+    height: 40px;
+    padding-left: 10px;
+    border: 1px solid #90A3B1;
+    color: black;
+    font-size: 14px;
+
+    &:focus,
+    &:active {
+      outline: none;
+      border-color: #1397CB;
+    }
+
+    &:disabled {
+      background: #90A3B1;
+    }
+
+    &.error {
+      color: black;
+      border-color: #E85568;
+    }
+  }
+
+  label {
+    display: block;
+    margin: 20px 0 5px 0;
+    font-size: 13px;
+  }
+
+  button {
+    &.login-btn {
+      display: block;
+      margin: 10px auto;
+      outline-color: transparent;
+      border: none;
+      border-radius: 40px;
+      padding: 10px 40px;
+      color: #ffffff;
+      font-size: 16px;
+      cursor: pointer;
+      background: #FFCC32;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  .or {
+    margin: 15px 0;
+    text-align: center;
+    width: 100%;
+    opacity: 0.5;
+
+    &::before,
+    &::after {
+      content: "\00a0";
+      border-bottom: solid 1px grey;
+      min-width: 30px;
+      display: inline-block;
+      vertical-align: middle;
+      margin: -0.5em 1em 0 1em;
+      height: 0.5em;
+      overflow: hidden;
+    }
+  }
+
+  .external-providers {
+    border: none;
+  }
+
+  .footnote {
+    border-top: 1px solid #90A3B1;
+    margin-top: 20px;
+    padding-top: 10px;
+    font-size: 14px;
+
+    a {
+      color: #000;
+    }
+  }
+}
 </style>
