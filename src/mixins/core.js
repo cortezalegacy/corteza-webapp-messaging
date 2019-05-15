@@ -27,6 +27,11 @@ export default {
       },
     )
 
+    this.$bus.$on('$ws.open', () => {
+      console.log('Hello')
+      this.$store.dispatch('users/loadStatuses')
+    })
+
     this.$bus.$on('$ws.channel', (channel) => {
       this.$store.commit('channels/updateList', new Channel(channel))
     })
