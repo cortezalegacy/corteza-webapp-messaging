@@ -204,7 +204,7 @@ export default {
           return
         }
 
-        if (this.currentChannel && this.currentchannel.channelID === message.channelID && document.hasFocus()) {
+        if (this.currentChannel && this.currentChannel.channelID === message.channelID && document.hasFocus()) {
           console.debug('Not notifying, in channel, focused')
           // We're already paying attention
           return
