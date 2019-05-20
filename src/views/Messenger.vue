@@ -243,7 +243,7 @@ export default {
         console.debug('Sending notification about new message', { message })
 
         // Please note that this will not work on non secure domains. "http://localhost" is an exception.
-        this.$notification.show(`${this.labelUser(message.user)} in ${msgChannel.name} | Crust`, {
+        this.$notification.show(`${this.label(this.findUserByID(message.userID))} in ${msgChannel.name} | Crust`, {
           body: body.length > 200 ? body.substring(0, 200) + '...' : body,
         }, {
           onclick: () => {
