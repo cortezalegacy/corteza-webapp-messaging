@@ -2698,6 +2698,8 @@ crust-api-client.js@crusttech/crust-api-client.js.git#master:
   dependencies:
     "@vue/eslint-config-standard" "^4.0.0"
     core-js "^2.6.5"
+    crust-api-client.js crusttech/crust-api-client.js.git#master
+    crust-common.vue crusttech/crust-common.vue.git#master
     stylelint "^9.10.1"
     stylelint-config-standard "^18.2.0"
     stylelint-scss "^3.5.4"
@@ -2706,8 +2708,8 @@ crust-api-client.js@crusttech/crust-api-client.js.git#master:
     vue-router "^3.0.3"
 
 crust-common.vue@crusttech/crust-common.vue.git#master:
-  version "2019.3.4"
-  resolved "https://codeload.github.com/crusttech/crust-common.vue/tar.gz/e5ae9d35140aa12f9a6d8faf9a85426e1a1ff5fe"
+  version "2019.3.6"
+  resolved "https://codeload.github.com/crusttech/crust-common.vue/tar.gz/d58b16e397aacecf568ee101ecd8a3b7372ce7f8"
 
 crypto-browserify@^3.11.0:
   version "3.12.0"
