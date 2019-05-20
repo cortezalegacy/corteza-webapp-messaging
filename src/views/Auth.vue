@@ -11,6 +11,7 @@
           :afterSignup="updatePlugins"
           :afterConfirmEmail="afterConfirmEmail"
           :afterLogout="afterLogout"
+          :onExternalAuth="onExternalAuth"
           v-bind="settings"/>
 
       </section>
@@ -88,6 +89,29 @@ export default {
   },
 
   methods: {
+    onExternalAuth (url) {
+      if (!url) return
+
+      if (!process.env.VUE_APP_CORDOVA) {
+        window.location = url
+        return
+      }
+
+      /* eslint-disable no-undef */
+      const iab = cordova.InAppBrowser.open(url, '_blank', 'location=no,beforeload=yes,hidenavigationbuttons=yes,zoom=no')
+
+      // If url has our token, take it and use it for exchange
+      const r = /^.+[?&]token=([a-zA-Z0-9]{32}\d+).*$/
+      iab.addEventListener('loadstart', ({ url }) => {
+        const rr = r.exec(url)
+        console.debug(url, rr)
+        if (rr != null) {
+          iab.close()
+          this.$router.push({ name: 'login', query: { token: rr[1] } })
+        }
+      })
+    },
+
     // Checks & configures client if needed
     attemptConfig () {
       this.configured = false
