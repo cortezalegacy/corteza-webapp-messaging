@@ -327,9 +327,10 @@ $mobileInputWidth: 35px;
   }
 
   &.editing {
+    display: inline-block;
+    width: 100%;
     padding: 0 10px 0 0;
     overflow: visible;
-    display: flex;
     .text-input {
       width: 100%;
     }
