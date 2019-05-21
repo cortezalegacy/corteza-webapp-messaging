@@ -30,6 +30,7 @@
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",
     "favico.js": "^0.3.10",
+    "fuzzysort": "^1.1.4",
     "highlight.js": "^9.13.1",
     "i18next": "^15.0.7",
     "i18next-browser-languagedetector": "^3.0.1",

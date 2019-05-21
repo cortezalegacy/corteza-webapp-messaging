@@ -14,6 +14,15 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
+const fuzzysort = require('fuzzysort')
+
+const fzsOpts = {
+  threshold: -1000,
+  limit: 10,
+  allowTypo: true,
+
+  key: 'key',
+}
 
 export default {
   components: {
@@ -74,13 +83,7 @@ export default {
               if (searchTerm.length === 0) {
                 renderList(values, searchTerm)
               } else {
-                const matches = []
-                for (let i = 0; i < values.length; i++) {
-                  if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) {
-                    matches.push(values[i])
-                  }
-                }
-                renderList(matches, searchTerm)
+                renderList(fuzzysort.go(searchTerm, values, fzsOpts).map(r => r.obj), searchTerm)
               }
             },
           },

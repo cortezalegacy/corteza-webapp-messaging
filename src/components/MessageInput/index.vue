@@ -63,6 +63,7 @@ import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
+const fuzzysort = require('fuzzysort')
 
 const kinds = {
   editing: 'editing',
@@ -124,11 +125,17 @@ export default {
     },
 
     channelSuggestions () {
-      return this.channels.map(c => { return { id: c.channelID, value: c.name || c.channelID || '' } })
+      return this.channels.map(c => {
+        const value = c.name || c.channelID || ''
+        return { id: c.channelID, value, key: fuzzysort.prepare(value) }
+      })
     },
 
     userSuggestions () {
-      return this.users.map(u => { return { id: u.userID, value: u.name || u.userID || '' } })
+      return this.users.map(u => {
+        const value = u.name || u.userID || ''
+        return { id: u.userID, value, key: fuzzysort.prepare(value) }
+      })
     },
 
     showFileUpload () {
