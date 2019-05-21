@@ -60,6 +60,7 @@ export default {
             allowedChars: /^[A-Za-z\sÅÄÖåäöđšćčžĐŠĆČŽ\-_]*$/,
             offsetLeft: 0,
             fixMentionsToQuill: true,
+            defaultMenuOrientation: 'top',
             mentionDenotationChars: ['@', '#'],
             source: function (searchTerm, renderList, mentionChar) {
               let values
