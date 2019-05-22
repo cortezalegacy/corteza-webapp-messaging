@@ -78,7 +78,7 @@ export default {
           // Configure mention module
           // It helps user select user or channel by typing @ or # char
           mention: {
-            allowedChars: /^[A-Za-z\sÅÄÖåäöđšćčžĐŠĆČŽ\-_]*$/,
+            allowedChars: /^.*$/,
             offsetLeft: 0,
             fixMentionsToQuill: true,
             defaultMenuOrientation: 'top',
