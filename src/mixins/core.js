@@ -28,7 +28,6 @@ export default {
     )
 
     this.$bus.$on('$ws.open', () => {
-      console.log('Hello')
       this.$store.dispatch('users/loadStatuses')
     })
 
@@ -54,7 +53,6 @@ export default {
     // Processes unique activities & resets the list
     const updateActivity = throttle(() => {
       const activities = Array.from(activitySet)
-      console.debug('updateActivity', { activities })
       activitySet = new Set()
 
       if (activities.length) {
