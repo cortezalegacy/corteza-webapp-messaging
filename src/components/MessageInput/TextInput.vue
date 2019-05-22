@@ -71,6 +71,16 @@ export default {
             fixMentionsToQuill: true,
             defaultMenuOrientation: 'top',
             mentionDenotationChars: ['@', '#'],
+            renderItem: function (item, searchTerm) {
+              if (item.type === 'User') {
+                return `
+                  <span class="group ${item.online ? 'full-moon' : 'new-moon'}">
+                    <span class="channel-name"><span class="label">${item.value}</span></span>
+                  </span>`
+              } else {
+                return `<span class="label">${item.value}</span>`
+              }
+            },
             source: function (searchTerm, renderList, mentionChar) {
               let values
 
@@ -174,6 +184,8 @@ export default {
 
 <style lang="scss">
   @import '@/assets/sass/_0.commons.scss';
+  @import '@/assets/sass/channel-names.scss';
+
   @media (max-width: $wideminwidth - 1px)
   {
     .ql-editor
@@ -194,11 +206,11 @@ export default {
       height: 30px;
       line-height: 30px;
 
-      &[data-denotation-char="#"]:before {
+      &[data-denotation-char="#"] .label:before {
         content: "#";
       }
 
-      &[data-denotation-char="@"]:before {
+      &[data-denotation-char="@"] .label:before {
         content: "@";
       }
     }

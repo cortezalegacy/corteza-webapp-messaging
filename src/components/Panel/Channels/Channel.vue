@@ -113,35 +113,6 @@ export default {
   font-weight: 400;
 }
 
-.group {
-  .channel-name:before {
-    content: '●';
-    font-weight: bold;
-    color: $appgrey;
-    font-size: 20px;
-    margin-left: -2px;
-  }
-
-  &.new-moon {
-    a {
-      color: $appgrey;
-    }
-  }
-
-  &.full-moon {
-    .channel-name:before {
-      color: $appgreen;
-    }
-  }
-
-  &.last-quarter-moon {
-    .channel-name:before {
-      content: '○';
-      color: $appgreen;
-    }
-  }
-}
-
 .unread {
   background: $appblue;
   color: white;

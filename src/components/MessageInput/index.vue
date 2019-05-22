@@ -116,6 +116,7 @@ export default {
       channels: 'channels/list',
       channelActivity: 'users/channelActivity',
       messageActivity: 'users/messageActivity',
+      statuses: 'users/statuses',
       hasUnreads: 'unread/has',
     }),
 
@@ -127,14 +128,16 @@ export default {
     channelSuggestions () {
       return this.channels.map(c => {
         const value = c.name || c.channelID || ''
-        return { id: c.channelID, value, key: fuzzysort.prepare(value) }
+        return { type: 'Channel', id: c.channelID, value, key: fuzzysort.prepare(value) }
       })
     },
 
     userSuggestions () {
+      const online = new Set(this.statuses.filter(s => s.present === 'online').map(s => s.userID))
+
       return this.users.map(u => {
         const value = u.name || u.userID || ''
-        return { id: u.userID, value, key: fuzzysort.prepare(value) }
+        return { type: 'User', id: u.userID, value, key: fuzzysort.prepare(value), online: online.has(u.userID) }
       })
     },
 
