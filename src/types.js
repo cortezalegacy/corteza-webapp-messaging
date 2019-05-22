@@ -139,11 +139,13 @@ export function Attachment (a) {
   this.userID = a.userID
   this.name = a.name
   this.meta = a.meta
-  this.url = a.url
-  this.previewUrl = a.previewUrl
 
   if (window.CrustMessagingAPI) {
-    this.downloadUrl = window.CrustMessagingAPI + this.url + '?download=1'
+    const base = window.CrustMessagingAPI
+
+    this.url = base + a.url
+    this.previewUrl = base + a.previewUrl
+    this.downloadUrl = this.url + (this.url.indexOf('?') === -1 ? '?' : '&') + 'download=1'
   }
 }
 

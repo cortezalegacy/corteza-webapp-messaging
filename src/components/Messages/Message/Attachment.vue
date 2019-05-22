@@ -1,16 +1,16 @@
 <template>
   <div>
       <div v-if="inline && attachment.meta.preview">
-        <a class="attachment-wrap" @click.prevent="onClick" :href="prefixAttachmentUrl(attachment.downloadUrl)">
+        <a class="attachment-wrap" @click.prevent="onClick" :href="attachment.downloadUrl">
           <img :width="(attachment.meta.preview.image || {}).width || 320"
                :height="(attachment.meta.preview.image || {}).height || 180"
                @error.once="reloadBrokenImage"
-               :src="prefixAttachmentUrl(attachment.previewUrl)">
+               :src="attachment.previewUrl">
         </a>
       </div>
       <!-- file has size but not image -->
       <span v-else-if="attachment.meta.original">
-        <a v-bind:href="prefixAttachmentUrl(attachment.downloadUrl)">
+        <a v-bind:href="attachment.downloadUrl">
           <font-awesome-icon
             :icon="['far', 'file-'+ext]"
             :title="$t('message.openBookmarks')"
@@ -64,10 +64,6 @@ export default {
   },
 
   methods: {
-    prefixAttachmentUrl (url) {
-      return this.$messaging.baseURL + url
-    },
-
     onClick () {
       this.$bus.$emit('$message.previewAttachment', this.attachment)
     },
