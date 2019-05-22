@@ -16,9 +16,12 @@ import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
 const fuzzysort = require('fuzzysort')
 
+const suggestionLimit = 10
+const filterIn = ['group', 'private']
+const ignoreFlags = ['ignored', 'hidden']
 const fzsOpts = {
   threshold: -1000,
-  limit: 10,
+  limit: suggestionLimit,
   allowTypo: true,
 
   key: 'key',
@@ -40,6 +43,15 @@ export default {
     users: {
       type: Array,
       required: false,
+    },
+
+    channel: {
+      type: Object,
+      default: () => ({}),
+    },
+    user: {
+      type: Object,
+      default: () => ({}),
     },
 
     preset: String,
@@ -84,17 +96,42 @@ export default {
             source: function (searchTerm, renderList, mentionChar) {
               let values
 
+              const { userID: meID } = vm.user
               if (mentionChar === '@') {
                 values = vm.users
+                let { type, members = [] } = vm.channel
+
+                // In private & group channels, initally show only members
+                if (searchTerm.length === 0 && filterIn.find((e) => e === type)) {
+                  values = values.filter(a => members.find(m => m === a.id))
+                }
+
+                // Fuzzy sort
+                if (searchTerm.length !== 0) {
+                  values = fuzzysort.go(searchTerm, values, fzsOpts).map(r => r.obj)
+                }
+
+                // Extra sort by presence & membership
+                values = [ ...values ].sort((a, b) => {
+                  if (a.online && !b.online && a.id !== meID) return -1
+                  if (members.find(m => m === a.id) && !members.find(m => m === b.id)) return -1
+
+                  return 0
+                })
               } else {
                 values = vm.channels
+
+                // Show named, not ignored, joined channels
+                if (searchTerm.length === 0) {
+                  values = values.filter(a => a.name && !ignoreFlags.find(e => e === a.membershipFlag) && a.members.find((e) => e === meID))
+                } else {
+                  values = fuzzysort.go(searchTerm, values, fzsOpts)
+                    .filter(r => !ignoreFlags.find(e => e === r.obj.membershipFlag) || -r.score < r.target.length * 0.65)
+                    .map(r => r.obj)
+                }
               }
 
-              if (searchTerm.length === 0) {
-                renderList(values, searchTerm)
-              } else {
-                renderList(fuzzysort.go(searchTerm, values, fzsOpts).map(r => r.obj), searchTerm)
-              }
+              renderList(values.slice(0, suggestionLimit), searchTerm)
             },
           },
 

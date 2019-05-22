@@ -1,3 +1,5 @@
+const fuzzysort = require('fuzzysort')
+
 export class Channel {
   constructor (c) {
     this.canUpdate = true
@@ -28,6 +30,10 @@ export class Channel {
     this.canDelete = !!c.canDelete
 
     this.members = c.members || [] // []string
+  }
+
+  fuzzyKey () {
+    return fuzzysort.prepare(this.name || this.channelID || '')
   }
 
   isMember (userID) {
@@ -160,6 +166,10 @@ export class User {
     this.email = u.email || ''
 
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
+  }
+
+  fuzzyKey () {
+    return fuzzysort.prepare(this.name || this.userID || '')
   }
 
   Match (q) {
