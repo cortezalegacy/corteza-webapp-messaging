@@ -86,11 +86,11 @@ export default {
             renderItem: function (item, searchTerm) {
               if (item.type === 'User') {
                 return `
-                  <span class="group ${item.online ? 'full-moon' : 'new-moon'}">
+                  <span class="user group ${item.online ? 'full-moon' : 'new-moon'} ${item.member ? 'member' : ''}">
                     <span class="channel-name"><span class="label">${item.value}</span></span>
                   </span>`
               } else {
-                return `<span class="label">${item.value}</span>`
+                return `<span class="channel ${item.opts.type}"><span class="channel-name ">${item.value}</span></span>`
               }
             },
             source: function (searchTerm, renderList, mentionChar) {
@@ -104,6 +104,8 @@ export default {
                 // In private & group channels, initally show only members
                 if (searchTerm.length === 0 && filterIn.find((e) => e === type)) {
                   values = values.filter(a => members.find(m => m === a.id))
+                } else {
+                  values = values.map(v => ({ ...v, member: members.find(m => m === v.id) }))
                 }
 
                 // Fuzzy sort
@@ -123,10 +125,10 @@ export default {
 
                 // Show named, not ignored, joined channels
                 if (searchTerm.length === 0) {
-                  values = values.filter(a => a.name && !ignoreFlags.find(e => e === a.membershipFlag) && a.members.find((e) => e === meID))
+                  values = values.filter(a => a.name && !ignoreFlags.find(e => e === a.opts.membershipFlag) && a.members.find((e) => e === meID))
                 } else {
                   values = fuzzysort.go(searchTerm, values, fzsOpts)
-                    .filter(r => !ignoreFlags.find(e => e === r.obj.membershipFlag) || -r.score < r.target.length * 0.65)
+                    .filter(r => !ignoreFlags.find(e => e === r.obj.opts.membershipFlag) || -r.score < r.target.length * 0.65)
                     .map(r => r.obj)
                 }
               }
@@ -243,12 +245,20 @@ export default {
       height: 30px;
       line-height: 30px;
 
-      &[data-denotation-char="#"] .label:before {
-        content: "#";
+      &[data-denotation-char="@"] .label {
+        color: $appgrey;
       }
 
-      &[data-denotation-char="@"] .label:before {
-        content: "@";
+      &[data-denotation-char="@"] .full-moon .label {
+        color: $black;
+      }
+
+      &[data-denotation-char="@"] .member .label {
+        font-weight: bold;
+      }
+
+      & .channel .channel-name:before {
+        color: $black;
       }
     }
   }

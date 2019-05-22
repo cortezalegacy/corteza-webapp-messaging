@@ -129,7 +129,7 @@ export default {
     channelSuggestions () {
       return this.channels.map(c => {
         const value = c.name || c.channelID || ''
-        return { type: 'Channel', id: c.channelID, value, key: c.fuzzyKey(), members: c.members, name: c.name, membershipFlag: c.membershipFlag }
+        return { type: 'Channel', id: c.channelID, value, key: c.fuzzyKey(), members: c.members, name: c.name, opts: { membershipFlag: c.membershipFlag, type: c.type } }
       })
     },
 
