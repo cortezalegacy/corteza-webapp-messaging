@@ -13,8 +13,7 @@ export default {
     // later this can be extended to actual profile page
 
     this.$messaging.channelCreate({ type: 'group', members: [this.userID] }).then((ch) => {
-      console.debug('Direct message channel created', ch)
-      this.$router.push({ name: 'channel', params: { channelID: ch.cannelID } })
+      this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
     }).catch(({ error }) => {
       console.error(error)
     })
