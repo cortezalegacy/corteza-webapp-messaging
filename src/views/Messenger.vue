@@ -254,7 +254,7 @@ export default {
 
       this.$bus.$on('$message.previewAttachment', (attachment) => {
         this.uiShowPreview = {
-          src: this.$messaging.baseURL + attachment.url,
+          src: attachment.url,
           caption: attachment.name,
         }
       })
