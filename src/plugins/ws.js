@@ -36,15 +36,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     // check if already connected
     if (this.connected()) return
 
-    let wsBaseUrl
-
-    if (window.CrustMessagingAPI.substring(0, 2) === '//') {
-      wsBaseUrl = location.protocol.replace(/^http/, 'ws') + window.CrustMessagingAPI
-    } else {
-      wsBaseUrl = window.CrustMessagingAPI.replace(/^http/, 'ws')
-    }
-
-    const url = wsBaseUrl + '/websocket/?jwt=' + localStorage.getItem('auth.jwt')
+    const url = this.guessBaseUrl(window.CrustMessagingAPI) + '/websocket/?jwt=' + localStorage.getItem('auth.jwt')
 
     this.conn = new ReconnectingWebSocket(url)
     this.conn.debug = true
@@ -89,6 +81,20 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
         this.$bus.$emit(`$ws.${type}`, payload[type])
       }
     })
+  },
+
+  guessBaseUrl (messagingAPI) {
+    if (messagingAPI.substring(0, 2) === '//') {
+      // No schema but with hostname
+      return location.protocol.replace(/^http/, 'ws') + messagingAPI
+    }
+    if (messagingAPI.substring(0, 1) === '/') {
+      // No schema, no hostname,..
+      return location.protocol.replace(/^http/, 'ws') + '//' + location.host + messagingAPI
+    }
+
+    // Schema & hostname present
+    return messagingAPI.replace(/^http/, 'ws')
   },
 
   close () {
