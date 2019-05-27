@@ -147,7 +147,7 @@ export default {
         this.$store.dispatch('users/loadStatuses'),
         this.$store.dispatch('suggestions/loadCommands'),
       ]).then(() => {
-        setTimeout(() => { this.loaded = true }, 2000)
+        setTimeout(() => { navigator.splashscreen.hide() }, 200)
       })
 
       this.windowResizeHandler()

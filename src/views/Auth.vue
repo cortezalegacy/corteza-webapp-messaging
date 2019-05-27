@@ -16,10 +16,6 @@
 
       </section>
     </main>
-
-    <div class="loader" v-else-if="configured">
-      <img :src="logo" />
-    </div>
   </div>
 </template>
 
@@ -85,6 +81,7 @@ export default {
       return
     }
 
+    navigator.splashscreen.hide()
     this.attemptConfig()
   },
 
@@ -185,25 +182,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@keyframes flickerAnimation {
-  0% { opacity: 0.6; }
-  50% { opacity: 0.1; }
-  100% { opacity: 0.6; }
-}
-
-.loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-
-  img {
-    align-self: center;
-    opacity: 0.7;
-    animation: flickerAnimation 3s infinite;
-  }
-}
-
 .error {
   display: flex;
   align-items: center;
