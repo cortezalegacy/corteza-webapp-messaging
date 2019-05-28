@@ -22,6 +22,8 @@
               :submitOnEnter="!uiEnableSubmitButton()"
               :channels="channelSuggestions"
               :users="userSuggestions"
+              :channel="channel"
+              :user="$auth.user"
               class="text-input "
               :class="{'no-files': !showFileUpload}" />
 
@@ -115,6 +117,7 @@ export default {
       channels: 'channels/list',
       channelActivity: 'users/channelActivity',
       messageActivity: 'users/messageActivity',
+      statuses: 'users/statuses',
       hasUnreads: 'unread/has',
     }),
 
@@ -124,11 +127,21 @@ export default {
     },
 
     channelSuggestions () {
-      return this.channels.map(c => { return { id: c.channelID, value: c.name || c.channelID || '' } })
+      return this.channels.map(c => {
+        const value = c.name || c.channelID || ''
+        return { type: 'Channel', id: c.channelID, value, key: c.fuzzyKey(), members: c.members, name: c.name, opts: { membershipFlag: c.membershipFlag, type: c.type } }
+      })
+    },
+
+    onlineStatuses () {
+      return new Set(this.statuses.filter(s => s.present === 'online').map(s => s.userID))
     },
 
     userSuggestions () {
-      return this.users.map(u => { return { id: u.userID, value: u.name || u.userID || '' } })
+      return this.users.map(u => {
+        const value = u.name || u.userID || ''
+        return { type: 'User', id: u.userID, value, key: u.fuzzyKey(), online: this.onlineStatuses.has(u.userID), name: u.name }
+      })
     },
 
     showFileUpload () {
@@ -327,9 +340,10 @@ $mobileInputWidth: 35px;
   }
 
   &.editing {
+    display: inline-block;
+    width: 100%;
     padding: 0 10px 0 0;
     overflow: visible;
-    display: flex;
     .text-input {
       width: 100%;
     }

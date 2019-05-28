@@ -14,6 +14,18 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
 import { exportToMarkdown } from './src/markdown'
+const fuzzysort = require('fuzzysort')
+
+const suggestionLimit = 10
+const filterIn = ['group', 'private']
+const ignoreFlags = ['ignored', 'hidden']
+const fzsOpts = {
+  threshold: -1000,
+  limit: suggestionLimit,
+  allowTypo: true,
+
+  key: 'key',
+}
 
 export default {
   components: {
@@ -31,6 +43,15 @@ export default {
     users: {
       type: Array,
       required: false,
+    },
+
+    channel: {
+      type: Object,
+      default: () => ({}),
+    },
+    user: {
+      type: Object,
+      default: () => ({}),
     },
 
     preset: String,
@@ -57,30 +78,62 @@ export default {
           // Configure mention module
           // It helps user select user or channel by typing @ or # char
           mention: {
-            allowedChars: /^[A-Za-z\sÅÄÖåäöđšćčžĐŠĆČŽ\-_]*$/,
+            allowedChars: /^.*$/,
             offsetLeft: 0,
             fixMentionsToQuill: true,
+            defaultMenuOrientation: 'top',
             mentionDenotationChars: ['@', '#'],
+            renderItem: function (item, searchTerm) {
+              if (item.type === 'User') {
+                return `
+                  <span class="user group ${item.online ? 'full-moon' : 'new-moon'} ${item.member ? 'member' : ''}">
+                    <span class="channel-name"><span class="label">${item.value}</span></span>
+                  </span>`
+              } else {
+                return `<span class="channel ${item.opts.type}"><span class="channel-name ">${item.value}</span></span>`
+              }
+            },
             source: function (searchTerm, renderList, mentionChar) {
               let values
 
+              const { userID: meID } = vm.user
               if (mentionChar === '@') {
                 values = vm.users
+                let { type, members = [] } = vm.channel
+
+                // In private & group channels, initally show only members
+                if (searchTerm.length === 0 && filterIn.find((e) => e === type)) {
+                  values = values.filter(a => members.find(m => m === a.id))
+                } else {
+                  values = values.map(v => ({ ...v, member: members.find(m => m === v.id) }))
+                }
+
+                // Fuzzy sort
+                if (searchTerm.length !== 0) {
+                  values = fuzzysort.go(searchTerm, values, fzsOpts).map(r => r.obj)
+                }
+
+                // Extra sort by presence & membership
+                values = [ ...values ].sort((a, b) => {
+                  if (a.online && !b.online && a.id !== meID) return -1
+                  if (members.find(m => m === a.id) && !members.find(m => m === b.id)) return -1
+
+                  return 0
+                })
               } else {
                 values = vm.channels
+
+                // Show named, not ignored, joined channels
+                if (searchTerm.length === 0) {
+                  values = values.filter(a => a.name && !ignoreFlags.find(e => e === a.opts.membershipFlag) && a.members.find((e) => e === meID))
+                } else {
+                  values = fuzzysort.go(searchTerm, values, fzsOpts)
+                    .filter(r => !ignoreFlags.find(e => e === r.obj.opts.membershipFlag) || -r.score < r.target.length * 0.65)
+                    .map(r => r.obj)
+                }
               }
 
-              if (searchTerm.length === 0) {
-                renderList(values, searchTerm)
-              } else {
-                const matches = []
-                for (let i = 0; i < values.length; i++) {
-                  if (~values[i].value.toLowerCase().indexOf(searchTerm.toLowerCase())) {
-                    matches.push(values[i])
-                  }
-                }
-                renderList(matches, searchTerm)
-              }
+              renderList(values.slice(0, suggestionLimit), searchTerm)
             },
           },
 
@@ -170,6 +223,8 @@ export default {
 
 <style lang="scss">
   @import '@/assets/sass/_0.commons.scss';
+  @import '@/assets/sass/channel-names.scss';
+
   @media (max-width: $wideminwidth - 1px)
   {
     .ql-editor
@@ -190,12 +245,20 @@ export default {
       height: 30px;
       line-height: 30px;
 
-      &[data-denotation-char="#"]:before {
-        content: "#";
+      &[data-denotation-char="@"] .label {
+        color: $appgrey;
       }
 
-      &[data-denotation-char="@"]:before {
-        content: "@";
+      &[data-denotation-char="@"] .full-moon .label {
+        color: $black;
+      }
+
+      &[data-denotation-char="@"] .member .label {
+        font-weight: bold;
+      }
+
+      & .channel .channel-name:before {
+        color: $black;
       }
     }
   }

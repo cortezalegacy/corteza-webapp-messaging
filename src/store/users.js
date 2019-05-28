@@ -78,6 +78,7 @@ export default function (Messaging, System) {
     },
     getters: {
       list: (state) => state.list,
+      statuses: (state) => state.status,
       listOnDemand: (state) => () => state.list,
       length: (state) => state.list.length,
       findByID: (state) => (ID) => state.list.find(u => ID === u.userID),
