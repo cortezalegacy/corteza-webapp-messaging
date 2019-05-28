@@ -208,8 +208,7 @@ nav {
     overflow-y: auto;
     flex: 1;
     padding-bottom: 10px;
-    box-shadow: inset -10px 0px 0px $mainbgcolor;
-    padding-right: 10px;
+    padding-right: 0;
 
     div.browse {
       padding-top: 0;

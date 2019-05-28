@@ -44,18 +44,37 @@ export default {
       speedThreshold: 0.4,
       panStarted: null,
       transitioning: false,
-      openedBy: {
-        left: 'panright',
-        right: 'panleft',
-      },
-      closedBy: {
-        left: 'panleft',
-        right: 'panright',
-      },
     }
   },
 
   computed: {
+    // Cached properties for animations
+    openPanDir () {
+      return { left: 'panright', right: 'panleft' }[this.orientation]
+    },
+    closePanDir () {
+      return { left: 'panleft', right: 'panright' }[this.orientation]
+    },
+    opening () {
+      return this.panDir === this.openPanDir
+    },
+    closing () {
+      return this.panDir === this.closePanDir
+    },
+    animEndPrefix () {
+      return this.opening ? '+' : '-'
+    },
+    orientationMult () {
+      return this.orientationLeft ? 1 : -1
+    },
+    orientationLeft () {
+      return this.orientation === 'left'
+    },
+    orientationRight () {
+      return this.orientation === 'right'
+    },
+    // ---
+
     styles () {
       let s = {
         '--width': this.width + 'px',
@@ -63,13 +82,9 @@ export default {
 
       // If mid-gesture, determine panel's position based on orientation
       if (this.dx) {
-        let base = this.orientation === 'left' ? this.dx : -this.dx
+        let base = this.dx * this.orientationMult
         let l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
-        if (this.orientation === 'right') {
-          l *= -1
-        }
-
-        s[this.orientation] = l + 'px'
+        s['transform'] = `translateX(${l + 'px'})`
       }
 
       return s
@@ -102,7 +117,7 @@ export default {
 
   methods: {
     animate (properties = {}, ...targets) {
-      const opt = { targets, easing: 'easeOutCubic', ...properties }
+      const opt = { targets, easing: 'easeOutQuart', ...properties }
       anime(opt)
     },
 
@@ -134,8 +149,8 @@ export default {
       const [ t ] = changedTouches
       if (t && this.hidden) {
         // Check if gesture is allowed based on start touch & panel orientation
-        this.ignorePan = (this.orientation === 'left' && t.pageX > this.openThreshold) ||
-          (this.orientation === 'right' && clientWidth - t.pageX > this.openThreshold)
+        this.ignorePan = (this.orientationLeft && t.pageX > this.openThreshold) ||
+          (this.orientationRight && clientWidth - t.pageX > this.openThreshold)
       }
     },
 
@@ -151,7 +166,7 @@ export default {
         this.panDir = 'panleft'
       }
 
-      if ((this.hidden && this.panDir === this.openedBy[this.orientation]) || (!this.hidden && this.panDir === this.closedBy[this.orientation])) {
+      if ((this.hidden && this.opening) || (!this.hidden && this.closing)) {
         // Accumulate dx, used for panel's position
         this.dx += deltaX
       }
@@ -170,19 +185,14 @@ export default {
 
         // Checks if it should open
         if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {
-          if (this.hidden && this.panDir === this.openedBy[this.orientation]) {
-            properties[this.orientation] = `+=${distLeft}px`
-            this.panelShow(false, properties, this.$refs.panel)
-          } else if (!this.hidden && this.panDir === this.closedBy[this.orientation]) {
-            properties[this.orientation] = `-=${distLeft}px`
-            this.panelShow(true, properties, this.$refs.panel)
+          if ((this.hidden && this.opening) || (!this.hidden && this.closing)) {
+            properties.translateX = `${this.animEndPrefix}=${(this.orientationMult) * distLeft}px`
+            this.panelShow(!this.hidden, properties, this.$refs.panel)
           }
         } else if (Math.abs(this.dx) > 0) {
           // Checks if it should close
-          if (this.hidden && this.openedBy[this.orientation]) {
-            this.panelAbort(true)
-          } else if (!this.hidden && this.closedBy[this.orientation]) {
-            this.panelAbort(false)
+          if ((this.hidden && this.openPanDir) || (!this.hidden && this.closePanDir)) {
+            this.panelAbort(this.hidden)
           }
         }
       }
@@ -206,8 +216,16 @@ aside {
   max-width: 100%;
   background-color: $menupanebgcolor;
 
+  // Force hardware acceleration
+  will-change: transform;
+  // Falback for older browsers
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+
   &.transitioning {
-    transition: all .3s;
+    transition: transform .3s;
   }
 
   div {
@@ -221,19 +239,21 @@ aside {
   }
 
   &.left {
+    left: 0;
     &.unpinned {
-      left: 0;
+      transform: translateX(0);
       &.hidden {
-        left: calc(-1 * var(--width));
+        transform: translateX(calc(-1 * var(--width)));
       }
     }
   }
 
   &.right {
+    right: 0;
     &.unpinned {
-      right: 0;
+      transform: translateX(0);
       &.hidden {
-        right: calc(-1 * var(--width));
+        transform: translateX(var(--width));
       }
     }
   }
