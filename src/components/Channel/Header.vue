@@ -6,7 +6,8 @@
       <i class="icon-menu4"></i></label>
 
     <div class="channel-header">
-      <span class="channel-name" :class="[channel.type]">{{ label(channel) }}
+      <span class="channel-name" :class="[channel.type]">
+        <group-members :channel="channel" />
         <span v-if="channel.membershipFlag==='pinned'" @click="onFlag('')">
           <label>
             <font-awesome-icon
@@ -133,9 +134,14 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import GroupMembers from '@/components/Channel/GroupMembers'
 
 export default {
   name: 'channel-header',
+
+  components: {
+    GroupMembers,
+  },
 
   props: {
     channel: {

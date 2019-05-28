@@ -8,7 +8,7 @@
           :icon="['far', 'bell-slash']"
         ></font-awesome-icon>
       </label>
-      {{ labelChannel(channel) }}
+      <group-members :channel="channel" />
     </router-link>
     <router-link v-else
                  class="layer-item layer-selectable channel-name"
@@ -16,7 +16,7 @@
         { current: (current||{}).channelID === channel.channelID },
       ]"
       :to="{name:'channel', params:{channelID:channel.channelID}}">
-                  {{ labelChannel(channel) }}
+      <group-members :channel="channel" />
     </router-link>
     <transition v-if="countUnread(channel) > 0"
                 name="slide-fade">
@@ -39,8 +39,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import GroupMembers from '@/components/Channel/GroupMembers'
 
 export default {
+  components: {
+    GroupMembers,
+  },
+
   props: {
     channel: {
       type: Object,
