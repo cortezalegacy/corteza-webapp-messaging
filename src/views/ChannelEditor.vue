@@ -61,7 +61,7 @@
             <label v-if="members.length > 0">{{ $t('channel.editor.selectedMembersLabel') }}</label>
             <ul>
               <li v-for="(u) in members" :key="u.userID">
-                <user-avatar :user="u" />
+                <user-avatar :userID="u.userID" />
                 {{ label(u) }}
                 <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-close"></i></button>
               </li>

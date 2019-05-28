@@ -12,7 +12,7 @@
             v-for="u in members"
             :key="u.userID"
             @click="$emit('openDirectMessage', u.userID);">
-            <user-avatar :user="u" />
+            <user-avatar :userID="u.userID" />
             <span class="member-name">{{ label(u) }}</span>
             <confirmation-toggle
               @confirmed="remove(u.userID)"
@@ -32,7 +32,7 @@
           <li
             v-for="u in searchResults"
             :key="u.userID">
-            <user-avatar :user="u" />
+            <user-avatar :userID="u.userID" />
             <span class="member-name">{{ label(u) }}</span>
             <button @click="add(u.userID)" class="btn">{{ $t('general.label.add') }}</button>
           </li>
