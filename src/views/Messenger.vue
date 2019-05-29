@@ -1,119 +1,77 @@
 <template>
-  <div v-if="$auth.is()">
-      <div class="flex-grid">
-          <base-side-panel
-            orientation="left"
-            :width="260"
-            :pinned="isChannelPanelPined"
-            :hidden.sync="uiHideChannelSidePanel"
-            :disableGestures="!!uiRightSidePanelContent">
-              <channels-panel
-                  @close="hideChannelSidePanel"
-                  @openQuickSearch="uiShowQuickSearch=true"
-                  @searchSubmit="onPanelSearchSubmit" />
-          </base-side-panel>
+  <div>
+    <messenger-base
+      v-if="$auth.is()"
+      :currentChannel="currentChannel"
+      @openQuickSearch="uiShowQuickSearch=true"
+      @searchSubmit="searchQuery=$event">
 
-          <!-- no use in displaying messages if no channel -->
-          <div class="main">
-            <router-view
-                @toggleChannelPanel="toggleChannelSidePanel()"
-                @openThreadPanel="switchRightSidePanel('thread', $event)"
-                @openMembersPanel="switchRightSidePanel('members', $event)"
-                @openPinnedMessagesPanel="switchRightSidePanel('pinnedMessages', $event)"
-                @openBookmarkedMessagesPanel="switchRightSidePanel('bookmarkedMessages', $event)" />
-          </div>
+      <div key="content" class="main">
+        <router-view
+          key="mainContent"
+          @toggleChannelPanel="tcp"
+          @openThreadPanel="srpThread"
+          @openMembersPanel="srpMembers"
+          @openPinnedMessagesPanel="srpPinnedMessages"
+          @openBookmarkedMessagesPanel="srpBookmarkedMessages" />
 
-          <base-side-panel
-            v-if="uiRightSidePanelContent"
-            :hidden="uiHideRightSidePanel"
-            orientation="right"
-            :width="400"
-            :pinned="uiPinRightSidePanel"
-            @update:hidden="hideRightPanel">
-              <members-panel
-                  v-if="uiRightSidePanelContent === 'members'"
-                  :channel="currentChannel"
-                  @close="switchRightSidePanel()" />
+        <component
+          v-show="emojiPickerCallback"
+          class="emoji-picker"
+          set="apple"
+          :is="emojiPickerLoader"
+          :showSkinTones="false"
+          :showPreview="false"
+          :sheetSize="32"
+          :infiniteScroll="false"
+          @select="onEmojiSelect" />
 
-              <thread-panel
-                  v-if="uiRightSidePanelContent === 'thread'"
-                  @close="switchRightSidePanel()"
-                  :repliesTo="uiRightSidePanelThreadMessageID" />
-
-              <pinned-messages-panel
-                  v-if="currentChannel && uiRightSidePanelContent === 'pinnedMessages'"
-                  :channel="currentChannel"
-                  @openThreadPanel="switchRightSidePanel('thread', $event)"
-                  @close="switchRightSidePanel()" />
-
-              <bookmarked-messages-panel
-                  v-if="uiRightSidePanelContent === 'bookmarkedMessages'"
-                  @openThreadPanel="switchRightSidePanel('thread', $event)"
-                  @close="switchRightSidePanel()" />
-          </base-side-panel>
       </div>
-      <div class="helpers">
-          <search-results
-              v-if="searchQuery"
-              @close="searchQuery=null"
-              @goToMessage="onGoToMessage"
-              :searchQuery="searchQuery" />
+    </messenger-base>
 
-          <preview
-              v-if="uiShowPreview"
-              @close="uiShowPreview=null"
-              :src="uiShowPreview.src" />
+    <div class="helpers">
+      <search-results
+        v-if="searchQuery"
+        :searchQuery="searchQuery"
+        @close="searchQuery=null"
+        @goToMessage="onGoToMessage" />
 
-          <quick-search
-              v-if="uiShowQuickSearch"
-              @close="uiShowQuickSearch=false"></quick-search>
+      <preview
+        v-if="uiShowPreview"
+        :src="uiShowPreview.src"
+        @close="uiShowPreview=null" />
 
-          <component
-              :is="emojiPickerLoader"
-              v-show="emojiPickerCallback"
-              @select="onEmojiSelect"
-              :style="{ position: 'absolute', bottom: '80px', right: uiRightSidePanelContent ? '415px' : '15px' }"
-              :showSkinTones="false"
-              :showPreview="false"
-              :sheetSize="32"
-              set="apple"
-              :infiniteScroll="false" />
-      </div>
-      <global-events
-          @keydown.esc.exact="emojiPickerCallback=null"
-          @keydown.meta.k.exact="toggleQuickSearch"
-          @keydown.ctrl.k.exact="toggleQuickSearch" />
+      <quick-search
+        v-if="uiShowQuickSearch"
+        @close="uiShowQuickSearch=false" />
+
     </div>
+    <global-events
+      @keydown.esc.exact="emojiPickerCallback=null"
+      @keydown.meta.k.exact="toggleQuickSearch"
+      @keydown.ctrl.k.exact="toggleQuickSearch" />
+
+  </div>
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import BaseSidePanel from '@/components/Panel/Base'
-import ChannelsPanel from '@/components/Panel/Channels'
-import MembersPanel from '@/components/Panel/Rightside/Members'
-import ThreadPanel from '@/components/Panel/Rightside/Thread'
-import BookmarkedMessagesPanel from '@/components/Panel/Rightside/BookmarkedMessages'
-import PinnedMessagesPanel from '@/components/Panel/Rightside/PinnedMessages'
 import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
 import core from '@/mixins/core'
+import MessengerBase from '@/components/MessengerBase'
 
 const titleNtf = new TitleNotifications(document)
 
 export default {
   name: 'Messenger',
   components: {
-    BaseSidePanel,
-    ChannelsPanel,
-    MembersPanel,
-    ThreadPanel,
-    PinnedMessagesPanel,
-    BookmarkedMessagesPanel,
     Preview,
     SearchResults,
     QuickSearch,
+    MessengerBase,
   },
 
   mixins: [ core ],
@@ -124,13 +82,8 @@ export default {
 
       // UI control
       uiShowPreview: null,
-      uiRightSidePanelThreadMessageID: null,
-      uiRightSidePanelContent: null,
       uiShowQuickSearch: false,
-      uiPinChannelSidePanel: null,
-      uiHideChannelSidePanel: false,
-      uiPinRightSidePanel: null,
-      uiHideRightSidePanel: true,
+      uiWide: undefined,
 
       // What to do when emoji is picked
       emojiPickerCallback: null,
@@ -138,10 +91,6 @@ export default {
   },
 
   computed: {
-    isChannelPanelPined () {
-      return this.uiPinChannelSidePanel || this.$route.name === 'landing'
-    },
-
     emojiPickerLoader () {
       // eslint-disable-next-line
       return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
@@ -169,7 +118,7 @@ export default {
       this.init()
       this.$ws.connect()
     }).catch((err) => {
-      console.log(err)
+      console.debug(err)
       window.location = '/auth'
     })
   },
@@ -192,7 +141,6 @@ export default {
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
-
       window.addEventListener('focus', this.titleNotificationsHandler)
 
       titleNtf.update()
@@ -269,19 +217,6 @@ export default {
       })
     },
 
-    hideRightPanel (hide) {
-      if (hide) {
-        this.uiRightSidePanelContent = null
-        this.uiHideRightSidePanel = true
-      }
-    },
-
-    onPanelSearchSubmit (query) {
-      // Take query we received from panel search input box
-      // and push it to search result component
-      this.searchQuery = query
-    },
-
     onGoToMessage ({ message }) {
       // Handling go-to-message request
 
@@ -297,37 +232,20 @@ export default {
       this.emojiPickerCallback = null
     },
 
-    switchRightSidePanel (panel = null, $event = {}) {
-      if (panel !== 'thread' && panel === this.uiRightSidePanelContent) {
-        this.uiRightSidePanelContent = null
-      } else {
-        this.uiRightSidePanelContent = panel
-      }
-
-      if (this.uiRightSidePanelContent && !this.uiIsWide()) {
-        // Close channels when opening right panel and screen is not wide enough
-        this.uiHideChannelSidePanel = true
-      }
-
-      this.uiHideRightSidePanel = !this.uiRightSidePanelContent
-
-      switch (panel) {
-        case 'thread':
-          this.uiRightSidePanelThreadMessageID = $event.message.messageID
-      }
+    tcp (e) {
+      this.$bus.$emit('Messenger/tcp', e)
     },
-
-    toggleChannelSidePanel (state = null) {
-      this.uiHideChannelSidePanel = state === null ? !this.uiHideChannelSidePanel : state
-
-      if (!this.uiHideChannelSidePanel && !this.uiIsWide()) {
-        // Close right side when screen is not wide enough
-        this.switchRightSidePanel(false)
-      }
+    srpThread (e) {
+      this.$bus.$emit('Messenger/srpThread', e)
     },
-
-    hideChannelSidePanel () {
-      this.toggleChannelSidePanel(true)
+    srpMembers (e) {
+      this.$bus.$emit('Messenger/srpMembers', e)
+    },
+    srpPinnedMessages (e) {
+      this.$bus.$emit('Messenger/srpPinnedMessages', e)
+    },
+    srpBookmarkedMessages (e) {
+      this.$bus.$emit('Messenger/srpBookmarkedMessages', e)
     },
 
     titleNotificationsHandler () {
@@ -335,9 +253,12 @@ export default {
     },
 
     windowResizeHandler () {
-      // We want to pin side panels when screen is wide enough.
-      this.uiPinChannelSidePanel = this.uiIsWide()
-      this.uiPinRightSidePanel = this.uiIsWide()
+      const wide = this.uiIsWide()
+      // Avoid unneded events
+      if (wide !== this.uiWide) {
+        this.$bus.$emit('Messenger/uiWide', wide)
+        this.uiWide = wide
+      }
     },
 
     toggleQuickSearch (e) {
@@ -356,19 +277,17 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
 
-div.flex-grid {
-  z-index: 1000;
-  background-color: $mainbgcolor;
+.main {
+  flex: 1;
+  background: $mainbgcolor;
   height: 100vh;
-  width: 100vw;
-  display: flex;
-  flex-flow: row nowrap;
+  overflow: hidden;
+  position: relative;
 
-  .main {
-    flex: 1;
-    background: $mainbgcolor;
-    height: 100vh;
-    overflow: hidden;
+  .emoji-picker {
+    position: absolute;
+    bottom: 80px;
+    right: 15px;
   }
 }
 
