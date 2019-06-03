@@ -79,7 +79,6 @@ export default {
   data () {
     return {
       logo: require('@/assets/images/crust-logo-with-tagline.png'),
-      loaded: false,
       searchQuery: null,
 
       // UI control
@@ -125,7 +124,6 @@ export default {
       this.init()
     }).catch((err) => {
       console.debug(err)
-      this.loaded = true
       this.$router.push({ name: 'login' })
     })
   },
