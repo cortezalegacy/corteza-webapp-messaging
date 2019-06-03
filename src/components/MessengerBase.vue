@@ -5,13 +5,13 @@
       <base-side-panel
         orientation="left"
         :width="250"
-        :pinned="isChannelPanelPined"
+        :pinned="isChannelPanelPinned"
         :hidden.sync="uiHideChannelSidePanel"
-        :disableGestures="isLpDisableGestures"
+        :disableGestures="isLeftPanelDisableGestures"
         key="leftPanel">
 
         <channels-panel
-            @close="hcsp"
+            @close="toggleChannelSidePanel(true)"
             @openQuickSearch="openQuickSearch"
             @searchSubmit="searchSubmit" />
 
@@ -32,23 +32,23 @@
         <members-panel
           v-if="isMembersPanel"
           :channel="currentChannel"
-          @close="hrsp" />
+          @close="switchRightSidePanel()" />
 
         <thread-panel
           v-if="isThreadPanel"
           :repliesTo="uiRightSidePanelThreadMessageID"
-          @close="hrsp" />
+          @close="switchRightSidePanel()" />
 
         <pinned-messages-panel
           v-if="isPinnedMessagesPanel"
           :channel="currentChannel"
-          @openThreadPanel="srpThread"
-          @close="hrsp" />
+          @openThreadPanel="switchRightSidePanel('thread', $event)"
+          @close="switchRightSidePanel()" />
 
         <bookmarked-messages-panel
           v-if="isBookmarkedMessagesPanel"
-          @openThreadPanel="srpThread"
-          @close="hrsp" />
+          @openThreadPanel="switchRightSidePanel('thread', $event)"
+          @close="switchRightSidePanel()" />
 
       </base-side-panel>
     </div>
@@ -107,12 +107,12 @@ export default {
       },
     },
 
-    isChannelPanelPined () {
+    isChannelPanelPinned () {
       return this.uiPinChannelSidePanel || this.$route.name === 'landing'
     },
 
-    isLpDisableGestures () {
-      return !this.uiHideRightSidePanel || this.isChannelPanelPined
+    isLeftPanelDisableGestures () {
+      return !this.uiHideRightSidePanel || this.isChannelPanelPinned
     },
     isMembersPanel () {
       return this.uiRightSidePanelContent === 'members'
@@ -129,20 +129,14 @@ export default {
   },
 
   created () {
-    this.$bus.$on('Messenger/tcp', this.tcp)
-    this.$bus.$on('Messenger/srpThread', this.srpThread)
-    this.$bus.$on('Messenger/srpMembers', this.srpMembers)
-    this.$bus.$on('Messenger/srpPinnedMessages', this.srpPinnedMessages)
-    this.$bus.$on('Messenger/srpBookmarkedMessages', this.srpBookmarkedMessages)
+    this.$bus.$on('Messenger/toggleChannelSidePanel', this.toggleChannelSidePanel)
+    this.$bus.$on('Messenger/switchRightSidePanel', ({ type, e }) => this.switchRightSidePanel(type, e))
 
     this.$bus.$on('Messenger/uiWide', this.windowResizeHandler)
   },
   beforeDestroy () {
-    this.$bus.$off('Messenger/tcp', this.tcp)
-    this.$bus.$off('Messenger/srpThread', this.srpThread)
-    this.$bus.$off('Messenger/srpMembers', this.srpMembers)
-    this.$bus.$off('Messenger/srpPinnedMessages', this.srpPinnedMessages)
-    this.$bus.$off('Messenger/srpBookmarkedMessages', this.srpBookmarkedMessages)
+    this.$bus.$off('Messenger/toggleChannelSidePanel', this.toggleChannelSidePanel)
+    this.$bus.$off('Messenger/switchRightSidePanel', ({ type, e }) => this.switchRightSidePanel(type, e))
 
     this.$bus.$off('Messenger/uiWide', this.windowResizeHandler)
   },
@@ -182,28 +176,6 @@ export default {
         // Close right side when screen is not wide enough
         this.switchRightSidePanel(false)
       }
-    },
-
-    hcsp () {
-      this.toggleChannelSidePanel(true)
-    },
-    tcp () {
-      this.toggleChannelSidePanel()
-    },
-    hrsp () {
-      this.switchRightSidePanel()
-    },
-    srpThread (e) {
-      this.switchRightSidePanel('thread', e)
-    },
-    srpMembers (e) {
-      this.switchRightSidePanel('members', e)
-    },
-    srpPinnedMessages (e) {
-      this.switchRightSidePanel('pinnedMessages', e)
-    },
-    srpBookmarkedMessages (e) {
-      this.switchRightSidePanel('bookmarkedMessages', e)
     },
 
     openQuickSearch () {

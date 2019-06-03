@@ -9,11 +9,11 @@
       <div key="content" class="main">
         <router-view
           key="mainContent"
-          @toggleChannelPanel="tcp"
-          @openThreadPanel="srpThread"
-          @openMembersPanel="srpMembers"
-          @openPinnedMessagesPanel="srpPinnedMessages"
-          @openBookmarkedMessagesPanel="srpBookmarkedMessages" />
+          @toggleChannelPanel="$bus.$emit('Messenger/toggleChannelSidePanel', $event)"
+          @openThreadPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'thread', e: $event })"
+          @openMembersPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'members', e: $event })"
+          @openPinnedMessagesPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'pinnedMessages', e: $event })"
+          @openBookmarkedMessagesPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'bookmarkedMessages', e: $event })" />
 
         <component
           v-show="emojiPickerCallback"
@@ -230,22 +230,6 @@ export default {
     onEmojiSelect (emoji) {
       this.emojiPickerCallback(emoji)
       this.emojiPickerCallback = null
-    },
-
-    tcp (e) {
-      this.$bus.$emit('Messenger/tcp', e)
-    },
-    srpThread (e) {
-      this.$bus.$emit('Messenger/srpThread', e)
-    },
-    srpMembers (e) {
-      this.$bus.$emit('Messenger/srpMembers', e)
-    },
-    srpPinnedMessages (e) {
-      this.$bus.$emit('Messenger/srpPinnedMessages', e)
-    },
-    srpBookmarkedMessages (e) {
-      this.$bus.$emit('Messenger/srpBookmarkedMessages', e)
     },
 
     titleNotificationsHandler () {
