@@ -8,7 +8,7 @@
 
       <div key="content" class="main">
         <router-view
-          key="mainContent"
+          :key="$route.name"
           @toggleChannelPanel="$bus.$emit('Messenger/toggleChannelSidePanel', $event)"
           @openThreadPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'thread', e: $event })"
           @openMembersPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'members', e: $event })"
