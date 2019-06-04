@@ -1,44 +1,63 @@
 <template>
-  <ul @scroll="onScrollThrottled"
-      ref="list"
-      :class="{scrollable:scrollable}"
-      @click="$bus.$emit('ui.closeEmojiPicker')">
-    <message
-      v-for="(msg, index) in messages"
-      ref="message"
-      @markAsUnread="markAsUnread(index)"
-      @cancelEditing="$emit('cancelEditing')"
-      :readOnly="readOnly"
-      :message="msg"
-      :consecutive="consecutive && isConsecutive(messages, index)"
-      :currentUser="currentUser"
-      :key="msg.messageID"
-      :isUnread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
-      :isLastRead="lastReadMessageID === msg.messageID"
-      :isFirst="index === 0"
-      :showEditor="showEditor(msg)"
-      :hideActions="hideActions"
-      :hideReactions="hideReactions"
-      :hidePinning="hidePinning"
-      :hideBookmarking="hideBookmarking"
-      :hideActionGoToMessage="hideActionGoToMessage"
-      :hideActionOpenThread="hideActionOpenThread"
-      :hideActionsMenu="hideActionsMenu"
-      :isLast="index === messages.length - 1"
-      :highlightPinned="highlightPinned"
-      :highlightBookmarked="highlightBookmarked"
-      v-on="$listeners" />
-    <li ref="anchor"></li>
-  </ul>
+  <div
+    @click="$bus.$emit('ui.closeEmojiPicker')"
+    class="messages-wrapper">
+    <chat-scroller
+      ref="chatScroller"
+      class="dynamic-scroller"
+      :key="$route.path"
+      :item-pool="getItems"
+      :min-height="30"
+      :view-pool-size-mult="3"
+      :scrollable="scrollable"
+      start-bottom
+      @scroll:top="onTop"
+      @scroll:bottom="onBottom"
+      @scroll:top:first="$emit('scrollTop', { messageID: getFirstID })"
+      @item:new:invisible="alertNew"
+      @scroll:bottom:last="onScrollBottom">
+
+      <template v-slot="{ item, index }">
+        <message
+          class="msg"
+          :listeners="$listeners"
+          @markAsUnread="markAsUnread(index)"
+          @cancelEditing="$emit('cancelEditing')"
+          :item="item" />
+
+      </template>
+    </chat-scroller>
+
+    <div
+      v-if="showGoToLast"
+      class="alert-bar go-down"
+      :class="{ visible: showGoToLast }">
+
+      <button class="goto" @click="gotoItem({ index: getItems.length - 1 })">
+        {{ $t('message.gotoLatestMessage') }}
+      </button>
+    </div>
+
+    <!-- <div
+      v-if="firstOutOfView"
+      class="alert-bar"
+      :class="{ visible: !!this.firstOutOfView }">
+
+      <button class="goto" @click="gotoLastUnread">
+        {{ $t('message.gotoLatestMessage') }}
+      </button>
+    </div> -->
+  </div>
 </template>
 <script>
-import { throttle } from 'lodash'
 import Message from './Message'
 import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
+import { ChatScroller } from 'vue-chat-scroller'
 
 export default {
   components: {
     Message,
+    ChatScroller,
   },
 
   props: {
@@ -91,6 +110,8 @@ export default {
       loadSuspended: false,
       allowAutoScroll: true,
       scrollToRef: false,
+      firstOutOfView: undefined,
+      showGoToLast: false,
 
       // Recounts messages on each update, so we can know
       // of new messages are added
@@ -99,6 +120,32 @@ export default {
   },
 
   computed: {
+    getFirstID () {
+      return getFirstID(this.messages)
+    },
+    getItems () {
+      return this.messages.map((m, index) => ({
+        // @todo allow custom id fields
+        id: m.messageID,
+        message: m,
+        readOnly: this.readOnly,
+        consecutive: this.consecutive && isConsecutive(this.messages, index),
+        currentUser: this.currentUser,
+        isUnread: !!this.lastReadMessageID && this.lastReadMessageID < m.messageID,
+        isLastRead: this.lastReadMessageID === m.messageID,
+        isFirst: index === 0,
+        hideActions: this.hideActions,
+        hideReactions: this.hideReactions,
+        hidePinning: this.hidePinning,
+        hideBookmarking: this.hideBookmarking,
+        hideActionGoToMessage: this.hideActionGoToMessage,
+        hideActionOpenThread: this.hideActionOpenThread,
+        hideActionsMenu: this.hideActionsMenu,
+        isLast: index === this.messages.length - 1,
+        highlightPinned: this.highlightPinned,
+        highlightBookmarked: this.highlightBookmarked,
+      }))
+    },
     getLastEditable () {
       return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.userID)
     },
@@ -121,22 +168,6 @@ export default {
   updated () {
     const lastMessage = this.messages.length === 0 ? null : this.messages[this.messages.length - 1]
     const isNewMessage = lastMessage && this.lastMessageID < lastMessage.messageID
-    const isOwnerOfLastMessage = lastMessage && lastMessage.userID === this.currentUser.userID
-
-    this.$nextTick(() => {
-      if (this.scrollable) {
-        // When we're scrollable, we need to emit scroll* events
-        if (this.allowAutoScroll || (isNewMessage && isOwnerOfLastMessage)) {
-          this.$refs.anchor.scrollIntoView()
-        }
-
-        const hasScrollBar = this.$refs.list.scrollHeight > this.$refs.list.clientHeight
-        if (!hasScrollBar && isNewMessage) {
-          // Emit scrollTo bottom when there is no scrollbar on message update...
-          this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
-        }
-      }
-    })
 
     if (isNewMessage) {
       // Store this for next lookup
@@ -145,30 +176,44 @@ export default {
   },
 
   methods: {
+    onTop ({ lastViewPool }) {
+      if (!lastViewPool) {
+        this.showGoToLast = true
+      }
+    },
+    onBottom ({ lastViewPool }) {
+      if (lastViewPool) {
+        this.showGoToLast = false
+      }
+    },
+    onScrollBottom () {
+      this.firstOutOfView = undefined
+
+      const lastMessage = this.messages.length === 0 ? null : this.messages[this.messages.length - 1]
+      const isNewMessage = lastMessage && this.lastMessageID < lastMessage.messageID
+      if (isNewMessage) {
+        this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
+      }
+    },
+
+    gotoItem (item = {}) {
+      if (this.$refs.chatScroller.gotoItem(item) === true) {
+        this.showGoToLast = false
+      }
+    },
+
+    // @todo
+    alertNew (e) {
+      // return
+      // if (this.firstOutOfView !== undefined) return
+      // console.debug('alertNew', { e })
+      // this.firstOutOfView = e
+    },
+
     isConsecutive,
 
     originChanged () {
       this.allowAutoScroll = true
-    },
-
-    onScrollThrottled: throttle(function (e) { this.onScroll(e) }, 1500),
-    onScroll ({ target }) {
-      if (!target || !this.scrollable) return
-
-      const atBottom = target.scrollHeight - target.scrollTop - target.clientHeight <= 0
-      const atTop = target ? target.scrollTop <= 0 : true
-
-      this.allowAutoScroll = atBottom
-
-      if (atTop && this.$refs.list) {
-        // load more messages 'above'.
-        this.$refs.list.scrollTop = 5
-        this.$emit('scrollTop', { messageID: getFirstID(this.messages) })
-      }
-
-      if (atBottom) {
-        this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
-      }
     },
 
     // When we receive a request to mark message as unread
@@ -206,6 +251,20 @@ export default {
 </script>
 <style scoped lang="scss">
 @import '@/assets/sass/_0.commons.scss';
+
+.dynamic-scroller {
+  height: 100%;
+  padding-bottom: 10px;
+}
+
+.messages-wrapper {
+  height: 100%;
+  position: relative;
+}
+
+.msg {
+  min-height: 30px;
+}
 ul {
   padding:0;
   margin:0;
@@ -221,6 +280,26 @@ li {
   overflow-y: scroll;
 }
 
+.alert-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  transform: translateY(100%);
+
+  &.visible {
+    transform: translateY(0%);
+  }
+
+  &.go-down button {
+    background-color: $appblue;
+    padding: 3px;
+    border: none;
+    outline: none;
+    width: 100%;
+    color: $appwhite;
+    padding: 5px;
+  }
+}
 //media query specific for webkit, because of fixed and vh related problem in android/webkit
 @media (max-width: #{$wideminwidth - 1px})
 {

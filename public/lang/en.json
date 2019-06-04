@@ -121,6 +121,8 @@
 
     "newMessages": "New messages",
 
+    "gotoLatestMessage": "Go to latest message",
+
     "activity": {
       "activityOverflow": "{{userList}} and {{count}} others ... are {{activity}}",
       "activityMultiple": "{{userList}} are {{activity}}",

@@ -1,25 +1,9 @@
 <template>
-    <li
-      :id="message.messageID"
+    <div
       @click.alt.exact.prevent="$emit('markAsUnread')"
       @click.meta.exact.prevent="onOpenThread"
       class="message-n-meta"
-      :class="{
-        'consecutive': consecutive,
-        'first': !consecutive,
-        'attachement' : message.attachment,
-        'valid' : message.attachment && message.attachment.size > 0,
-        'with-replies' : message.replies,
-        'edited' : message.updatedAt,
-        'pinned' : highlightPinned && message.isPinned,
-        'bookmarked' : highlightBookmarked && message.isBookmarked,
-        'last-read': isLastRead && !isLast,
-        'unread': isUnread,
-        'type-channel-event': message.type === 'channelEvent',
-        'last' : isLast && !isFirst,
-      }"
-      ref="message"
-      :key="message.messageID">
+      :class="msgClass">
 
       <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
 
@@ -31,46 +15,42 @@
           </em>
           <em  v-if="!consecutive" class="author selectable">
             <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-              {{ labelUser(message.userID) }}
+              {{ getLabelUser }}
             </router-link>
           </em>
           <i18next path="message.postedDate" tag="span" class="date">
-            <span place="relative">{{ moment(message.createdAt).fromNow() }}</span>
+            <span place="relative">{{ timestampCreatedAt }}</span>
 
             <span place="time">
-              <template v-if="!isToday(message.createdAt)">{{ $t('message.relativeTime', { time: momentHourMinute(message.createdAt) }) }}</template>
+            <template v-if="!isCreatedAtToday">{{ $t('message.relativeTime', { time: getMomentHourMinute }) }}</template>
             </span>
           </i18next>
 
-          <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
-          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+          <em class="time selectable">{{ getMomentHourMinute }}</em>
+          <em class="day selectable">{{ getMomentDayMonth }}</em>
 
           <actions
             class="actions"
             v-if="!hideActions && !inEditing"
-            v-bind="$props"
-            @editMessage="inEditing=true"
-            @pinMessage="onPinMessage"
-            @bookmarkMessage="onBookmarkMessage"
-            @deleteMessage="onDeleteMessage"
-            v-on="$listeners" />
+            v-bind="{ ...item }"
+            v-on="actionListeners"
+            @editMessage="inEditing = true" />
         </section>
         <section v-else>
-          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+          <em class="day selectable">{{ getMomentDayMonth }}</em>
         </section>
         <div
           class="selectable"
-          :class="{ from_me: message.userID === currentUser.userID,
-          'message' : !inEditing,
-           }">
+          :class="msgMetaClass">
+
           <attachment
             v-if="message.attachment"
             class="message-content"
             :attachment="message.attachment"
-            :inline="message.type === 'inlineImage'" />
+            :inline="isInlineImg" />
 
           <message-input
-            v-if="inEditing && !readOnly"
+            v-if="isEditingMsg"
             :hideFileUpload="true"
             :message="message"
             @submit="onInputSubmit"
@@ -89,17 +69,18 @@
             :src="embeded.src" />
         </div>
 
-      <reactions
-        v-if="!hideReactions && message.type !== 'channelEvent'"
-        class="reactions"
-        @reaction="onReaction"
-        :class="{'no-reactions': message.reactions.length === 0}"
-        :reactions="message.reactions" />
+        <reactions
+          v-if="isShowReactions"
+          class="reactions"
+          @reaction="onReaction"
+          :class="reactionsClass"
+          :reactions="message.reactions" />
 
       <footnote
         :message="message"
-        v-on="$listeners" />
-    </li>
+        v-on="listeners" />
+
+    </div>
 </template>
 <script>
 import { mapActions } from 'vuex'
@@ -126,39 +107,15 @@ export default {
   },
 
   props: {
-    message: {
+    listeners: {
+      type: Object,
+      default: () => ({}),
+    },
+    item: {
       type: Object,
       required: true,
+      default: () => ({}),
     },
-    consecutive: {
-      type: Boolean,
-      required: false,
-    },
-    currentUser: {
-      type: Object,
-      required: true,
-    },
-
-    readOnly: Boolean,
-
-    hideActions: Boolean,
-    hideActionOpenThread: Boolean,
-    hideActionsMenu: Boolean,
-    hidePinning: Boolean,
-    hideBookmarking: Boolean,
-    hideActionGoToMessage: { type: Boolean, default: false },
-    hideReactions: Boolean,
-
-    isUnread: Boolean,
-    isLastRead: Boolean,
-    isFirst: Boolean,
-    isLast: Boolean,
-
-    showEditor: Boolean,
-
-    // Controling bookmarked and pinned messages highlighting
-    highlightBookmarked: { type: Boolean, default: true },
-    highlightPinned: { type: Boolean, default: true },
   },
 
   data () {
@@ -173,6 +130,134 @@ export default {
   },
 
   computed: {
+    // Props replaced by these computeds
+    message () {
+      return this.item.message || {}
+    },
+    consecutive () {
+      return this.item.consecutive || false
+    },
+    currentUser () {
+      return this.item.currentUser || {}
+    },
+
+    readOnly () {
+      return this.item.readOnly || false
+    },
+
+    active () {
+      return this.item.active || false
+    },
+    hideActions () {
+      return this.item.hideActions || false
+    },
+    hideActionOpenThread () {
+      return this.item.hideActionOpenThread || false
+    },
+    hideActionsMenu () {
+      return this.item.hideActionsMenu || false
+    },
+    hidePinning () {
+      return this.item.hidePinning || false
+    },
+    hideBookmarking () {
+      return this.item.hideBookmarking || false
+    },
+    hideActionGoToMessage () {
+      return this.item.hideActionGoToMessage || false
+    },
+    hideReactions () {
+      return this.item.hideReactions || false
+    },
+
+    isUnread () {
+      return this.item.isUnread || false
+    },
+    isLastRead () {
+      return this.item.isLastRead || false
+    },
+    isFirst () {
+      return this.item.isFirst || false
+    },
+    isLast () {
+      return this.item.isLast || false
+    },
+
+    showEditor () {
+      return this.item.showEditor || false
+    },
+
+    // Controling bookmarked and pinned messages highlighting
+    highlightBookmarked () {
+      return this.item.highlightBookmarked || true
+    },
+    highlightPinned () {
+      return this.item.highlightPinned || true
+    },
+    // ---
+
+    actionListeners () {
+      return {
+        ...this.listeners,
+        pinMessage: this.onPinMessage,
+        bookmarkMessage: this.onBookmarkMessage,
+        deleteMessage: this.onDeleteMessage,
+      }
+    },
+
+    getLabelUser () {
+      return this.labelUser(this.message.userID)
+    },
+    timestampCreatedAt () {
+      return moment(this.message.createdAt).fromNow()
+    },
+    isCreatedAtToday () {
+      return (moment().startOf('day')).diff(this.message.createdAt, 'days') === 0
+    },
+    getMomentHourMinute () {
+      return moment(this.message.createdAt).format('HH:mm')
+    },
+
+    getMomentDayMonth () {
+      return moment(this.message.createdAt).format('DD/MM')
+    },
+
+    msgMetaClass () {
+      return { from_me: this.message.userID === this.currentUser.userID, 'message': !this.inEditing }
+    },
+
+    msgClass () {
+      return {
+        'consecutive': this.consecutive,
+        'first': !this.consecutive,
+        'attachement': this.message.attachment,
+        'valid': this.message.attachment && this.message.attachment.size > 0,
+        'with-replies': this.message.replies,
+        'edited': this.message.updatedAt,
+        'pinned': this.highlightPinned && this.message.isPinned,
+        'bookmarked': this.highlightBookmarked && this.message.isBookmarked,
+        'last-read': this.isLastRead && !this.isLast,
+        'unread': this.isUnread,
+        'type-channel-event': this.message.type === 'channelEvent',
+        'last': this.isLast && !this.isFirst,
+      }
+    },
+
+    isInlineImg () {
+      return this.message.type === 'inlineImage'
+    },
+    isEditingMsg () {
+      return this.inEditing && !this.readOnly
+    },
+
+    isShowReactions () {
+      return !this.hideReactions && this.message.type !== 'channelEvent'
+    },
+
+    reactionsClass () {
+      return { 'no-reactions': this.message.reactions.length === 0 }
+    },
+
     embeded () {
       if (this.message) {
         let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
@@ -205,22 +290,6 @@ export default {
 
     onInputSubmit ({ value }) {
       this.showEditor = false
-    },
-
-    moment: function (timeString) {
-      return moment(timeString)
-    },
-
-    momentDayMonth: function (timeString) {
-      return moment(timeString).format('DD/MM')
-    },
-
-    momentHourMinute: function (timeString) {
-      return moment(timeString).format('HH:mm')
-    },
-
-    isToday: function (timeString) {
-      return (moment().startOf('day').unix() === moment(timeString).startOf('day').unix())
     },
 
     getChunks (text) {
@@ -283,14 +352,14 @@ em{
 }
 
 .message-n-meta {
-  margin-bottom: 10px;
+  margin-top: 10px;
   padding: 1px 5px 1px 66px;
   position: relative;
 
   &.edited {
     &.last-read {
       &::after {
-        margin-top: 5px;
+        margin-top: 15px;
       }
     }
   }
@@ -311,8 +380,8 @@ em{
   }
 
   &.type-channel-event{
-    padding: 1px 1px 1px 66px;
-    margin-bottom: 0px;
+    padding: 2px 1px 2px 66px;
+    margin-top: 0px;
     font-style: italic;
     &:hover{
       background: none;
@@ -367,7 +436,7 @@ em{
   }
 
   &.consecutive {
-    margin-top: -10px;
+    margin-top: 0px;
     &:hover,
     &:focus{
       .date {

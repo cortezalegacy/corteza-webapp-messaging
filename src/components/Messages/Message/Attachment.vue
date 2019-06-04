@@ -2,7 +2,9 @@
   <div>
       <div v-if="inline && attachment.meta.preview">
         <a class="attachment-wrap" @click.prevent="onClick" :href="attachment.downloadUrl">
-          <img :width="(attachment.meta.preview.image || {}).width || 320"
+          <img
+               :key="attachment.previewUrl"
+               :width="(attachment.meta.preview.image || {}).width || 320"
                :height="(attachment.meta.preview.image || {}).height || 180"
                @error.once="reloadBrokenImage"
                :src="attachment.previewUrl">

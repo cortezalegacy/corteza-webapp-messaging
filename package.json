@@ -44,6 +44,7 @@
     "quill-mention": "^2.0.5",
     "reconnecting-websocket": "^3.2.2",
     "vue": "^2.5.17",
+    "vue-chat-scroller": "git+https://github.com/tjerman/vue-chat-scroller.git",
     "vue-focus": "^2.1.0",
     "vue-global-events": "^1.0.3",
     "vue-native-notification": "^1.0.5",
