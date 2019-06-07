@@ -7,6 +7,7 @@ import messaging from 'corteza-webapp-common/src/plugins/messaging'
 import commands from '@/plugins/commands'
 import triggers from '@/plugins/triggers'
 import auth from 'corteza-webapp-common/src/plugins/auth'
+import externalContent from './external_content'
 
 const eventbus = new Vue()
 
@@ -22,3 +23,4 @@ Vue.use(triggers, {
   channelByID: store.getters['channels/findByID'],
   channelList: store.getters['channels/listOnDemand'],
 })
+Vue.use(externalContent, { providers: window.MediaProviders })
