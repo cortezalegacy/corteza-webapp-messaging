@@ -8,11 +8,16 @@
        :class="{editing:!!message, inThread:!!replyTo}">
 
       <div class="group">
+          <gif-picker
+            v-if="gifPickerVisible"
+            :gifs="gifs"
+            @pick="onPick"
+            @close="gifPickerVisible=false" />
 
           <text-input
               :key="textInputKey"
               @editLastMessage="$emit('editLastMessage', $event)"
-              @cancel="$emit('cancel', $event)"
+              @cancel="gifPickerVisible=false; $emit('cancel', $event)"
               @submit="onSubmit"
               @change="onChange"
               @focus="onFocus"
@@ -59,12 +64,15 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { throttle } from 'lodash'
+import { throttle, debounce } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
+import GifPicker from './GifPicker'
+
+const gifRegex = /^gif (.+)$/g
 
 const kinds = {
   editing: 'editing',
@@ -78,6 +86,7 @@ export default {
     EmojiPicker,
     Activity,
     ObserverFooter,
+    GifPicker,
   },
 
   props: {
@@ -98,6 +107,9 @@ export default {
 
   data () {
     return {
+      gifs: [],
+      gifVisible: false,
+      gifCancelReset: true,
       inputBoxValue: '',
       cursorIndex: -1,
       value: '',
@@ -120,6 +132,15 @@ export default {
       statuses: 'users/statuses',
       hasUnreads: 'unread/has',
     }),
+
+    gifPickerVisible: {
+      set (v) {
+        this.gifVisible = v
+      },
+      get () {
+        return !this.message && this.gifVisible && this.gifs.length
+      },
+    },
 
     channelID () {
       // Returns channelID from one of the provided params
@@ -159,6 +180,23 @@ export default {
   },
 
   watch: {
+    value (nval) {
+      // No gifs if editing message
+      if (this.message) return
+
+      if (nval.indexOf('gif') === 0) {
+        if (this.gifCancelReset) {
+          this.gifPickerVisible = true
+        }
+        this.gifCancelReset = false
+
+        if (!this.gifVisible) return
+        this.searchGif(nval.trim())
+      } else {
+        this.gifPickerVisible = false
+        this.gifCancelReset = true
+      }
+    },
     channel () {
       this.clearInputText()
     },
@@ -180,6 +218,26 @@ export default {
     ...mapActions({
       // @todo unread setChannelUnreadCount: 'unread/setChannel',
     }),
+
+    searchGif: debounce(function (val) {
+      const exec = gifRegex.exec(val)
+      // If not set; undefined will search over trending
+      let query
+      if (exec) {
+        query = exec[1]
+      }
+      this.$externalContent.get({ params: { query } }).then((gifs) => { this.gifs = gifs })
+    }, 1000),
+
+    onPick (e) {
+      console.debug('gif.onPick', { e })
+      // Upload...
+      // @todo connect to endpoint
+
+      // Reset meta
+      this.gifCancelReset = true
+      this.gifPickerVisible = false
+    },
 
     clearInputText () {
       this.value = ''
