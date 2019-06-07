@@ -1,40 +1,76 @@
 <template>
-  <div>
-      <div v-if="inline && attachment.meta.preview">
-        <a class="attachment-wrap" @click.prevent="onClick" :href="attachment.downloadUrl">
-          <img :width="(attachment.meta.preview.image || {}).width || 320"
-               :height="(attachment.meta.preview.image || {}).height || 180"
-               @error.once="reloadBrokenImage"
-               :src="attachment.previewUrl">
-        </a>
-      </div>
-      <!-- file has size but not image -->
-      <span v-else-if="attachment.meta.original">
-        <a v-bind:href="attachment.downloadUrl">
-          <font-awesome-icon
-            :icon="['far', 'file-'+ext]"
-            :title="$t('message.openBookmarks')"
-          ></font-awesome-icon>
-          <span>{{ $t('message.file.download', { label: attachment.name }) }}</span><br>
+  <div class="attachment">
+    <div
+      v-if="canPreview"
+      class="actions">
+      <a :href="attachment.downloadUrl">
+        <button class="action">
+          <font-awesome-icon :icon="['fas', 'file-download']" :title="$t('message.file.download')"></font-awesome-icon>
+        </button>
+      </a>
+    </div>
 
-          <span class="meta">{{ $t('message.file.size', { size: numeral(attachment.meta.original.size).format('0b') }) }}</span>
+    <template v-if="canPreview">
+      <preview-inline
+        @openPreview="openPreview"
+        :src="inlineUrl"
+        :meta="inlineMeta"
+        :name="attachment.name"
+        :alt="attachment.name" />
+
+    </template>
+    <template v-else-if="attachment.meta.original">
+      <span class="no-preview">
+        <!-- file has size but not image -->
+        <a v-bind:href="attachment.downloadUrl">
+          <div>
+            <font-awesome-icon
+              :icon="['far', 'file-'+ext]"
+              :title="$t('message.openBookmarks')"
+            ></font-awesome-icon>
+          </div>
+          <div>
+            <span>{{ $t('message.file.download', { label: attachment.name }) }}</span><br>
+            <span class="meta">{{ $t('message.file.size', { size: numeral(attachment.meta.original.size).format('0b') }) }}</span>
+          </div>
         </a>
       </span>
+    </template>
+    <template v-else>
       <!-- @todo : added file has no size so probably error, maybe other possible errors -->
-      <span class="missing" v-else>
+      <span class="missing">
         <i18next path="message.file.missing" tag="i">
           <template><br/>{{attachment.name}}<br/></template>
         </i18next>
       </span>
+    </template>
   </div>
 </template>
 <script>
 import * as numeral from 'numeral'
+import { canPreview } from 'crust-common.vue/src/lib/filePreview'
+import { PreviewInline } from 'crust-common.vue/src/components/FilePreview/index'
 
 export default {
+  components: {
+    PreviewInline,
+  },
+
   props: [ 'attachment', 'inline' ],
 
   computed: {
+    inlineMeta () {
+      // atm only images require special meta; dimensions.
+      return (this.attachment.meta.preview || {}).image || {}
+    },
+    inlineUrl () {
+      return this.ext === 'pdf' ? this.attachment.downloadUrl : this.attachment.previewUrl
+    },
+    canPreview () {
+      const meta = this.attachment.meta
+      const type = (meta.preview || meta.original || {}).mimetype
+      return canPreview({ type, src: this.inlineUrl, name: this.attachment.name })
+    },
     ext () {
       const meta = this.attachment.meta
       switch (meta && meta.original ? meta.original.ext : null) {
@@ -64,14 +100,8 @@ export default {
   },
 
   methods: {
-    onClick () {
-      this.$bus.$emit('$message.previewAttachment', this.attachment)
-    },
-
-    reloadBrokenImage (ev) {
-      window.setTimeout(() => {
-        ev.target.src = ev.target.src
-      }, 500)
+    openPreview (e) {
+      this.$bus.$emit('$message.previewAttachment', { ...this.attachment, ...e })
     },
 
     numeral: numeral,
@@ -80,6 +110,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/sass/_0.declare.scss';
+
 .missing {
   color: #ccc;
 }
@@ -92,19 +124,65 @@ img {
 
 a{
   text-decoration: none;
-  font-size: 12px;
   display: block;
-  margin-bottom: 15px;
   color: #000;
   .meta{
     font-weight: 300;
   }
 }
 
-.svg-inline--fa{
-  height: 30px;
-  float: left;
-  width: auto;
-  margin-right: 10px;
+.attachment {
+  margin-bottom: 5px;
+
+  &:hover .actions {
+    display: block;
+  }
+
+  .no-preview a {
+    display: flex;
+  }
+  .no-preview .svg-inline--fa{
+    height: 30px;
+    width: auto;
+    margin-right: 10px;
+  }
+  .actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 9px 8px;
+    display: none;
+    z-index: 2;
+
+    button {
+      background-color: #FFFFFF;
+      border: solid 1px $appgrey;
+      border-radius: 4px;
+      padding: 3px 7px;
+      cursor: pointer;
+    }
+
+    .action {
+      display: inline-block;
+      border: solid 1px rgba($appgrey, 0.25);
+      border-radius: 5px;
+      width: 25px;
+      height: 25px;
+      background-color: $appwhite;
+      font-size: 15px;
+      text-align: center;
+      box-shadow: 0 0 3px 0 rgba($appgrey, 0.5);
+      cursor: pointer;
+      color: $defaultlinecolor;
+      margin-right: 1px;
+      &.unread{
+        color: $appred;
+      }
+      &:hover{
+        border-color: $appgrey;
+      }
+    }
+  }
 }
+
 </style>

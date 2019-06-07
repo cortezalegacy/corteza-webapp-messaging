@@ -66,8 +66,7 @@
           <attachment
             v-if="message.attachment"
             class="message-content"
-            :attachment="message.attachment"
-            :inline="message.type === 'inlineImage'" />
+            :attachment="message.attachment" />
 
           <message-input
             v-if="inEditing && !readOnly"

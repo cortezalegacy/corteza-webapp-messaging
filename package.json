@@ -26,7 +26,7 @@
     "animejs": "^3.0.1",
     "axios": "^0.17.1",
     "crust-api-client.js": "crusttech/crust-api-client.js.git#master",
-    "crust-common.vue": "crusttech/crust-common.vue.git#master",
+    "crust-common.vue": "crusttech/crust-common.vue.git#file-preview",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",
     "favico.js": "^0.3.10",
