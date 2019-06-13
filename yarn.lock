@@ -2479,9 +2479,9 @@ crust-api-client.js@crusttech/crust-api-client.js.git#master:
   dependencies:
     axios "^0.18.0"
 
-crust-common.vue@crusttech/crust-common.vue.git#file-preview:
-  version "2019.3.10"
-  resolved "https://codeload.github.com/crusttech/crust-common.vue/tar.gz/72f2a2e05894df33c2a47caff5c60868205ebfaa"
+crust-common.vue@crusttech/crust-common.vue.git#master:
+  version "2019.3.9"
+  resolved "https://codeload.github.com/crusttech/crust-common.vue/tar.gz/6b74e2d401a06daa641fafccbd74d6bc8fd5a606"
   dependencies:
     mime-types "^2.1.24"
     pdfjs-dist "^2.0.943"
