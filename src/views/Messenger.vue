@@ -60,7 +60,7 @@
 
     </div>
     <global-events
-      @keydown.esc.exact="emojiPickerCallback=null"
+      @keydown.esc.exact="closePopups"
       @keydown.meta.k.exact="toggleQuickSearch"
       @keydown.ctrl.k.exact="toggleQuickSearch" />
 
@@ -231,6 +231,11 @@ export default {
       this.$bus.$on('ui.closeEmojiPicker', () => {
         this.emojiPickerCallback = null
       })
+    },
+
+    closePopups () {
+      this.emojiPickerCallback = null
+      this.uiShowPreview = null
     },
 
     onGoToMessage ({ message }) {
