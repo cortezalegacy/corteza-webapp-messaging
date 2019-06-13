@@ -36,10 +36,23 @@
         @close="searchQuery=null"
         @goToMessage="onGoToMessage" />
 
-      <preview
+      <preview-lightbox
         v-if="uiShowPreview"
-        :src="uiShowPreview.src"
-        @close="uiShowPreview=null" />
+        :src="uiShowPreview.pdf || uiShowPreview.src"
+        :name="uiShowPreview.name"
+        :alt="uiShowPreview.name"
+        @close="uiShowPreview=null">
+
+        <p slot="header.left">
+          {{ uiShowPreview.name }}
+        </p>
+
+        <template slot="header.right">
+          <a :href="uiShowPreview.download">
+            {{ $t('message.file.download') }}
+          </a>
+        </template>
+      </preview-lightbox>
 
       <quick-search
         v-if="uiShowQuickSearch"
@@ -47,7 +60,7 @@
 
     </div>
     <global-events
-      @keydown.esc.exact="emojiPickerCallback=null"
+      @keydown.esc.exact="closePopups"
       @keydown.meta.k.exact="toggleQuickSearch"
       @keydown.ctrl.k.exact="toggleQuickSearch" />
 
@@ -55,23 +68,23 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import Preview from '@/components/Lightboxed/Preview'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
 import core from '@/mixins/core'
 import MessengerBase from '@/components/MessengerBase'
+import { PreviewLightbox } from 'crust-common.vue/src/components/FilePreview/index'
 
 const titleNtf = new TitleNotifications(document)
 
 export default {
   name: 'Messenger',
   components: {
-    Preview,
     SearchResults,
     QuickSearch,
     MessengerBase,
+    PreviewLightbox,
   },
 
   mixins: [ core ],
@@ -200,10 +213,13 @@ export default {
         })
       })
 
-      this.$bus.$on('$message.previewAttachment', (attachment) => {
+      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, pdf = undefined }) => {
         this.uiShowPreview = {
-          src: attachment.url,
-          caption: attachment.name,
+          pdf,
+          src: url,
+          download: downloadUrl,
+          name: name,
+          caption: name,
         }
       })
 
@@ -215,6 +231,11 @@ export default {
       this.$bus.$on('ui.closeEmojiPicker', () => {
         this.emojiPickerCallback = null
       })
+    },
+
+    closePopups () {
+      this.emojiPickerCallback = null
+      this.uiShowPreview = null
     },
 
     onGoToMessage ({ message }) {
