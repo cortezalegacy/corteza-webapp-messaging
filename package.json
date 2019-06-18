@@ -1,7 +1,7 @@
 {
-  "name": "webapp-messaging",
-  "description": "Crust Authentication WebApp",
-  "version": "0.1.0",
+  "name": "corteza-webapp-messaging",
+  "description": "Messaging WebApp",
+  "version": "2019.6.1",
   "private": true,
   "license": "Apache-2.0",
   "contributors": [
@@ -25,8 +25,7 @@
     "alloyfinger": "^0.1.16",
     "animejs": "^3.0.1",
     "axios": "^0.17.1",
-    "crust-api-client.js": "crusttech/crust-api-client.js.git#master",
-    "crust-common.vue": "crusttech/crust-common.vue.git#master",
+    "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "^2.6.4",
     "favico.js": "^0.3.10",

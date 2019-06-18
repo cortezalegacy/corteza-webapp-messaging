@@ -2,11 +2,11 @@ import Vue from 'vue'
 import store from '@/store'
 import ws from '@/plugins/ws'
 import bus from '@/plugins/bus'
-import system from '@/plugins/system'
+import system from 'corteza-webapp-common/src/plugins/system'
+import messaging from 'corteza-webapp-common/src/plugins/messaging'
 import commands from '@/plugins/commands'
 import triggers from '@/plugins/triggers'
-import messaging from '@/plugins/messaging'
-import auth from 'crust-common.vue/src/plugins/auth'
+import auth from 'corteza-webapp-common/src/plugins/auth'
 
 const eventbus = new Vue()
 

@@ -74,7 +74,7 @@ import { cleanMentions } from '@/lib/mentions'
 import TitleNotifications from '@/lib/title_notifications'
 import core from '@/mixins/core'
 import MessengerBase from '@/components/MessengerBase'
-import { PreviewLightbox } from 'crust-common.vue/src/components/FilePreview/index'
+import { PreviewLightbox } from 'corteza-webapp-common/src/components/FilePreview/index'
 
 const titleNtf = new TitleNotifications(document)
 

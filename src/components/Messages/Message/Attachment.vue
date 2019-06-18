@@ -48,8 +48,8 @@
 </template>
 <script>
 import * as numeral from 'numeral'
-import { canPreview } from 'crust-common.vue/src/lib/filePreview'
-import { PreviewInline } from 'crust-common.vue/src/components/FilePreview/index'
+import { canPreview } from 'corteza-webapp-common/src/lib/filePreview'
+import { PreviewInline } from 'corteza-webapp-common/src/components/FilePreview/index'
 
 export default {
   components: {

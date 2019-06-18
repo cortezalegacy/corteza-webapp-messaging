@@ -22,7 +22,7 @@ if (window.CrustMessagingAPI === undefined) {
 
   /* eslint-disable no-undef */
   console.log(
-    `%cCrust Messaging, version: ${CRUST_VERSION}, build time: ${CRUST_BUILD_TIME}`,
+    `%cCrust Messaging, version: ${VERSION}, build time: ${BUILD_TIME}`,
     'background-color: #1397CB; color: white; padding: 3px 10px; border: 1px solid black; font: Courier',
   )
 
