@@ -85,11 +85,11 @@ export default {
 
   methods: {
     add (userID) {
-      this.$messaging.channelJoin({ channelID: this.channel.channelID, userID })
+      this.$MessagingAPI.channelJoin({ channelID: this.channel.channelID, userID })
     },
 
     remove (userID) {
-      this.$messaging.channelPart({ channelID: this.channel.channelID, userID })
+      this.$MessagingAPI.channelPart({ channelID: this.channel.channelID, userID })
     },
 
     isMember (userID) {

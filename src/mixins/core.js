@@ -143,9 +143,9 @@ export default {
       const ours = existing && Array.isArray(existing.userIDs) && existing.userIDs.indexOf(this.$auth.user.userID) !== -1
 
       if (existing && ours) {
-        this.$messaging.messageReactionRemove({ ...message, reaction })
+        this.$MessagingAPI.messageReactionRemove({ ...message, reaction })
       } else {
-        this.$messaging.messageReactionCreate({ ...message, reaction })
+        this.$MessagingAPI.messageReactionCreate({ ...message, reaction })
       }
     })
 
@@ -159,7 +159,7 @@ export default {
 
     // Activity cleanup interval
     autheticationRecheckInterval = window.setInterval(() => {
-      this.$system.authCheck().catch((err) => {
+      this.$SystemAPI.authCheck().catch((err) => {
         // When logout (or a problem) is detected, redirect user
         console.error(err)
         this.$router.push({ name: 'signin' })

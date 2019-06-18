@@ -47,7 +47,7 @@ export default {
   },
 
   mounted () {
-    messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { pinnedOnly: true, channelID: this.channelID }).then((msgs) => {
+    messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { pinnedOnly: true, channelID: this.channelID }).then((msgs) => {
       this.$store.commit('history/updateSet', msgs)
     })
   },

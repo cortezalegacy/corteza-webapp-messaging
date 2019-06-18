@@ -168,18 +168,18 @@ export default {
 
   methods: {
     onPart () {
-      this.$messaging.channelPart({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
+      this.$MessagingAPI.channelPart({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
     },
 
     onJoin () {
-      this.$messaging.channelJoin({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
+      this.$MessagingAPI.channelJoin({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
     },
 
     onFlag (flag) {
       if (flag) {
-        this.$messaging.channelSetFlag({ channelID: this.channel.channelID, flag })
+        this.$MessagingAPI.channelSetFlag({ channelID: this.channel.channelID, flag })
       } else {
-        this.$messaging.channelRemoveFlag({ channelID: this.channel.channelID })
+        this.$MessagingAPI.channelRemoveFlag({ channelID: this.channel.channelID })
       }
     },
   },

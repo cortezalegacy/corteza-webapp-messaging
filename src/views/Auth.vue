@@ -44,7 +44,7 @@ export default {
 
   computed: {
     backend () {
-      return window.CrustSystemAPI
+      return window.SystemAPI
     },
   },
 
@@ -59,7 +59,7 @@ export default {
 
   methods: {
     check () {
-      this.$auth.check(this.$system, this.newJWT).then(() => {
+      this.$auth.check(this.$SystemAPI, this.newJWT).then(() => {
         this.checkRsp = 'Valid JWT.'
       }).catch(({ message }) => {
         this.checkRsp = message
@@ -69,7 +69,7 @@ export default {
 }
 </script>
 <style lang="scss">
-#crust-messenger {
+#messenger {
   position: inherit;
 }
 </style>

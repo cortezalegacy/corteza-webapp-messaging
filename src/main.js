@@ -11,7 +11,7 @@ import './global'
 import './plugins'
 import './main.scss'
 
-if (window.CrustMessagingAPI === undefined) {
+if (window.MessagingAPI === undefined) {
   alert('Unexisting or invalid configuration. Make sure there is a public/config.js configuration file.')
 } else {
   window.favicon = new Favico({
@@ -29,11 +29,11 @@ if (window.CrustMessagingAPI === undefined) {
   const unsync = sync(store, router)
   /* eslint-disable no-new */
   new Vue({
-    name: 'crust-messenger',
+    name: 'messenger',
     store,
     router,
     i18n,
-    template: '<div id="crust-messenger" class="crust"><router-view/></div>',
+    template: '<div id="messenger" class="crust"><router-view/></div>',
   }).$mount('#app')
 
   unsync()

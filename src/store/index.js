@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Messaging from '@/api/messaging'
-import System from '@/api/system'
+import SystemAPI from 'corteza-webapp-common/src/lib/corteza-server/system'
+import MessagingAPI from 'corteza-webapp-common/src/lib/corteza-server/messaging'
 import channels from './channels'
 import users from './users'
 import history from './history'
@@ -14,12 +14,12 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   strict: process.env.NODE_ENV !== 'production',
   modules: {
-    channels: channels(Messaging),
-    history: history(Messaging),
-    users: users(Messaging, System),
-    settings: settings(Messaging),
-    suggestions: suggestions(Messaging),
-    unread: unread(Messaging),
+    channels: channels(MessagingAPI),
+    history: history(MessagingAPI),
+    users: users(MessagingAPI, SystemAPI),
+    settings: settings(MessagingAPI),
+    suggestions: suggestions(MessagingAPI),
+    unread: unread(MessagingAPI),
   },
 })
 

@@ -76,7 +76,6 @@ export default function (Messaging) {
           Messaging.channelList().then((channels) => {
             const cc = []
             const unreads = []
-            console.debug('Prefeched %d channels', channels.length)
             channels.forEach((c) => {
               cc.push(new Channel(c))
 

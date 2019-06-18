@@ -214,7 +214,7 @@ export default {
 
     load (channelID) {
       if (channelID) {
-        this.$messaging.channelRead({ channelID }).then((ch) => {
+        this.$MessagingAPI.channelRead({ channelID }).then((ch) => {
           this.channel = new Channel(ch)
         }).catch((error) => {
           console.error('Failed to load channel info', { error })
@@ -231,7 +231,7 @@ export default {
 
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
-      this.$messaging.channelState({ channelID: this.channel.channelID, state }).then((ch) => {
+      this.$MessagingAPI.channelState({ channelID: this.channel.channelID, state }).then((ch) => {
         this.channel = new Channel(ch)
       }).catch(({ message }) => {
         this.error = message
@@ -247,11 +247,11 @@ export default {
         if (actions.length) {
           for (const [ userID ] of actions) {
             // @note When we allow memer adding in this interface; this should be updated
-            this.$messaging.channelPart({ channelID, userID })
+            this.$MessagingAPI.channelPart({ channelID, userID })
           }
         }
         // Update channel
-        this.$messaging.channelUpdate({ ...this.channel, channelID: channelID }).then((ch) => {
+        this.$MessagingAPI.channelUpdate({ ...this.channel, channelID: channelID }).then((ch) => {
           console.debug('Channel updated', ch)
           this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
         }).catch((error) => {
@@ -259,7 +259,7 @@ export default {
         })
       } else {
         console.debug('Creating channel', this.channel)
-        this.$messaging.channelCreate(this.channel).then((ch) => {
+        this.$MessagingAPI.channelCreate(this.channel).then((ch) => {
           console.debug('Channel created', ch)
           this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
         }).catch(({ error }) => {

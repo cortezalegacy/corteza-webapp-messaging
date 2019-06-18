@@ -212,10 +212,10 @@ export default {
         return false
       } else if (this.message) {
         // Doing update
-        this.$messaging.messageEdit({ channelID: this.message.channelID, messageID: this.message.messageID, message: value }).then(stdResponse)
+        this.$MessagingAPI.messageEdit({ channelID: this.message.channelID, messageID: this.message.messageID, message: value }).then(stdResponse)
       } else if (this.replyTo) {
         // Sending reply
-        this.$messaging.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, message: value }).then(stdResponse)
+        this.$MessagingAPI.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, message: value }).then(stdResponse)
       } else if (this.channel) {
         this.keepFocusOnSubmit = true
 
@@ -226,7 +226,7 @@ export default {
           return
         }
 
-        this.$messaging.messageCreate({ channelID: this.channel.channelID, message: value }).then(stdResponse)
+        this.$MessagingAPI.messageCreate({ channelID: this.channel.channelID, message: value }).then(stdResponse)
         this.$store.commit('unread/unset', this.channel)
       }
     },
@@ -263,7 +263,7 @@ export default {
       }
 
       if (params) {
-        this.$messaging.activitySend(params)
+        this.$MessagingAPI.activitySend(params)
       }
     }, 2000),
 

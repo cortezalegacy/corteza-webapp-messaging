@@ -99,9 +99,9 @@ export default {
     },
     onFlag (flag) {
       if (flag) {
-        this.$messaging.channelSetFlag({ channelID: this.channel.channelID, flag })
+        this.$MessagingAPI.channelSetFlag({ channelID: this.channel.channelID, flag })
       } else {
-        this.$messaging.channelRemoveFlag({ channelID: this.channel.channelID })
+        this.$MessagingAPI.channelRemoveFlag({ channelID: this.channel.channelID })
       }
     },
   },

@@ -131,7 +131,7 @@ export default {
   methods: {
     // Preloads all thread data
     preload () {
-      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channelID, threadID: this.repliesTo }).then((msgs) => {
+      messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channelID, threadID: this.repliesTo }).then((msgs) => {
         this.$store.commit('history/updateSet', msgs)
       })
     },

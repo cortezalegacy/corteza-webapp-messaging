@@ -146,8 +146,8 @@ export function Attachment (a) {
   this.name = a.name
   this.meta = a.meta
 
-  if (window.CrustMessagingAPI) {
-    const base = window.CrustMessagingAPI
+  if (window.MessagingAPI) {
+    const base = window.MessagingAPI
 
     this.url = base + a.url
     this.previewUrl = base + a.previewUrl

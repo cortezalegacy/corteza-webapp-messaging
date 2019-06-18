@@ -152,7 +152,7 @@ export default {
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, fromMessageID: this.messageID }).then((msgs) => {
+      messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, fromMessageID: this.messageID }).then((msgs) => {
         this.$store.commit('history/updateSet', msgs)
       })
     },
@@ -167,7 +167,7 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, toMessageID: messageID }).then((msgs) => {
+        messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, toMessageID: messageID }).then((msgs) => {
           this.$store.commit('history/updateSet', msgs)
         })
       }

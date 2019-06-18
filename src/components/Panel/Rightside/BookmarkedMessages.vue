@@ -34,7 +34,7 @@ export default {
   },
 
   mounted () {
-    messagesLoad(this.$messaging, this.$store.getters['users/findByID'], { bookmarkedOnly: true }).then((msgs) => {
+    messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { bookmarkedOnly: true }).then((msgs) => {
       this.$store.commit('history/updateSet', msgs)
     })
   },

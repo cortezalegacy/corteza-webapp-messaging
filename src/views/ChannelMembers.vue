@@ -37,7 +37,7 @@ export default {
   },
 
   mounted () {
-    this.$messaging.channelMembers({ channelID: this.channelID }).then(members => {
+    this.$MessagingAPI.channelMembers({ channelID: this.channelID }).then(members => {
       this.members = members
     }).catch(error => {
       console.error('Failed to load channel members', { error })
@@ -46,13 +46,13 @@ export default {
 
   methods: {
     add (userID) {
-      this.$messaging.channelJoin({ channelID: this.channelID, userID }).then((members) => {
+      this.$MessagingAPI.channelJoin({ channelID: this.channelID, userID }).then((members) => {
         this.members = this.members.concat(members)
       })
     },
 
     remove (userID) {
-      this.$messaging.channelPart({ channelID: this.channelID, userID }).then(() => {
+      this.$MessagingAPI.channelPart({ channelID: this.channelID, userID }).then(() => {
         const i = this.members.findIndex(m => m.userID === userID)
         if (i > 0) {
           this.members.splice(i, 1)

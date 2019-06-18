@@ -80,7 +80,7 @@ export default {
   methods: {
     search (query) {
       this.results = []
-      this.$messaging.searchMessages({ query }).then(mm => {
+      this.$MessagingAPI.searchMessages({ query }).then(mm => {
         this.results = this.groupByChannel(mm)
       })
     },

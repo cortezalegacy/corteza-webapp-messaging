@@ -127,7 +127,7 @@ export default {
   },
 
   created () {
-    this.$auth.check(this.$system).then(() => {
+    this.$auth.check(this.$SystemAPI).then(() => {
       this.init()
       this.$ws.connect()
     }).catch((err) => {
