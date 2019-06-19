@@ -107,20 +107,20 @@
 
   [type="checkbox"]:disabled:checked + label::before,
   [type="checkbox"]:disabled:checked + label::before  {
-    background-color: $appblue;
+    background-color: $primary;
   }
 
   [type="checkbox"]:checked:focus + label::before,
   [type="checkbox"]:not(:checked):focus + label::before,
   [type="radio"]:checked:focus + label::before,
   [type="radio"]:not(:checked):focus + label::before {
-    border: 1px dotted $appblue;
+    border: 1px dotted $primary;
   }
 
   [type="checkbox"]:checked + label::before,
   [type="radio"]:checked + label::before {
-    background-color: $appblue;
-    border-color: $appblue;
+    background-color: $primary;
+    border-color: $primary;
   }
 
   [type="checkbox"]:checked + label::after,
@@ -175,7 +175,7 @@ $form-toggle-height:20px;
 
   [type="checkbox"]:checked + label::before,
   [type="checkbox"]:checked + label::before  {
-    background-color: $appblue;
+    background-color: $primary;
   }
 
   [type="checkbox"]:checked + label::after,

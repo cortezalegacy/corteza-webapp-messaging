@@ -118,7 +118,7 @@ export default {
 }
 
 .unread {
-  background: $appblue;
+  background: $primary;
   color: white;
   display:inline-block;
   pointer-events: none; // make this click through.

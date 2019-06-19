@@ -48,7 +48,7 @@ a{
   font-weight: 900;
   text-decoration: none;
   &.current-user{
-    color: $appblue;
+    color: $primary;
   }
 
   &:before {

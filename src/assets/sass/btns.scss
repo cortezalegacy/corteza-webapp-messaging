@@ -145,8 +145,8 @@ button structure :
 
 .btn-info, .btn-blue
 {
-  background-color: $appblue;
-  border-color: $appblue;
+  background-color: $primary;
+  border-color: $primary;
   color:white;
 	.btn-txt, .btn-i
 	{
@@ -154,11 +154,11 @@ button structure :
 	}
   &:hover
   {
-    color: $appblue;
+    color: $primary;
     background-color:white;
     .btn-txt, .btn-i
     {
-      color:$appblue;
+      color: $primary;
     }
   }
 }

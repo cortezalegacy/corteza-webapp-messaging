@@ -299,7 +299,7 @@ export default {
         .svg-inline--fa,
         .icon {
           margin-right: 3px;
-          color: $appblue;
+          color: $primary;
           display: inline-block;
           width: 15px;
           text-align: right;

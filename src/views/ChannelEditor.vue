@@ -385,7 +385,7 @@ ul {
       cursor: pointer;
       padding: 5px 0 0;
         &:hover {
-          color: $appblue;
+          color: $primary;
         }
     }
   }

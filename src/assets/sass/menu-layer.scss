@@ -116,11 +116,11 @@
   &.current
   {
     background-color:rgba($primary,0.15);
-    border-color:$appblue;
+    border-color: $primary;
     color:$primary;
     a
     {
-      color:$appblue;
+      color: $primary;
     }
   }
 }
