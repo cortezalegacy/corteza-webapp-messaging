@@ -22,14 +22,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 footer {
   text-align: center;
   width: 100%;
   height: 80px;
-  border-top: 2px solid $defaultlinecolor;
+  border-top: 2px solid $secondary;
   background-color: $white;
 }
 </style>

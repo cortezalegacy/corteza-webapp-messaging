@@ -63,8 +63,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
-
 label {
   display:block
 }

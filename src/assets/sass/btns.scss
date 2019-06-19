@@ -4,7 +4,6 @@ button structure :
 <tag1 class="btn"><tag2 class="btn-txt">button content</tag2></tag1>
 <tag1 class="btn"><i class="btn-i icon-icontag"></i><tag2 class="btn-txt">button content</tag2></tag1>
 */
-@import './_0.declare';
 :focus{
   outline: none;
 }
@@ -13,15 +12,15 @@ button structure :
   display:inline-block;
   align-items: flex-start;
   text-align: center;
-  border: solid 1px $appgrey;
-  color: $appgrey;
+  border: solid 1px $secondary;
+  color: $secondary;
   padding:0.25em 1em;
   border-radius:1.5em;
   text-decoration: none;
   transition: color 0.2s, background-color 0.2s;
   background-color:transparent;
   margin:0 0.5em;
-  font-family: $crustregular;
+  font-family: $regular;
   cursor:pointer;
 
   &:first-child
@@ -35,11 +34,11 @@ button structure :
 
   &:hover
   {
-    color: $appwhite;
-    background-color:$appgrey;
+    color: $white;
+    background-color: $secondary;
     .btn-txt, .btn-i
     {
-      color:$appwhite;
+      color: $white;
     }
   }
 
@@ -55,7 +54,7 @@ button structure :
 .btn-i, .btn-txt
 {
   background-color: transparent;
-  color: $appgrey;
+  color: $secondary;
   display:inline-block;
   vertical-align: middle;
   text-decoration: none;
@@ -87,7 +86,7 @@ button structure :
 
 .btn-dark
 {
-  background-color: $appgrey;
+  background-color: $secondary;
   color:white;
 	.btn-txt, .btn-i
 	{
@@ -95,19 +94,19 @@ button structure :
 	}
   &:hover
   {
-    color: $appgrey;
+    color: $secondary;
     background-color:white;
     .btn-txt, .btn-i
     {
-      color:$appgrey;
+      color: $secondary;
     }
   }
 }
 
 .btn-success, .btn-green
 {
-  background-color: $appgreen;
-  border-color: $appgreen;
+  background-color: $success;
+  border-color: $success;
   color:white;
 	.btn-txt, .btn-i
 	{
@@ -115,19 +114,19 @@ button structure :
 	}
   &:hover
   {
-    color: $appgreen;
+    color: $success;
     background-color:white;
     .btn-txt, .btn-i
     {
-      color:$appgreen;
+      color: $success;
     }
   }
 }
 
 .btn-danger, .btn-red
 {
-  background-color: $appred;
-  border-color: $appred;
+  background-color: $danger;
+  border-color: $danger;
   color:white;
 	.btn-txt, .btn-i
 	{
@@ -135,11 +134,11 @@ button structure :
 	}
   &:hover
   {
-    color: $appred;
+    color: $danger;
     background-color:white;
     .btn-txt, .btn-i
     {
-      color:$appred;
+      color: $danger;
     }
   }
 }
@@ -168,7 +167,7 @@ button structure :
   cursor: default;
 
   &:hover {
-    color: $appgrey;
+    color: $secondary;
     background-color:transparent;
   }
 }

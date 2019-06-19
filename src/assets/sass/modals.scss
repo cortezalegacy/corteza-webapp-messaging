@@ -20,7 +20,6 @@
     </div>
   </div>
 */
-@import './_0.declare';
 @import './btns.scss';
 @import './inputs.scss';
 
@@ -44,10 +43,10 @@
     text-decoration: none;
     > *
     {
-      color:$appgrey;
+      color: $secondary;
       text-decoration: none;
       font-size:24px;
-      color:$appgrey;
+      color: $secondary;
       text-decoration: none;
     }
     a
@@ -75,10 +74,10 @@
   max-height:90vh;
   overflow-x:hidden;
   overflow-y:auto;
-  background-color:$appwhite;
+  background-color: $white;
   margin:0 auto;
   margin-top:10vh;
-  box-shadow: 0 0 0.2em 0.2em  rgba($defaulttextcolor, 0.1);
+  box-shadow: 0 0 0.2em 0.2em  rgba($dark, 0.1);
 }
 
 @media (min-width: $wideminwidth)

@@ -17,7 +17,6 @@
 </template>
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/headers.scss';
 
 .rightside-panel-container {
@@ -27,7 +26,7 @@
   overflow: hidden;
 
   & > div.header {
-    border-left: 1px solid $appcream;
+    border-left: 1px solid $light;
 
     .closer {
       position: absolute;

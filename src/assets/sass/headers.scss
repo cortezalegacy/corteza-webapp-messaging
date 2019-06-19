@@ -1,11 +1,9 @@
-@import './_0.declare';
-
 .header
 {
   font-size:10px;
   min-height:50px;
-  background-color: $appwhite;
-  border-bottom: 1px solid $appcream;
+  background-color: $white;
+  border-bottom: 1px solid $light;
   padding:0 10px;
   position: relative;
   white-space: nowrap;
@@ -19,7 +17,7 @@
 
   .title {
     font-size:15px;
-    font-family: $crustsemibold;
+    font-family: $semibold;
     padding-top: 10px;
   }
 

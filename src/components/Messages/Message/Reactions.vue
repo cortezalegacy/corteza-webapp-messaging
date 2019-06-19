@@ -34,7 +34,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 
 ul {
   padding: 0;
@@ -42,9 +41,9 @@ ul {
   list-style-type: none;
 
   .reactions.no-reactions{
-    border: 1px solid $appyellow;
+    border: 1px solid $warning;
     border-radius: 2px;
-    background-color: lighten($appyellow, 30%);
+    background-color: lighten($warning, 30%);
 
   }
   li {
@@ -60,7 +59,7 @@ ul {
     }
 
     &:hover {
-      background-color: lighten($appyellow, 20%);
+      background-color: lighten($warning, 20%);
     }
   }
 

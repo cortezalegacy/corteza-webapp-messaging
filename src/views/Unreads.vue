@@ -111,7 +111,7 @@ div > main {
 .header {
   span {
     font-size: 13px;
-    font-family: $crustheavy;
+    font-family: $bold;
     font-weight: bold;
   }
   .title {
@@ -137,7 +137,7 @@ div > main {
 }
 
 hr {
-  background-color: $appwhite;
+  background-color: $white;
   height: 1px;
   border: none;
 }

@@ -4,7 +4,7 @@ input[type=text]
 {
   outline:none;
   padding:0.25em;
-  border:solid 1px $defaultlinecolor;
+  border:solid 1px $secondary;
   border-radius:3px;
 
   &.input-block
@@ -15,27 +15,27 @@ input[type=text]
 
   &:focus
   {
-    color:$defaulttextcolor;
+    color: $dark;
   }
 
   &::-webkit-input-placeholder {
-    color: $gris-bleu;
+    color: $secondary;
   }
 
   &:-moz-placeholder {
-    color: $gris-bleu;
+    color: $secondary;
   }
 
   &::-moz-placeholder {
-    color: $gris-bleu;
+    color: $secondary;
   }
 
   &:-ms-input-placeholder {
-    color: $gris-bleu;
+    color: $secondary;
   }
 
   &:focus, &.focus {
-      border-color: $bleu;
+      border-color: $appblue;
       outline: none;
   }
 

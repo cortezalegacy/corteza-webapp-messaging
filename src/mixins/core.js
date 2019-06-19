@@ -16,7 +16,7 @@ export default {
     // Fav icon notifications
     window.favicon = new Favico({
       animation: 'none',
-      bgColor: '#E85568', // /src/assets/sass/_0.declare.scss -> $appred
+      bgColor: '#E85568', // /src/assets/sass/variables.scss -> $appred
       fontStyle: 'lighter',
     })
 

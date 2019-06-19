@@ -101,7 +101,6 @@ export default {
 
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 .header {
@@ -118,7 +117,7 @@ div {
   }
 
   &.add-members {
-    border-top: 1px solid $appgrey;
+    border-top: 1px solid $secondary;
     .header {
       background: white;
       padding-bottom: 5px;
@@ -145,7 +144,7 @@ div {
       cursor: pointer;
 
       &:hover {
-        background: rgba($appgrey, 0.15);
+        background: rgba($secondary, 0.15);
       }
 
       .confirmation-buttons, .btn {

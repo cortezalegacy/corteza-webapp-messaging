@@ -204,8 +204,6 @@ export default {
 </script>
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
-
 aside {
   z-index: 1001;
   height: 100vh;
@@ -214,7 +212,7 @@ aside {
   overflow: hidden;
   width: var(--width);
   max-width: 100%;
-  background-color: $menupanebgcolor;
+  background-color: $white;
 
   // Force hardware acceleration
   will-change: transform;

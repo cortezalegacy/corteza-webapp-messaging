@@ -73,7 +73,7 @@ div > main {
 .header {
   span {
     font-size: 13px;
-    font-family: $crustheavy;
+    font-family: $bold;
     font-weight: bold;
   }
   .title {
@@ -82,7 +82,7 @@ div > main {
 }
 
 hr {
-  background-color: $appgrey;
+  background-color: $secondary;
   height: 1px;
   border: none;
 }

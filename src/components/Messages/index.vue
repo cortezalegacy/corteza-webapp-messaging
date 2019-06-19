@@ -205,7 +205,6 @@ export default {
 
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 ul {
   padding:0;
   margin:0;

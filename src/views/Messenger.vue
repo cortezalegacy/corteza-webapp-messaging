@@ -280,11 +280,9 @@ export default {
 
 </style>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-
 .main {
   flex: 1;
-  background: $mainbgcolor;
+  background: $light;
   height: 100vh;
   overflow: hidden;
   position: relative;

@@ -13,8 +13,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
-
 div {
   display: block;
   height: 100vh;

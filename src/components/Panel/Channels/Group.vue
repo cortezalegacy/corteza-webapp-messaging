@@ -52,13 +52,12 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 div {
   display: block;
   font-size: 14px;
-  color: $defaulttextcolor;
+  color: $dark;
   margin-top: 10px;
   max-width: 100%;
   padding: .35em 0 0 15px;
@@ -72,7 +71,7 @@ ul {
 
 a {
   cursor: pointer;
-  font-family: $crustsemibold;
+  font-family: $semibold;
 }
 
 .icon-plus {
@@ -83,9 +82,9 @@ a {
     margin-top: 6px;
     font-size: 12px;
     &:hover{
-      color: $black;
+      color: $dark;
       background: transparent;
-      border-color: $black;
+      border-color: $dark;
     }
   }
 }

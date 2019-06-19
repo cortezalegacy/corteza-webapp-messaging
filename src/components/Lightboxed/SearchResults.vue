@@ -121,8 +121,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/_0.declare.scss';
 
 header {
   height: 50px;
@@ -134,7 +132,7 @@ header {
 
   .closer {
     position: fixed;
-    color: $appcream;
+    color: $light;
     float: right;
     font-size: 50px;
     top: 10px;
@@ -147,7 +145,7 @@ header {
 
 main {
   height: calc(100vh - 100px);
-  background-color: $appwhite;
+  background-color: $white;
   margin: 0px 70px 0 70px;
   overflow-x: auto;
   overflow-x: hidden;
@@ -165,7 +163,7 @@ main {
     }
 
     padding: 10px 0px;
-    border-bottom: 1px solid $tab_bgcolor;
+    border-bottom: 1px solid $light;
   }
 
 }

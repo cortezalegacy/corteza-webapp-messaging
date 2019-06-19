@@ -187,11 +187,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/sass/_0.commons.scss';
   @import '@/assets/sass/headers.scss';
 
   hr {
-    background: $appcream;
+    background: $light;
     border: none;
     height: 1px;
   }
@@ -203,7 +202,7 @@ export default {
   }
   .channel-name {
     font-size:15px;
-    font-family: $crustsemibold;
+    font-family: $semibold;
     display: block;
     &.public {
       &:before {
@@ -212,11 +211,11 @@ export default {
       }
     }
     .svg-inline--fa {
-      color: $appgrey;
+      color: $secondary;
       vertical-align: inherit;
       font-size: 12px;
       &.fa-star {
-        color: $appyellow;
+        color: $warning;
       }
     }
   }
@@ -251,19 +250,19 @@ export default {
 
   .is-online,
   .is-offline {
-    color: $appgrey;
+    color: $secondary;
     &:before {
       content: '\25CF';
       font-weight: bold;
       margin-right: 2px;
-      color: $appgrey;
+      color: $secondary;
     }
   }
 
   .is-online {
-    color: $appgreen;
+    color: $success;
     &:before {
-      color: $appgreen;
+      color: $success;
     }
   }
 
@@ -276,21 +275,21 @@ export default {
       float: right;
       height: 50px;
       width: 7px;
-      color: $appgrey;
+      color: $secondary;
     }
     .dropdown-content {
       display: none;
       position: absolute;
-      background-color: $appwhite;
+      background-color: $white;
       min-width: 160px;
       z-index: 2;
       right: 0;
       top: 50px;
-      border-right: 1px solid $appcream;
+      border-right: 1px solid $light;
       box-shadow: 0px 5px 7px -2px rgba(0, 0, 0, 0.4);
 
       .open-sidebar {
-        border-bottom: 1px solid $appcream;
+        border-bottom: 1px solid $light;
       }
 
       label {

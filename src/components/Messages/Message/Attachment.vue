@@ -110,8 +110,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.declare.scss';
-
 .missing {
   color: #ccc;
 }
@@ -156,7 +154,7 @@ a{
 
     button {
       background-color: #FFFFFF;
-      border: solid 1px $appgrey;
+      border: solid 1px $secondary;
       border-radius: 4px;
       padding: 3px 7px;
       cursor: pointer;
@@ -164,22 +162,22 @@ a{
 
     .action {
       display: inline-block;
-      border: solid 1px rgba($appgrey, 0.25);
+      border: solid 1px rgba($secondary, 0.25);
       border-radius: 5px;
       width: 25px;
       height: 25px;
-      background-color: $appwhite;
+      background-color: $white;
       font-size: 15px;
       text-align: center;
-      box-shadow: 0 0 3px 0 rgba($appgrey, 0.5);
+      box-shadow: 0 0 3px 0 rgba($secondary, 0.5);
       cursor: pointer;
-      color: $defaultlinecolor;
+      color: $secondary;
       margin-right: 1px;
       &.unread{
-        color: $appred;
+        color: $danger;
       }
       &:hover{
-        border-color: $appgrey;
+        border-color: $secondary;
       }
     }
   }

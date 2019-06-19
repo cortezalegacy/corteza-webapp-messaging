@@ -190,11 +190,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 
 div.flex-grid {
   z-index: 1000;
-  background-color: $mainbgcolor;
+  background-color: $light;
   height: 100vh;
   width: 100vw;
   display: flex;

@@ -1,4 +1,4 @@
-@import "_0.declare";
+@import "variables";
 
 .dz-message {
     position: relative;
@@ -20,7 +20,7 @@
 			.dz-upload{
 				animation: unset;
 				transition: unset;
-				background-color: $bleu;
+				background-color: $appblue;
 			}
 		}
 		&:not(.dz-processing) {

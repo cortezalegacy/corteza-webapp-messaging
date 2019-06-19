@@ -189,7 +189,6 @@ export default {
 
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/_0.commons.scss';
 
 nav {
   display: flex;
@@ -199,7 +198,7 @@ nav {
   height: 100vh;
 
   & > form {
-    border-bottom: 1px solid $appcream;
+    border-bottom: 1px solid $light;
     padding: 10px 20px 10px 10px;
     display: block;
     height: 50px;
@@ -209,7 +208,8 @@ nav {
     overflow-y: auto;
     flex: 1;
     padding-bottom: 10px;
-    padding-right: 0;
+    box-shadow: inset -10px 0 0 $light;
+    padding-right: 10px;
 
     div.browse {
       padding-top: 0;
@@ -247,7 +247,7 @@ nav {
   pre.version {
     margin: 30px 0 0 0;
     padding: 10px;
-    color: $appgrey;
+    color: $secondary;
     font-size: 70%;
   }
 }

@@ -1,5 +1,3 @@
-@import './_0.declare';
-
 .channel-name {
   &:before {
     content:"#";
@@ -15,17 +13,17 @@
   }
   &.green {
     &:before {
-      color:$appgreen;
+      color: $success;
     }
   }
   &.red {
     &:before {
-      color:$appred;
+      color: $danger;
     }
   }
   &.yellow {
     &:before {
-      color:$appyellow;
+      color: $warning;
     }
   }
 }
@@ -48,27 +46,27 @@
   &>.channel-name:before {
     content: '●';
     font-weight: bold;
-    color: $appgrey;
+    color: $secondary;
     font-size: 20px;
     margin-left: -2px;
   }
 
   &.new-moon {
     a {
-      color: $appgrey;
+      color: $secondary;
     }
   }
 
   &.full-moon {
     .channel-name:before {
-      color: $appgreen;
+      color: $success;
     }
   }
 
   &.last-quarter-moon {
     .channel-name:before {
       content: '○';
-      color: $appgreen;
+      color: $success;
     }
   }
 }

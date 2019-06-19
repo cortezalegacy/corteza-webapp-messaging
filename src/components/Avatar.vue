@@ -67,27 +67,25 @@ export default {
 </script>
 
 <style scoped lang="scss">
-//this import is for variables
-@import '@/assets/sass/_0.declare.scss';
 .u-avatar
 {
   display:inline-block;
   font-size:16px;
   height:32px;
   width:32px;
-  border:solid 1px $defaultlinecolor;
+  border:solid 1px $secondary;
   border-radius:100%;
   background:url('/static/pics/no-profile-pic.png') center center no-repeat;
   background-size:contain;
   line-height:28px;
   text-align:center;
   font-style:normal;
-  background-color:rgba($appgrey,0.08);;
-  color:$appgrey;
+  background-color:rgba($secondary,0.08);;
+  color: $secondary;
   &.online {
-    background-color: rgba($appgreen,0.08);
-    color: $appgreen;
-    border: 1px solid $appgreen;
+    background-color: rgba($success,0.08);
+    color: $success;
+    border: 1px solid $success;
   }
 }
 </style>

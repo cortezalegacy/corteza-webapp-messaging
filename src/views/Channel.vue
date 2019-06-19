@@ -181,8 +181,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
-
 .channel {
   display: flex;
   flex-flow: column nowrap;

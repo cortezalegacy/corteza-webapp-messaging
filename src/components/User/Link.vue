@@ -43,9 +43,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 a{
-  color: $defaulttextcolor;
+  color: $dark;
   font-weight: 900;
   text-decoration: none;
   &.current-user{

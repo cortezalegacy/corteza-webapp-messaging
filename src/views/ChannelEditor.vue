@@ -279,7 +279,6 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/sass/inputs.scss';
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/headers.scss';
 @import '@/assets/sass/btns.scss';
 @import '@/assets/sass/notifications.scss';
@@ -291,7 +290,7 @@ export default {
 }
 
 div.error {
-  color: $appred;
+  color: $danger;
 }
 
 form, main > section {
@@ -309,7 +308,7 @@ form {
 }
 
 section.toggle-state {
-  border-top: 1px solid $appgrey;
+  border-top: 1px solid $secondary;
   font-size: 1.5em;
   padding: 20px 10px 30px 10px;
   margin: 20px;
@@ -321,7 +320,7 @@ section.toggle-state {
 
 .closer {
   position: relative;
-  color: $appgrey;
+  color: $secondary;
   float: right;
   font-size: 20px;
   font-weight: bold;
@@ -378,7 +377,7 @@ ul {
   }
   /deep/ .suggestions {
     position: absolute;
-    background: $appcream;
+    background: $light;
     padding: 0 10px 20px 10px;
     overflow: scroll;
     max-height: 100px;

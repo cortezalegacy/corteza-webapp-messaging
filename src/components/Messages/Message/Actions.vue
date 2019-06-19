@@ -106,7 +106,6 @@ export default {
 
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
 
 .actions, .context-menu {
@@ -121,22 +120,22 @@ export default {
 
   .action {
     display: inline-block;
-    border: solid 1px rgba($appgrey, 0.25);
+    border: solid 1px rgba($secondary, 0.25);
     border-radius: 5px;
     line-height: 20px;
     width: 25px;
-    background-color: $appwhite;
+    background-color: $white;
     font-size: 15px;
     text-align: center;
-    box-shadow: 0 0 3px 0 rgba($appgrey, 0.5);
+    box-shadow: 0 0 3px 0 rgba($secondary, 0.5);
     cursor: pointer;
-    color: $defaultlinecolor;
+    color: $secondary;
     margin-right: 1px;
     &.unread{
-      color: $appred;
+      color: $danger;
     }
     &:hover{
-      border-color: $appgrey;
+      border-color: $secondary;
     }
   }
 }
@@ -144,10 +143,10 @@ export default {
 .actions {
   min-width: 180px;
   .bookmarked{
-    color: $appgreen;
+    color: $success;
   }
   .pinned {
-    color: $appyellow;
+    color: $warning;
   }
   .svg-inline--fa{
     padding: 4px;
@@ -171,8 +170,8 @@ export default {
     list-style: none;
     float: right;
     background-color: white;
-    box-shadow: 0 0 5px 0 rgba($appgrey, 0.5);
-    border: solid 1px rgba($appgrey, 0.25);
+    box-shadow: 0 0 5px 0 rgba($secondary, 0.5);
+    border: solid 1px rgba($secondary, 0.25);
     padding: 0;
     margin: 0;
     margin-top: -1px;
@@ -193,7 +192,7 @@ export default {
       }
 
       &:hover {
-        background-color: $appcream;
+        background-color: $light;
         cursor: pointer;
       }
 

@@ -26,19 +26,17 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
-
 .message-infos
 {
   font-size:10px;
-  color: $appgrey;
+  color: $secondary;
   display: inline;
   .info
   {
     display:inline-block;
     font-weight: 300;
     &.unread{
-      color: $appred;
+      color: $danger;
       font-weight: 900;
     }
     &:after

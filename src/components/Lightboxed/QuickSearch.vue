@@ -102,7 +102,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 
 header {
   height: 50px;
@@ -110,7 +109,7 @@ header {
 
   .closer {
     position: fixed;
-    color: $appcream;
+    color: $light;
     float: right;
     font-size: 50px;
     top: 10px;
@@ -125,7 +124,7 @@ form{
 main {
   max-height: 70vh;
   width: 90vw;
-  background-color: $appwhite;
+  background-color: $white;
   margin: 5vh 0 0 5vw;
   padding: 20px 20px 3px;
 
@@ -145,7 +144,7 @@ main {
         display: block;
 
         &:hover {
-          background: $appcream;
+          background: $light;
         }
       }
     }
@@ -155,8 +154,8 @@ main {
 footer {
   text-align: center;
   width: 90vw;
-  background-color: $appcream;
-  border-top: 2px solid $appgrey;
+  background-color: $light;
+  border-top: 2px solid $secondary;
   margin: 0 0 0 5vw;
   padding: 10px;
   position: fixed;

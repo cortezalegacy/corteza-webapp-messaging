@@ -57,8 +57,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
-@import '@/assets/sass/badges.scss';
 @import '@/assets/sass/inputs.scss';
 
 form  {
@@ -74,6 +72,36 @@ form  {
   .badge {
     border-radius: 0;
   }
+}
+
+.badge {
+  font-size:12px;
+  line-height:1;
+  display:inline-block;
+  border: solid 1px $secondary;
+  color: $secondary;
+  padding:0.25em 1em;
+  border-radius:1.5em;
+  text-decoration: none;
+  margin:0 0.5em;
+  transition: color 0.2s, background-color 0.2s;
+  [class^="icon-"],
+  [class*=" icon-"],
+  a {
+    text-decoration: none;
+    color: $secondary;
+  }
+  [class^="icon-"],
+  [class*=" icon-"] {
+    display:inline-block;
+    margin-right:3px;
+    margin-top:0.2em;
+  }
+}
+
+.badge-block {
+  display:block;
+  margin:0;
 }
 
 </style>

@@ -1,5 +1,3 @@
-@import './_0.declare';
-
 .notification,
 .alert
 {
@@ -20,7 +18,7 @@
   &-teal,
   &-cream
   {
-    background: $gris-bleu;
+    background: $secondary;
     padding: 15px 55px;
     margin: 10px;
     position: relative;
@@ -75,7 +73,7 @@
   //teal alone
   &-teal
   {
-    background: $vert-bleu;
+    background: $success;
   }
 
   //info and blue
@@ -83,7 +81,7 @@
   &-info,
   &-blue
   {
-    background: $bleu;
+    background: $appblue;
   }
 
   //red, danger and error
@@ -93,7 +91,7 @@
   &-danger,
   &-red
   {
-      background: $error;
+      background: $danger;
   }
   //danger icon
   &.error,
@@ -128,7 +126,7 @@
   &-warning,
   &-yellow
   {
-    background: $jaune;
+    background: $warning;
   }
   //warning icon
   &.warning,

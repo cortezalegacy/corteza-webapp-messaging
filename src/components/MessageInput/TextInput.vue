@@ -222,7 +222,6 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '@/assets/sass/_0.commons.scss';
   @import '@/assets/sass/channel-names.scss';
 
   @media (max-width: $wideminwidth - 1px)
@@ -246,11 +245,11 @@ export default {
       line-height: 30px;
 
       &[data-denotation-char="@"] .label {
-        color: $appgrey;
+        color: $secondary;
       }
 
       &[data-denotation-char="@"] .full-moon .label {
-        color: $black;
+        color: $dark;
       }
 
       &[data-denotation-char="@"] .member .label {
@@ -258,7 +257,7 @@ export default {
       }
 
       & .channel .channel-name:before {
-        color: $black;
+        color: $dark;
       }
     }
   }

@@ -1,6 +1,6 @@
-@import './_0.declare';
-@import './closer';
-
+.closer {
+  font-size:20px;
+}
 .menu-layer
 {
   font-size:14px;
@@ -13,12 +13,12 @@
   overflow-x: hidden;
   overflow-y: auto;
   transition:margin 0.5s ease-in;
-  background-color:$menupanebgcolor;
+  background-color: $white;
   z-index:50;
 
   &.shadowed
   {
-    box-shadow: 0.2rem 0 0.2rem 0 rgba($defaulttextcolor, 0.1);
+    box-shadow: 0.2rem 0 0.2rem 0 rgba($dark, 0.1);
   }
 
   &.noborder
@@ -28,7 +28,7 @@
 
   &.left
   {
-    border-right: solid 1px $defaultlinecolor;
+    border-right: solid 1px $secondary;
   }
 
   .closer
@@ -59,19 +59,19 @@
 {
   font-size:14px;
   font-weight:600;
-  color:$defaulttextcolor;
+  color: $dark;
   padding:0 5px;
   margin-top: 10px;
   a
   {
-    color:$defaulttextcolor;
+    color: $dark;
     text-decoration:none;
     cursor: pointer;
   }
   .icon
   {
     display:inline-block;
-    color:rgba($defaulttextcolor, 0.75);
+    color:rgba($dark, 0.75);
     font-size:18px;
     line-height: 14px;
     vertical-align: sub;
@@ -108,10 +108,10 @@
 .layer-selectable
 {
   border-right:solid 3px transparent;
-  color:$defaulttextcolor;
+  color: $dark;
   a
   {
-    color:$appgrey;
+    color: $secondary;
   }
   &.current
   {
@@ -129,7 +129,7 @@
 .menu-layer.force-on,
 .menu-layer.open
 {
-  background-color:$menupanebgcolor;
+  background-color: $white;
   max-width:250px;
   min-width:190px;
   margin-left:0;
@@ -137,14 +137,14 @@
   {
     margin:0;
     padding:20px 0;
-    color: $appgrey;
+    color: $secondary;
     font-size: 14px;
     font-weight: 400;
     line-height: 26px;
     text-align: left;
     a
     {
-      color:$appgrey;
+      color: $secondary;
       text-decoration:none;
     }
   }
@@ -175,7 +175,7 @@
       bottom:0;
       overflow-x: hidden;
       overflow-y: auto;
-      background-color:$menupanebgcolor;
+      background-color: $white;
       min-height:100vh;
     }
     &.open

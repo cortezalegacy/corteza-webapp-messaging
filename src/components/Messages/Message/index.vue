@@ -257,7 +257,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
 
 em{
@@ -265,11 +264,11 @@ em{
 }
 
 .last-read {
-  border-bottom: 1px solid $appred;
+  border-bottom: 1px solid $danger;
 
   .label {
     background: white;
-    color: $appred;
+    color: $danger;
     display: inline;
     position: absolute;
     right: 16px;
@@ -277,7 +276,7 @@ em{
     line-height: 20px;
     padding: 0 10px;
     z-index: 1;
-    border: 1px solid $appred;
+    border: 1px solid $danger;
   }
 }
 
@@ -296,7 +295,7 @@ em{
 
   &:hover,
   &:focus{
-    background-color: rgba($appgrey, 0.1);
+    background-color: rgba($secondary, 0.1);
     .date {
       display: inline-block;
     }
@@ -335,13 +334,13 @@ em{
 
   &.bookmarked {
     .message{
-      border-right: 3px solid $appgreen;
+      border-right: 3px solid $success;
     }
   }
 
   &.pinned {
     .message{
-      border-right: 3px solid $appyellow;
+      border-right: 3px solid $warning;
     }
     &.bookmarked{
       .message{
@@ -421,14 +420,14 @@ em{
 .author{
   a {
     text-decoration: none;
-    color: $appgrey;
+    color: $secondary;
   }
 }
 
 .date,
 .time,
 .day {
-  color: $appgrey;
+  color: $secondary;
 }
 
 .avatar {
@@ -460,7 +459,7 @@ em{
 
 .message {
   position: relative;
-  background-color: $messagebgcolor;
+  background-color: $white;
   word-wrap: break-word;
   padding: 6px;
   display: table;
@@ -468,7 +467,7 @@ em{
 
   &:before {
     content: " ";
-    background-color: $messagebgcolor;
+    background-color: $white;
     position: absolute;
     left: -5px;
     top: 8px;

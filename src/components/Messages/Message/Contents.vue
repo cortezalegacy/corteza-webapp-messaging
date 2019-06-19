@@ -31,8 +31,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
-
 p {
   margin: 0;
 }
@@ -45,13 +43,13 @@ p + p {
 blockquote {
   margin: 5px 20px 5px 5px;
   padding-left: 5px;
-  border-left: 4px solid $appcream;
+  border-left: 4px solid $light;
 }
 
 pre {
   padding: 7px 5px;
   background-color: white;
-  border: 1px solid $appgrey;
+  border: 1px solid $secondary;
   border-radius: 5px;
   max-width: 100%;
   overflow: scroll;
@@ -63,12 +61,12 @@ p > code {
   padding: 1px 3px;
   font-size: 90%;
   background-color: white;
-  border: 1px solid $appgrey;
+  border: 1px solid $secondary;
   border-radius: 2px;
-  color: $appred
+  color: $danger
 }
 
   a {
-    color: $black;
+    color: $dark;
   }
 </style>

@@ -17,7 +17,6 @@
   </div>
 </template>
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 div {

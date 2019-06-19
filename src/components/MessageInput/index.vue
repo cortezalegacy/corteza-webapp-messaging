@@ -276,7 +276,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 $inputWidth: 50px;
@@ -296,22 +295,22 @@ $mobileInputWidth: 35px;
     width: 100%;
     position: relative;
     margin-bottom: 2px;
-    border: 1px solid $appgrey;
+    border: 1px solid $secondary;
     .text-input {
       width: calc(100% - #{$inputWidth});
       float:right;
       &:focus-within {
         outline: none;
-        border-color: $appgreen;
+        border-color: $success;
 
         ~ .upload-button {
-         background-color:rgba($appgreen,0.1);
-         border-color:$appgreen;
-         color:$appgreen;
+         background-color:rgba($success,0.1);
+         border-color: $success;
+         color: $success;
         }
         ~ .send-button{
           span{
-            color: $appgreen;
+            color: $success;
           }
         }
       }
@@ -320,7 +319,7 @@ $mobileInputWidth: 35px;
       width: $inputWidth;
       position: absolute;
       height: 100%;
-      color: $appgrey;
+      color: $secondary;
       cursor: pointer;
       font-size:28px;
       span{
@@ -368,7 +367,7 @@ $mobileInputWidth: 35px;
     .group {
       margin-bottom: 0;
       border: none;
-      border-top: 1px solid $appgrey;
+      border-top: 1px solid $secondary;
       border-radius: 0;
       .text-input {
         width: calc(100% - #{$mobileInputWidth});

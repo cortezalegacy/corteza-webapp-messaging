@@ -30,9 +30,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 
 .offline {
-  color: $appgrey;
+  color: $secondary;
 }
 </style>

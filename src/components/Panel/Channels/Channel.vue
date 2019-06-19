@@ -108,7 +108,6 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/menu-layer.scss';
 @import '@/assets/sass/channel-names.scss';
 
@@ -155,7 +154,7 @@ export default {
 }
 
 .ignored {
-  color: $appgrey;
+  color: $secondary;
   &::before {
     content: "";
     width: 0px;
@@ -176,7 +175,7 @@ export default {
 
 .hide,
 .starred {
-  color: $appgrey;
+  color: $secondary;
   font-size: 11px;
   display: none;
   line-height: 22px;
@@ -184,7 +183,7 @@ export default {
 }
 
 .starred {
-  color: $appyellow;
+  color: $warning;
 }
 
 .layer-item-wrap {
@@ -193,8 +192,8 @@ export default {
   }
   &:hover {
     .channel-name {
-      background-color:rgba($appgrey,0.15);
-      border-color:rgba($appgrey,0.5);
+      background-color:rgba($secondary,0.15);
+      border-color:rgba($secondary,0.5);
     }
     .hide,
     .starred {

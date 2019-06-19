@@ -171,7 +171,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/_0.commons.scss';
 @import '@/assets/sass/btns.scss';
 
 .droparea {
@@ -191,7 +190,7 @@ export default {
   .unsupported {
     text-align: center;
     h2 {
-      color: $appred;
+      color: $danger;
     }
   }
 }
@@ -226,7 +225,7 @@ export default {
 }
 .dz-message{
   h2{
-    color: $appwhite;
+    color: $white;
     font-size: 26px;
   }
 }
