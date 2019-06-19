@@ -115,9 +115,9 @@
   }
   &.current
   {
-    background-color:rgba($appblue,0.15);
+    background-color:rgba($primary,0.15);
     border-color:$appblue;
-    color:$appblue;
+    color:$primary;
     a
     {
       color:$appblue;

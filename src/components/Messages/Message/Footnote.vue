@@ -29,7 +29,6 @@ export default {
 .message-infos
 {
   font-size:10px;
-  color: $secondary;
   display: inline;
   .info
   {

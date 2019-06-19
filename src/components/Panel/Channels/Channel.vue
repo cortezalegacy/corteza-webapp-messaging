@@ -16,7 +16,7 @@
         { current: (current||{}).channelID === channel.channelID },
       ]"
       :to="{name:'channel', params:{channelID:channel.channelID}}">
-      <channel-label :channel="channel" />
+      <channel-label :channel="channel"/>
     </router-link>
     <transition v-if="countUnread(channel) > 0"
                 name="slide-fade">
