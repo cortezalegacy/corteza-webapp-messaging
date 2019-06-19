@@ -48,7 +48,7 @@
 </template>
 <script>
 import * as numeral from 'numeral'
-import { canPreview } from 'corteza-webapp-common/src/lib/filePreview'
+import { canPreview } from 'corteza-webapp-common/src/lib/file_preview'
 import { PreviewInline } from 'corteza-webapp-common/src/components/FilePreview/index'
 
 export default {
