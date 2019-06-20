@@ -3,7 +3,7 @@
       <header class="header">
         <label class="closer"
                @click.prevent="$router.back()"
-               :aria-label="$t('channel.editor.closeTooltip')"><i class="icon-close"></i></label>
+               :aria-label="$t('channel.editor.closeTooltip')"><i class="icon-x"></i></label>
           <span class="title" v-if="channel.type === 'group' && channel.channelID">{{ $t('channel.editor.editGroup') }}</span>
           <span class="title" v-else-if="channel.type === 'group'">{{ $t('channel.editor.createGroup') }}</span>
           <span class="title" v-else-if="channel.channelID">{{ $t('channel.editor.editChannel') }}</span>
@@ -63,7 +63,7 @@
               <li v-for="(u) in members" :key="u.userID">
                 <user-avatar :userID="u.userID" />
                 {{ label(u) }}
-                <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-close"></i></button>
+                <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-x"></i></button>
               </li>
             </ul>
           </div>

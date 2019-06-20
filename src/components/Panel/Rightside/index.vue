@@ -5,7 +5,7 @@
       <span class="subtitle"><slot name="subtitle"></slot></span>
       <label class="closer"
              @click="$emit('close')"
-             :aria-label="$t('panel.close')"><i class="icon-close"></i></label>
+             :aria-label="$t('panel.close')"><i class="icon-x"></i></label>
     </div>
     <div class="main">
       <slot name="main"></slot>

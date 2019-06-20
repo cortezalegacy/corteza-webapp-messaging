@@ -35,7 +35,7 @@
       <i v-if="!isContextMenuOpen && isContextMenuEnabled"
         class="action icon-plus" @click="onContextMenuOpen()"></i>
       <i v-else-if="isContextMenuEnabled"
-        class="action icon-close" @click="isContextMenuOpen=false"></i>
+        class="action icon-x" @click="isContextMenuOpen=false"></i>
     </div>
     <div class="context-menu" v-if="isContextMenuOpen && isContextMenuEnabled">
       <ul class="context-menu-list">
