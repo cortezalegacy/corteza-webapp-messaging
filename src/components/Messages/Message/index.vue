@@ -346,7 +346,7 @@ em{
       .message{
         &:after{
           content:" ";
-          background: linear-gradient(to bottom, rgba(47,188,149,1) 0%, rgba(47,188,148,1) 50%, rgba(255,204,50,1) 50%, rgba(255,204,50,1) 100%);
+          background: linear-gradient(to bottom, rgba(113,148,48,1) 0%, rgba(113,148,48,1) 50%, rgba(245,211,128,1) 50%, rgba(245,211,128,1) 100%);
           display: block;
           height: 100%;
           width: 3px;
