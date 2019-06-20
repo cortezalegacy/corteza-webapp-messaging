@@ -1,7 +1,7 @@
 <template>
   <div class="mobile">
     <div class="logo-container">
-      <img class="logo" src="../assets/images/crust-logo-with-tagline.png" alt="Logo with tagline"/>
+      <img class="logo" src="../assets/images/corteza-logo-with-tagline.png" alt="Logo with tagline"/>
     </div>
     <div class="badges">
       <div>
