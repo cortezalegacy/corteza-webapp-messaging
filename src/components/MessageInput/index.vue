@@ -24,7 +24,8 @@
               :users="userSuggestions"
               :channel="channel"
               :user="$auth.user"
-              class="text-input "
+              class="text-input"
+              ref="text"
               :class="{'no-files': !showFileUpload}" />
 
           <button
@@ -35,18 +36,17 @@
           </button>
 
           <button
+              class="emoji-button input-button"
+              @click="onEmojiPickerClick">
+              <span class="icon-smile"></span>
+          </button>
+
+          <button
               v-if="uiEnableSubmitButton()"
               class="input-button send-button"
               @click="onSubmitBtnClick">
               <span class="icon-hsend"></span>
           </button>
-
-    <!--
-          <i class="emoji-picker-button icon-smile"
-             title="Insert emoji"
-             @click="onEmojiPickerClick"
-          ></i> -->
-
       </div>
       <div class="activity">
         <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
@@ -63,7 +63,6 @@ import { throttle } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
-import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
 
 const kinds = {
@@ -75,7 +74,6 @@ const kinds = {
 export default {
   components: {
     TextInput,
-    EmojiPicker,
     Activity,
     ObserverFooter,
   },
@@ -236,15 +234,15 @@ export default {
       this.clearInputText()
     },
 
-    // onEmojiPickerClick () {
-    //   this.$bus.$emit('ui.openEmojiPicker', {
-    //     callback: ({ colons }) => {
-    //       // Got called back from the emoji picker, now send the reaction to this message...
-    //       // this.$bus.$emit('message.reaction', { message: this.message, reaction: colons })
-    //       console.log('FOO')
-    //     },
-    //   })
-    // },
+    onEmojiPickerClick () {
+      this.$bus.$emit('ui.openEmojiPicker', {
+        callback: ({ colons }) => {
+          const q = this.$refs.text.$refs.quill.quill
+          // insert emoji at cursor position
+          q.insertText(q.getSelection(), colons)
+        },
+      })
+    },
 
     // Update channel activity once in a while while typing
     onChange: throttle(function (value) {
@@ -299,14 +297,15 @@ $mobileInputWidth: 35px;
     .text-input {
       width: calc(100% - #{$inputWidth});
       float:right;
+      padding-right: 48px;
       &:focus-within {
         outline: none;
         border-color: $success;
 
         ~ .upload-button {
-         background-color:rgba($success,0.1);
-         border-color: $success;
-         color: $success;
+          background-color:rgba($success,0.1);
+          border-color: $success;
+          color: $success;
         }
         ~ .send-button{
           span{
@@ -319,11 +318,13 @@ $mobileInputWidth: 35px;
       width: $inputWidth;
       position: absolute;
       height: 100%;
+      text-align: center;
+      vertical-align: middle;
       color: $secondary;
       cursor: pointer;
       font-size:28px;
       span{
-        margin-top: -5px;
+        margin-top: -3px;
         display: block;
       }
       &:focus{
@@ -335,6 +336,17 @@ $mobileInputWidth: 35px;
     {
       border: 1px solid transparent;
       background-color:transparent;
+    }
+    .upload-button {
+      border-right: 1px solid $secondary;
+    }
+    .emoji-button {
+      right: 0;
+      font-size: 20px;
+
+      &:hover span{
+        color: $success;
+      }
     }
   }
 
@@ -359,6 +371,7 @@ $mobileInputWidth: 35px;
 }
 /deep/ .ql-editor {
   max-height: 30vh;
+  padding-right: 0;
 }
 
 @media (max-width: $wideminwidth) {
@@ -373,13 +386,16 @@ $mobileInputWidth: 35px;
         width: calc(100% - #{$mobileInputWidth});
         border: none;
         border-top: 1px solid transparent;
-        padding-right: 25px;
+        padding-right: 60px;
       }
       .input-button {
         width: $mobileInputWidth;
         &.send-button{
           font-size: 20px;
           right: 0;
+        }
+        &.emoji-button {
+          right: 30px;
         }
       }
     }
