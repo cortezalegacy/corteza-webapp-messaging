@@ -24,22 +24,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/_0.declare.scss';
+@import '@/assets/sass/variables.scss';
 .picker {
   transform: translateY(-100%);
   position: absolute;
   width: 100%;
-  background-color: $mainbgcolor;
+  background-color: $light;
   box-shadow: 0 0 3px rgba($black, 0.4);
   overflow-x: scroll;
-  display: flex;
   overflow-y: hidden;
   padding: 5px 0;
+  white-space: nowrap;
 
   .gif {
+    display: inline-block;
     cursor: pointer;
     height: 100px;
-    width: 100%;
     margin-right: 5px;
     &:last-of-type {
       margin-right: 0;
