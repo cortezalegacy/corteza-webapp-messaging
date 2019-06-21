@@ -12,7 +12,7 @@ import './plugins'
 import './main.scss'
 
 if (window.MessagingAPI === undefined) {
-  alert('Unexisting or invalid configuration. Make sure there is a public/config.js configuration file.')
+  alert('Missing or invalid configuration. Make sure there is a public/config.js configuration file.')
 } else {
   window.favicon = new Favico({
     animation: 'none',
@@ -22,7 +22,7 @@ if (window.MessagingAPI === undefined) {
 
   /* eslint-disable no-undef */
   console.log(
-    `%cCrust Messaging, version: ${VERSION}, build time: ${BUILD_TIME}`,
+    `%cMessaging, version: ${VERSION}, build time: ${BUILD_TIME}`,
     'background-color: #1397CB; color: white; padding: 3px 10px; border: 1px solid black; font: Courier',
   )
 
