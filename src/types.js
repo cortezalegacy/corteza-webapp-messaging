@@ -46,7 +46,7 @@ export class Channel {
   }
 
   isDirectMessage () {
-    return this.type === 'group' && this.members.length === 2
+    return this.type === 'group' && this.name === '' && this.members.length === 2
   }
 
   isPinned () {

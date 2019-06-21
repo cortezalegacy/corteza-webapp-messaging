@@ -10,7 +10,7 @@
               <li v-if="query && filtered.length===0" class="no-results">
                 {{ $t('search.noMatchesFound') }}
               </li>
-              <li v-for="i in (query ? filtered : prefered).slice(0, 10)"
+              <li v-for="i in (query ? filtered : preferred).slice(0, 10)"
                   @click="onClose"
                   :key="i.ID">
                 <component :is="i.cmp" :ID="i.ID" ></component>
@@ -65,19 +65,19 @@ export default {
       return this.targetNames(this.channelsAndUsers).filter(c => c.name.toLocaleLowerCase().indexOf(q) > -1)
     },
 
-    // List of prefered channels -- ones we're not members of
-    prefered () {
-      return this.targetNames(this.preferedChannels)
+    // List of preferred channels -- ones we're not members of
+    preferred () {
+      return this.targetNames(this.preferredChannels)
     },
 
-    preferedChannels () {
-      return this.channels.filter(c => c.members.length > 0 && !c.isMember(this.$auth.user.userID)).map(cmp('channel'))
+    preferredChannels () {
+      return this.channels.filter(c => !c.isDirectMessage() && !c.isMember(this.$auth.user.userID)).map(cmp('channel'))
     },
 
     channelsAndUsers () {
       return [
-        ...this.users.filter(i => i.userID !== this.$auth.user.userID).map(cmp('user')),
-        ...this.channels.filter(i => i.members.length >= 2).map(cmp('channel')),
+        ...this.users.filter(u => u.userID !== this.$auth.user.userID).map(cmp('user')),
+        ...this.channels.filter(c => !c.isDirectMessage()).map(cmp('channel')),
       ]
     },
   },
