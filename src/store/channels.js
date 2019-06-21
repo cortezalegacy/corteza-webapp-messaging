@@ -91,6 +91,24 @@ export default function (Messaging) {
         })
       },
 
+      setMembershipFlag ({ commit, getters }, { channelID, flag }) {
+        commit(types.pending)
+        Messaging.channelSetFlag({ channelID, flag }).then((ch) => {
+          commit(types.updateList, new Channel(ch))
+        }).finally(() => {
+          commit(types.completed)
+        })
+      },
+
+      clearMembershipFlag ({ commit, getters }, { channelID }) {
+        commit(types.pending)
+        Messaging.channelRemoveFlag({ channelID }).then((ch) => {
+          commit(types.updateList, new Channel(ch))
+        }).finally(() => {
+          commit(types.completed)
+        })
+      },
+
       incUnreadMessageCount ({ commit, getters }, channelID) {
         const ch = getters.findByID(channelID)
 

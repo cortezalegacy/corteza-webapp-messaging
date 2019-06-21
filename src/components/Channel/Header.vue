@@ -133,7 +133,7 @@
   </header>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ChannelLabel from '@/components/Channel/ChannelLabel'
 
 export default {
@@ -167,6 +167,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setChannelMembershipFlag: 'channels/setMembershipFlag',
+      removeChannelMembershipFlag: 'channels/removeMembershipFlag',
+    }),
+
     onPart () {
       this.$MessagingAPI.channelPart({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
     },
@@ -176,10 +181,12 @@ export default {
     },
 
     onFlag (flag) {
+      const { channelID } = this.channel
+
       if (flag) {
-        this.$MessagingAPI.channelSetFlag({ channelID: this.channel.channelID, flag })
+        this.setChannelMembershipFlag({ channelID, flag })
       } else {
-        this.$MessagingAPI.channelRemoveFlag({ channelID: this.channel.channelID })
+        this.removeChannelMembershipFlag({ channelID })
       }
     },
   },
