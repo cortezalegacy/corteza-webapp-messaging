@@ -38,7 +38,7 @@
   </li>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ChannelLabel from '@/components/Channel/ChannelLabel'
 
 export default {
@@ -93,15 +93,23 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      setChannelMembershipFlag: 'channels/setMembershipFlag',
+      removeChannelMembershipFlag: 'channels/removeMembershipFlag',
+    }),
+
     channelColor (index) {
       const colors = ['blue', 'red', 'green', 'yellow']
       return (colors[index % colors.length])
     },
+
     onFlag (flag) {
+      const { channelID } = this.channel
+
       if (flag) {
-        this.$MessagingAPI.channelSetFlag({ channelID: this.channel.channelID, flag })
+        this.setChannelMembershipFlag({ channelID, flag })
       } else {
-        this.$MessagingAPI.channelRemoveFlag({ channelID: this.channel.channelID })
+        this.removeChannelMembershipFlag({ channelID })
       }
     },
   },

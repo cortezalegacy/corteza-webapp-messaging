@@ -100,7 +100,7 @@ export default function (Messaging) {
         })
       },
 
-      clearMembershipFlag ({ commit, getters }, { channelID }) {
+      removeMembershipFlag ({ commit, getters }, { channelID }) {
         commit(types.pending)
         Messaging.channelRemoveFlag({ channelID }).then((ch) => {
           commit(types.updateList, new Channel(ch))
