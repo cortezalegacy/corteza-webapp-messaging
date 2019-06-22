@@ -17,7 +17,7 @@
           <text-input
               :key="textInputKey"
               @editLastMessage="$emit('editLastMessage', $event)"
-              @cancel="gifPickerVisible=false; $emit('cancel', $event)"
+              @cancel="$emit('cancel', $event)"
               @submit="onSubmit"
               @change="onChange"
               @focus="onFocus"
@@ -64,15 +64,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import { throttle, debounce } from 'lodash'
+import { throttle } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
 import { EmojiPicker } from 'emoji-mart-vue'
 import { enrichMentions } from '@/lib/mentions'
 import GifPicker from './GifPicker'
-
-const gifRegex = /^gif (.+)$/g
 
 const kinds = {
   editing: 'editing',
@@ -109,7 +107,6 @@ export default {
     return {
       gifs: [],
       gifVisible: false,
-      gifCancelReset: true,
       inputBoxValue: '',
       cursorIndex: -1,
       value: '',
@@ -180,22 +177,35 @@ export default {
   },
 
   watch: {
-    value (nval) {
+    value (nval = '') {
+      nval = nval.replace('\n', '')
+
       // No gifs if editing message
-      if (this.message) return
-
-      if (nval.indexOf('gif') === 0) {
-        if (this.gifCancelReset) {
-          this.gifPickerVisible = true
-        }
-        this.gifCancelReset = false
-
-        if (!this.gifVisible) return
-        this.searchGif(nval.trim())
-      } else {
+      if (this.message) {
         this.gifPickerVisible = false
-        this.gifCancelReset = true
+        return
       }
+
+      if (!this.$commands.test(nval)) {
+        this.gifPickerVisible = false
+        return
+      }
+
+      const cmd = this.$commands.getActive(nval)
+      if (!cmd) {
+        this.gifPickerVisible = false
+        return
+      }
+
+      let middleware = () => {
+        this.gifPickerVisible = true
+      }
+
+      const afterware = (gifs) => {
+        this.gifs = gifs
+      }
+
+      cmd.handler({ middleware, afterware, $externalContent: this.$externalContent, msg: nval })
     },
     channel () {
       this.clearInputText()
@@ -219,23 +229,12 @@ export default {
       // @todo unread setChannelUnreadCount: 'unread/setChannel',
     }),
 
-    searchGif: debounce(function (val) {
-      const exec = gifRegex.exec(val)
-      // If not set; undefined will search over trending
-      let query
-      if (exec) {
-        query = exec[1]
-      }
-      this.$externalContent.get({ params: { query } }).then((gifs) => { this.gifs = gifs })
-    }, 1000),
-
     onPick (e) {
       console.debug('gif.onPick', { e })
       // Upload...
       // @todo connect to endpoint
 
       // Reset meta
-      this.gifCancelReset = true
       this.gifPickerVisible = false
     },
 

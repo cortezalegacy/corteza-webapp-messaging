@@ -9,6 +9,10 @@ export default {
         return store.getters['suggestions/getCommand'](command)
       },
 
+      getActive (val) {
+        return store.getters['suggestions/getActiveCommands'].filter(c => c.match(val)).pop()
+      },
+
       exec (vm, str, { channel }) {
         const [name, ...params] = str.trim().substring(1).split(' ')
         const cmd = this.get(name)
