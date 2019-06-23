@@ -19,32 +19,34 @@
       <group v-if="unreadChannels.length > 0"
              v-on="$listeners"
              :list="unreadChannels"
+             :current="channel"
              class="channel-group">{{ $t('panel.unreadMessages') }}</group>
 
       <group v-if="pinnedChannels.length > 0"
-        v-on="$listeners"
-        :list="pinnedChannels"
-        class="channel-group">{{ $t('panel.pinned') }}</group>
+             v-on="$listeners"
+             :list="pinnedChannels"
+             :current="channel"
+             class="channel-group">{{ $t('panel.pinned') }}</group>
 
-      <group
-        v-on="$listeners"
-        :link="{name: 'new-channel', params: { type: 'public' } }"
-        :list="publicChannels"
-        class="channel-group">{{ $t('panel.channel.public') }}</group>
+      <group v-on="$listeners"
+             :link="{name: 'new-channel', params: { type: 'public' } }"
+             :list="publicChannels"
+             :current="channel"
+             class="channel-group">{{ $t('panel.channel.public') }}</group>
 
       <div class="browse">
         <a @click="$emit('openQuickSearch')">+ {{ $t('panel.channel.browse') }}</a>
       </div>
 
-      <group
-        v-on="$listeners"
-        :link="{name: 'new-channel', params: { type: 'private' } }"
-        :list="privateChannels">{{ $t('panel.channel.private') }}</group>
+      <group v-on="$listeners"
+             :link="{name: 'new-channel', params: { type: 'private' } }"
+             :list="privateChannels"
+             :current="channel">{{ $t('panel.channel.private') }}</group>
 
-      <group
-        v-on="$listeners"
-        :link="{name: 'new-channel', params: { type: 'group' } }"
-        :list="groupChannels">{{ $t('panel.channel.group') }}</group>
+      <group v-on="$listeners"
+             :link="{name: 'new-channel', params: { type: 'group' } }"
+             :list="groupChannels"
+             :current="channel">{{ $t('panel.channel.group') }}</group>
 
       <pre
         class="version selectable" v-html="version"></pre>
@@ -69,6 +71,11 @@ export default {
       type: String,
       required: false,
     },
+
+    channel: {
+      type: Object,
+      required: false,
+    }
   },
 
   data () {
@@ -84,7 +91,6 @@ export default {
     ...mapGetters({
       isPresent: 'users/isPresent',
       findUserByID: 'users/findByID',
-      current: 'channels/current',
       channels: 'channels/list',
     }),
 
@@ -92,7 +98,7 @@ export default {
     filteredChannels () {
       return this.channels.filter(c => c && (
         // Always show current channel on the list
-        (this.current && this.current.channelID === c.channelID) ||
+        (this.channel && this.channel.channelID === c.channelID) ||
 
         // Unless hidden, show channels we're members of
         (c.membershipFlag !== 'hidden') ||

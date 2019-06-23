@@ -17,6 +17,7 @@
         v-for="(ch, index) in list"
         :key="ch.channelID"
         :channel="ch"
+        :current="current"
         :index="index"
         v-on="$listeners" />
     </ul>
@@ -35,7 +36,13 @@ export default {
       type: Array,
       required: true,
     },
+
     link: {
+      type: Object,
+      required: false,
+    },
+
+    current: {
       type: Object,
       required: false,
     },

@@ -12,7 +12,6 @@ export default {
     // If document has focus, callback is executed immediately
     // otherwise an event handler is set for focus event on window obj
     resetUnreadOnFocus ({ channelID, messageID } = {}) {
-      console.trace('mixinUnread.resetUnreadOnFocus()', { channelID, messageID }, this.unreadInternal.lastMessageID)
       if (!channelID) {
         return
       }
@@ -25,7 +24,6 @@ export default {
       this.unreadInternal.lastMessageID = messageID
 
       const resetUnread = () => {
-        console.debug('mixinUnread.resetUnreadOnFocus().resetUnread()')
         this.$store.dispatch('channels/markLastReadMessage', { channelID, messageID })
       }
 
@@ -35,17 +33,14 @@ export default {
       }
 
       const resetUnreadAfterTimeout = () => {
-        console.debug('mixinUnread.resetUnreadOnFocus().resetUnreadAfterTimeout()')
         this.unreadInternal.timeoutHandle = window.setTimeout(resetUnread, 2000)
       }
 
       //
       if (document.hasFocus()) {
-        console.debug('mixinUnread.resetUnreadOnFocus(), has focus')
         resetUnread()
       } else {
         const onFocus = () => {
-          console.debug('mixinUnread.resetUnreadOnFocus(), got focus')
           resetUnreadAfterTimeout()
           window.removeEventListener('focus', onFocus)
         }

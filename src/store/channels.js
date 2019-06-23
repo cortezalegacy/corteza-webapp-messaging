@@ -3,7 +3,6 @@ import { Channel } from '@/types'
 const types = {
   pending: 'pending',
   completed: 'completed',
-  setCurrent: 'setCurrent',
   resetList: 'resetList',
   updateList: 'updateList',
   channelJoin: 'channelJoin',
@@ -18,20 +17,12 @@ export default function (Messaging) {
     namespaced: true,
 
     state: {
-      current: null,
       pending: false,
       list: [],
-      // lastMessages: [], // set of channelID-messageId pairs
     },
 
     getters: {
       pending: (state) => state.pending,
-      // Finds last message id for a specific channel
-      // lastMessage: (state) => (channelID) => {
-      //   const ci = state.lastMessages.findIndex(lm => lm.channelID === channelID)
-      //   return ci < 0 ? 0 : state.lastMessages[ci].messageId
-      // },
-      current: (state) => state.current,
 
       // Return all but deleted
       list: (state) => state.list.filter(c => c.canJoin || c.canObserve),
@@ -139,10 +130,6 @@ export default function (Messaging) {
       },
       [types.completed] (state) {
         state.pending = false
-      },
-
-      [types.setCurrent] (state, channel) {
-        state.current = channel
       },
 
       [types.resetList] (state, channels) {

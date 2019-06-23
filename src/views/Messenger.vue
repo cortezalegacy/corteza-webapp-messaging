@@ -2,7 +2,7 @@
   <div>
     <messenger-base
       v-if="$auth.is()"
-      :currentChannel="currentChannel"
+      :channel="channel"
       @openQuickSearch="uiShowQuickSearch=true"
       @searchSubmit="searchQuery=$event">
 
@@ -104,25 +104,32 @@ export default {
   },
 
   computed: {
-    emojiPickerLoader () {
-      // eslint-disable-next-line
-      return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
-    },
-
     ...mapGetters({
-      currentChannel: 'channels/current',
       findChannelByID: 'channels/findByID',
       channels: 'channels/list',
       findUserByID: 'users/findByID',
       users: 'users/list',
       getSettings: 'settings/get',
     }),
+
+    emojiPickerLoader () {
+      // eslint-disable-next-line
+      return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
+    },
+
+    channelID () {
+      return this.$route.params.channelID
+    },
+
+    channel () {
+      return this.findChannelByID(this.channelID)
+    },
   },
 
   watch: {
-    'currentChannel' () {
+    'channelID' () {
       // Channel change means title change
-      titleNtf.setChannelName(this.currentChannel ? this.currentChannel.name : null).update()
+      titleNtf.setChannelName(this.channel ? this.channel.name : null).update()
     },
   },
 
@@ -206,7 +213,7 @@ export default {
         return
       }
 
-      if (this.currentChannel && this.currentChannel.channelID === message.channelID && document.hasFocus()) {
+      if (this.channel && this.channel.channelID === message.channelID && document.hasFocus()) {
         console.debug('Not notifying, in channel, focused')
         // We're already paying attention
         return

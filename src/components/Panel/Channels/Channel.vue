@@ -12,10 +12,8 @@
     </router-link>
     <router-link v-else
                  class="layer-item layer-selectable channel-name"
-                 :class="[channelColor(index),
-        { current: (current||{}).channelID === channel.channelID },
-      ]"
-      :to="{name:'channel', params:{channelID:channel.channelID}}">
+                 :class="[channelColor(index), { current: (current||{}).channelID === channel.channelID }]"
+                 :to="{name:'channel', params:{channelID:channel.channelID}}">
       <channel-label :channel="channel"/>
     </router-link>
     <transition v-if="countUnread"
@@ -51,6 +49,12 @@ export default {
       type: Object,
       required: true,
     },
+
+    current: {
+      type: Object,
+      required: false,
+    },
+
     index: {
       type: Number,
       required: true,
@@ -65,7 +69,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      current: 'channels/current',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
       isPresent: 'users/isPresent',

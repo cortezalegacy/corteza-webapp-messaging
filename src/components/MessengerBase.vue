@@ -12,6 +12,7 @@
 
         <channels-panel
             @close="toggleChannelSidePanel(true)"
+            :channel="channel"
             @openQuickSearch="openQuickSearch"
             @searchSubmit="searchSubmit" />
 
@@ -31,7 +32,7 @@
 
         <members-panel
           v-if="isMembersPanel"
-          :channel="currentChannel"
+          :channel="channel"
           @close="switchRightSidePanel()" />
 
         <thread-panel
@@ -41,7 +42,7 @@
 
         <pinned-messages-panel
           v-if="isPinnedMessagesPanel"
-          :channel="currentChannel"
+          :channel="channel"
           @openThreadPanel="switchRightSidePanel('thread', $event)"
           @close="switchRightSidePanel()" />
 
@@ -74,7 +75,7 @@ export default {
   },
 
   props: {
-    currentChannel: {
+    channel: {
       type: Object,
       default: () => ({}),
     },
@@ -121,7 +122,7 @@ export default {
       return this.uiRightSidePanelContent === 'thread'
     },
     isPinnedMessagesPanel () {
-      return this.currentChannel && this.uiRightSidePanelContent === 'pinnedMessages'
+      return this.channel && this.uiRightSidePanelContent === 'pinnedMessages'
     },
     isBookmarkedMessagesPanel () {
       return this.uiRightSidePanelContent === 'bookmarkedMessages'

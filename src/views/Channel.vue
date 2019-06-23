@@ -38,7 +38,7 @@
         :channel="channel"
         :readonly="!isMember"
         :focus="uiFocusMessageInput()"
-        :show-mark-as-unread-button="!!currentChannel.unread.count"
+        :show-mark-as-unread-button="!!channel.unread.count"
         @markAsRead="onMarkAsRead"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
@@ -85,8 +85,6 @@ export default {
       showUploadArea: false,
       uploadFileTypeSupported: true,
 
-      channel: null,
-
       // Assists with on-scroll loading
       previousFetchFirstMessageID: null,
 
@@ -99,6 +97,7 @@ export default {
   computed: {
     ...mapGetters({
       channelByID: 'channels/findByID',
+      findUserByID: 'users/findByID',
       channelHistory: 'history/getByChannelID',
     }),
 
@@ -106,7 +105,7 @@ export default {
       return this.channelHistory(this.channel.channelID)
     },
 
-    currentChannel () {
+    channel () {
       return this.channelByID(this.channelID)
     },
 
@@ -115,26 +114,21 @@ export default {
     },
 
     lastReadMessageID () {
-      return this.currentChannel.unread.count ? this.currentChannel.unread.lastMessageID : null
+      return this.channel.unread.count ? this.channel.unread.lastMessageID : null
     },
 
     following () {
-      // @todo add check if scrolled to bottom!
       return document.hasFocus()
     },
   },
 
   watch: {
-    channelID () {
-      this.changeChannel(this.currentChannel)
+    channelID: {
+      immediate: true,
+      handler () {
+        this.loadMessages()
+      },
     },
-  },
-
-  created () {
-    let c = this.currentChannel
-    if (!c) return
-
-    this.changeChannel(c)
   },
 
   mounted () {
@@ -153,20 +147,15 @@ export default {
       markLastReadMessage: 'channels/markLastReadMessage',
     }),
 
-    changeChannel (channel) {
-      if (!channel) return
-
+    loadMessages () {
       this.editLastMessage = false
-      this.channel = channel
-
-      this.$store.commit('channels/setCurrent', this.channel)
 
       this.previousFetchFirstMessageID = null
 
       // @todo <fromID> does not work as expected
       // need to rewire message fetching via rest and react
       // after response is actually received
-      messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, fromMessageID: this.messageID }).then((msgs) => {
+      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((msgs) => {
         this.$store.commit('history/updateSet', msgs)
       })
     },
@@ -195,7 +184,7 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channel.channelID, toMessageID: messageID }).then((msgs) => {
+        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, toMessageID: messageID }).then((msgs) => {
           this.$store.commit('history/updateSet', msgs)
         })
       }
@@ -213,14 +202,14 @@ export default {
 
     //
     handleUnread ({ message }) {
-      if (!this.currentChannel) {
+      if (!this.channel) {
         return
       }
 
       // If user does not have any existing unread info (lastMessageID <> null)
       // skip extra checks and mark message as unread
-      console.log(this.currentChannel.unread.lastMessageID)
-      if (this.currentChannel.unread.lastMessageID !== null) {
+      console.log(this.channel.unread.lastMessageID)
+      if (this.channel.unread.lastMessageID !== null) {
         // Is user observing list of messages where this message will land
         if (!this.following) {
           // Not focus, no update
