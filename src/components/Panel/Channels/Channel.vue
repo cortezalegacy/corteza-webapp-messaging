@@ -18,10 +18,10 @@
       :to="{name:'channel', params:{channelID:channel.channelID}}">
       <channel-label :channel="channel"/>
     </router-link>
-    <transition v-if="countUnread(channel) > 0"
+    <transition v-if="countUnread"
                 name="slide-fade">
-        <span class="unread" v-if="countUnread(channel) > maxUnread">{{ maxUnread }}+</span>
-        <span class="unread" v-else-if="countUnread(channel) > 0">{{ countUnread(channel) }}</span>
+        <span class="unread" v-if="countUnread > maxUnread">{{ maxUnread }}+</span>
+        <span class="unread" v-else-if="countUnread">{{ countUnread }}</span>
     </transition>
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
       <font-awesome-icon
@@ -56,6 +56,7 @@ export default {
       required: true,
     },
   },
+
   data () {
     return {
       maxUnread: 99,
@@ -65,11 +66,14 @@ export default {
   computed: {
     ...mapGetters({
       current: 'channels/current',
-      countUnread: 'unread/count',
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
       isPresent: 'users/isPresent',
     }),
+
+    countUnread () {
+      return this.channel.unread.count
+    },
 
     cssClass () {
       let set = [this.channel.type]

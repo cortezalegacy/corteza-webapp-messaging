@@ -86,8 +86,6 @@ export default {
       findUserByID: 'users/findByID',
       current: 'channels/current',
       channels: 'channels/list',
-      countUnread: 'unread/count',
-      lastUnread: 'unread/last',
     }),
 
     // Returns filtered list of channels
@@ -100,7 +98,7 @@ export default {
         (c.membershipFlag !== 'hidden') ||
 
         // Unless ignored, show channels with unread messages we're members of
-        (this.countUnread(c) > 0 && c.membershipFlag !== 'ignored') ||
+        (c.unread.count && c.membershipFlag !== 'ignored') ||
 
         // and ignore the rest...
         false
@@ -108,23 +106,23 @@ export default {
     },
 
     pinnedChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPinned()), this.sortByOnlineStatus)
     },
 
     unreadChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) > 0), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => c.unread.count), this.sortChannelByName)
     },
 
     publicChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPublic() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPublic() && !c.isPinned()), this.sortChannelByName)
     },
 
     privateChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
     },
 
     groupChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.countUnread(c) === 0 && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
     },
 
     version () {

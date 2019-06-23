@@ -26,7 +26,7 @@
         :scrollable="true"
         :hideActionOpenThread="true"
         :editLastMessage="editLastMessage"
-        :lastReadMessageID="lastUnread(message)"
+        :lastReadMessageID="lastReadMessageID"
         @scrollBottom="onScrollBottom"
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
@@ -36,6 +36,7 @@
         <message-input
           @markAsRead="onMarkAsRead"
           :replyTo="message"
+          :show-mark-as-unread-button="false"
           v-if="channel.canSendMessages"
           @promptFilePicker="onOpenFilePicker"
           @editLastMessage="editLastMessage=true" />
@@ -89,7 +90,7 @@ export default {
       getMessageByID: 'history/getByID',
       getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',
-      lastUnread: 'unread/last',
+      // lastUnread: 'unread/last',
     }),
 
     message () {
@@ -106,6 +107,11 @@ export default {
 
     messages () {
       return this.getThread(this.repliesTo)
+    },
+
+    lastReadMessageID () {
+      throw new Error('Not implemented')
+      return undefined
     },
   },
 

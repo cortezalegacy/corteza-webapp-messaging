@@ -84,7 +84,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      lastMessage: 'channels/lastMessage',
       findChannelByID: 'channels/findByID',
     }),
 

@@ -51,14 +51,14 @@
       <div class="activity">
         <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
         <button class="btn float-right"
-                v-show="hasUnreads({ channelID, threadID: replyTo ? replyTo.messageID : '0' })"
-                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }}</button>
+                v-show="showMarkAsUnreadButton"
+                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }} [{{ channel.unread.lastMessageID }} / {{ channel.unread.count }}]</button>
       </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { throttle } from 'lodash'
 import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
@@ -94,6 +94,8 @@ export default {
 
     focus: { type: Boolean, default: true },
     readonly: { type: Boolean, default: false },
+
+    showMarkAsUnreadButton: { type: Boolean, default: false },
   },
 
   data () {
@@ -118,7 +120,6 @@ export default {
       channelActivity: 'users/channelActivity',
       messageActivity: 'users/messageActivity',
       statuses: 'users/statuses',
-      hasUnreads: 'unread/has',
     }),
 
     channelID () {
@@ -177,10 +178,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      // @todo unread setChannelUnreadCount: 'unread/setChannel',
-    }),
-
     clearInputText () {
       this.value = ''
       this.textInputKey++
@@ -227,7 +224,6 @@ export default {
         }
 
         this.$MessagingAPI.messageCreate({ channelID: this.channel.channelID, message: value }).then(stdResponse)
-        this.$store.commit('unread/unset', this.channel)
       }
     },
 

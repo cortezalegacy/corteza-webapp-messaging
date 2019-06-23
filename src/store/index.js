@@ -5,7 +5,7 @@ import MessagingAPI from 'corteza-webapp-common/src/lib/corteza-server/messaging
 import channels from './channels'
 import users from './users'
 import history from './history'
-import unread from './unread'
+// import unread from './unread'
 import settings from './settings'
 import suggestions from './suggestions'
 
@@ -19,7 +19,7 @@ const store = new Vuex.Store({
     users: users(MessagingAPI, SystemAPI),
     settings: settings(MessagingAPI),
     suggestions: suggestions(MessagingAPI),
-    unread: unread(MessagingAPI),
+    // unread: unread(MessagingAPI),
   },
 })
 

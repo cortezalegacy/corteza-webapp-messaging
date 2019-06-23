@@ -6,7 +6,6 @@
     <message
       v-for="(msg, index) in messages"
       ref="message"
-      @markAsUnread="markAsUnread(index)"
       @cancelEditing="$emit('cancelEditing')"
       :readOnly="readOnly"
       :message="msg"
@@ -171,31 +170,31 @@ export default {
       }
     },
 
-    // When we receive a request to mark message as unread
-    // we want to find a previous message and mark that one as last read
-    markAsUnread (index) {
-      if (index === 0 || typeof this.origin !== 'object') {
-        return
-      }
-
-      const { messageID, channelID, replyTo } = this.messages[index - 1]
-      let payload = {
-        channelID,
-        messageID,
-      }
-
-      switch (this.origin.constructor.name) {
-        case 'Message':
-          payload.threadID = replyTo || messageID
-          break
-        case 'Channel':
-          break
-        default:
-          return
-      }
-
-      this.$bus.$emit('message.markAsLastRead', payload)
-    },
+    // // When we receive a (manual, explicit) request to mark message as unread
+    // // we want to find a previous message and mark that one as last read
+    // markAsUnread (index) {
+    //   if (index === 0 || typeof this.origin !== 'object') {
+    //     return
+    //   }
+    //
+    //   const { messageID, channelID, replyTo } = this.messages[index - 1]
+    //   let payload = {
+    //     channelID,
+    //     messageID,
+    //   }
+    //
+    //   switch (this.origin.constructor.name) {
+    //     case 'Message':
+    //       payload.threadID = replyTo || messageID
+    //       break
+    //     case 'Channel':
+    //       break
+    //     default:
+    //       return
+    //   }
+    //
+    //   this.$bus.$emit('message.markAsLastRead', payload)
+    // },
 
     getLastMessageByUserID: (set, userID) => {
       return [...set].reverse().find(m => m.userID === userID)

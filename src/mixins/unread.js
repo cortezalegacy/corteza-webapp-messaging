@@ -1,69 +1,82 @@
 export default {
   mounted () {
-    this.$unread = {
+    this.unreadInternal = {
       timeoutHandle: null,
       lastMessageID: null,
     }
   },
 
-  data () {
-    return {
-      resetUnreadTimeout: null,
-    }
-  },
-
   methods: {
-    resetUnreadAfterTimeout (messageID) {
-      this.clearUnreadTimeout()
+    // Resets unread when document/window has focus
+    //
+    // If document has focus, callback is executed immediately
+    // otherwise an event handler is set for focus event on window obj
+    resetUnreadOnFocus ({ channelID, messageID } = {}) {
+      console.trace('mixinUnread.resetUnreadOnFocus()', { channelID, messageID }, this.unreadInternal.lastMessageID)
+      if (!channelID) {
+        return
+      }
 
-      if (this.$unread.lastMessageID === messageID) {
+      if (this.unreadInternal.lastMessageID === messageID && messageID !== undefined) {
         // already recorded, nothing to do.
         return
       }
 
-      this.$unread.timeoutHandle = window.setTimeout(() => {
-        this.recordUnreadReset({ messageID })
-      }, 2000)
-    },
+      this.unreadInternal.lastMessageID = messageID
 
-    clearUnreadTimeout () {
-      if (this.$unread.timeoutHandle !== null) {
-        window.clearTimeout(this.$unread.timeoutHandle)
+      const resetUnread = () => {
+        console.debug('mixinUnread.resetUnreadOnFocus().resetUnread()')
+        this.$store.dispatch('channels/markLastReadMessage', { channelID, messageID })
       }
-    },
 
-    onScrollBottom ({ messageID }) {
+      // Clear existing timeout
+      if (this.unreadInternal.timeoutHandle !== null) {
+        window.clearTimeout(this.unreadInternal.timeoutHandle)
+      }
+
+      const resetUnreadAfterTimeout = () => {
+        console.debug('mixinUnread.resetUnreadOnFocus().resetUnreadAfterTimeout()')
+        this.unreadInternal.timeoutHandle = window.setTimeout(resetUnread, 2000)
+      }
+
+      //
       if (document.hasFocus()) {
-        this.resetUnreadAfterTimeout(messageID)
+        console.debug('mixinUnread.resetUnreadOnFocus(), has focus')
+        resetUnread()
       } else {
-        const resetUnreadAfterTimeoutOnFocus = () => {
-          this.resetUnreadAfterTimeout(messageID)
-          window.removeEventListener('focus', resetUnreadAfterTimeoutOnFocus)
+        const onFocus = () => {
+          console.debug('mixinUnread.resetUnreadOnFocus(), got focus')
+          resetUnreadAfterTimeout()
+          window.removeEventListener('focus', onFocus)
         }
 
-        window.addEventListener('focus', resetUnreadAfterTimeoutOnFocus)
+        window.addEventListener('focus', onFocus)
       }
     },
 
-    onMarkAsRead (o) {
-      this.recordUnreadReset(o)
-    },
+    // Will reset channel (or thread) as read
+    // onMarkAsRead (o) {
+    //   this.recordUnreadReset(o)
+    // },
 
-    recordUnreadReset ({ lastReadMessageID = '0' } = {}) {
-      const payload = { lastReadMessageID, ...this.unreadResetPayload() }
+    // recordUnreadReset ({ lastReadMessageID = '0' } = {}) {
+    //   const payload = { lastReadMessageID, ...this.unreadResetPayload() }
+    //
+    //   if (!payload.threadID) delete payload.threadID
+    //
+    //   // Remember lastMessageID so that we do not
+    //   // bother the API if nothing changed
+    //   this.unreadInternal.lastMessageID = lastReadMessageID
+    //
+    //   // Tell the backend we've read it all..
+    //   console.log('mixinUnread.recordUnreadReset()', payload)
+    //   this.$bus.$emit('message.markAsLastRead', payload)
+    // },
 
-      if (!payload.threadID) delete payload.threadID
-
-      this.$unread.lastMessageID = lastReadMessageID
-
-      // Tell the backend we've read it all..
-      this.$bus.$emit('message.markAsLastRead', payload)
-    },
-
-    unreadResetPayload () {
-      // This method should be overriden in component that includes the mixin.
-      console.warn('No unread reset recording (recordUnreadReset()) method found on component')
-      return undefined
-    },
+    // unreadResetPayload () {
+    //   // This method should be overridden in component that includes the mixin.
+    //   console.warn('No unread reset recording (recordUnreadReset()) method found on component')
+    //   return undefined
+    // },
   },
 }

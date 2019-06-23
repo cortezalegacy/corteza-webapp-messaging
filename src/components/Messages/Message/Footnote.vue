@@ -1,14 +1,14 @@
 <template>
   <div class="message-infos">
     <a class="info"
-       :class="{unread: countUnread(message)}"
+       :class="{unread: countUnread}"
        v-if="message.replies"
        @click="$emit('openThreadPanel', { message })">{{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}</a>
     <span class="info" v-if="message.updatedAt">{{ $t('message.edited') }}</span>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -19,9 +19,14 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      countUnread: 'unread/count',
-    }),
+    // ...mapGetters({
+    //   countUnread: 'unread/count',
+    // }),
+
+    countUnread () {
+      // @todo return unreads in a thread
+      return 0
+    },
   },
 }
 </script>

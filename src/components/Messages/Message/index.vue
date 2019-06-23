@@ -1,7 +1,7 @@
 <template>
     <li
       :id="message.messageID"
-      @click.alt.exact.prevent="$emit('markAsUnread')"
+      @click.alt.exact.prevent="$emit('markAsUnread', { message })"
       @click.meta.exact.prevent="onOpenThread"
       class="message-n-meta"
       :class="{
@@ -22,7 +22,6 @@
       :key="message.messageID">
 
       <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
-
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
             <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
@@ -166,7 +165,6 @@ export default {
       previousMessageCount: -1,
       allowAutoScroll: true,
       scrollToRef: false,
-      resetUnreadTimeout: null,
       showEditorInternal: false,
     }
   },
