@@ -41,6 +41,7 @@
         :src="uiShowPreview.pdf || uiShowPreview.src"
         :name="uiShowPreview.name"
         :alt="uiShowPreview.name"
+        :labels="previewLabels"
         @close="uiShowPreview=null">
 
         <p slot="header.left">
@@ -104,6 +105,15 @@ export default {
   },
 
   computed: {
+    previewLabels () {
+      return {
+        loading: this.$t('preview.pdf.loading'),
+        downloadForAll: this.$t('preview.pdf.downloadForAll'),
+        pageLoadFailed: this.$t('preview.pdf.pageLoadFailed'),
+        pageLoading: this.$t('preview.pdf.pageLoading'),
+      }
+    },
+
     ...mapGetters({
       findChannelByID: 'channels/findByID',
       channels: 'channels/list',
