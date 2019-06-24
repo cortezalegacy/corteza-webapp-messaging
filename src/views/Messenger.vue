@@ -41,6 +41,7 @@
         :src="uiShowPreview.pdf || uiShowPreview.src"
         :name="uiShowPreview.name"
         :alt="uiShowPreview.name"
+        :labels="previewLabels"
         @close="uiShowPreview=null">
 
         <p slot="header.left">
@@ -107,6 +108,15 @@ export default {
     emojiPickerLoader () {
       // eslint-disable-next-line
       return () => import('emoji-mart-vue').then(({ Picker }) => Picker)
+    },
+
+    previewLabels () {
+      return {
+        loading: this.$t('preview.pdf.loading'),
+        downloadForAll: this.$t('preview.pdf.downloadForAll'),
+        pageLoadFailed: this.$t('preview.pdf.pageLoadFailed'),
+        pageLoading: this.$t('preview.pdf.pageLoading'),
+      }
     },
 
     ...mapGetters({

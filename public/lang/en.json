@@ -169,6 +169,16 @@
     }
   },
 
+  "preview": {
+    "pdf": {
+      "loading": "Loading",
+      "downloadForAll": "Download to see all pages",
+      "firstPagePreview": "First page preview",
+      "pageLoadFailed": "Page failed to load",
+      "pageLoading": "$t(preview.pdf.loading)"
+    }
+  },
+
   "general": {
     "label": {
       "ok": "Ok",

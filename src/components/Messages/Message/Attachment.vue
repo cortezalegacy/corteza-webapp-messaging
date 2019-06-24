@@ -16,7 +16,8 @@
         :src="inlineUrl"
         :meta="inlineMeta"
         :name="attachment.name"
-        :alt="attachment.name" />
+        :alt="attachment.name"
+        :labels="previewLabels" />
 
     </template>
     <template v-else-if="attachment.meta.original">
@@ -95,6 +96,15 @@ export default {
         case 'mp4':
           return 'video'
         default: return 'alt'
+      }
+    },
+
+    previewLabels () {
+      return {
+        loading: this.$t('preview.pdf.loading'),
+        firstPagePreview: this.$t('preview.pdf.firstPagePreview'),
+        pageLoadFailed: this.$t('preview.pdf.pageLoadFailed'),
+        pageLoading: this.$t('preview.pdf.pageLoading'),
       }
     },
   },
