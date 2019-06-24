@@ -59,7 +59,6 @@ export default {
 
   mounted () {
     this.loadUnreadMessages()
-    this.$store.commit('channels/setCurrent', null)
   },
 
   methods: {

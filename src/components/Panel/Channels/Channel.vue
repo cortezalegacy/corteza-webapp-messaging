@@ -16,10 +16,11 @@
                  :to="{name:'channel', params:{channelID:channel.channelID}}">
       <channel-label :channel="channel"/>
     </router-link>
-    <transition v-if="countUnread"
+    <transition v-if="unread.count || unread.tcount"
                 name="slide-fade">
-        <span class="unread" v-if="countUnread > maxUnread">{{ maxUnread }}+</span>
-        <span class="unread" v-else-if="countUnread">{{ countUnread }}</span>
+        <span class="unread" v-if="unread.count > maxUnread">{{ maxUnread }}+</span>
+        <span class="unread" v-else-if="unread.count">{{ unread.count }}</span>
+        <span class="unread" v-else-if="unread.tcount"><i class="icon-message-circle-left-speak" /></span>
     </transition>
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
       <font-awesome-icon
@@ -72,10 +73,11 @@ export default {
       otherMembersOf: 'channels/otherMembersOf',
       findUserByID: 'users/findByID',
       isPresent: 'users/isPresent',
+      unreadFinder: 'unread/find',
     }),
 
-    countUnread () {
-      return this.channel.unread.count
+    unread () {
+      return this.unreadFinder(this.channel)
     },
 
     cssClass () {
@@ -137,6 +139,10 @@ export default {
   color: white;
   display:inline-block;
   pointer-events: none; // make this click through.
+
+  i {
+    color: white;
+  }
 }
 
 .unread,

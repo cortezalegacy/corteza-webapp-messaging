@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import QuickSearch from '@/components/Lightboxed/QuickSearch'
 import SearchResults from '@/components/Lightboxed/SearchResults'
 import { cleanMentions } from '@/lib/mentions'
@@ -152,11 +152,22 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      loadChannels: 'channels/load',
+      loadUsers: 'users/load',
+      loadUserStatuses: 'users/loadStatuses',
+      loadCommands: 'suggestions/loadCommands',
+      updateUnreads: 'unread/update',
+    }),
+
     init () {
-      this.$store.dispatch('channels/load')
-      this.$store.dispatch('users/load')
-      this.$store.dispatch('users/loadStatuses')
-      this.$store.dispatch('suggestions/loadCommands')
+      this.loadChannels().then(cc => {
+        this.updateUnreads(cc)
+      })
+
+      this.loadUsers()
+      this.loadUserStatuses()
+      this.loadCommands()
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
@@ -207,14 +218,17 @@ export default {
     },
 
     handleNotifications ({ message }) {
+      if (message.updatedAt == null && message.deletedAt == null) {
+        // Ignoring deletes & removals
+        return
+      }
+
       if (!this.$auth.user || this.$auth.user.userID === message.userID) {
-        console.debug('Not notifying, same user')
         // Ignore messages we've authored
         return
       }
 
       if (this.channel && this.channel.channelID === message.channelID && document.hasFocus()) {
-        console.debug('Not notifying, in channel, focused')
         // We're already paying attention
         return
       }
@@ -232,24 +246,20 @@ export default {
         return
       }
 
-      if (ch.isGroup() && ch.isMember(this.$auth.user.userID)) {
-        console.debug('Notifying, message sent to our group', { message })
-      } else if (!message.isMentioned(this.$auth.user.userID)) {
-        console.debug('Not notifying, not mentioned')
-        // User is not mentioned.
-        // @todo this needs to be a bit more intelligent, take user's settings into account etc...
-        return
+      if (!(ch.isGroup() && ch.isMember(this.$auth.user.userID))) {
+        if (!message.isMentioned(this.$auth.user.userID)) {
+          // User is not mentioned.
+          // @todo this needs to be a bit more intelligent, take user's settings into account etc...
+          return
+        }
       }
 
       if (this.getSettings('mute.all')) {
-        console.debug('Suppressing notification due to user settings', { message })
         return
       }
 
       const body = cleanMentions(message.message, this.users, this.channels)
       const msgChannel = this.findChannelByID(message.channelID)
-
-      console.debug('Sending notification about new message', { message })
 
       // Please note that this will not work on non secure domains. "http://localhost" is an exception.
       this.$notification.show(`${this.label(this.findUserByID(message.userID))} in ${msgChannel.name} | Crust`, {

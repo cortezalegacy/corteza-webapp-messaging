@@ -7,7 +7,7 @@
       :class="{
         'consecutive': consecutive,
         'first': !consecutive,
-        'attachement' : message.attachment,
+        'attachment' : message.attachment,
         'valid' : message.attachment && message.attachment.size > 0,
         'with-replies' : message.replies,
         'edited' : message.updatedAt,
@@ -20,7 +20,6 @@
       }"
       ref="message"
       :key="message.messageID">
-
       <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
@@ -96,6 +95,7 @@
 
       <footnote
         :message="message"
+        :hide-replies="hideReplies"
         v-on="$listeners" />
     </li>
 </template>
@@ -140,12 +140,14 @@ export default {
     readOnly: Boolean,
 
     hideActions: Boolean,
+    hideMarkAsUnread: Boolean,
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
     hidePinning: Boolean,
     hideBookmarking: Boolean,
     hideActionGoToMessage: { type: Boolean, default: false },
     hideReactions: Boolean,
+    hideReplies: Boolean,
 
     isUnread: Boolean,
     isLastRead: Boolean,
@@ -180,6 +182,7 @@ export default {
         return false
       }
     },
+
     inEditing: {
       get () {
         return this.showEditor || this.showEditorInternal
@@ -380,9 +383,9 @@ em{
       margin-top: 0;
     }
 
-    &.attachement {
+    &.attachment {
       margin-bottom: 10px;
-      // because attachements are bigger than 65px;
+      // because attachments are bigger than 65px;
     }
     .time {
       left: 22px;

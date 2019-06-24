@@ -52,7 +52,7 @@
         <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
         <button class="btn float-right"
                 v-show="showMarkAsUnreadButton"
-                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }} [{{ channel.unread.lastMessageID }} / {{ channel.unread.count }}]</button>
+                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }}</button>
       </div>
   </div>
 </template>
@@ -194,7 +194,7 @@ export default {
       const value = $event.value.trim()
       this.value = ''
 
-      const stdResponse = () => {
+      const stdResponse = (m) => {
         // Trigger remounting
         this.clearInputText()
 

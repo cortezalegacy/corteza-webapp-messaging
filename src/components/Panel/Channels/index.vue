@@ -75,7 +75,7 @@ export default {
     channel: {
       type: Object,
       required: false,
-    }
+    },
   },
 
   data () {
@@ -92,6 +92,7 @@ export default {
       isPresent: 'users/isPresent',
       findUserByID: 'users/findByID',
       channels: 'channels/list',
+      unreadFinder: 'unread/find',
     }),
 
     // Returns filtered list of channels
@@ -112,23 +113,23 @@ export default {
     },
 
     pinnedChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPinned()), this.sortByOnlineStatus)
     },
 
     unreadChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => c.unread.count), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => this.unread(c).count), this.sortChannelByName)
     },
 
     publicChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPublic() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPublic() && !c.isPinned()), this.sortChannelByName)
     },
 
     privateChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
     },
 
     groupChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !c.unread.count && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
+      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
     },
 
     version () {
@@ -144,6 +145,10 @@ export default {
       if (params) {
         this.$router.push(params)
       }
+    },
+
+    unread (ch) {
+      return this.unreadFinder(ch)
     },
 
     channelSlicer (cc, sortFn) {

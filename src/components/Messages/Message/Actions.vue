@@ -16,6 +16,11 @@
          v-if="!hideActionGoToMessage"
          @click="$emit('goToMessage', { message })"
       ></i>
+      <i class="action icon-checkmark"
+         :title="$t('message.markAsUnread')"
+         v-if="!hideMarkAsUnread"
+         @click="$emit('markAsUnread', { message })"
+      ></i>
       <font-awesome-icon
         class="action"
         icon="thumbtack"
@@ -66,6 +71,7 @@ export default {
     readOnly: Boolean,
 
     hideActions: Boolean,
+    hideMarkAsUnread: Boolean,
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
     hidePinning: Boolean,

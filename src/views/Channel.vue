@@ -23,7 +23,7 @@
         :origin="channel"
         :scrollable="true"
         :consecutive="true"
-        :lastReadMessageID="lastReadMessageID"
+        :lastReadMessageID="unread.lastMessageID"
         :editLastMessage="editLastMessage"
         :readOnly="!channel.canSendMessages"
         @markAsUnread="onMarkAsUnread"
@@ -32,13 +32,12 @@
         @scrollBottom="onScrollBottom"
         v-on="$listeners" />
     </div>
-
     <div class="footer">
       <message-input
         :channel="channel"
         :readonly="!isMember"
         :focus="uiFocusMessageInput()"
-        :show-mark-as-unread-button="!!channel.unread.count"
+        :show-mark-as-unread-button="unread.count > 0"
         @markAsRead="onMarkAsRead"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
@@ -99,6 +98,7 @@ export default {
       channelByID: 'channels/findByID',
       findUserByID: 'users/findByID',
       channelHistory: 'history/getByChannelID',
+      unreadFinder: 'unread/find',
     }),
 
     messages () {
@@ -113,12 +113,8 @@ export default {
       return this.channel.isMember(this.$auth.user.userID)
     },
 
-    lastReadMessageID () {
-      return this.channel.unread.count ? this.channel.unread.lastMessageID : null
-    },
-
-    following () {
-      return document.hasFocus()
+    unread () {
+      return this.unreadFinder(this.channel)
     },
   },
 
@@ -131,47 +127,37 @@ export default {
     },
   },
 
-  mounted () {
-    this.$bus.$on('$core.newMessage', this.handleUnread)
-  },
-
-  destroyed () {
-    this.$bus.$off('$core.newMessage', this.handleUnread)
-  },
-
   methods: {
-    ...mapMutations({ // @todo remove direct access to mutations!
-      clearHistory: 'history/clearSet',
+    ...mapMutations({
+      // @todo remove direct access to mutations!
+      updateHistorySet: 'history/updateSet',
     }),
+
     ...mapActions({
-      markLastReadMessage: 'channels/markLastReadMessage',
+      clearUnreadMessages: 'unread/clear',
+      setLastReadMessageID: 'unread/setLastMessageID',
+      updateUnreads: 'unread/update',
     }),
+
+    isFollowing ({ channelID, replyTo }) {
+      return document.hasFocus() && this.channel.channelID === channelID && !replyTo
+    },
 
     loadMessages () {
       this.editLastMessage = false
 
       this.previousFetchFirstMessageID = null
 
-      // @todo <fromID> does not work as expected
-      // need to rewire message fetching via rest and react
-      // after response is actually received
-      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((msgs) => {
-        this.$store.commit('history/updateSet', msgs)
+      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((mm) => {
+        this.updateHistorySet(mm)
+        this.updateUnreads(mm)
+        this.setLastReadMessageID(mm.length ? mm[mm.length - 1] : {})
       })
     },
 
     // Mark entire channel as read
     onMarkAsRead () {
-      this.markLastReadMessage({ channelID: this.channelID })
-    },
-
-    // Mark specific message in the channel as unread
-    onMarkAsUnread ({ message }) {
-      if (this.lastReadMessageID === message.messageID) {
-        this.markLastReadMessage({ channelID: this.channelID })
-      } else {
-        this.markLastReadMessage(message)
-      }
+      this.clearUnreadMessages(this.channel)
     },
 
     onOpenFilePicker () {
@@ -184,45 +170,14 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, toMessageID: messageID }).then((msgs) => {
-          this.$store.commit('history/updateSet', msgs)
+        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, toMessageID: messageID }).then((mm) => {
+          this.updateHistorySet(mm)
         })
       }
     },
 
     onScrollBottom () {
-      this.resetUnreadOnFocus({ channelID: this.channel.channelID })
-    },
-
-    // // Prepares payload for unread resetting
-    // unreadResetPayload () {
-    //   const { channelID } = this.channel
-    //   return { channelID }
-    // },
-
-    //
-    handleUnread ({ message }) {
-      if (!this.channel) {
-        return
-      }
-
-      // If user does not have any existing unread info (lastMessageID <> null)
-      // skip extra checks and mark message as unread
-      console.log(this.channel.unread.lastMessageID)
-      if (this.channel.unread.lastMessageID !== null) {
-        // Is user observing list of messages where this message will land
-        if (!this.following) {
-          // Not focus, no update
-          return
-        }
-
-        if (!this.channel.channelID === message.channelID) {
-          // Not in the current channel, no update
-          return
-        }
-      }
-
-      this.markLastReadMessage(message)
+      // @todo bottom loading
     },
   },
 }

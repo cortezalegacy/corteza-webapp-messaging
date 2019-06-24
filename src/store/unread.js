@@ -1,166 +1,209 @@
-// import { Channel, Message } from '../types'
-// import i18next from 'i18next'
+// A separate store to handle unread info for channels and threads
 //
-// const types = {
-//   pending: 'pending',
-//   completed: 'completed',
-//   set: 'set',
-//   unset: 'unset',
-//   inc: 'inc',
-//   dec: 'dec',
-//   delta: 'delta',
-// }
-//
-// class Unread {
-//   constructor (channelID, threadID, count, lastMessageID) {
-//     if (channelID === undefined || typeof channelID !== 'string') {
-//       throw new Error(i18next.t('notification.message.channelIDNotString'))
-//     }
-//     if (threadID !== undefined && typeof threadID !== 'string') {
-//       throw new Error(i18next.t('notification.message.threadIDNotString'))
-//     }
-//
-//     this.channelID = channelID
-//     this.count = count || 0
-//     this.threadID = threadID || '0'
-//     this.lastMessageID = lastMessageID || '0'
-//   }
-// }
-//
-// function filter ({ channelID, threadID = '' }) {
-//   return (u) => u.channelID === channelID && u.threadID === threadID
-// }
-//
-// function transform (o) {
-//   if (o instanceof Channel) {
-//     // Channel always tranforms to channel
-//     return { channelID: o.channelID, threadID: '0' }
-//   } else if (o instanceof Message) {
-//     if (o.replies > 0 || o.replyTo) {
-//       // Reply or the original (first) thread message transform to thread
-//       return { channelID: o.channelID, threadID: o.replyTo || o.messageID }
-//     } else {
-//       // Other messages always transform to channel
-//       return { channelID: o.channelID, threadID: '0' }
-//     }
-//   }
-//
-//   if (typeof o === 'object') {
-//     if (typeof o.channelID !== 'string') {
-//       throw new Error(i18next.t('notification.message.channelIDPropNotString'))
-//     }
-//
-//     if (o.threadID !== undefined && typeof o.threadID !== 'string') {
-//       throw new Error(i18next.t('notification.message.threadIDPropNotString'))
-//     }
-//
-//     return { channelID: o.channelID, threadID: o.threadID || '0' }
-//   }
-//
-//   if (typeof o === 'string') {
-//     return { channelID: o, threadID: '0' }
-//   }
-//
-//   throw new Error(i18next.t('notification.message.invalidUnreadParam'))
-// }
-//
-// function delta (state, { channelID, threadID = '' }, delta = 0) {
-//   const i = state.set.findIndex(filter({ channelID, threadID }))
-//   if (i > -1) {
-//     const u = state.set[i]
-//     u.count += delta
-//
-//     if (u.count >= 0) {
-//       state.set.splice(i, 1, u)
-//     }
-//   } else if (delta > 0) {
-//     state.set.push(new Unread(channelID, threadID, delta))
-//   }
-// }
-//
-// export default function (Messaging) {
-//   return {
-//     namespaced: true,
-//
-//     state: {
-//       pending: false,
-//       set: [],
-//     },
-//
-//     getters: {
-//       // Return number of unread messages in channel/thread. Default to 0
-//       count: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { count: 0 }).count,
-//       last: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID,
-//       has: (state) => (cnd) => (state.set.find(filter(transform(cnd))) || { lastMessageID: '0' }).lastMessageID !== '0',
-//
-//       // All unread channels
-//       // eslint-disable-next-line eqeqeq
-//       channels: (state) => state.set.filter(u => (!u.threadID || u.threadID == 0) && u.count > 0),
-//
-//       // Total unread count
-//       total: (state) => state.set.map(u => u.count).reduce((c, i) => i + c, 0),
-//       pending: (state) => state.pending,
-//     },
-//
-//     actions: {
-//       markAsRead ({ commit }, { channelID, lastReadMessageID, threadID }) {
-//         commit(types.pending)
-//         Messaging.messageMarkAsRead({ channelID, threadID, lastReadMessageID }).then(count => {
-//           commit(types.set, [{ channelID, threadID, count, lastMessageID: lastReadMessageID }])
-//           commit(types.completed)
-//         })
-//       },
-//     },
-//
-//     mutations: {
-//       [types.pending] (state) {
-//         state.pending = true
-//       },
-//
-//       [types.completed] (state) {
-//         state.pending = false
-//       },
-//
-//       [types.set] (state, unreads = []) {
-//         for (const { channelID, threadID = '', count = 0, lastMessageID = '' } of unreads) {
-//           const u = new Unread(channelID, threadID, count, lastMessageID)
-//           const i = state.set.findIndex(filter(u))
-//
-//           if (i > -1) {
-//             state.set.splice(i, 1, u)
-//           } else {
-//             state.set.push(u)
-//           }
-//         }
-//       },
-//
-//       [types.unset] (state, input) {
-//         const i = state.set.findIndex(filter(transform(input)))
-//         if (i > -1) {
-//           state.set.splice(i, 1)
-//         }
-//       },
-//
-//       [types.inc] (state, input) {
-//         delta(state, transform(input), 1)
-//       },
-//
-//       [types.dec] (state, input) {
-//         delta(state, transform(input), -1)
-//       },
-//
-//       [types.delta] (state, { channelID, threadID = '', delta = 0 }) {
-//         const i = state.set.findIndex(filter({ channelID, threadID }))
-//         if (i > -1) {
-//           const u = state.set[i]
-//           u.count += delta
-//           state.set.splice(i, 1, u)
-//         }
-//       },
-//       //
-//       // setIgnoreChannel (state, ID) {
-//       //   state.ignoreChannel = ID
-//       // },
-//     },
-//   }
-// }
+
+const types = {
+  pending: 'pending',
+  completed: 'completed',
+  update: 'update',
+}
+
+// Maps Message or Channel object to internal struct
+// @param {Message|Channel}
+function toInternal ({ channelID, messageID, unread } = {}) {
+  if (!unread) {
+    // Nothing to do, do not have unread info
+    return
+  }
+
+  const { count = 0, tcount = 0, lastMessageID = null } = unread || {}
+
+  return {
+    channelID,
+    messageID,
+
+    // number of unread messages in a channel or a single thread
+    count,
+
+    // number of unread messages in threads
+    tcount,
+
+    // ID of the last read message in the thread or channel
+    lastMessageID,
+  }
+}
+
+function update (clean, set, { channelID, messageID = '', count, tcount, delta, lastMessageID = null }) {
+  if (!channelID) {
+    throw new Error('expecting channelID value')
+  }
+
+  let index = -1
+
+  if (!clean) {
+    index = set.findIndex(i => (i.channelID === channelID) && (i.messageID === (messageID || '')))
+  }
+
+  if (index > -1 && !lastMessageID) {
+    lastMessageID = set[index].lastMessageID
+  }
+
+  let item = {
+    channelID,
+    messageID,
+    lastMessageID,
+    count,
+    tcount,
+  }
+
+  if (delta) {
+    // Increment count of an existing value
+    item.count = index < 0 ? delta : (set[index].count + delta)
+  }
+
+  if (index < 0) {
+    set.push(item)
+  } else {
+    set.splice(index, 1, item)
+  }
+
+  if (messageID && delta) {
+    // this is thread message,
+    // update tcount on the channel when delta is positive
+    index = set.findIndex(i => (i.channelID === channelID) && !i.messageID)
+
+    if (index < 0) {
+      // new entry
+      set.push({
+        channelID,
+        count: 0,
+        tcount: delta,
+      })
+    } else {
+      // existing entry, modify tcount with delta
+      let item = { ...set[index] }
+      item.tcount = item.tcount ? item.tcount + delta : delta
+      set.splice(index, 1, item)
+    }
+  }
+}
+
+export default (MessagingAPI) => {
+  return {
+    namespaced: true,
+
+    state: {
+      pending: false,
+      set: [],
+    },
+
+    getters: {
+      find: (state) => ({ channelID, messageID = '' }) => {
+        return state.set.find((i) => {
+          return (i.channelID === channelID) && ((i.messageID || '') === (messageID || ''))
+        }) || {}
+      },
+    },
+
+    actions: {
+      clear ({ commit, getters }, { channelID, messageID }) {
+        commit(types.pending)
+        MessagingAPI.messageMarkAsRead({ channelID, threadID: messageID }).then((unread) => {
+          commit(types.update, [toInternal({
+            channelID,
+            messageID,
+            unread,
+          })])
+        }).finally(() => {
+          commit(types.completed)
+        })
+      },
+
+      mark ({ commit, getters }, { channelID, replyTo, messageID }) {
+        commit(types.pending)
+        MessagingAPI.messageMarkAsRead({ channelID, threadID: replyTo, lastReadMessageID: messageID }).then((unread) => {
+          commit(types.update, [toInternal({
+            channelID,
+            messageID: replyTo,
+            unread,
+          })])
+        }).finally(() => {
+          commit(types.completed)
+        })
+      },
+
+      // Sets last message ID if missing (or forced)
+      setLastMessageID ({ commit, getters }, { channelID, replyTo, messageID, force = false }) {
+        if (!messageID) {
+          return
+        }
+
+        const u = {
+          // Set defaults
+          count: 0,
+          tcount: 0,
+
+          // Get what we know (interested mainly in lastMessageID)
+          ...getters.find({ channelID, messageID: replyTo }),
+
+          // And make sure keys are properly set
+          channelID,
+          messageID: replyTo,
+        }
+
+        if (force || !u.lastMessageID) {
+          u.lastMessageID = messageID
+          commit(types.update, [u])
+        }
+      },
+
+      // Updates internal unread counter (increment or decrement, depending on deletedAt status)
+      //
+      // @param {Message}
+      count ({ commit }, { channelID, replyTo = '', updatedAt = null, deletedAt = null }) {
+        if (updatedAt) {
+          // Ignoring updated messages
+          return
+        }
+
+        const payload = {
+          // Always use channelID
+          channelID,
+
+          // Remap value of replyTo to messageID to trigger thread counter
+          messageID: replyTo,
+
+          // Decrement or increment? depending on deletedAt info
+          delta: deletedAt ? -1 : 1,
+        }
+
+        commit(types.update, [payload])
+      },
+
+      // Updates unread info holder
+      //
+      // @param {Message|Channel|[Message|Channel]} Item
+      update ({ commit }, set) {
+        if (!Array.isArray(set)) {
+          set = [set]
+        }
+
+        commit(types.update, set.map(i => toInternal(i)).filter(i => !!i))
+      },
+    },
+
+    mutations: {
+      [types.pending] (state) {
+        state.pending = true
+      },
+
+      [types.completed] (state) {
+        state.pending = false
+      },
+
+      [types.update] (state, set) {
+        const clean = (state.set.length === 0)
+        set.forEach(i => update(clean, state.set, i))
+      },
+    },
+  }
+}

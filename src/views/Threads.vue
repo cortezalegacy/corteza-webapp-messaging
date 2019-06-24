@@ -44,7 +44,6 @@ export default {
   },
 
   mounted () {
-    this.$store.commit('channels/setCurrent', null)
     messagesThreadLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], {}).then((msgs) => {
       this.$store.commit('history/updateSet', msgs)
     })

@@ -27,10 +27,6 @@ export default function (MessagingAPI) {
       getPinned: (state) => state.set.filter(m => isValid(m) && m.isPinned),
       getBookmarked: (state) => state.set.filter(m => isValid(m) && m.isBookmarked),
 
-      unreadInChannel: (state) =>
-        (channelID, firstMessageID) =>
-          state.set.filter(m => isValid(m) && !m.replyTo && m.channelID === channelID && (firstMessageID || 0) <= m.messageID),
-
       getThread: (state) => (messageID) => state.set.filter(m => isValid(m) && (m.messageID === messageID || m.replyTo === messageID)),
 
       getThreads: (state) =>

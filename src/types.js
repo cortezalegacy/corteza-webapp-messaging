@@ -28,6 +28,9 @@ export class Message {
     this.canEdit = !!m.canEdit
     this.canDelete = !!m.canDelete
 
+    // only to pass values along to unread store, do not use it directly
+    this.unread = m.unread
+
     this.attachment = m.att ? new Attachment(m.att) : null
   }
 

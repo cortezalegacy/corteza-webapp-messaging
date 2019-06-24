@@ -98,6 +98,7 @@
   "message": {
     "reaction": "Reaction",
     "replyInThread": "Reply in thread",
+    "markAsUnread": "Mark as read/unread",
     "goto": "Go to message",
     "pin": "Pin message for everyone to see",
     "bookmark": "Bookmark message for personal reference",
@@ -105,6 +106,7 @@
     "delete": "Delete message",
     "deleteConfirm": "Delete this message?",
     "replies": "(1){ {{count}} reply};(2-inf){ {{count}} replies}",
+    "newReplies": "{{count}} new",
     "edited": "edited",
     "typing": "typing",
     "markAsRead": "Mark as Read",

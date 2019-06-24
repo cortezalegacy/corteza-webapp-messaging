@@ -1,14 +1,17 @@
 <template>
   <div class="message-infos">
     <a class="info"
-       :class="{unread: countUnread}"
-       v-if="message.replies"
-       @click="$emit('openThreadPanel', { message })">{{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}</a>
+       :class="{unread: unread.count}"
+       v-if="!hideReplies && message.replies"
+       @click="$emit('openThreadPanel', { message })">
+      {{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}
+      <span v-if="unread.count">({{ $t('message.newReplies', { postProcess: 'interval', count: unread.count }) }})</span>
+    </a>
     <span class="info" v-if="message.updatedAt">{{ $t('message.edited') }}</span>
   </div>
 </template>
 <script>
-// import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   props: {
@@ -16,16 +19,17 @@ export default {
       type: Object,
       required: true,
     },
+
+    hideReplies: Boolean,
   },
 
   computed: {
-    // ...mapGetters({
-    //   countUnread: 'unread/count',
-    // }),
+    ...mapGetters({
+      unreadFinder: 'unread/find',
+    }),
 
-    countUnread () {
-      // @todo return unreads in a thread
-      return 0
+    unread () {
+      return this.unreadFinder(this.message)
     },
   },
 }

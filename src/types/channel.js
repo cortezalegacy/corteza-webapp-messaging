@@ -1,19 +1,12 @@
 const fuzzysort = require('fuzzysort')
 
-class ChannelUnread {
-  constructor ({ lastMessageID, count } = {}) {
-    this.lastMessageID = lastMessageID || null
-    this.count = count || 0
-  }
-}
-
 export class Channel {
   constructor (c) {
     this.canUpdate = true
 
     if (!c) {
       this.members = []
-      this.unread = new ChannelUnread()
+      this.unread = {}
       return
     }
 
@@ -37,7 +30,8 @@ export class Channel {
     this.canArchive = !!c.canArchive
     this.canDelete = !!c.canDelete
 
-    this.unread = new ChannelUnread(c.unread)
+    // only to pass values along to unread store, do not use it directly
+    this.unread = c.unread
 
     this.members = c.members || [] // []string
   }

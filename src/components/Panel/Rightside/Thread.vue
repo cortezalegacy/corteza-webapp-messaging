@@ -19,14 +19,18 @@
       <messages
         class="messages"
         ref="messages"
-        :readOnly="!channel.canSendMessages"
         :messages="messages"
         :currentUser="$auth.user"
         :origin="message"
         :scrollable="true"
+        :consecutive="true"
         :hideActionOpenThread="true"
+        :lastReadMessageID="unread.lastMessageID"
         :editLastMessage="editLastMessage"
-        :lastReadMessageID="lastReadMessageID"
+        :readOnly="!channel.canSendMessages"
+        hide-replies
+        @markAsUnread="onMarkAsUnread"
+        @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
         @cancelEditing="editLastMessage=false"
         v-on="$listeners" />
@@ -34,10 +38,10 @@
     <template v-if="message" slot="footer">
       <div class="footer">
         <message-input
-          @markAsRead="onMarkAsRead"
-          :replyTo="message"
-          :show-mark-as-unread-button="false"
           v-if="channel.canSendMessages"
+          :replyTo="message"
+          :show-mark-as-unread-button="unread.count > 0"
+          @markAsRead="onMarkAsRead"
           @promptFilePicker="onOpenFilePicker"
           @editLastMessage="editLastMessage=true" />
       </div>
@@ -45,7 +49,7 @@
   </base-panel>
 </template>
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import BasePanel from './.'
 import Messages from '@/components/Messages'
 import MessageInput from '@/components/MessageInput'
@@ -88,12 +92,14 @@ export default {
   computed: {
     ...mapGetters({
       getMessageByID: 'history/getByID',
+      findUserByID: 'users/findByID',
       getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',
-      // lastUnread: 'unread/last',
+      unreadFinder: 'unread/find',
     }),
 
     message () {
+      // Thread start
       return this.getMessageByID(this.repliesTo)
     },
 
@@ -109,9 +115,8 @@ export default {
       return this.getThread(this.repliesTo)
     },
 
-    lastReadMessageID () {
-      throw new Error('Not implemented')
-      return undefined
+    unread () {
+      return this.unreadFinder(this.message)
     },
   },
 
@@ -125,20 +130,35 @@ export default {
 
     repliesTo (newRepliesTo, oldRepliesTo) {
       if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
-        this.preload()
+        this.loadMessages()
       }
     },
   },
 
   created () {
-    this.preload()
+    this.loadMessages()
   },
 
   methods: {
-    // Preloads all thread data
-    preload () {
-      messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: this.channelID, threadID: this.repliesTo }).then((msgs) => {
-        this.$store.commit('history/updateSet', msgs)
+    ...mapMutations({
+      // @todo remove direct access to mutations!
+      updateHistorySet: 'history/updateSet',
+    }),
+
+    ...mapActions({
+      clearUnreadMessages: 'unread/clear',
+      setLastReadMessageID: 'unread/setLastMessageID',
+    }),
+
+    isFollowing ({ replyTo }) {
+      return document.hasFocus() && this.repliesTo === replyTo
+    },
+
+    // Preloads thread
+    loadMessages () {
+      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, threadID: this.repliesTo }).then((mm) => {
+        this.updateHistorySet(mm)
+        this.setLastReadMessageID(mm.length ? mm[mm.length - 1] : {})
       })
     },
 
@@ -146,9 +166,25 @@ export default {
       this.$refs.upload.openFilePicker()
     },
 
-    // Prepares payload for unread resetting
-    unreadResetPayload () {
-      return { channelID: this.channel.channelID, threadID: this.message.messageID }
+    // Mark entire thread as read
+    onMarkAsRead () {
+      this.clearUnreadMessages(this.message)
+    },
+
+    onScrollTop ({ messageID }) {
+      if (this.previousFetchFirstMessageID !== messageID) {
+        // Make sure we do not fetch for the same lastID
+        // over and over again...
+        this.previousFetchFirstMessageID = messageID
+
+        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, threadID: this.repliesTo }).then((mm) => {
+          this.updateHistorySet(mm)
+        })
+      }
+    },
+
+    onScrollBottom () {
+      // @todo bottom loading
     },
   },
 }

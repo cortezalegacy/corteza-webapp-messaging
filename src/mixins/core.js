@@ -94,20 +94,7 @@ export default {
     this.$bus.$on('$ws.message', (message) => {
       const [ msg ] = messagesProcess(this.$store.getters['users/findByID'], [message])
 
-      if (msg.updatedAt == null && msg.deletedAt == null && msg.replies === 0) {
-        if (this.$auth.user.userID !== msg.userID && msg.type !== 'channelEvent') {
-          // Count only new messages, no updates, no replies
-
-          if (msg.replyTo) {
-            // @todo handle thread unreads
-          } else {
-            this.$store.dispatch('channels/changeUnreadCount', { channelID: msg.channelID, delta: 1 })
-          }
-        }
-
-        this.$bus.$emit('$core.newMessage', { message: msg })
-      }
-
+      this.$bus.$emit('$core.newMessage', { message: msg })
       this.$store.commit('history/updateSet', [msg])
 
       // Assume activity stopped
@@ -128,12 +115,6 @@ export default {
 
     this.$bus.$on('$ws.messagePinRemoved', ({ messageID }) => {
       this.$store.dispatch('history/unpinned', { messageID })
-    })
-
-    // Handling requests for last read message
-    this.$bus.$on('message.markAsLastRead', ({ channelID, messageID, threadID }) => {
-      throw new Error('OBSOLETE $bus event caught: message.markAsLastRead')
-      // this.$store.dispatch('unread/markAsRead', { channelID, lastReadMessageID: messageID, threadID })
     })
 
     // Handling Message reaction requests

@@ -1,22 +1,79 @@
+import { mapActions } from 'vuex'
+
 export default {
-  mounted () {
-    this.unreadInternal = {
-      timeoutHandle: null,
-      lastMessageID: null,
+  data () {
+    return {
+      unreadInternal: {
+        timeoutHandle: null,
+        lastMessageID: null,
+      },
     }
   },
 
+  mounted () {
+    this.$bus.$on('$core.newMessage', this.handleNewMessageReadStatus)
+  },
+
+  destroyed () {
+    this.$bus.$off('$core.newMessage', this.handleNewMessageReadStatus)
+  },
+
   methods: {
-    // Resets unread when document/window has focus
+    ...mapActions({
+      markLastReadMessage: 'unread/mark',
+      countUnreads: 'unread/count',
+    }),
+
+    // Marks new message as read if conditions are met
     //
-    // If document has focus, callback is executed immediately
-    // otherwise an event handler is set for focus event on window obj
-    resetUnreadOnFocus ({ channelID, messageID } = {}) {
-      if (!channelID) {
+    // handleUnreadCounting() in Messanger.vue handles general counting for received messages (all but ours)
+    //
+    // Here we do 2 checks and mark the message (and all before it) as read
+    //  - if message is ours
+    //  - if message is not ours and we're following this stream (see isFollowing())
+    handleNewMessageReadStatus ({ message }) {
+      if (message.type === 'channelEvent') {
+        // system messages
         return
       }
 
-      if (this.unreadInternal.lastMessageID === messageID && messageID !== undefined) {
+      if (message.replies > 0) {
+        // notification on thread message about new replies
+        return
+      }
+
+      if (this.$auth.user.userID === message.userID) {
+        // This is our message, no need to update counter
+        this.markLastReadMessage(message)
+        return
+      }
+
+      if (this.isFollowing(message)) {
+        // When "following" (doc has focus, and we are looking at the stream)
+        // Mark messge as read as soon as it arrives
+        this.markLastReadMessage(message)
+      } else {
+        // When not following, increment unread counter
+        this.countUnreads(message)
+      }
+    },
+
+    // Mark specific message in the channel as unread
+    onMarkAsUnread ({ message }) {
+      if (this.unread.lastMessageID === message.messageID) {
+        // toggle
+        this.onMarkAsRead()
+      } else {
+        this.markLastReadMessage(message)
+      }
+    },
+
+    // needs a lot of UX testing
+    // for now, we'll stick to manual reset when channel is read
+    setMessageAsReadOnFocus ({ messageID }, handler, force) {
+      console.debug('setMessageAsReadOnFocus() :: in')
+      if (this.unreadInternal.lastMessageID === messageID) {
+        console.debug('setMessageAsReadOnFocus() :: this.unreadInternal.lastMessageID !== messageID', { lastMessageID: this.unreadInternal.lastMessageID, messageID })
         // already recorded, nothing to do.
         return
       }
@@ -24,54 +81,46 @@ export default {
       this.unreadInternal.lastMessageID = messageID
 
       const resetUnread = () => {
-        this.$store.dispatch('channels/markLastReadMessage', { channelID, messageID })
+        console.debug('setMessageAsReadOnFocus() :: resetUnread()')
+        handler().then(({ lastMessageID } = {}) => {
+          // this.unreadInternal.lastMessageID = messageID
+        })
+      }
+
+      if (force) {
+        console.debug('setMessageAsReadOnFocus() :: resetUnread() :: forced reset')
+        resetUnread()
+        return
       }
 
       // Clear existing timeout
       if (this.unreadInternal.timeoutHandle !== null) {
+        console.debug('setMessageAsReadOnFocus() :: clearing timeout')
         window.clearTimeout(this.unreadInternal.timeoutHandle)
-      }
-
-      const resetUnreadAfterTimeout = () => {
-        this.unreadInternal.timeoutHandle = window.setTimeout(resetUnread, 2000)
       }
 
       //
       if (document.hasFocus()) {
+        console.debug('setMessageAsReadOnFocus() :: doc has focus')
         resetUnread()
       } else {
+        const resetUnreadAfterTimeout = () => {
+          console.debug('setMessageAsReadOnFocus() :: setting timeout for resetUnread')
+          this.unreadInternal.timeoutHandle = window.setTimeout(resetUnread, 2000)
+        }
+
         const onFocus = () => {
+          console.debug('setMessageAsReadOnFocus() :: onFocus() executed')
           resetUnreadAfterTimeout()
           window.removeEventListener('focus', onFocus)
         }
 
+        // Remove existing listeners
+        window.removeEventListener('focus', onFocus)
+
+        console.debug('setMessageAsReadOnFocus() :: adding onFocus() listener')
         window.addEventListener('focus', onFocus)
       }
     },
-
-    // Will reset channel (or thread) as read
-    // onMarkAsRead (o) {
-    //   this.recordUnreadReset(o)
-    // },
-
-    // recordUnreadReset ({ lastReadMessageID = '0' } = {}) {
-    //   const payload = { lastReadMessageID, ...this.unreadResetPayload() }
-    //
-    //   if (!payload.threadID) delete payload.threadID
-    //
-    //   // Remember lastMessageID so that we do not
-    //   // bother the API if nothing changed
-    //   this.unreadInternal.lastMessageID = lastReadMessageID
-    //
-    //   // Tell the backend we've read it all..
-    //   console.log('mixinUnread.recordUnreadReset()', payload)
-    //   this.$bus.$emit('message.markAsLastRead', payload)
-    // },
-
-    // unreadResetPayload () {
-    //   // This method should be overridden in component that includes the mixin.
-    //   console.warn('No unread reset recording (recordUnreadReset()) method found on component')
-    //   return undefined
-    // },
   },
 }

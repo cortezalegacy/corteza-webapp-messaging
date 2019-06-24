@@ -8,11 +8,9 @@ const types = {
   channelJoin: 'channelJoin',
   channelPart: 'channelPart',
   removeFromList: 'removeFromList',
-  // updateLastMessage: 'updateLastMessage',
-  changeUnreadCount: 'changeUnreadCount',
 }
 
-export default function (Messaging) {
+export default function (MessagingAPI) {
   return {
     namespaced: true,
 
@@ -65,9 +63,10 @@ export default function (Messaging) {
       async load ({ commit, getters }) {
         commit(types.pending)
         return new Promise((resolve) => {
-          Messaging.channelList().then((cc) => {
-            commit(types.resetList, cc.map(c => new Channel(c)))
-            return getters.list
+          MessagingAPI.channelList().then((cc) => {
+            cc = cc.map(c => new Channel(c))
+            commit(types.resetList, cc)
+            resolve(cc)
           }).finally(() => {
             commit(types.completed)
           })
@@ -76,7 +75,7 @@ export default function (Messaging) {
 
       setMembershipFlag ({ commit, getters }, { channelID, flag }) {
         commit(types.pending)
-        Messaging.channelSetFlag({ channelID, flag }).then((ch) => {
+        MessagingAPI.channelSetFlag({ channelID, flag }).then((ch) => {
           commit(types.updateList, new Channel(ch))
         }).finally(() => {
           commit(types.completed)
@@ -85,41 +84,10 @@ export default function (Messaging) {
 
       removeMembershipFlag ({ commit, getters }, { channelID }) {
         commit(types.pending)
-        Messaging.channelRemoveFlag({ channelID }).then((ch) => {
+        MessagingAPI.channelRemoveFlag({ channelID }).then((ch) => {
           commit(types.updateList, new Channel(ch))
         }).finally(() => {
           commit(types.completed)
-        })
-      },
-
-      // changeUnreadCount action is called whenever a new message is received
-      // and we need to update unread info on channel
-      changeUnreadCount ({ commit, getters }, { channelID, delta, lastMessageID = undefined }) {
-        commit(types.changeUnreadCount, { channelID, delta, lastMessageID })
-      },
-
-      // clearUnread removes unread count and last message from the channel
-      clearUnread ({ commit }, { channelID }) {
-        commit(types.pending)
-        Messaging.messageMarkAsRead({ channelID }).then(count => {
-          commit(types.changeUnreadCount, { channelID, count, lastMessageID: null })
-        }).finally(() => {
-          commit(types.completed)
-        })
-      },
-
-      // markLastReadMessage marks last read message in the channel
-      //
-      // Returns promise, resolves channel
-      async markLastReadMessage ({ commit, getters }, { channelID, messageID }) {
-        commit(types.pending)
-        return new Promise((resolve) => {
-          Messaging.messageMarkAsRead({ channelID, lastReadMessageID: messageID }).then(({ lastMessageID, count }) => {
-            commit(types.changeUnreadCount, { channelID, count, lastMessageID })
-            resolve(getters.findByID(channelID))
-          }).finally(() => {
-            commit(types.completed)
-          })
         })
       },
     },
@@ -181,28 +149,6 @@ export default function (Messaging) {
 
       [types.removeFromList] (state, { ID }) {
         state.list = [...state.list.filter(ch => ID !== ch.channelID)]
-      },
-
-      [types.changeUnreadCount] (state, { channelID, count = undefined, delta = 0, lastMessageID }) {
-        const i = state.list.findIndex(c => c.channelID === channelID)
-
-        if (i === -1) {
-          throw new Error(`could not find channel (channelID: ${channelID})`)
-        }
-
-        const ch = state.list[i]
-
-        if (count !== undefined) {
-          ch.unread.count = count
-        } else {
-          ch.unread.count += delta
-        }
-
-        if (lastMessageID !== undefined) {
-          ch.unread.lastMessageID = lastMessageID
-        }
-
-        state.list.splice(i, 1, ch)
       },
     },
   }

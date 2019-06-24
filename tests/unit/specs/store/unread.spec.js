@@ -12,94 +12,97 @@ localVue.use(Vuex)
 
 /* TODO, Not running this test because of future unread rework */
 
-describe.skip('unread.js', () => {
+describe('unread.js', () => {
   let state
   let store
 
   beforeEach(() => {
     state = {
-      set: []
+      pending: false,
+      set: [],
     }
 
-    const { mutations, getters } = unread()
-    store = new Vuex.Store({state, mutations, getters})
+    const { actions, mutations, getters } = unread()
+    store = new Vuex.Store({state, actions, mutations, getters})
   })
 
-  it('Can set unread info', () => {
-    store.commit('set', [{channelID: '1234567890', count: 1}])
+  it('new message on an empty set', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
     expect(state.set.length).to.equal(1)
     expect(state.set[0].count).to.equal(1)
-    expect(state.set[0].channelID).to.equal('1234567890')
+    expect(state.set[0].channelID).to.equal('c1')
   })
 
-  it('Can alter unread info', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    store.commit('set', [{channelID: '1234567890', count: 1}])
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(1)
-    expect(state.set[0].channelID).to.equal('1234567890')
-  })
-
-  it('Can inc unread count', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    store.commit('inc', '1234567890')
+  it('multiple new messages', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1'}))
     expect(state.set.length).to.equal(1)
     expect(state.set[0].count).to.equal(3)
   })
 
-  it('Can inc unread count multiple times', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    store.commit('inc', '1234567890')
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(3)
-    store.commit('inc', {channelID: '1234567890'})
-    expect(state.set[0].count).to.equal(4)
-    store.commit('inc', {channelID: '1234567890', threadID: ''})
-    expect(state.set[0].count).to.equal(5)
-    store.commit('inc', new Channel({channelID:'1234567890'}))
-    expect(state.set[0].count).to.equal(6)
-    store.commit('inc', new Message({messageID:'12345678901',channelID:'1234567890'}))
-    expect(state.set[0].count).to.equal(7)
-    expect(state.set.length).to.equal(1)
-  })
-
-  it('Can dec unread count', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    store.commit('dec', '1234567890')
+  it('decrement on deleted message', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1', deletedAt: new Date()}))
     expect(state.set.length).to.equal(1)
     expect(state.set[0].count).to.equal(1)
   })
 
-  it('Can unset unread', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    store.commit('unset', '1234567890')
+  it('skip count on updated message', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1', updatedAt: new Date()}))
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    expect(state.set.length).to.equal(1)
+    expect(state.set[0].count).to.equal(2)
+  })
+
+  it('update unread without the data', () => {
+    store.dispatch('update', {})
     expect(state.set.length).to.equal(0)
   })
 
-  it('Can get unread count', () => {
-    store.commit('set', [{channelID: '1234567890', count: 2}])
-    expect(store.getters.count({channelID: '1234567890'})).to.equal(2)
-    expect(store.getters.count({channelID: '1234567890', threadID: ''})).to.equal(2)
-    expect(store.getters.count('1234567890')).to.equal(2)
+  it('update unread with simple data the data', () => {
+    store.dispatch('update', new Channel({ channelID: 'c1', unread: { count: 2 }}))
+    expect(state.set.length).to.equal(1)
+    expect(state.set[0].count).to.equal(2)
   })
 
-  it('Can differentiate between channel and message (thread) input', () => {
-    store.commit('set', [{ channelID:'1234567890', count: 2 }])
-    store.commit('set', [{ channelID:'1234567890', threadID:'9876543210', count: 2 }])
-    expect(state.set.length).to.equal(2)
-
-    store.commit('inc', new Channel({ channelID:'1234567890' }))
-    store.commit('inc', new Message({ messageID:'12345678901', channelID:'1234567890', replyTo:'9876543210' }))
-    store.commit('inc', new Message({ messageID:'12345678901', channelID:'1234567890', replyTo:'9876543210' }))
-
-    expect(state.set.length).to.equal(2)
-    expect(store.getters.count({channelID: '1234567890'})).to.equal(3)
-    expect(store.getters.count({channelID: '1234567890', threadID: '9876543210'})).to.equal(4)
+  it('update unread with existing set', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('update', new Channel({ channelID: 'c1', unread: { count: 2, lastMessageID: 'lm1' }}))
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    expect(state.set.length).to.equal(1)
+    expect(state.set[0].count).to.equal(3)
+    expect(state.set[0].lastMessageID).to.equal('lm1')
   })
 
-  it('Can fetch ID of last read message', () => {
-    store.commit('set', [{channelID: '1234567890', threadID: '', count: 2, lastMessageID: '9876543210' }])
-    expect(store.getters.last({channelID: '1234567890', threadID: ''})).to.equal('9876543210')
+  it('complex set update', () => {
+    store.dispatch('update', [
+      new Channel({ channelID: 'c1', unread: { count: 10 }}),
+      new Channel({ channelID: 'c2', unread: { count: 20 }}),
+    ])
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c2'}))
+    store.dispatch('count', new Message({channelID: 'c2'}))
+
+    expect(state.set.length).to.equal(2)
+    expect(state.set[0].count).to.equal(11)
+    expect(state.set[1].count).to.equal(22)
+  })
+
+  it('increment/decrement in-thread counter', () => {
+    store.dispatch('count', new Message({channelID: 'c1'}))
+    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
+    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
+    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1', deletedAt: new Date()}))
+    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1', updatedAt: new Date()}))
+    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
+
+    expect(state.set.length).to.equal(2)
+    expect(state.set[0].count).to.equal(1)
+    expect(state.set[0].tcount).to.equal(2)
+    expect(state.set[1].count).to.equal(2)
   })
 })
 

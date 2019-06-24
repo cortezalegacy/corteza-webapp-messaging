@@ -18,11 +18,13 @@
       :showEditor="showEditor(msg)"
       :hideActions="hideActions"
       :hideReactions="hideReactions"
+      :hideMarkAsUnread="index === messages.length - 1 || index === 0"
       :hidePinning="hidePinning"
       :hideBookmarking="hideBookmarking"
       :hideActionGoToMessage="hideActionGoToMessage"
       :hideActionOpenThread="hideActionOpenThread"
       :hideActionsMenu="hideActionsMenu"
+      :hideReplies="hideReplies"
       :isLast="index === messages.length - 1"
       :highlightPinned="highlightPinned"
       :highlightBookmarked="highlightBookmarked"
@@ -70,12 +72,14 @@ export default {
     consecutive: { type: Boolean, default: true },
 
     hideActions: Boolean,
+    hideMarkAsUnread: Boolean,
     hideReactions: Boolean,
     hidePinning: Boolean,
     hideBookmarking: Boolean,
     hideActionGoToMessage: { type: Boolean, default: true },
     hideActionOpenThread: Boolean,
     hideActionsMenu: Boolean,
+    hideReplies: Boolean,
 
     // Set to true to enable edit mode for last message from currentUser
     editLastMessage: Boolean,
@@ -169,32 +173,6 @@ export default {
         this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
       }
     },
-
-    // // When we receive a (manual, explicit) request to mark message as unread
-    // // we want to find a previous message and mark that one as last read
-    // markAsUnread (index) {
-    //   if (index === 0 || typeof this.origin !== 'object') {
-    //     return
-    //   }
-    //
-    //   const { messageID, channelID, replyTo } = this.messages[index - 1]
-    //   let payload = {
-    //     channelID,
-    //     messageID,
-    //   }
-    //
-    //   switch (this.origin.constructor.name) {
-    //     case 'Message':
-    //       payload.threadID = replyTo || messageID
-    //       break
-    //     case 'Channel':
-    //       break
-    //     default:
-    //       return
-    //   }
-    //
-    //   this.$bus.$emit('message.markAsLastRead', payload)
-    // },
 
     getLastMessageByUserID: (set, userID) => {
       return [...set].reverse().find(m => m.userID === userID)

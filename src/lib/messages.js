@@ -3,8 +3,8 @@ import moment from 'moment'
 // Time window for consecutive messages in seconds
 const consecutiveMessagesTimeWindow = 3 * 60 // 3 minutes
 
-export function getFirstID (set) {
-  return (set[0] || {}).messageID
+export function getFirstID (set, messageID) {
+  return (set[0] || { messageID }).messageID
 }
 
 export function getLastID (set, ID) {
