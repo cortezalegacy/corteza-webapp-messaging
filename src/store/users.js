@@ -103,8 +103,8 @@ export default function (Messaging, System) {
     actions: {
       async load ({ commit }) {
         commit(types.pending)
-        System.userList().then((users) => {
-          commit(types.updateList, users)
+        System.userList().then(({ set }) => {
+          commit(types.updateList, set)
           commit(types.completed)
         })
       },
