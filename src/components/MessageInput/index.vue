@@ -232,10 +232,10 @@ export default {
 
     onEmojiPickerClick () {
       this.$bus.$emit('ui.openEmojiPicker', {
-        callback: ({ colons }) => {
+        callback: ({ colons, native }) => {
           const q = this.$refs.text.$refs.quill.quill
           // insert emoji at cursor position
-          q.insertText(q.getSelection(), colons)
+          q.insertText(q.getSelection(), native || colons)
         },
       })
     },
