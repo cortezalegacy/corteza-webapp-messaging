@@ -47,9 +47,6 @@
              :link="{name: 'new-channel', params: { type: 'group' } }"
              :list="groupChannels"
              :current="channel">{{ $t('panel.channel.group') }}</group>
-
-      <pre
-        class="version selectable" v-html="version"></pre>
     </div>
 
   </nav>
@@ -97,44 +94,49 @@ export default {
 
     // Returns filtered list of channels
     filteredChannels () {
+      const { userID } = this.$auth.user
       return this.channels.filter(c => c && (
         // Always show current channel on the list
         (this.channel && this.channel.channelID === c.channelID) ||
 
         // Unless hidden, show channels we're members of
-        (c.membershipFlag !== 'hidden') ||
+        (c.isMember(userID) && c.membershipFlag !== 'hidden') ||
 
         // Unless ignored, show channels with unread messages we're members of
-        (c.unread.count && c.membershipFlag !== 'ignored') ||
+        (c.isMember(userID) && c.membershipFlag !== 'ignored' && this.unread(c).has) ||
 
         // and ignore the rest...
         false
       ))
     },
 
-    pinnedChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPinned()), this.sortByOnlineStatus)
+    unreadChannels () {
+      return this.channelSlicer(this.filteredChannels.filter(c => this.unread(c).has), this.sortByOnlineStatus)
     },
 
-    unreadChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => this.unread(c).count), this.sortChannelByName)
+    readChannels () {
+      return this.filteredChannels.filter(c => !this.unread(c).has)
+    },
+
+    pinnedChannels () {
+      return this.channelSlicer(this.readChannels.filter(c => c.isPinned()), this.sortByOnlineStatus)
+    },
+
+    // no unreads, not pinned
+    unpinnedChannels () {
+      return this.readChannels.filter(c => !c.isPinned())
     },
 
     publicChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPublic() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.unpinnedChannels.filter(c => c.isPublic()), this.sortChannelByName)
     },
 
     privateChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isPrivate() && !c.isPinned()), this.sortChannelByName)
+      return this.channelSlicer(this.unpinnedChannels.filter(c => c.isPrivate()), this.sortChannelByName)
     },
 
     groupChannels () {
-      return this.channelSlicer(this.filteredChannels.filter(c => !this.unread(c).count && c.isGroup() && !c.isPinned()), this.sortByOnlineStatus)
-    },
-
-    version () {
-      /* eslint-disable no-undef */
-      return `<a href="https://github.com/crusttech/webapp-messaging/commit/${VERSION}" target="_blank">${VERSION}</a>`
+      return this.channelSlicer(this.unpinnedChannels.filter(c => c.isGroup()), this.sortByOnlineStatus)
     },
   },
 
@@ -148,9 +150,15 @@ export default {
     },
 
     unread (ch) {
-      return this.unreadFinder(ch)
+      const { count = 0, tcount = 0 } = this.unreadFinder(ch) || {}
+      return {
+        count,
+        tcount,
+        has: tcount + count > 0,
+      }
     },
 
+    // Sorts channels: 1) valid channels, directs with everyone online, some online, all offline and others
     channelSlicer (cc, sortFn) {
       const presenceFilter = (c, cnd) => {
         const present = c.members.filter(m => this.isPresent(m)).length

@@ -20,6 +20,7 @@ export default {
 
   methods: {
     ...mapActions({
+      clearUnreads: 'unread/clear',
       markLastReadMessage: 'unread/mark',
       countUnreads: 'unread/count',
     }),
@@ -43,8 +44,14 @@ export default {
       }
 
       if (this.$auth.user.userID === message.userID) {
-        // This is our message, no need to update counter
-        this.markLastReadMessage(message)
+        // This is our message, make modifications to payload
+        // for clearUnreads so it understands what we want to clear
+        const { channelID, messageID, replyTo } = message
+        if (replyTo) {
+          this.clearUnreads({ channelID, messageID })
+        } else {
+          this.clearUnreads({ channelID, messageID: replyTo })
+        }
         return
       }
 

@@ -32,7 +32,7 @@ function toInternal ({ channelID, messageID, unread } = {}) {
   }
 }
 
-function update (clean, set, { channelID, messageID = '', count, tcount, delta, lastMessageID = null }) {
+function update (clean, set, { channelID, messageID = '', count, tcount, delta, lastMessageID }) {
   if (!channelID) {
     throw new Error('expecting channelID value')
   }
@@ -43,8 +43,16 @@ function update (clean, set, { channelID, messageID = '', count, tcount, delta, 
     index = set.findIndex(i => (i.channelID === channelID) && (i.messageID === (messageID || '')))
   }
 
-  if (index > -1 && !lastMessageID) {
+  if (index > -1 && lastMessageID === undefined) {
     lastMessageID = set[index].lastMessageID
+  }
+
+  if (index > -1 && count === undefined) {
+    count = set[index].count
+  }
+
+  if (index > -1 && tcount === undefined) {
+    tcount = set[index].tcount
   }
 
   let item = {
@@ -61,7 +69,15 @@ function update (clean, set, { channelID, messageID = '', count, tcount, delta, 
   }
 
   if (index < 0) {
+    if (item.count + item.tcount <= 0) {
+      // New item, zero count
+      return
+    }
+
     set.push(item)
+  } else if (item.count + item.tcount <= 0) {
+    // Remove zeros
+    set.splice(index, 1)
   } else {
     set.splice(index, 1, item)
   }
@@ -82,6 +98,11 @@ function update (clean, set, { channelID, messageID = '', count, tcount, delta, 
       // existing entry, modify tcount with delta
       let item = { ...set[index] }
       item.tcount = item.tcount ? item.tcount + delta : delta
+      if (item.tcount < 0) {
+        // Normalize.
+        item.tcount = 0
+      }
+
       set.splice(index, 1, item)
     }
   }

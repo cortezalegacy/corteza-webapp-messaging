@@ -151,7 +151,6 @@ export default {
       messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((mm) => {
         this.updateHistorySet(mm)
         this.updateUnreads(mm)
-        this.setLastReadMessageID(mm.length ? mm[mm.length - 1] : {})
       })
     },
 

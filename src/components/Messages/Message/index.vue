@@ -20,7 +20,9 @@
       }"
       ref="message"
       :key="message.messageID">
-      <div v-if="isLastRead && !isLast" class="label">{{ $t('message.newMessages') }}</div>
+        <div v-if="isLastRead && !isLast"
+             @click="$emit('markAsUnread', { message })"
+             class="label">{{ $t('message.newMessages') }}</div>
         <section v-if="message.type !== 'channelEvent'">
           <em v-if="!consecutive" class="avatar">
             <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
@@ -278,6 +280,7 @@ em{
     padding: 0 10px;
     z-index: 1;
     border: 1px solid $danger;
+    cursor: pointer;
   }
 }
 
