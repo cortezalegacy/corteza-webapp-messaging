@@ -37,7 +37,7 @@
 
           <button
               class="emoji-button input-button"
-              @click="onEmojiPickerClick">
+              @click.stop="onEmojiPickerClick">
               <span class="icon-smile"></span>
           </button>
 
@@ -235,7 +235,7 @@ export default {
         callback: ({ colons, native }) => {
           const q = this.$refs.text.$refs.quill.quill
           // insert emoji at cursor position
-          q.insertText(q.getSelection(), native || colons)
+          q.insertText(q.getSelection() || q.scroll.length() - 1, native || colons)
         },
       })
     },
