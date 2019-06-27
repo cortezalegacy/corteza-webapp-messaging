@@ -1,3 +1,5 @@
+import Delta from 'quill-delta'
+
 export const mentionSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]*?>)`)
 export const mentionRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
 
@@ -20,23 +22,21 @@ export function cleanMentions (string, users = [], channels = []) {
   return split.join('')
 }
 
-// Converts  given string and replaces mentions with HTML code understood by
-// Quill editor.
+// Converts  given string and replaces mentions with Delta code understood by
+// Quill.
 export function enrichMentions (string, users = [], channels = []) {
-  const html = (char, ID, label) =>
-    '<span class="mention" data-denotation-char="' + char + '" data-id="' + ID + '" data-value="' + label + '">' +
-    '<span contenteditable="false"><span class="ql-mention-denotation-char">' + char + '</span>' + label + '</span>' +
-    '</span>'
-
   let split = string.split(mentionSplitRE, -1)
 
   for (let s = 0; s < split.length; s++) {
     // It's a split, ignore odds.
-    if (s % 2 !== 1) continue
+    if (s % 2 !== 1) {
+      split[s] = { insert: split[s] }
+      continue
+    }
 
-    const [ , char, ID, , label ] = mentionRE.exec(split[s])
-    split[s] = html(char, ID, label)
+    const [ , denotationChar, id, , value ] = mentionRE.exec(split[s])
+    split[s] = { insert: { mention: { denotationChar, id, value, index: '0' } } }
   }
 
-  return split.join('')
+  return new Delta(split)
 }
