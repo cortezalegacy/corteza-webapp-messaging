@@ -10,14 +10,12 @@
       <div class="group">
 
           <text-input
-              :key="textInputKey"
               @editLastMessage="$emit('editLastMessage', $event)"
               @cancel="$emit('cancel', $event)"
               @submit="onSubmit"
               @change="onChange"
               @focus="onFocus"
               v-model="value"
-              :preset="editableString"
               :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
               :submitOnEnter="!uiEnableSubmitButton()"
               :channels="channelSuggestions"
@@ -64,6 +62,7 @@ import TextInput from './TextInput'
 import ObserverFooter from '@/components/Channel/ObserverFooter'
 import Activity from './Activity'
 import { enrichMentions } from '@/lib/mentions'
+import { exportToMarkdown } from './src/markdown'
 
 const kinds = {
   editing: 'editing',
@@ -97,15 +96,15 @@ export default {
   },
 
   data () {
+    let value
+    if (this.message) {
+      value = enrichMentions(this.message.message)
+    }
+
     return {
       inputBoxValue: '',
       cursorIndex: -1,
-      value: '',
-
-      // This handles input component redrawing/remounting
-      // we need to do it to get because setting input.value to ''
-      // does not work as expected (value does not change)
-      textInputKey: 0,
+      value,
 
       keepFocusOnSubmit: false,
     }
@@ -147,19 +146,11 @@ export default {
       // Hide file upload when editing
       return !this.hideFileUpload || !this.message
     },
-
-    editableString () {
-      if (this.message) {
-        return enrichMentions(this.message.message)
-      }
-
-      return ''
-    },
   },
 
   watch: {
     channel () {
-      this.clearInputText()
+      this.value = null
     },
   },
 
@@ -168,33 +159,23 @@ export default {
       console.error('Could not mount message input without at least one of channel/message/replyTo props')
       return false
     }
-
-    if (this.message) {
-      // When editing a message, make sure we prefill value
-      this.value = this.message.message
-    }
   },
 
   methods: {
-    clearInputText () {
-      this.value = ''
-      this.textInputKey++
-    },
-
     onPromptFilePicker () {
       this.$emit('promptFilePicker', {})
     },
 
     // Override original submit event and extend event
     // data with submitMeta data.
-    onSubmit ($event) {
+    onSubmit () {
       // Make a copy and reset component's version of a value to prevent dups
-      const value = $event.value.trim()
-      this.value = ''
+      const value = exportToMarkdown(this.value).trim()
+      this.value = null
 
       const stdResponse = (m) => {
         // Trigger remounting
-        this.clearInputText()
+        this.value = null
 
         // Tell parent we're done with editing.
         this.$emit('cancel', {})
@@ -217,7 +198,7 @@ export default {
         // Sending message
         if (this.$commands.test(value)) {
           this.$commands.exec(this, value, { channel: this.channel })
-          this.clearInputText()
+          this.value = null
           return
         }
 
@@ -226,15 +207,14 @@ export default {
     },
 
     onSubmitBtnClick ($event) {
-      this.onSubmit({ value: this.value })
-      this.clearInputText()
+      this.onSubmit()
+      this.value = null
     },
 
     onEmojiPickerClick () {
       this.$bus.$emit('ui.openEmojiPicker', {
         callback: ({ colons, native }) => {
-          const q = this.$refs.text.$refs.quill.quill
-          // insert emoji at cursor position
+          const q = this.$refs.text.quill
           q.insertText(q.getSelection() || q.scroll.length() - 1, native || colons)
         },
       })

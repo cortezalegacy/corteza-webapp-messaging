@@ -1,19 +1,16 @@
 <template>
-  <quill-editor
-    ref="quill"
-    @ready="onQuillReady"
-    @change="$emit('change', $event)"
-    @focus="$emit('focus')"
-    v-model="content"
-    :options="options"/>
+  <div class="quill-editor">
+    <slot name="toolbar"></slot>
+    <div ref="editor"></div>
+  </div>
 </template>
 
 <script>
-import { quillEditor } from 'vue-quill-editor'
+// Use regular quill, so we can work with Delta objects
+import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
-import { exportToMarkdown } from './src/markdown'
 const fuzzysort = require('fuzzysort')
 
 const suggestionLimit = 10
@@ -28,11 +25,12 @@ const fzsOpts = {
 }
 
 export default {
-  components: {
-    quillEditor,
-  },
   props: {
-    value: String,
+    value: {
+      required: false,
+      default: null,
+    },
+
     placeholder: { type: String },
 
     channels: {
@@ -54,9 +52,13 @@ export default {
       default: () => ({}),
     },
 
-    preset: String,
     focus: { type: Boolean, default: true },
     submitOnEnter: { type: Boolean, default: false },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   data () {
@@ -65,7 +67,8 @@ export default {
     const vm = this
 
     return {
-      internalValue: this.preset.replace(/\n/g, '<br>'),
+      quill: null,
+      crtDelta: this.value,
 
       options: {
         debug: false,
@@ -144,9 +147,7 @@ export default {
                 key: 'ENTER',
                 handler: function () {
                   if (vm.submitOnEnter) {
-                    vm.$emit('submit', {
-                      value: exportToMarkdown(this.quill.getContents()),
-                    })
+                    vm.$emit('submit', {})
                     return false
                   }
 
@@ -171,12 +172,32 @@ export default {
   computed: {
     content: {
       get () {
-        return this.internalValue
+        return this.crtDelta
       },
 
       set (value) {
-        this.$emit('input', exportToMarkdown(this.$refs.quill.quill.getContents()))
+        this.crtDelta = value
+        this.$emit('input', value)
       },
+    },
+  },
+
+  watch: {
+    disabled: {
+      handler: function (newVal, oldVal) {
+        this.quill.enable(!newVal)
+      },
+    },
+
+    value: {
+      handler: function (newVal, oldVal) {
+        // If value becomes undefined; it should be removed
+        if (!newVal || !this.crtDelta || newVal.diff(this.crtDelta).ops.length !== 0) {
+          this.crtDelta = newVal
+          this.setContent(newVal)
+        }
+      },
+      deep: true,
     },
   },
 
@@ -191,20 +212,61 @@ export default {
   },
 
   mounted () {
-    if (this.$refs.quill !== undefined && this.focus) {
-      const q = this.$refs.quill.quill
-      // Focus on editor
-      q.scrollingContainer.focus()
+    this.initialize()
 
-      // And select all content
-      q.setSelection(0, 10000)
+    if (this.quill && this.focus) {
+      this.setFocus()
     }
   },
 
   methods: {
+    setContent (delta) {
+      this.quill.setContents(delta)
+    },
+
+    setFocus () {
+      // Focus on editor
+      this.quill.scrollingContainer.focus()
+
+      // And select all content
+      let length = 0
+      if (this.crtDelta) {
+        if (typeof this.crtDelta.length === 'function') {
+          length = this.crtDelta.length()
+        } else if (!isNaN(this.crtDelta.length)) {
+          length = this.crtDelta.length
+        }
+        this.quill.setSelection(0, length)
+      }
+    },
+
+    initialize () {
+      this.quill = new Quill(this.$refs.editor, this.options)
+      this.quill.enable(!this.disabled)
+
+      this.quill.on('selection-change', range => {
+        if (!range) {
+          this.$emit('blur', { quill: this.quill, range })
+        } else {
+          this.$emit('focus', { quill: this.quill, range })
+        }
+      })
+
+      this.quill.on('text-change', () => {
+        const content = this.quill.getContents()
+        const text = this.quill.getText()
+
+        this.content = content
+        this.$emit('change', { text, content })
+      })
+
+      this.setContent(this.crtDelta)
+      this.onQuillReady(this.quill)
+    },
+
     updatePlaceholder () {
       // Quill doesn't have a setter; so we need to do it like this
-      this.$refs.quill.quill.root.dataset.placeholder = this.placeholder || this.$t('message.newPlaceholder')
+      this.quill.root.dataset.placeholder = this.placeholder || this.$t('message.newPlaceholder')
     },
 
     onQuillReady (quill) {
