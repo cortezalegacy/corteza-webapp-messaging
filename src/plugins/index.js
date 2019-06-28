@@ -6,6 +6,7 @@ import system from 'corteza-webapp-common/src/plugins/system'
 import messaging from 'corteza-webapp-common/src/plugins/messaging'
 import commands from '@/plugins/commands'
 import triggers from '@/plugins/triggers'
+import drafts from './drafts'
 import auth from 'corteza-webapp-common/src/plugins/auth'
 
 const eventbus = new Vue()
@@ -16,6 +17,7 @@ Vue.use(system)
 Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
 Vue.use(auth)
+Vue.use(drafts)
 Vue.use(triggers, {
   userByID: store.getters['users/findByID'],
   userList: store.getters['users/listOnDemand'],

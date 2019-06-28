@@ -38,6 +38,7 @@
         :readonly="!isMember"
         :focus="uiFocusMessageInput()"
         :show-mark-as-unread-button="unread.count > 0"
+        :draft.sync="draft"
         @markAsRead="onMarkAsRead"
         @promptFilePicker="onOpenFilePicker"
         @editLastMessage="editLastMessage=true" />
@@ -53,6 +54,7 @@ import Messages from '@/components/Messages'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
 import { messagesLoad } from '@/lib/messenger'
+import Delta from 'quill-delta'
 
 export default {
   components: {
@@ -100,6 +102,24 @@ export default {
       channelHistory: 'history/getByChannelID',
       unreadFinder: 'unread/find',
     }),
+
+    draft: {
+      get () {
+        const d = this.$drafts.get({ channelID: this.channelID })
+        if (d) {
+          return new Delta(d)
+        }
+        return d
+      },
+
+      set ({ dest, value }) {
+        if (dest.remove) {
+          this.$drafts.remove(dest)
+        } else {
+          this.$drafts.set(dest, value)
+        }
+      },
+    },
 
     messages () {
       return this.channelHistory(this.channel.channelID)

@@ -20,6 +20,10 @@ export default {
       fontStyle: 'lighter',
     })
 
+    window.onbeforeunload = (event) => {
+      this.$bus.$emit('$core.unload')
+    }
+
     this.$store.watch(
       () => this.$store.getters['unread/total'],
       (count) => {

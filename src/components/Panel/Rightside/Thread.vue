@@ -41,6 +41,7 @@
           v-if="channel.canSendMessages"
           :replyTo="message"
           :show-mark-as-unread-button="unread.count > 0"
+          :draft.sync="draft"
           @markAsRead="onMarkAsRead"
           @promptFilePicker="onOpenFilePicker"
           @editLastMessage="editLastMessage=true" />
@@ -57,6 +58,7 @@ import Upload from '@/components/MessageInput/Upload'
 import mixinUnread from '@/mixins/unread'
 import mixinUpload from '@/mixins/upload'
 import { messagesLoad } from '@/lib/messenger'
+import Delta from 'quill-delta'
 
 export default {
   components: {
@@ -97,6 +99,24 @@ export default {
       getChannelByID: 'channels/findByID',
       unreadFinder: 'unread/find',
     }),
+
+    draft: {
+      get () {
+        const d = this.$drafts.get({ messageID: this.repliesTo })
+        if (d) {
+          return new Delta(d)
+        }
+        return d
+      },
+
+      set ({ dest, value }) {
+        if (dest.remove) {
+          this.$drafts.remove(dest)
+        } else {
+          this.$drafts.set(dest, value)
+        }
+      },
+    },
 
     message () {
       // Thread start

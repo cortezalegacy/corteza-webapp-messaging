@@ -93,12 +93,16 @@ export default {
     readonly: { type: Boolean, default: false },
 
     showMarkAsUnreadButton: { type: Boolean, default: false },
+
+    draft: { default: null },
   },
 
   data () {
     let value
     if (this.message) {
       value = enrichMentions(this.message.message)
+    } else if (this.draft && !value) {
+      value = this.draft
     }
 
     return {
@@ -122,6 +126,10 @@ export default {
     channelID () {
       // Returns channelID from one of the provided params
       return (this.channel || {}).channelID || (this.message || {}).channelID || (this.replyTo || {}).channelID
+    },
+
+    replyToMessageID () {
+      return (this.replyTo || {}).messageID
     },
 
     channelSuggestions () {
@@ -149,9 +157,23 @@ export default {
   },
 
   watch: {
-    channel () {
-      this.value = null
+    channelID (newValue, oldValue) {
+      this.sendDraft({ channelID: oldValue })
     },
+
+    replyToMessageID (newValue, oldValue) {
+      this.sendDraft({ messageID: oldValue })
+    },
+  },
+
+  created () {
+    this.$bus.$on('$core.unload', this.sendDraft)
+  },
+
+  beforeDestroy () {
+    this.sendDraft()
+
+    this.$bus.$off('$core.unload', this.sendDraft)
   },
 
   beforeMount () {
@@ -162,6 +184,22 @@ export default {
   },
 
   methods: {
+    sendDraft ({ value, messageID, channelID, remove } = {}) {
+      if (this.message) {
+        return
+      }
+
+      // Draft current value
+      value = value || this.value
+      messageID = messageID || this.replyToMessageID
+      channelID = channelID || this.channelID
+      remove = remove || !(this.value && this.value.length() > 1)
+      this.$emit('update:draft', { value, dest: { messageID, channelID, remove } })
+
+      // Use new draft value
+      this.value = this.draft
+    },
+
     onPromptFilePicker () {
       this.$emit('promptFilePicker', {})
     },
@@ -172,6 +210,9 @@ export default {
       // Make a copy and reset component's version of a value to prevent dups
       const value = exportToMarkdown(this.value).trim()
       this.value = null
+
+      // Delete draft
+      this.$emit('update:draft', { dest: { messageID: this.replyToMessageID, channelID: this.channelID, remove: true } })
 
       const stdResponse = (m) => {
         // Trigger remounting
