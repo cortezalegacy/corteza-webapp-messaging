@@ -18,7 +18,7 @@
       :showEditor="showEditor(msg)"
       :hideActions="hideActions"
       :hideReactions="hideReactions"
-      :hideMarkAsUnread="index === messages.length - 1 || index === 0"
+      :hideMarkAsUnread="hideMarkAsUnread || index === messages.length - 1 || index === 0"
       :hidePinning="hidePinning"
       :hideBookmarking="hideBookmarking"
       :hideActionGoToMessage="hideActionGoToMessage"
@@ -61,6 +61,9 @@ export default {
 
     scrollable: { type: Boolean, value: true },
 
+    // When set, we scroll to that message
+    scrollToMessage: String,
+
     // This will help us mark new messages
     lastReadMessageID: {
       type: String,
@@ -95,6 +98,8 @@ export default {
       allowAutoScroll: true,
       scrollToRef: false,
 
+      scrolledToMessage: false,
+
       // Recounts messages on each update, so we can know
       // of new messages are added
       lastMessageID: null,
@@ -115,6 +120,10 @@ export default {
     'origin' () {
       this.originChanged()
     },
+
+    scrollToMessage () {
+      this.scrolledToMessage = false
+    },
   },
 
   mounted () {
@@ -128,8 +137,20 @@ export default {
 
     this.$nextTick(() => {
       if (this.scrollable) {
-        // When we're scrollable, we need to emit scroll* events
-        if (this.allowAutoScroll || (isNewMessage && isOwnerOfLastMessage)) {
+        if (this.scrollToMessage && !this.scrolledToMessage) {
+          // Someone wanted to get to the very specific message (via search probably
+          const refMessage = this.$refs.message.find(({ message }) => message.messageID === this.scrollToMessage)
+
+          if (refMessage && refMessage.$el) {
+            // when message is present, scroll it into view
+            refMessage.$el.scrollIntoView()
+            window.setTimeout(() => {
+              // delay setting scrolledToMessage flag for 5 seconds
+              // to prevent auto-scroller to kick in too soon
+              this.scrolledToMessage = true
+            }, 5 * 1000)
+          }
+        } else if (this.allowAutoScroll || (isNewMessage && isOwnerOfLastMessage)) {
           this.$refs.anchor.scrollIntoView()
         }
 
@@ -152,6 +173,7 @@ export default {
 
     originChanged () {
       this.allowAutoScroll = true
+      this.scrolledToMessage = false
     },
 
     onScrollThrottled: throttle(function (e) { this.onScroll(e) }, 1500),

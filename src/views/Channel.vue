@@ -22,6 +22,7 @@
         :currentUser="$auth.user"
         :origin="channel"
         :scrollable="true"
+        :scroll-to-message="messageID"
         :consecutive="true"
         :lastReadMessageID="unread.lastMessageID"
         :editLastMessage="editLastMessage"
@@ -167,7 +168,6 @@ export default {
       this.editLastMessage = false
 
       this.previousFetchFirstMessageID = null
-
       messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((mm) => {
         this.updateHistorySet(mm)
         this.updateUnreads(mm)
