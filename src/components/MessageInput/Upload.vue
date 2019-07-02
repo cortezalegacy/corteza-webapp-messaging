@@ -150,7 +150,7 @@ export default {
     onFileAdded (file) {
       this.$emit('show', {})
 
-      // If file is already in DZ, remove it and use curent one
+      // If file is already in DZ, remove it and use current one
       const qFiles = this.dropzone.getQueuedFiles()
       if (qFiles.length > 0) {
         this.dropzone.removeFile(qFiles[0])
@@ -159,7 +159,7 @@ export default {
       this.queued = 1
     },
 
-    // When maximum files exceed, file uplaod is called and it fails instantly
+    // When maximum files exceed, file upload is called and it fails instantly
     onComplete (e) {
       if (e.status !== 'error') {
         this.resetUpload()
