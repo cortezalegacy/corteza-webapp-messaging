@@ -21,6 +21,7 @@
                   :hideActionsMenu="true"
                   :hideReactions="true"
                   :hidePinning="true"
+                  :hideMarkAsUnread="true"
                   :hideBookmarking="true"
                   origin="search"
                   :scrollable="false"
