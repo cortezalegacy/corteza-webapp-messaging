@@ -1,7 +1,7 @@
 <template>
   <section>
     <div>
-      <router-link v-if="link" :to="link" @click.native="$emit('close')">
+      <router-link v-if="link && canCreate" :to="link" @click.native="$emit('close')">
         <i class="icon icon-left icon-plus btn"></i>
       </router-link>
       <a @click="expanded=!expanded">
@@ -45,6 +45,12 @@ export default {
     current: {
       type: Object,
       required: false,
+    },
+
+    canCreate: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
 
