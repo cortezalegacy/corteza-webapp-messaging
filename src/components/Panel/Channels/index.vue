@@ -31,6 +31,7 @@
       <group v-on="$listeners"
              :link="{name: 'new-channel', params: { type: 'public' } }"
              :list="publicChannels"
+             :canCreate="effective['channel.public.create']"
              :current="channel"
              class="channel-group">{{ $t('panel.channel.public') }}</group>
 
@@ -41,11 +42,13 @@
       <group v-on="$listeners"
              :link="{name: 'new-channel', params: { type: 'private' } }"
              :list="privateChannels"
+             :canCreate="effective['channel.private.create']"
              :current="channel">{{ $t('panel.channel.private') }}</group>
 
       <group v-on="$listeners"
              :link="{name: 'new-channel', params: { type: 'group' } }"
              :list="groupChannels"
+             :canCreate="effective['channel.group.create']"
              :current="channel">{{ $t('panel.channel.group') }}</group>
     </div>
 
@@ -81,6 +84,7 @@ export default {
       groupUnfold: true,
       privateUnfold: true,
       publicUnfold: true,
+      effective: {},
     }
   },
 
@@ -138,6 +142,16 @@ export default {
     groupChannels () {
       return this.channelSlicer(this.unpinnedChannels.filter(c => c.isGroup()), this.sortByOnlineStatus)
     },
+  },
+
+  created () {
+    this.$MessagingAPI.permissionsEffective().then(e => {
+      e.forEach(p => {
+        if (p.operation.indexOf('create') > -1) {
+          this.effective[p.operation] = p.allow
+        }
+      })
+    })
   },
 
   methods: {
