@@ -11,8 +11,9 @@
       </header>
       <main class="container">
         <form class="editor big-form" @submit.prevent="onSubmit" v-if="!channel.channelID || channel.type !== 'group'">
-          <div v-if="error" class="error">
-            {{error}}
+          <div v-if="error" class="notification error no-margin">
+              <p>{{ $t(error) }}</p>
+              <span @click="error=null" class="close"></span>
           </div>
           <div v-if="channel.type !== 'group'" class="input-wrap">
             <label class="label-block">{{ $t('channel.editor.channelNameLabel') }} *</label>
@@ -295,10 +296,6 @@ export default {
   .title {
     padding-top: 15px;
   }
-}
-
-div.error {
-  color: $danger;
 }
 
 form, main > section {
