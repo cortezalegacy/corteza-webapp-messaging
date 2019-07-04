@@ -198,7 +198,7 @@ export default {
     },
 
     'type' (newType) {
-      if (!this.channel.channelID) this.channel.type = newType
+      if (!this.channel.channelID) this.load()
     },
   },
 
