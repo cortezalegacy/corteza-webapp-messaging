@@ -18,6 +18,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    canCreate: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -31,7 +35,11 @@ export default {
       if (ch) {
         return { name: 'channel', params: { channelID: ch.channelID } }
       } else {
-        return { name: 'profile', params: { userID: this.ID } }
+        if (this.canCreate) {
+          return { name: 'profile', params: { userID: this.ID } }
+        } else {
+          return ''
+        }
       }
     },
 

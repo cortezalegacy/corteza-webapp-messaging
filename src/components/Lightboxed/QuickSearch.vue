@@ -13,7 +13,7 @@
               <li v-for="i in (query ? filtered : preferred).slice(0, 10)"
                   @click="onClose"
                   :key="i.ID">
-                <component :is="i.cmp" :ID="i.ID" ></component>
+                <component :is="i.cmp" :ID="i.ID" :canCreate="canCreate" ></component>
               </li>
           </ol>
       </main>
@@ -51,6 +51,7 @@ export default {
   data () {
     return {
       query: '',
+      canCreate: false,
     }
   },
 
@@ -80,6 +81,15 @@ export default {
         ...this.channels.filter(c => !c.isDirectMessage()).map(cmp('channel')),
       ]
     },
+  },
+
+  created () {
+    this.$MessagingAPI.permissionsEffective().then(e => {
+      const canCreate = e.find(p => p.operation === 'channel.private.create')
+      if (canCreate) {
+        this.canCreate = canCreate.allow
+      }
+    })
   },
 
   methods: {
