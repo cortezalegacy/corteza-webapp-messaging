@@ -175,6 +175,7 @@ export default {
       loadUserStatuses: 'users/loadStatuses',
       loadCommands: 'suggestions/loadCommands',
       updateChannelUnreads: 'unread/fromChannel',
+      loadSession: 'session/load',
     }),
 
     init () {
@@ -184,6 +185,7 @@ export default {
 
       this.loadUsers()
       this.loadCommands()
+      this.loadSession()
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)
