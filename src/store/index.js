@@ -10,6 +10,7 @@ import history from './history'
 import unread from './unread'
 import settings from './settings'
 import suggestions from './suggestions'
+import session from './session'
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ const store = new Vuex.Store({
     settings: settings(MessagingAPI),
     suggestions: suggestions(MessagingAPI),
     unread: unread(MessagingAPI),
+    session: session(MessagingAPI),
   },
 })
 

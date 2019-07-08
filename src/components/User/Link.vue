@@ -18,7 +18,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    canCreate: {
+    canCreateGroupChannel: {
       type: Boolean,
       default: false,
     },
@@ -35,9 +35,10 @@ export default {
       if (ch) {
         return { name: 'channel', params: { channelID: ch.channelID } }
       } else {
-        if (this.canCreate) {
+        if (this.canCreateGroupChannel) {
           return { name: 'profile', params: { userID: this.ID } }
         } else {
+          // Cant click on a user if no previous conversation and no permission
           return ''
         }
       }
