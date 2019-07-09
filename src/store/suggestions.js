@@ -4,12 +4,14 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   updateCommands: 'updateCommands',
+  updateAPI: 'updateAPI',
 }
 
-export default function (Messaging) {
+export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
+      MessagingAPI,
       suggestions: [],
       suggestionsOpened: false,
       commands: [],
@@ -24,9 +26,9 @@ export default function (Messaging) {
       pending: (state) => state.pending,
     },
     actions: {
-      async loadCommands ({ commit }) {
+      async loadCommands ({ commit, state }) {
         commit(types.pending)
-        Messaging.commandsList().then((commands) => {
+        state.MessagingAPI.commandsList().then((commands) => {
           commit(types.updateCommands, commands)
           commit(types.completed)
         })
@@ -42,13 +44,14 @@ export default function (Messaging) {
       },
 
       [types.updateCommands] (state, commands) {
+        const MessagingAPI = state.MessagingAPI
         commands = commands.map(c => ({
           command: c.name,
           description: c.description,
           params: [],
           meta: {},
           handler: (vm, { channel, params, input }) => {
-            Messaging.messageExecuteCommand({ channelID: channel.channelID, command: c.name, input, params })
+            MessagingAPI.messageExecuteCommand({ channelID: channel.channelID, command: c.name, input, params })
           },
         })).concat(localCommands)
 

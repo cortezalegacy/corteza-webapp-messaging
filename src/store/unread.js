@@ -5,6 +5,7 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   update: 'update',
+  updateAPI: 'updateAPI',
 }
 
 // Maps Message or Channel object to internal struct
@@ -113,6 +114,7 @@ export default (MessagingAPI) => {
     namespaced: true,
 
     state: {
+      MessagingAPI,
       pending: false,
       set: [],
     },
@@ -126,9 +128,9 @@ export default (MessagingAPI) => {
     },
 
     actions: {
-      clear ({ commit, getters }, { channelID, messageID }) {
+      clear ({ commit, state }, { channelID, messageID }) {
         commit(types.pending)
-        MessagingAPI.messageMarkAsRead({ channelID, threadID: messageID }).then((unread) => {
+        state.MessagingAPI.messageMarkAsRead({ channelID, threadID: messageID }).then((unread) => {
           commit(types.update, [toInternal({
             channelID,
             messageID,
@@ -139,9 +141,9 @@ export default (MessagingAPI) => {
         })
       },
 
-      mark ({ commit, getters }, { channelID, replyTo, messageID }) {
+      mark ({ commit, state }, { channelID, replyTo, messageID }) {
         commit(types.pending)
-        MessagingAPI.messageMarkAsRead({ channelID, threadID: replyTo, lastReadMessageID: messageID }).then((unread) => {
+        state.MessagingAPI.messageMarkAsRead({ channelID, threadID: replyTo, lastReadMessageID: messageID }).then((unread) => {
           commit(types.update, [toInternal({
             channelID,
             messageID: replyTo,
@@ -213,6 +215,10 @@ export default (MessagingAPI) => {
     },
 
     mutations: {
+      [types.updateAPI] (state, { MessagingAPI }) {
+        state.MessagingAPI = MessagingAPI
+      },
+
       [types.pending] (state) {
         state.pending = true
       },

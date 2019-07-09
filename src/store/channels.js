@@ -8,6 +8,7 @@ const types = {
   channelJoin: 'channelJoin',
   channelPart: 'channelPart',
   removeFromList: 'removeFromList',
+  updateAPI: 'updateAPI',
 }
 
 export default function (MessagingAPI) {
@@ -15,6 +16,7 @@ export default function (MessagingAPI) {
     namespaced: true,
 
     state: {
+      MessagingAPI,
       pending: false,
       list: [],
     },
@@ -60,10 +62,10 @@ export default function (MessagingAPI) {
 
     actions: {
       // Loads & transforms all channels
-      async load ({ commit, getters }) {
+      async load ({ commit, state }) {
         commit(types.pending)
         return new Promise((resolve) => {
-          MessagingAPI.channelList().then((cc) => {
+          state.MessagingAPI.channelList().then((cc) => {
             cc = cc.map(c => new Channel(c))
             commit(types.resetList, cc)
             resolve(cc)
@@ -73,18 +75,18 @@ export default function (MessagingAPI) {
         })
       },
 
-      setMembershipFlag ({ commit, getters }, { channelID, flag }) {
+      setMembershipFlag ({ commit, state }, { channelID, flag }) {
         commit(types.pending)
-        MessagingAPI.channelSetFlag({ channelID, flag }).then((ch) => {
+        state.MessagingAPI.channelSetFlag({ channelID, flag }).then((ch) => {
           commit(types.updateList, new Channel(ch))
         }).finally(() => {
           commit(types.completed)
         })
       },
 
-      removeMembershipFlag ({ commit, getters }, { channelID }) {
+      removeMembershipFlag ({ commit, state }, { channelID }) {
         commit(types.pending)
-        MessagingAPI.channelRemoveFlag({ channelID }).then((ch) => {
+        state.MessagingAPI.channelRemoveFlag({ channelID }).then((ch) => {
           commit(types.updateList, new Channel(ch))
         }).finally(() => {
           commit(types.completed)
@@ -93,6 +95,10 @@ export default function (MessagingAPI) {
     },
 
     mutations: {
+      [types.updateAPI] (state, { MessagingAPI }) {
+        state.MessagingAPI = MessagingAPI
+      },
+
       [types.pending] (state) {
         state.pending = true
       },

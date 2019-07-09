@@ -1,11 +1,10 @@
-
 const types = {
   pending: 'pending',
   completed: 'completed',
   set: 'set',
 }
 
-export default function (Messaging) {
+export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
