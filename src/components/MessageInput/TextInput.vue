@@ -286,6 +286,14 @@ export default {
 <style lang="scss">
   @import '@/assets/sass/channel-names.scss';
 
+  .ql-editor {
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+
   @media (max-width: $wideminwidth - 1px)
   {
     .ql-editor
