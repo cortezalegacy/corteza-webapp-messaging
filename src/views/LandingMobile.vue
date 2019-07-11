@@ -1,23 +1,23 @@
 <template>
   <div class="mobile">
     <div class="logo-container">
-      <img class="logo" src="../assets/images/corteza-logo-with-tagline.png" alt="Logo with tagline"/>
+      <img class="logo" src="../themes/corteza-base/images/corteza-logo-with-tagline.png" alt="Logo with tagline"/>
     </div>
     <div class="badges">
       <div>
         <a href="https://play.google.com/store/apps/details?id=tech.crust.hybrid.messaging">
-          <img class="badge" src="../assets/badges/google-play.svg" alt="Google play"/>
+          <img class="badge" src="../themes/corteza-base/badges/google-play.svg" alt="Google play"/>
         </a>
       </div>
 
       <div>
-        <img class="mobile-preview" src="../assets/images/mobile-preview.png" alt="Mobile preview"/>
+        <img class="mobile-preview" src="../themes/corteza-base/images/mobile-preview.png" alt="Mobile preview"/>
       </div>
     </div>
   </div>
 </template>
 <style lang="scss" scoped>
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 
 div {
   display: flex;

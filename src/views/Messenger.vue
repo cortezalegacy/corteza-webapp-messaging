@@ -69,12 +69,12 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import QuickSearch from '@/components/Lightboxed/QuickSearch'
-import SearchResults from '@/components/Lightboxed/SearchResults'
-import { cleanMentions } from '@/lib/mentions'
-import TitleNotifications from '@/lib/title_notifications'
-import core from '@/mixins/core'
-import MessengerBase from '@/components/MessengerBase'
+import QuickSearch from 'corteza-webapp-messaging/src/components/Lightboxed/QuickSearch'
+import SearchResults from 'corteza-webapp-messaging/src/components/Lightboxed/SearchResults'
+import { cleanMentions } from 'corteza-webapp-messaging/src/lib/mentions'
+import TitleNotifications from 'corteza-webapp-messaging/src/lib/title_notifications'
+import core from 'corteza-webapp-messaging/src/mixins/core'
+import MessengerBase from 'corteza-webapp-messaging/src/components/MessengerBase'
 import { PreviewLightbox } from 'corteza-webapp-common/src/components/FilePreview/index'
 
 const titleNtf = new TitleNotifications(document)
@@ -303,8 +303,8 @@ export default {
 </script>
 <style lang="scss">
 // General stuff we need everywhere..
-@import '@/assets/sass/emojis.scss';
-@import '@/assets/sass/text.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/emojis.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/text.scss';
 
 </style>
 <style scoped lang="scss">

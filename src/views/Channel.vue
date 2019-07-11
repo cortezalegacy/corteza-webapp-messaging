@@ -48,13 +48,13 @@
 </template>
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
-import ChannelHeader from '@/components/Channel/Header'
-import MessageInput from '@/components/MessageInput'
-import Upload from '@/components/MessageInput/Upload'
-import Messages from '@/components/Messages'
-import mixinUnread from '@/mixins/unread'
-import mixinUpload from '@/mixins/upload'
-import { messagesLoad } from '@/lib/messenger'
+import ChannelHeader from 'corteza-webapp-messaging/src/components/Channel/Header'
+import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
+import Upload from 'corteza-webapp-messaging/src/components/MessageInput/Upload'
+import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
+import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
+import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 import Delta from 'quill-delta'
 
 export default {

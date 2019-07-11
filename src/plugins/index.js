@@ -1,15 +1,26 @@
 import Vue from 'vue'
-import store from '@/store'
-import ws from '@/plugins/ws'
-import bus from '@/plugins/bus'
+
+import VueNativeNotification from 'vue-native-notification'
+
+import Router from 'vue-router'
+
+import store from 'corteza-webapp-messaging/src/store'
+
 import system from 'corteza-webapp-common/src/plugins/system'
 import messaging from 'corteza-webapp-common/src/plugins/messaging'
-import commands from '@/plugins/commands'
-import triggers from '@/plugins/triggers'
-import drafts from './drafts'
 import auth from 'corteza-webapp-common/src/plugins/auth'
 
+import ws from './ws'
+import bus from './bus'
+import commands from './commands'
+import triggers from './triggers'
+import drafts from './drafts'
+
 const eventbus = new Vue()
+
+Vue.use(Router)
+
+Vue.use(VueNativeNotification)
 
 Vue.use(messaging)
 Vue.use(bus, { eventbus })

@@ -112,7 +112,7 @@ export default {
 
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/menu-layer.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/menu-layer.scss';
 
 .actions, .context-menu {
   position: absolute;

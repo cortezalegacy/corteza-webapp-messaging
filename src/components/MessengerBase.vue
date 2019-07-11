@@ -57,12 +57,12 @@
 </template>
 
 <script>
-import BaseSidePanel from '@/components/Panel/Base'
-import ChannelsPanel from '@/components/Panel/Channels'
-import MembersPanel from '@/components/Panel/Rightside/Members'
-import ThreadPanel from '@/components/Panel/Rightside/Thread'
-import BookmarkedMessagesPanel from '@/components/Panel/Rightside/BookmarkedMessages'
-import PinnedMessagesPanel from '@/components/Panel/Rightside/PinnedMessages'
+import BaseSidePanel from 'corteza-webapp-messaging/src/components/Panel/Base'
+import ChannelsPanel from 'corteza-webapp-messaging/src/components/Panel/Channels'
+import MembersPanel from 'corteza-webapp-messaging/src/components/Panel/Rightside/Members'
+import ThreadPanel from 'corteza-webapp-messaging/src/components/Panel/Rightside/Thread'
+import BookmarkedMessagesPanel from 'corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMessages'
+import PinnedMessagesPanel from 'corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages'
 
 export default {
   components: {

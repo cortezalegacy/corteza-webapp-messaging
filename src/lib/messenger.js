@@ -1,6 +1,6 @@
 // Helps fetch & process messages; storage done by caller
 
-import { Message } from '@/types'
+import { Message } from 'corteza-webapp-messaging/src/types'
 
 const messagesProcess = function (uGetter, messages = []) {
   // Append actual user & convert to internal object

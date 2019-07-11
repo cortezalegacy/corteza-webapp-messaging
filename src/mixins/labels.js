@@ -1,4 +1,4 @@
-import { User, Channel } from '@/types'
+import { User, Channel } from 'corteza-webapp-messaging/src/types'
 
 export default {
   methods: {

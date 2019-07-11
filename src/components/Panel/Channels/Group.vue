@@ -24,7 +24,7 @@
   </section>
 </template>
 <script>
-import Channel from '@/components/Panel/Channels/Channel'
+import Channel from 'corteza-webapp-messaging/src/components/Panel/Channels/Channel'
 
 export default {
   components: {
@@ -59,7 +59,7 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 
 div {
   display: block;

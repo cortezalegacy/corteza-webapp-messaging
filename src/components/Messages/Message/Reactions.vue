@@ -8,7 +8,7 @@
   </ul>
 </template>
 <script>
-import { textToEmoji } from '@/lib/emoji'
+import { textToEmoji } from 'corteza-webapp-messaging/src/lib/emoji'
 
 export default {
   mixins: [

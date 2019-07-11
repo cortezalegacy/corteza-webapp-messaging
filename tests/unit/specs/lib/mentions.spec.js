@@ -2,7 +2,7 @@
 /* ESLint didn't like some expects */
 
 import { expect } from 'chai'
-import {cleanMentions} from '@/lib/mentions'
+import {cleanMentions} from 'corteza-webapp-messaging/src/lib/mentions'
 import {Channel, User} from '../../../../src/types'
 
 describe('mentions.js', () => {

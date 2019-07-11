@@ -1,4 +1,4 @@
-import { User } from '@/types'
+import { User } from 'corteza-webapp-messaging/src/types'
 
 const types = {
   pending: 'pending',

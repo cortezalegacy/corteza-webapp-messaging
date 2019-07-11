@@ -35,12 +35,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Lightbox from '@/components/Lightboxed/index.vue'
-import SearchInput from '@/components/SearchInput'
-import Messages from '@/components/Messages'
-import ChannelLink from '@/components/Channel/Link'
-import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
-import { Message } from '@/types'
+import Lightbox from 'corteza-webapp-messaging/src/components/Lightboxed/index.vue'
+import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
+import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import ChannelLink from 'corteza-webapp-messaging/src/components/Channel/Link'
+import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
+import { Message } from 'corteza-webapp-messaging/src/types'
 
 export default {
   components: {

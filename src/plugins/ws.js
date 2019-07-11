@@ -1,5 +1,5 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
-import { Message } from '@/types'
+import { Message } from 'corteza-webapp-messaging/src/types'
 
 export default {
   install (Vue, { eventbus }) {

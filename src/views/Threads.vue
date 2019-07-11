@@ -26,9 +26,9 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import Messages from '@/components/Messages'
-import Empty from '@/components/Empty'
-import { messagesThreadLoad } from '@/lib/messenger'
+import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import Empty from 'corteza-webapp-messaging/src/components/Empty'
+import { messagesThreadLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 
 export default {
   components: {
@@ -52,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/assets/sass/headers.scss';
+  @import 'corteza-webapp-messaging/src/themes/corteza-base/headers.scss';
 .channel-container {
   width: 100%;
 }

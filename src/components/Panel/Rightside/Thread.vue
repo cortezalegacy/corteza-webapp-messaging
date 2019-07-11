@@ -52,12 +52,12 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import BasePanel from './.'
-import Messages from '@/components/Messages'
-import MessageInput from '@/components/MessageInput'
-import Upload from '@/components/MessageInput/Upload'
-import mixinUnread from '@/mixins/unread'
-import mixinUpload from '@/mixins/upload'
-import { messagesLoad } from '@/lib/messenger'
+import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
+import Upload from 'corteza-webapp-messaging/src/components/MessageInput/Upload'
+import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
+import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
+import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 import Delta from 'quill-delta'
 
 export default {

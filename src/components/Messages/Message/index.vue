@@ -110,8 +110,8 @@ import Reactions from './Reactions'
 import EmbeddedBox from './EmbeddedBox'
 import Footnote from './Footnote'
 import Actions from './Actions'
-import Avatar from '@/components/Avatar'
-import MessageInput from '@/components/MessageInput'
+import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
+import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
 
 export default {
   components: {
@@ -260,7 +260,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/menu-layer.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/menu-layer.scss';
 
 em{
   font-style: normal;

@@ -1,4 +1,4 @@
-import { Channel } from '@/types'
+import { Channel } from 'corteza-webapp-messaging/src/types'
 
 const types = {
   pending: 'pending',

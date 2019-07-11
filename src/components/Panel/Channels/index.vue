@@ -54,8 +54,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Group from '@/components/Panel/Channels/Group'
-import SearchInput from '@/components/SearchInput'
+import Group from 'corteza-webapp-messaging/src/components/Panel/Channels/Group'
+import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
 
 export default {
   components: {

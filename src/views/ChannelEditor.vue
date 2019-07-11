@@ -14,12 +14,6 @@
           <div v-if="error" class="error">
             {{error}}
           </div>
-<!--
-          <div class="notification info no-margin">
-              <p>Notifications ready to use ! Check assets/sass/README.MD for more info</p>
-              <span class="close"></span>
-          </div>
--->
           <div v-if="channel.type !== 'group'" class="input-wrap">
             <label class="label-block">{{ $t('channel.editor.channelNameLabel') }} *</label>
             <input
@@ -127,13 +121,13 @@
   </section>
 </template>
 <script>
-import { Channel } from '@/types'
+import { Channel } from 'corteza-webapp-messaging/src/types'
 import { mapGetters, mapMutations } from 'vuex'
-import ConfirmationRow from '@/components/Form/ConfirmationRow'
-import SearchInput from '@/components/SearchInput'
+import ConfirmationRow from 'corteza-webapp-messaging/src/components/Form/ConfirmationRow'
+import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
 import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
 import 'vue-simple-suggest/dist/styles.css'
-import Avatar from '@/components/Avatar'
+import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
 
 const action = {
   add: 'add',
@@ -278,10 +272,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/inputs.scss';
-@import '@/assets/sass/headers.scss';
-@import '@/assets/sass/btns.scss';
-@import '@/assets/sass/notifications.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/inputs.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/headers.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/notifications.scss';
 
 .header {
   .title {

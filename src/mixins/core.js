@@ -1,5 +1,5 @@
-import { Channel } from '@/types'
-import { messagesProcess } from '@/lib/messenger'
+import { Channel } from 'corteza-webapp-messaging/src/types'
+import { messagesProcess } from 'corteza-webapp-messaging/src/lib/messenger'
 import Favico from 'favico.js'
 import { throttle } from 'lodash'
 
@@ -16,7 +16,7 @@ export default {
     // Fav icon notifications
     window.favicon = new Favico({
       animation: 'none',
-      bgColor: '#E85568', // /src/assets/sass/variables.scss -> $appred
+      bgColor: '#E85568', // /src/themes/corteza-base/variables.scss -> $appred
       fontStyle: 'lighter',
     })
 

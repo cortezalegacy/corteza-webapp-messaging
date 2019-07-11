@@ -16,7 +16,7 @@
 </template>
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/headers.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/headers.scss';
 
 .rightside-panel-container {
   display: flex;

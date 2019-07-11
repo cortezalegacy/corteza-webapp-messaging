@@ -59,9 +59,9 @@
 import { mapGetters } from 'vuex'
 import { throttle } from 'lodash'
 import TextInput from './TextInput'
-import ObserverFooter from '@/components/Channel/ObserverFooter'
+import ObserverFooter from 'corteza-webapp-messaging/src/components/Channel/ObserverFooter'
 import Activity from './Activity'
-import { enrichMentions } from '@/lib/mentions'
+import { enrichMentions } from 'corteza-webapp-messaging/src/lib/mentions'
 import { exportToMarkdown } from './src/markdown'
 
 const kinds = {
@@ -291,7 +291,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 
 $inputWidth: 50px;
 $mobileInputWidth: 35px;
@@ -425,5 +425,10 @@ $mobileInputWidth: 35px;
       }
     }
   }
+}
+
+.float-right
+{
+    float:right;
 }
 </style>

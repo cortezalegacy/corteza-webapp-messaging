@@ -1,4 +1,4 @@
-import CRM from '@/api/crm'
+import CRM from 'corteza-webapp-messaging/src/api/crm'
 
 export default {
   install (Vue) {

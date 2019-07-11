@@ -4,7 +4,7 @@
 import { expect } from 'chai'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuex from 'vuex'
-import unread from '@/store/unread'
+import unread from 'corteza-webapp-messaging/src/store/unread'
 import {Channel, Message} from '../../../../src/types'
 
 const localVue = createLocalVue()

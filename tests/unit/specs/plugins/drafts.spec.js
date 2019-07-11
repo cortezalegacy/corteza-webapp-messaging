@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { makeKey, get, remove, set } from '@/plugins/drafts'
+import { makeKey, get, remove, set } from 'corteza-webapp-messaging/src/plugins/drafts'
 
 class Api {
   constructor () {

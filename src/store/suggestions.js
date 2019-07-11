@@ -1,4 +1,4 @@
-import localCommands from '@/commands'
+import localCommands from 'corteza-webapp-messaging/src/commands'
 
 const types = {
   pending: 'pending',

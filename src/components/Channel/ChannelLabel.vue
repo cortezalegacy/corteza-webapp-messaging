@@ -1,5 +1,5 @@
 <script>
-import GroupMembers from '@/components/Channel/GroupMembers'
+import GroupMembers from 'corteza-webapp-messaging/src/components/Channel/GroupMembers'
 
 export default {
   components: {

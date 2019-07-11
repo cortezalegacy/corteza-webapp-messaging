@@ -1,6 +1,6 @@
 <script>
-import markdown2VDOM from '@/lib/markdown'
-import { vdomifyEmojis } from '@/lib/emoji'
+import markdown2VDOM from 'corteza-webapp-messaging/src/lib/markdown'
+import { vdomifyEmojis } from 'corteza-webapp-messaging/src/lib/emoji'
 
 export default {
   props: {

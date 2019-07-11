@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+
 import SystemAPI from 'corteza-webapp-common/src/lib/corteza-server/system'
 import MessagingAPI from 'corteza-webapp-common/src/lib/corteza-server/messaging'
+
 import channels from './channels'
 import users from './users'
 import history from './history'

@@ -18,8 +18,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import BasePanel from '.'
-import Messages from '@/components/Messages'
-import { messagesLoad } from '@/lib/messenger'
+import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 
 export default {
   components: {

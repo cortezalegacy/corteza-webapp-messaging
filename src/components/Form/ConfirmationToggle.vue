@@ -43,5 +43,5 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 </style>

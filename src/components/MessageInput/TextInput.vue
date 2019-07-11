@@ -284,7 +284,7 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '@/assets/sass/channel-names.scss';
+  @import 'corteza-webapp-messaging/src/themes/corteza-base/channel-names.scss';
 
   .ql-editor {
     -moz-user-select: text;

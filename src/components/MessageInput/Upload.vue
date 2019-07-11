@@ -58,8 +58,8 @@
 import { mapGetters } from 'vuex'
 import vueDropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-import '@/assets/sass/file-upload.scss'
-import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
+import 'corteza-webapp-messaging/src/themes/corteza-base/file-upload.scss'
+import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
 
 export default {
   components: {
@@ -170,7 +170,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 
 .droparea {
   position: absolute;

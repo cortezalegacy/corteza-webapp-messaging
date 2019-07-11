@@ -2,7 +2,7 @@
 /* ESLint didn't like some expects */
 
 import { expect } from 'chai'
-import render from '@/lib/markdown'
+import render from 'corteza-webapp-messaging/src/lib/markdown'
 
 let mdInput
 

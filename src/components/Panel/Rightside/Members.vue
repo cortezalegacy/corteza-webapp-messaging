@@ -44,9 +44,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import BasePanel from './.'
-import Avatar from '@/components/Avatar'
+import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
 import SearchInput from '../../SearchInput'
-import ConfirmationToggle from '@/components/Form/ConfirmationToggle'
+import ConfirmationToggle from 'corteza-webapp-messaging/src/components/Form/ConfirmationToggle'
 
 export default {
   components: {
@@ -101,7 +101,7 @@ export default {
 
 <style scoped lang="scss">
 //inlude generic definitions
-@import '@/assets/sass/btns.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
 
 .header {
   height: auto;

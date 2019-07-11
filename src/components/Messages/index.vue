@@ -35,7 +35,7 @@
 <script>
 import { throttle } from 'lodash'
 import Message from './Message'
-import { getFirstID, getLastID, isConsecutive } from '@/lib/messages'
+import { getFirstID, getLastID, isConsecutive } from 'corteza-webapp-messaging/src/lib/messages'
 
 export default {
   components: {

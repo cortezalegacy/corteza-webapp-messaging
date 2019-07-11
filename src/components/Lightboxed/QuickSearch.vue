@@ -27,10 +27,10 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import Lightbox from '@/components/Lightboxed/index.vue'
-import SearchInput from '@/components/SearchInput'
-import emitCloseOnEscape from '@/mixins/emitCloseOnEscape'
-import labelsMixin from '@/mixins/labels'
+import Lightbox from 'corteza-webapp-messaging/src/components/Lightboxed/index.vue'
+import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
+import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
+import labelsMixin from 'corteza-webapp-messaging/src/mixins/labels'
 
 const cmp = (type) => (i) => {
   i.cmp = `${type}-link`

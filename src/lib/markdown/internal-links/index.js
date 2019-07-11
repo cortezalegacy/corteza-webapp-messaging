@@ -1,6 +1,6 @@
 'use strict'
 
-import { mentionSplitRE, mentionRE } from '@/lib/mentions.js'
+import { mentionSplitRE, mentionRE } from 'corteza-webapp-messaging/src/lib/mentions.js'
 
 export default (md, setup) => {
   md.core.ruler.push('mention', parser.bind(md))

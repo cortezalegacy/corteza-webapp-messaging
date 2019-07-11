@@ -134,7 +134,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ChannelLabel from '@/components/Channel/ChannelLabel'
+import ChannelLabel from 'corteza-webapp-messaging/src/components/Channel/ChannelLabel'
 
 export default {
   name: 'channel-header',
@@ -194,7 +194,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import '@/assets/sass/headers.scss';
+  @import 'corteza-webapp-messaging/src/themes/corteza-base/headers.scss';
 
   hr {
     background: $light;

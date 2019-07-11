@@ -38,7 +38,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import ChannelLabel from '@/components/Channel/ChannelLabel'
+import ChannelLabel from 'corteza-webapp-messaging/src/components/Channel/ChannelLabel'
 
 export default {
   components: {
@@ -125,8 +125,8 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-@import '@/assets/sass/menu-layer.scss';
-@import '@/assets/sass/channel-names.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/menu-layer.scss';
+@import 'corteza-webapp-messaging/src/themes/corteza-base/channel-names.scss';
 
 .channel-name {
   text-decoration:none;
