@@ -92,7 +92,6 @@ module.exports = ({ appName, appLabel, version, theme, packageAlias, root = path
           // @todo cleanup all components and remove this global import
           data: `
             @import "./src/themes/${theme}/variables.scss";
-            @import "./src/themes/${theme}/main.scss";
           `,
         },
       },

@@ -7,6 +7,11 @@ function view (name, resolve) {
 export default [
   { path: '/auth', name: 'auth', component: view('Auth') },
   {
+    path: '/mobile',
+    name: 'mobile',
+    component: view('LandingMobile'),
+  },
+  {
     path: '',
     name: 'root',
     component: view('Messenger'),
@@ -26,10 +31,5 @@ export default [
   {
     path: '*',
     redirect: { name: 'root' },
-  },
-  {
-    path: '/mobile',
-    name: 'mobile',
-    component: view('LandingMobile'),
   },
 ]

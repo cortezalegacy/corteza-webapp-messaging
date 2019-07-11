@@ -19,3 +19,78 @@ label
 {
   cursor:pointer;
 }
+
+div.landing {
+  display: block;
+  height: 100vh;
+  width: 100%;
+  background: url($logo) no-repeat #efefef;
+  background-position: 50% 50%;
+  opacity: 0.25;
+  background-size: 300px;
+}
+
+.mobile {
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .mobile {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: #efefef;
+    overflow-y: auto;
+  }
+
+  .logo {
+    height: 100px;
+    opacity: 0.8;
+    background: url($logo) no-repeat center;
+    background-size: contain;
+    margin: 20px;
+  }
+
+  img {
+    margin: 10px;
+    max-width: 100%;
+  }
+
+  .mobile-preview {
+    min-width: 250px;
+    width: 65vw;
+    height: 100%;
+  }
+
+  .badge {
+    width: auto;
+    height: 10vw;
+  }
+
+  .badges {
+    margin-top: 5vw;
+    flex-direction: column;
+    align-content: space-around;
+  }
+
+  @media (orientation: landscape) {
+    .logo {
+      height: 15vh;
+    }
+
+    .mobile-preview {
+      width: 65vh;
+      height: 100%;
+    }
+
+    .badge {
+      height: 10vh;
+    }
+
+    .badges {
+      margin-top: 5vh;
+    }
+  }
+}
