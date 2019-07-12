@@ -14,7 +14,7 @@ import i18next from 'i18next'
 // Rules to follow:
 //
 // Event name MUST be prefixed. Use name of the origin, ie:
-//  - [plugins] $ws.message
+//  - [plugins] $ServerEvents.message
 //  - [components] Component/Path/And/Name.eventName
 //  - [views] /ViewName.eventName
 

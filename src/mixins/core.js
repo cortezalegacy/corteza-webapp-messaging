@@ -31,19 +31,19 @@ export default {
       },
     )
 
-    this.$bus.$on('$ws.open', () => {
+    this.$bus.$on('$ServerEvents.open', () => {
       this.$store.dispatch('users/loadStatuses')
     })
 
-    this.$bus.$on('$ws.channel', (channel) => {
+    this.$bus.$on('$ServerEvents.channel', (channel) => {
       this.$store.commit('channels/updateList', new Channel(channel))
     })
 
-    this.$bus.$on('$ws.channelJoin', (join) => {
+    this.$bus.$on('$ServerEvents.channelJoin', (join) => {
       this.$store.commit('channels/channelJoin', join)
     })
 
-    this.$bus.$on('$ws.channelPart', (part) => {
+    this.$bus.$on('$ServerEvents.channelPart', (part) => {
       this.$store.commit('channels/channelPart', part)
     })
 
@@ -77,7 +77,7 @@ export default {
       }
     }, statusThrottle)
 
-    this.$bus.$on('$ws.activity', (activity) => {
+    this.$bus.$on('$ServerEvents.activity', (activity) => {
       // Ignore self
       if (this.$auth.user.userID !== activity.userID) {
         if (activity.kind !== 'disconnected') {
@@ -95,7 +95,7 @@ export default {
     })
 
     // Handles single-message updates that gets from the backend
-    this.$bus.$on('$ws.message', (message) => {
+    this.$bus.$on('$ServerEvents.message', (message) => {
       const [ msg ] = messagesProcess(this.$store.getters['users/findByID'], [message])
 
       this.$bus.$emit('$core.newMessage', { message: msg })
@@ -105,19 +105,19 @@ export default {
       this.$store.commit('users/inactive', { channelID: msg.channelID, userID: msg.userID, kind: 'typing' })
     })
 
-    this.$bus.$on('$ws.messageReaction', ({ userID, messageID, reaction }) => {
+    this.$bus.$on('$ServerEvents.messageReaction', ({ userID, messageID, reaction }) => {
       this.$store.dispatch('history/reactionAdded', { userID, messageID, reaction })
     })
 
-    this.$bus.$on('$ws.messageReactionRemoved', ({ userID, messageID, reaction }) => {
+    this.$bus.$on('$ServerEvents.messageReactionRemoved', ({ userID, messageID, reaction }) => {
       this.$store.dispatch('history/reactionRemoved', { userID, messageID, reaction })
     })
 
-    this.$bus.$on('$ws.messagePin', ({ messageID }) => {
+    this.$bus.$on('$ServerEvents.messagePin', ({ messageID }) => {
       this.$store.dispatch('history/pinned', { messageID })
     })
 
-    this.$bus.$on('$ws.messagePinRemoved', ({ messageID }) => {
+    this.$bus.$on('$ServerEvents.messagePinRemoved', ({ messageID }) => {
       this.$store.dispatch('history/unpinned', { messageID })
     })
 

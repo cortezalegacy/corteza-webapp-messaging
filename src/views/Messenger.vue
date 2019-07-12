@@ -146,7 +146,7 @@ export default {
   created () {
     this.$auth.check(this.$SystemAPI).then(() => {
       this.init()
-      this.$ws.connect()
+      this.$ServerEvents.connect(window.MessagingAPI, this.$auth.JWT)
     }).catch((err) => {
       console.debug(err)
       window.location = '/auth'

@@ -10,7 +10,7 @@ import system from 'corteza-webapp-common/src/plugins/system'
 import messaging from 'corteza-webapp-common/src/plugins/messaging'
 import auth from 'corteza-webapp-common/src/plugins/auth'
 
-import ws from './ws'
+import serverEvents from './serverEvents'
 import bus from './bus'
 import commands from './commands'
 import triggers from './triggers'
@@ -26,7 +26,7 @@ Vue.use(messaging)
 Vue.use(bus, { eventbus })
 Vue.use(system)
 Vue.use(commands, { store })
-Vue.use(ws, { eventbus })
+Vue.use(serverEvents, { eventbus })
 Vue.use(auth)
 Vue.use(drafts)
 Vue.use(triggers, {
