@@ -2,6 +2,7 @@ import Vue from 'vue'
 import i18next from 'i18next'
 import lngDetector from 'i18next-browser-languagedetector'
 import VueI18Next from '@panter/vue-i18next'
+import intervalPlural from 'i18next-intervalplural-postprocessor'
 
 import en from './en'
 
@@ -24,7 +25,13 @@ export default (lng = 'en', fallbackLng = lng) => {
     },
   }
 
-  i18next.use(lngDetector).init(options)
+  i18next
+    .use(lngDetector)
+    .use(intervalPlural)
+    .init(options)
+
+  i18next.on('loaded', () => Vue.prototype.$bus.$emit('$t.loaded'))
+  i18next.on('languageChanged', () => Vue.prototype.$bus.$emit('$t.languageChanged'))
 
   Vue.use(VueI18Next)
 
