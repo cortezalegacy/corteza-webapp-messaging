@@ -1,4 +1,5 @@
 const fuzzysort = require('fuzzysort')
+const UINT64_ZEROPAD = '00000000000000000000'
 
 export { Channel } from './types/channel'
 
@@ -32,6 +33,13 @@ export class Message {
     this.unread = m.unread
 
     this.attachment = m.att ? new Attachment(m.att) : null
+
+    // Preparing sort key
+    //
+    // We're using uint64 for ID and JavaScript does not know how to handle this type
+    // natively. We get the value from backend as string anyway and we need to prefix
+    // it with '0' to ensure string sorting does what we need it to.
+    this.sortKey = this.messageID ? UINT64_ZEROPAD.substr(this.messageID.length) + this.messageID : UINT64_ZEROPAD
   }
 
   isMentioned (userID) {

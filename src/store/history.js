@@ -191,6 +191,7 @@ const updateSet = (state, set) => {
   }
 
   if (sort) {
-    state.set.sort((a, b) => a.messageID.localeCompare(b.messageID))
+    // Padding strings to achieve equal length
+    state.set.sort((a, b) => a.sortKey.localeCompare(b.sortKey))
   }
 }
