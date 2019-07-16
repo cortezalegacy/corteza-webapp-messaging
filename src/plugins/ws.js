@@ -36,7 +36,13 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     // check if already connected
     if (this.connected()) return
 
-    const url = this.guessBaseUrl(window.MessagingAPI) + '/websocket/?jwt=' + localStorage.getItem('auth.jwt')
+    const jwt = localStorage.getItem('auth.jwt')
+
+    if (!jwt) {
+      return
+    }
+
+    const url = this.guessBaseUrl(window.MessagingAPI) + '/websocket/?jwt=' + jwt
 
     this.conn = new ReconnectingWebSocket(url)
     this.conn.debug = true
