@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <h3>{{ $t('channel.observing', { label: label(channel) }) }}</h3>
+    <h3>{{ $t('channel.observing', { label: getLabel(channel) }) }}</h3>
     <button @click="onJoin" class="btn btn-green" v-if="channel.canJoin">{{ $t('channel.join') }}</button>
   </footer>
 </template>

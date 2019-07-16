@@ -96,7 +96,7 @@ export default {
     targetNames (target) {
       return target.map(i => ({
         ID: i.channelID || i.userID,
-        name: this.label(i),
+        name: this.getLabel(i),
         cmp: i.cmp,
       }))
     },

@@ -71,7 +71,7 @@
             <ul>
               <li v-for="(u) in members" :key="u.userID">
                 <user-avatar :userID="u.userID" />
-                {{ label(u) }}
+                {{ getLabel(u) }}
                 <button class="btn-i" @click.prevent="removeMember(u)"><i class="icon-x"></i></button>
               </li>
             </ul>

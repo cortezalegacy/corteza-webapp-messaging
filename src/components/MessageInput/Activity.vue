@@ -2,13 +2,13 @@
 <template>
     <span v-if="users.length > 0" class="typing">
       <template v-if="users.length > limit">
-        {{ $t('message.activity.activityOverflow', { userList: users.slice(0, limit).map(u => label(u)).join(', '), count: users.length - limit, activity }) }}
+        {{ $t('message.activity.activityOverflow', { userList: users.slice(0, limit).map(u => getLabel(u)).join(', '), count: users.length - limit, activity }) }}
       </template>
       <template v-else-if="users.length > 1">
-        {{ $t('message.activity.activityMultiple', { userList: users.map(u => label(u)).join(', '), activity }) }}
+        {{ $t('message.activity.activityMultiple', { userList: users.map(u => getLabel(u)).join(', '), activity }) }}
       </template>
       <template v-else>
-        {{ $t('message.activity.activityOne', { user: label(users[0]), activity }) }}
+        {{ $t('message.activity.activityOne', { user: getLabel(users[0]), activity }) }}
       </template>
     </span>
 </template>

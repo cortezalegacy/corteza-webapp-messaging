@@ -2,7 +2,7 @@
   <router-link
     @click="$emit('click', $event)"
     :to="linkProps" :class="{ 'current-user': highlight && ID === $auth.user.userID }">
-    <slot>{{ label(user) }}</slot>
+    <slot>{{ getLabel(user) }}</slot>
   </router-link>
 </template>
 <script>

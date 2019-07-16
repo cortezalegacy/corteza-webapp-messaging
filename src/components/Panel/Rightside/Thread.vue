@@ -5,8 +5,8 @@
     @dragenter="handleShow($event, () => showUploadArea = true)">
 
     <template slot="header">{{ $t('panel.thread') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: label(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: label(channel) }) }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: getLabel(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: getLabel(channel) }) }}</template>
     <template v-if="message" slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false; uploadFileTypeSupported=true"

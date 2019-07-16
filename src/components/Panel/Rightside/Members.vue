@@ -3,8 +3,8 @@
     v-on="$listeners"
     @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.membersHeader') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: label(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: label(channel) }) }}</template>
+    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: getLabel(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: getLabel(channel) }) }}</template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">
@@ -13,7 +13,7 @@
             :key="u.userID"
             @click="$emit('openDirectMessage', u.userID);">
             <user-avatar :userID="u.userID" />
-            <span class="member-name">{{ label(u) }}</span>
+            <span class="member-name">{{ getLabel(u) }}</span>
             <confirmation-toggle
               @confirmed="remove(u.userID)"
               :cta="$t('panel.remove')"
@@ -33,7 +33,7 @@
             v-for="u in searchResults"
             :key="u.userID">
             <user-avatar :userID="u.userID" />
-            <span class="member-name">{{ label(u) }}</span>
+            <span class="member-name">{{ getLabel(u) }}</span>
             <button @click="add(u.userID)" class="btn">{{ $t('general.label.add') }}</button>
           </li>
         </ul>

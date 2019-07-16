@@ -41,7 +41,7 @@ export default {
       return u.name || u.username || u.handle || u.email || `<@${u.userID}>`
     },
 
-    label (o) {
+    getLabel (o) {
       if (o instanceof User) {
         return this.labelUser(o)
       }

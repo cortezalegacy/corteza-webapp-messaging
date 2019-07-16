@@ -197,7 +197,7 @@ export default {
     },
 
     sortChannelByName (a, b) {
-      return this.label(a).toLocaleLowerCase().localeCompare(this.label(b).toLocaleLowerCase())
+      return this.getLabel(a).toLocaleLowerCase().localeCompare(this.getLabel(b).toLocaleLowerCase())
     },
 
     sortByOnlineStatus (a, b) {
