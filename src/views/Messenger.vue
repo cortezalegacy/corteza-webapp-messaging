@@ -156,7 +156,11 @@ export default {
       this.init()
       this.$ws.connect()
     }).catch(() => {
-      window.location = '/auth'
+      if (this.isCordovaPlatform) {
+        this.$router.push({ name: 'auth' })
+      } else {
+        window.location = '/auth'
+      }
     })
   },
 
@@ -187,6 +191,9 @@ export default {
       this.loadUsers()
       this.loadCommands()
       this.loadSession()
+      if (this.isCordovaPlatform) {
+        setTimeout(navigator.splashscreen.hide, 1000)
+      }
 
       this.windowResizeHandler()
       window.addEventListener('resize', this.windowResizeHandler)

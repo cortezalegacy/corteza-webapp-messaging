@@ -3,6 +3,12 @@ const $wideminwidth = 720
 const $confortableminwidth = 1020
 
 export default {
+  data () {
+    return {
+      isCordovaPlatform: !!process.env.CORDOVA_PLATFORM,
+    }
+  },
+
   methods: {
     uiIsComfortableWidth () {
       return window.innerWidth > $confortableminwidth

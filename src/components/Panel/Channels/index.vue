@@ -50,6 +50,10 @@
              :list="groupChannels"
              :canCreate="canCreateGroupChannel"
              :current="channel">{{ $t('panel.channel.group') }}</group>
+
+      <!-- Temporary -->
+      <router-link v-if="isCordovaPlatform"
+                   :to="{ name: 'auth:logout' }">Log out</router-link>
     </div>
 
   </nav>
