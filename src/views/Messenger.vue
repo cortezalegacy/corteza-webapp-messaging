@@ -176,7 +176,6 @@ export default {
       })
 
       this.loadUsers()
-      this.loadUserStatuses()
       this.loadCommands()
 
       this.windowResizeHandler()

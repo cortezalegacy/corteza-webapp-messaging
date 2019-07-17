@@ -5,6 +5,8 @@ const types = {
   completed: 'completed',
   updateList: 'updateList',
   updateActivity: 'updateActivity',
+
+  // status related
   statusSet: 'statusSet',
   statusRemove: 'statusRemove',
   statusCleanup: 'statusCleanup',
@@ -18,9 +20,6 @@ const types = {
 // How much time (in seconds) should we keep the activity
 const activityTTL = 5000
 const statusTTL = 35000
-
-const statusFinder = ({ userID, status }) =>
-  (s) => s.userID === userID && s.status === status
 
 const activityFinder = ({ userID, channelID, kind }) =>
   (a) => a.userID === userID && a.channelID === channelID && a.kind === kind
@@ -44,25 +43,36 @@ class Activity {
 }
 
 class Status {
-  constructor (props = {}) {
-    this.permanent = false
-    Object.assign(this, props)
+  constructor ({ permanent = true, icon, message, present, userID } = {}) {
+    this.permanent = permanent
+    this.icon = icon
+    this.message = message
+    this.present = present
+    this.userID = userID
+
     this.createdAt = (new Date()).getTime()
     this.update()
   }
 
   // ttl contains ttl based on status type
   isStale (ttl = {}) {
-    if (this.permanent) return false
+    if (this.permanent) {
+      return false
+    }
 
     const now = (new Date()).getTime()
-    let use = ttl[this.status] || statusTTL
+    let use = ttl[this.present] || statusTTL
     return now - use > this.updatedAt
   }
 
   update () {
     this.updatedAt = (new Date()).getTime()
     return this
+  }
+
+  // uses bitwise xor to invert result on demand
+  static finder ({ userID, present }, invert = false) {
+    return (s) => !!((s.userID === userID && s.present === present) ^ invert)
   }
 }
 
@@ -176,7 +186,7 @@ export default function (MessagingAPI, SystemAPI) {
 
       [types.statusSet] (state, statuses) {
         for (const status of statuses) {
-          const i = state.status.findIndex(statusFinder(status))
+          const i = state.status.findIndex(Status.finder(status))
           if (i > -1) {
             state.status.splice(i, 1, state.status[i].update())
           } else {
@@ -185,9 +195,10 @@ export default function (MessagingAPI, SystemAPI) {
         }
       },
 
-      [types.statusRemove] (state, { userID, status }) {
-        state.status = [...state.status.filter((s) =>
-          !(s.userID === userID && s.status === status))]
+      [types.statusRemove] (state, statuses) {
+        for (const status of statuses) {
+          state.status = state.status.filter(Status.finder(status, true))
+        }
       },
 
       [types.statusCleanup] (state, { ttl }) {
