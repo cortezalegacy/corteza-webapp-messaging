@@ -47,28 +47,24 @@ export default {
       this.$store.commit('channels/channelPart', part)
     })
 
-    let activitySet = new Set()
-    const userGetter = this.$store.getters['users/findByID']
+    let activeUserIDs = new Set()
+    const userListGetter = this.$store.getters['users/listOnDemand']
 
     const userRePullHandler = () => {
       this.$store.dispatch('users/load')
     }
 
-    // Processes unique activities & resets the list
-    const updateActivity = throttle(() => {
-      const activities = Array.from(activitySet)
-      activitySet = new Set()
+    const syncUserList = throttle(() => {
+      const userIDs = Array.from(activeUserIDs)
+      activeUserIDs.clear()
 
-      if (activities.length) {
+      if (userIDs.length) {
         // Check for existing members
-        const existing = activities.filter(userID => !!userGetter(userID))
+        const users = new Set(userListGetter().map(u => u.userID))
+        const existing = userIDs.filter(userID => users.has(userID))
 
-        // Update statuses
-        const statuses = activities.map(userID => ({ userID, status: 'online' }))
-        this.$store.commit('users/statusSet', statuses)
-
-        // New users; pull all of them
-        if (existing.length !== activities.length) {
+        if (existing.length !== userIDs.length) {
+          // New users; pull all of them
           if (userRePullInterval) window.clearInterval(userRePullInterval)
           this.$store.dispatch('users/load').then(() => {
             userRePullInterval = window.setInterval(userRePullHandler, userRePull)
@@ -77,20 +73,21 @@ export default {
       }
     }, statusThrottle)
 
+    const statusFromActivity = ({ icon, message, kind: present, userID }) => ({ icon, message, present, userID })
+
     this.$bus.$on('$ws.activity', (activity) => {
       // Ignore self
       if (this.$auth.user.userID !== activity.userID) {
-        if (activity.kind !== 'disconnected') {
-          activitySet.add(activity.userID)
-          updateActivity()
-        }
-
-        if (activity.kind === 'disconnected' && !activity.present) {
-          this.$store.commit('users/statusRemove', { userID: activity.userID, status: 'online' })
+        if (activity.kind === 'connected') {
+          this.$store.commit('users/statusSet', [ { ...statusFromActivity(activity), present: 'online' } ])
+        } else if (activity.kind === 'disconnected' && !activity.present) {
+          this.$store.commit('users/statusRemove', [ { ...statusFromActivity(activity), present: 'online' } ])
         } else if (activity.kind) {
-          // Online wont have a kind; online handled by updateActivity
           this.$store.commit('users/active', [ activity ])
         }
+
+        activeUserIDs.add(activity.userID)
+        syncUserList()
       }
     })
 

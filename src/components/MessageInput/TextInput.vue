@@ -204,6 +204,22 @@ export default {
   created () {
     this.$bus.$on('$t.loaded', this.updatePlaceholder)
     this.$bus.$on('$t.languageChanged', this.updatePlaceholder)
+
+    // if mentions could change, rerender mentions
+    // https://github.com/vuejs/vue/issues/844#issuecomment-390498696
+    /* eslint-disable no-sequences */
+    this.$watch(vm => (vm.users, vm.channels, Date.now()), () => {
+      const mm = this.getQuillMention()
+      if (!mm || !mm.isOpen) {
+        return
+      }
+      const ii = mm.itemIndex
+      mm.onSomethingChange()
+
+      // Restore selection
+      mm.itemIndex = (ii) % mm.values.length
+      mm.highlightItem()
+    })
   },
 
   beforeDestroy () {
@@ -220,6 +236,10 @@ export default {
   },
 
   methods: {
+    getQuillMention () {
+      return this.quill.getModule('mention')
+    },
+
     setContent (delta) {
       this.quill.setContents(delta)
     },
