@@ -276,7 +276,13 @@ export default {
         const content = this.quill.getContents()
         const text = this.quill.getText()
 
-        this.content = content
+        // quill always adds trailing \n
+        if (text === '\n') {
+          this.content = null
+        } else {
+          this.content = content
+        }
+
         this.$emit('change', { text, content })
       })
 
