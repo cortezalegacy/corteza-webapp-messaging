@@ -35,6 +35,7 @@
           </button>
 
           <button
+              v-if="uiEnableEmojiButton()"
               class="emoji-button input-button"
               @click.stop="onEmojiPickerClick">
               <span class="icon-smile"></span>
@@ -43,7 +44,9 @@
           <button
               v-if="uiEnableSubmitButton()"
               class="input-button send-button"
-              @click="onSubmitBtnClick">
+              :disabled="submitDisabled"
+              @click="onSubmitBtnClick"
+              @mousedown="onMousedown">
               <span class="icon-hsend"></span>
           </button>
       </div>
@@ -117,6 +120,7 @@ export default {
       value,
 
       keepFocusOnSubmit: false,
+      submitDisabled: true,
     }
   },
 
@@ -201,6 +205,11 @@ export default {
   },
 
   methods: {
+    onMousedown (e) {
+      // Prevent it from stealing focus
+      e.preventDefault()
+    },
+
     sendDraft ({ value, messageID, channelID, remove } = {}) {
       if (this.message) {
         return
@@ -279,7 +288,12 @@ export default {
     },
 
     // Update channel activity once in a while while typing
-    onChange: throttle(function (value) {
+    onChange (value) {
+      this.sendActivity(value)
+      this.submitDisabled = !value.text.trim('\n')
+    },
+
+    sendActivity: throttle(function (value) {
       // @todo emoji closing on focus interaction should be handled by core.js
       this.$bus.$emit('ui.closeEmojiPicker')
 
@@ -332,6 +346,10 @@ $mobileInputWidth: 35px;
       width: calc(100% - #{$inputWidth});
       float:right;
       padding-right: 48px;
+
+      ~ .send-button:disabled {
+        pointer-events: none;
+      }
       &:focus-within {
         outline: none;
         border-color: $success;
@@ -341,7 +359,7 @@ $mobileInputWidth: 35px;
           border-color: $success;
           color: $success;
         }
-        ~ .send-button{
+        ~ .send-button:not(:disabled){
           span{
             color: $success;
           }
@@ -427,6 +445,10 @@ $mobileInputWidth: 35px;
         &.send-button{
           font-size: 20px;
           right: 0;
+
+          span {
+            pointer-events: none;
+          }
         }
         &.emoji-button {
           right: 30px;

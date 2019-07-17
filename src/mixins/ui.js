@@ -31,5 +31,9 @@ export default {
     uiEnableSubmitButton () {
       return !this.uiIsWide()
     },
+
+    uiEnableEmojiButton () {
+      return !this.isCordovaPlatform
+    },
   },
 }

@@ -134,6 +134,12 @@ export default {
 
   mounted () {
     this.originChanged()
+
+    window.addEventListener('keyboardDidShow', this.onKeyboardDidShow)
+  },
+
+  beforeDestroy () {
+    window.removeEventListener('keyboardDidShow', this.onKeyboardDidShow)
   },
 
   updated () {
@@ -176,6 +182,10 @@ export default {
 
   methods: {
     isConsecutive,
+
+    onKeyboardDidShow (e) {
+      this.$refs.list.scrollTop += e.keyboardHeight
+    },
 
     originChanged () {
       this.allowAutoScroll = true
