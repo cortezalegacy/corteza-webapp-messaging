@@ -162,6 +162,7 @@ export default {
     },
   },
   general: {
+    'error-tpl': 'Error: {{- error}}',
     label: {
       ok: 'Ok',
       search: 'Search',
