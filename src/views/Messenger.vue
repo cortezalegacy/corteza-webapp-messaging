@@ -147,8 +147,7 @@ export default {
     this.$auth.check(this.$SystemAPI).then(() => {
       this.init()
       this.$ws.connect()
-    }).catch((err) => {
-      console.debug(err)
+    }).catch(() => {
       window.location = '/auth'
     })
   },
@@ -227,8 +226,8 @@ export default {
     },
 
     handleNotifications ({ message }) {
-      if (message.updatedAt == null && message.deletedAt == null) {
-        // Ignoring deletes & removals
+      if (message.updatedAt !== null || message.deletedAt !== null || message.replies > 0) {
+        // Ignoring deletes, removals and thread-messages with reply updates
         return
       }
 
@@ -245,13 +244,13 @@ export default {
       // Set window title so user maybe notice the action in the channel (notifications mixin)
       // @todo not very stable & consistent...
       // titleNtf.flashNew()
-
       const ch = this.findChannelByID(message.channelID)
       if (!ch) {
         return
       }
 
       if (ch.membershipFlag === 'ignored') {
+        // Ignore by membership-flag
         return
       }
 
