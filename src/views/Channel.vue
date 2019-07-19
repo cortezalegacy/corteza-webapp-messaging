@@ -38,7 +38,7 @@
         :channel="channel"
         :readonly="!isMember"
         :focus="uiFocusMessageInput()"
-        :show-mark-as-unread-button="unread.count > 0"
+        :show-mark-as-unread-button="(unread.count || 0) + (unread.threadCount || 0) > 0"
         :draft.sync="draft"
         @markAsRead="onMarkAsRead"
         @promptFilePicker="onOpenFilePicker"
