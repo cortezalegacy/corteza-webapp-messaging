@@ -135,6 +135,11 @@ export default {
       return this.getThread(this.repliesTo)
     },
 
+    // Serves as a helper for unread procedures
+    lastMessage () {
+      return this.messages.length ? this.messages[this.messages.length - 1] : null
+    },
+
     unread () {
       return this.unreadFinder(this.message)
     },
@@ -166,8 +171,7 @@ export default {
     }),
 
     ...mapActions({
-      clearUnreadMessages: 'unread/clear',
-      setLastReadMessageID: 'unread/setLastMessageID',
+      markAllAsRead: 'unread/markThreadAsRead',
     }),
 
     isFollowing ({ replyTo }) {
@@ -187,7 +191,7 @@ export default {
 
     // Mark entire thread as read
     onMarkAsRead () {
-      this.clearUnreadMessages(this.message)
+      this.markAllAsRead(this.message)
     },
 
     onScrollTop ({ messageID }) {

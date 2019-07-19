@@ -5,7 +5,7 @@
        v-if="!hideReplies && message.replies"
        @click="$emit('openThreadPanel', { message })">
       {{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}
-      <span v-if="unread.count">({{ $t('message.newReplies', { postProcess: 'interval', count: unread.count }) }})</span>
+      <span v-if="unread.count > 0 && unread.count < message.replies">({{ $t('message.newReplies', { postProcess: 'interval', count: unread.count }) }})</span>
     </a>
     <span class="info" v-if="message.updatedAt">{{ $t('message.edited') }}</span>
   </div>

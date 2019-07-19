@@ -26,83 +26,52 @@ describe('unread.js', () => {
     store = new Vuex.Store({state, actions, mutations, getters})
   })
 
-  it('new message on an empty set', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(1)
-    expect(state.set[0].channelID).to.equal('c1')
-  })
-
-  it('multiple new messages', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(3)
-  })
-
-  it('decrement on deleted message', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1', deletedAt: new Date()}))
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(1)
-  })
-
-  it('skip count on updated message', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1', updatedAt: new Date()}))
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(2)
-  })
-
-  it('update unread without the data', () => {
-    store.dispatch('update', {})
+  it('update from Message w/o update struct', () => {
+    const m = new Message({channelID: 'c1'})
+    store.dispatch('fromMessage', m)
     expect(state.set.length).to.equal(0)
   })
 
-  it('update unread with simple data the data', () => {
-    store.dispatch('update', new Channel({ channelID: 'c1', unread: { count: 2 }}))
+  it('update from Message w/ update struct', () => {
+    const m = new Message({channelID: 'c1', unread: { count: 42 }})
+    store.dispatch('fromMessage', m)
     expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(2)
+    expect(store.getters.find(m).count).to.equal(42)
   })
 
-  it('update unread with existing set', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('update', new Channel({ channelID: 'c1', unread: { count: 2, lastMessageID: 'lm1' }}))
-    store.dispatch('count', new Message({channelID: 'c1'}))
+  it('update from Message (thread) w/ update struct', () => {
+    const m = new Message({channelID: 'c1', messageID: 't1', unread: { count: 42 }})
+    store.dispatch('fromMessage', m)
     expect(state.set.length).to.equal(1)
-    expect(state.set[0].count).to.equal(3)
-    expect(state.set[0].lastMessageID).to.equal('lm1')
+    expect(store.getters.find(m).count).to.equal(42)
+    expect(store.getters.find(new Message({channelID: 'c1', messageID: 't1'})).count).to.equal(42)
+    expect(store.getters.find(new Message({channelID: 'c1', messageID: 't2'})).count).to.equal(0)
   })
 
-  it('complex set update', () => {
-    store.dispatch('update', [
-      new Channel({ channelID: 'c1', unread: { count: 10 }}),
-      new Channel({ channelID: 'c2', unread: { count: 20 }}),
-    ])
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c2'}))
-    store.dispatch('count', new Message({channelID: 'c2'}))
-
-    expect(state.set.length).to.equal(2)
-    expect(state.set[0].count).to.equal(11)
-    expect(state.set[1].count).to.equal(22)
+  it('update from Channel w/ update struct', () => {
+    const c = new Channel({channelID: 'c1', unread: { count: 42 }})
+    store.dispatch('fromChannel', c)
+    expect(state.set.length).to.equal(1)
+    expect(store.getters.find(c).count).to.equal(42)
+    expect(store.getters.find(new Channel({channelID: 'c2'})).count).to.equal(0)
   })
 
-  it('increment/decrement in-thread counter', () => {
-    store.dispatch('count', new Message({channelID: 'c1'}))
-    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
-    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
-    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1', deletedAt: new Date()}))
-    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1', updatedAt: new Date()}))
-    store.dispatch('count', new Message({channelID: 'c1', replyTo: 'm1'}))
+  it('update from event', () => {
+    let c = new Channel({channelID: 'c1'})
+    store.dispatch('fromEvent', {channelID: c.channelID, count: 42, threadCount: 13})
+    expect(state.set.length).to.equal(1)
+    expect(store.getters.find(c).count).to.equal(42)
+    expect(store.getters.find(c).threadCount).to.equal(13)
+  })
 
+  it('calculate total', () => {
+    store.dispatch('fromEvent', {channelID: 'c1', count: 2, threadCount: 5})
+    store.dispatch('fromEvent', {channelID: 'c2', count: 3, threadCount: 6})
     expect(state.set.length).to.equal(2)
-    expect(state.set[0].count).to.equal(1)
-    expect(state.set[0].tcount).to.equal(2)
-    expect(state.set[1].count).to.equal(2)
+    expect(store.getters.total).to.equal(2+3+5+6)
+
+    store.dispatch('fromEvent', {channelID: 'c2', count: 3, threadCount: 7})
+    expect(store.getters.total).to.equal(2+3+5+7)
   })
 })
 

@@ -150,11 +150,11 @@ export default {
     },
 
     unread (ch) {
-      const { count = 0, tcount = 0 } = this.unreadFinder(ch) || {}
+      const { count = 0, threadCount = 0 } = this.unreadFinder(ch) || {}
       return {
         count,
-        tcount,
-        has: tcount + count > 0,
+        threadCount,
+        has: threadCount + count > 0,
       }
     },
 

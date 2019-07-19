@@ -9,69 +9,86 @@ export default {
       },
     }
   },
-
-  mounted () {
-    this.$bus.$on('$core.newMessage', this.handleNewMessageReadStatus)
+  //
+  created () {
+    this.$bus.$on('$core.newUnreadCount', this.handleUnreadCounterEvent)
+    this.$bus.$on('$core.newMessage', this.handleUnreadOnNewMessage)
   },
 
   destroyed () {
-    this.$bus.$off('$core.newMessage', this.handleNewMessageReadStatus)
+    this.$bus.$off('$core.newUnreadCount', this.handleUnreadCounterEvent)
+    this.$bus.$off('$core.newMessage', this.handleUnreadOnNewMessage)
   },
 
   methods: {
     ...mapActions({
-      clearUnreads: 'unread/clear',
-      markLastReadMessage: 'unread/mark',
-      countUnreads: 'unread/count',
+      markChannelAsRead: 'unread/markChannelAsRead',
+      markChannelMessageAsRead: 'unread/markChannelMessageAsRead',
+      markThreadAsRead: 'unread/markThreadAsRead',
+      markThreadMessageAsRead: 'unread/markThreadMessageAsRead',
+      updateUnreadFromEvent: 'unread/fromEvent',
     }),
 
-    // Marks new message as read if conditions are met
-    //
-    // handleUnreadCounting() in Messanger.vue handles general counting for received messages (all but ours)
-    //
-    // Here we do 2 checks and mark the message (and all before it) as read
-    //  - if message is ours
-    //  - if message is not ours and we're following this stream (see isFollowing())
-    handleNewMessageReadStatus ({ message }) {
-      if (message.type === 'channelEvent') {
-        // system messages
-        return
-      }
+    // updates internal unread counters
+    handleUnreadCounterEvent ({ unread }) {
+      this.updateUnreadFromEvent(unread)
+    },
 
-      if (message.replies > 0) {
-        // notification on thread message about new replies
+    // handling unread counters on new message
+    //
+    // we do not do anything if:
+    // a) handling updated/deleted message or reply-update
+    // a) it's our message, backend already took care of it
+    // b) we're not following the message stream
+    //
+    // If we're following the stream and someone posted something,
+    // we mark it as read right away.
+    handleUnreadOnNewMessage ({ message }) {
+      if (message.updatedAt || message.deletedAt || message.replies > 0) {
+        console.debug('updated, deleted, replies')
         return
       }
 
       if (this.$auth.user.userID === message.userID) {
-        // This is our message, make modifications to payload
-        // for clearUnreads so it understands what we want to clear
-        const { channelID, messageID, replyTo } = message
-        if (replyTo) {
-          this.clearUnreads({ channelID, messageID })
-        } else {
-          this.clearUnreads({ channelID, messageID: replyTo })
-        }
+        console.debug('handleUnreadOnNewMessage() our message, exit')
+        // If this is our own message, backend already marked it as read.
         return
       }
 
-      if (this.isFollowing(message)) {
-        // When "following" (doc has focus, and we are looking at the stream)
-        // Mark messge as read as soon as it arrives
-        this.markLastReadMessage(message)
-      } else {
-        // When not following, increment unread counter
-        this.countUnreads(message)
+      if (!this.isFollowing(message)) {
+        console.debug('handleUnreadOnNewMessage() not following')
+        // Not following the stream (chan, thread), nothing to do here..
+        return
       }
+
+      console.debug('handleUnreadOnNewMessage() marking as read', message)
+      this.markMessageAsRead(message)
     },
 
     // Mark specific message in the channel as unread
     onMarkAsUnread ({ message }) {
-      if (this.unread.lastMessageID === message.messageID) {
+      console.debug('onMarkAsUnread()', this.unreadInternal.lastMessageID, message.messageID)
+      if (this.unreadInternal.lastMessageID === message.messageID) {
         // toggle
-        this.onMarkAsRead()
+        console.debug('marking all as read')
+
+        if (message.replyTo) {
+          this.markThreadAsRead(message)
+        } else {
+          this.markChannelAsRead(message)
+        }
+
+        this.unreadInternal.lastMessageID = undefined
       } else {
-        this.markLastReadMessage(message)
+        console.debug('marking message as read')
+
+        if (message.replyTo) {
+          this.markThreadMessageAsRead(message)
+        } else {
+          this.markChannelMessageAsRead(message)
+        }
+
+        this.unreadInternal.lastMessageID = message.messageID
       }
     },
 

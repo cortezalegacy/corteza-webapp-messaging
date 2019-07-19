@@ -16,11 +16,11 @@
                  :to="{name:'channel', params:{channelID:channel.channelID}}">
       <channel-label :channel="channel"/>
     </router-link>
-    <transition v-if="unread.count || unread.tcount"
+    <transition v-if="unread.count || unread.threadCount"
                 name="slide-fade">
         <span class="unread" v-if="unread.count > maxUnread">{{ maxUnread }}+</span>
         <span class="unread" v-else-if="unread.count">{{ unread.count }}</span>
-        <span class="unread" v-else-if="unread.tcount"><i class="icon-message-circle-left-speak" /></span>
+        <span class="unread" v-else-if="unread.threadCount"><i class="icon-message-circle-left-speak" /></span>
     </transition>
     <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
       <font-awesome-icon

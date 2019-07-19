@@ -166,12 +166,12 @@ export default {
       loadUsers: 'users/load',
       loadUserStatuses: 'users/loadStatuses',
       loadCommands: 'suggestions/loadCommands',
-      updateUnreads: 'unread/update',
+      updateChannelUnreads: 'unread/fromChannel',
     }),
 
     init () {
       this.loadChannels().then(cc => {
-        this.updateUnreads(cc)
+        cc.forEach((c) => this.updateChannelUnreads(c))
       })
 
       this.loadUsers()

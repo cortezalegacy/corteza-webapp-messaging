@@ -114,8 +114,12 @@ export default {
       this.$store.dispatch('history/pinned', { messageID })
     })
 
+    this.$bus.$on('$ws.unread', (unread) => {
+      this.$bus.$emit('$core.newUnreadCount', { unread })
+    })
+
     this.$bus.$on('$ws.messagePinRemoved', ({ messageID }) => {
-      this.$store.dispatch('history/unpinned', { messageID })
+      this.$store.commit('history/unpinned', { messageID })
     })
 
     // Handling Message reaction requests
@@ -149,6 +153,10 @@ export default {
   },
 
   destroyed () {
+    // Remove all events
+    this.$bus.$off()
+
+    // Remove all intervals
     if (userActivityInterval) window.clearInterval(userActivityInterval)
     if (userRePullInterval) window.clearInterval(userRePullInterval)
     if (autheticationRecheckInterval) window.clearInterval(autheticationRecheckInterval)

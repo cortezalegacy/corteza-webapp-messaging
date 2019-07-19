@@ -126,6 +126,11 @@ export default {
       return this.channelHistory(this.channel.channelID)
     },
 
+    // Serves as a helper for unread procedures
+    lastMessage () {
+      return this.messages.length ? this.messages[this.messages.length - 1] : null
+    },
+
     channel () {
       return this.channelByID(this.channelID)
     },
@@ -155,9 +160,8 @@ export default {
     }),
 
     ...mapActions({
-      clearUnreadMessages: 'unread/clear',
-      setLastReadMessageID: 'unread/setLastMessageID',
-      updateUnreads: 'unread/update',
+      markAllAsRead: 'unread/markChannelAsRead',
+      fromMessage: 'unread/fromMessage',
     }),
 
     isFollowing ({ channelID, replyTo }) {
@@ -170,13 +174,15 @@ export default {
       this.previousFetchFirstMessageID = null
       messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((mm) => {
         this.updateHistorySet(mm)
-        this.updateUnreads(mm)
+
+        // Process loaded messages and extract unread info
+        mm.forEach(m => this.fromMessage(m))
       })
     },
 
     // Mark entire channel as read
     onMarkAsRead () {
-      this.clearUnreadMessages(this.channel)
+      this.markAllAsRead(this.channel)
     },
 
     onOpenFilePicker () {
