@@ -178,15 +178,15 @@ export default (MessagingAPI) => {
       //   }
       // },
 
-      fromMessage ({ commit }, { channelID, messageID: threadID, unread, updatedAt = null, deletedAt = null } = {}) {
+      fromMessage ({ commit }, { channelID, messageID: threadID, unread, deletedAt = null } = {}) {
         if (deletedAt) {
           // Remove on delete
           commit(types.remove, { channelID, threadID })
           return
         }
 
-        if (updatedAt || !unread) {
-          // Ignoring updated, deleted messages and messages w/o unread info
+        if (!unread) {
+          // Ignoring messages w/o unread info
           return
         }
 
