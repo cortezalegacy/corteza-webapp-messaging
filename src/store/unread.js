@@ -62,7 +62,7 @@ function update (clean, set, input) {
 }
 
 // Accepting Channel & Message (thread) objects
-function markMessageAsRead (commit, state, payload) {
+function markAsRead (commit, state, payload) {
   commit(types.pending)
   state.MessagingAPI.messageMarkAsRead(payload).then((unread) => {
     commit(types.update, [{
@@ -101,7 +101,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting channelID value')
         }
 
-        markMessageAsRead(commit, state, {
+        markAsRead(commit, state, {
           channelID,
         })
       },
@@ -113,7 +113,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting channelID value')
         }
 
-        markMessageAsRead(commit, state, {
+        markAsRead(commit, state, {
           channelID,
           threadID,
         })
@@ -129,7 +129,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting messageID (lastReadMessageID) value')
         }
 
-        markMessageAsRead(commit, state, {
+        markAsRead(commit, state, {
           channelID,
           lastReadMessageID,
         })
@@ -145,7 +145,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting messageID (lastReadMessageID) value')
         }
 
-        markMessageAsRead(commit, state, {
+        markAsRead(commit, state, {
           channelID,
           threadID,
           lastReadMessageID,
