@@ -195,7 +195,7 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, toMessageID: messageID }).then((mm) => {
+        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, beforeMessageID: messageID }).then((mm) => {
           this.updateHistorySet(mm)
         })
       }
