@@ -55,14 +55,7 @@ export default {
         return
       }
 
-      if (!this.isFollowing(message)) {
-        console.debug('handleUnreadOnNewMessage() not following')
-        // Not following the stream (chan, thread), nothing to do here..
-        return
-      }
-
-      console.debug('handleUnreadOnNewMessage() marking as read', message)
-      this.markMessageAsRead(message)
+      this.deferredUnreadOnFocus(message)
     },
 
     // Mark specific message in the channel as unread
@@ -94,47 +87,44 @@ export default {
 
     // needs a lot of UX testing
     // for now, we'll stick to manual reset when channel is read
-    setMessageAsReadOnFocus ({ messageID }, handler, force) {
-      console.debug('setMessageAsReadOnFocus() :: in')
-      if (this.unreadInternal.lastMessageID === messageID) {
-        console.debug('setMessageAsReadOnFocus() :: this.unreadInternal.lastMessageID !== messageID', { lastMessageID: this.unreadInternal.lastMessageID, messageID })
-        // already recorded, nothing to do.
-        return
-      }
-
-      this.unreadInternal.lastMessageID = messageID
-
+    deferredUnreadOnFocus (message, handler, force) {
       const resetUnread = () => {
-        console.debug('setMessageAsReadOnFocus() :: resetUnread()')
-        handler().then(({ lastMessageID } = {}) => {
-          // this.unreadInternal.lastMessageID = messageID
-        })
-      }
+        console.debug('deferredUnreadOnFocus() :: resetUnread()')
 
-      if (force) {
-        console.debug('setMessageAsReadOnFocus() :: resetUnread() :: forced reset')
-        resetUnread()
-        return
+        if (!this.isFollowing(message)) {
+          console.debug('deferredUnreadOnFocus() :: not following')
+          // Not following the stream (chan, thread), nothing to do here..
+          return
+        }
+
+        console.debug('deferredUnreadOnFocus() :: marking as read', message)
+        if (message.replyTo) {
+          this.markThreadAsRead(message)
+        } else {
+          this.markChannelAsRead(message)
+        }
+
+        this.unreadInternal.lastMessageID = message.messageID
       }
 
       // Clear existing timeout
       if (this.unreadInternal.timeoutHandle !== null) {
-        console.debug('setMessageAsReadOnFocus() :: clearing timeout')
+        console.debug('deferredUnreadOnFocus() :: clearing timeout')
         window.clearTimeout(this.unreadInternal.timeoutHandle)
       }
 
       //
       if (document.hasFocus()) {
-        console.debug('setMessageAsReadOnFocus() :: doc has focus')
+        console.debug('deferredUnreadOnFocus() :: doc has focus')
         resetUnread()
       } else {
         const resetUnreadAfterTimeout = () => {
-          console.debug('setMessageAsReadOnFocus() :: setting timeout for resetUnread')
+          console.debug('deferredUnreadOnFocus() :: setting timeout for resetUnread')
           this.unreadInternal.timeoutHandle = window.setTimeout(resetUnread, 2000)
         }
 
         const onFocus = () => {
-          console.debug('setMessageAsReadOnFocus() :: onFocus() executed')
+          console.debug('deferredUnreadOnFocus() :: onFocus() executed')
           resetUnreadAfterTimeout()
           window.removeEventListener('focus', onFocus)
         }
@@ -142,7 +132,7 @@ export default {
         // Remove existing listeners
         window.removeEventListener('focus', onFocus)
 
-        console.debug('setMessageAsReadOnFocus() :: adding onFocus() listener')
+        console.debug('deferredUnreadOnFocus() :: adding onFocus() listener')
         window.addEventListener('focus', onFocus)
       }
     },
