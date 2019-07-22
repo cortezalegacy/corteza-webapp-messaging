@@ -2623,8 +2623,8 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
-  version "2019.3.15"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/ebab2951d06f448fdf513552ae1cafa117a95b76"
+  version "2019.3.16"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/5ecaa70769c315d66ac67ef64557fb860cd15fa5"
   dependencies:
     axios "^0.18.1"
     mime-types "^2.1.24"
