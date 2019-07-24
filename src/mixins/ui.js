@@ -35,5 +35,9 @@ export default {
     uiEnableEmojiButton () {
       return !this.isCordovaPlatform
     },
+
+    uiEnableMobileMediaSourceButtons () {
+      return this.isCordovaPlatform
+    },
   },
 }

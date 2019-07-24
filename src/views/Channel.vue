@@ -43,7 +43,7 @@
         :draft.sync="draft"
         :suggestionPriorities="getSp"
         @markAsRead="onMarkAsRead"
-        @promptFilePicker="onOpenFilePicker"
+        @promptFilePicker="$refs.upload.openFilePicker"
         @editLastMessage="editLastMessage=true" />
     </div>
   </div>
@@ -193,10 +193,6 @@ export default {
     // Mark entire channel as read
     onMarkAsRead () {
       this.markAllAsRead(this.channel)
-    },
-
-    onOpenFilePicker () {
-      this.$refs.upload.openFilePicker()
     },
 
     onScrollTop ({ messageID }) {

@@ -133,8 +133,53 @@ export default {
     //   this.disabled = disabled
     // },
 
-    openFilePicker () {
-      this.dropzone.$el.click()
+    openFilePicker ({ sourceType, opts = {} } = {}) {
+      if (sourceType !== undefined && this.isCordovaPlatform) {
+        const options = {
+          quality: 100,
+          destinationType: window.Camera.DestinationType.FILE_URI,
+          sourceType,
+          encodingType: window.Camera.EncodingType.JPEG,
+          mediaType: window.Camera.MediaType.PICTURE,
+          ...opts,
+
+          // These 2 should stay like this recommended by the documentation
+          // allowEdit could prompt an incompatable app
+          allowEdit: false,
+          // corrects android's orientation issues
+          correctOrientation: true,
+        }
+
+        // Get image to tmp storage
+        navigator.camera.getPicture((imageUri) => {
+          // get File object
+          // @note cordova-plugin-file not used, because it overwrites
+          // the global File constructor, so things break...
+          let xhr = new XMLHttpRequest()
+          xhr.open('GET', imageUri)
+          xhr.responseType = 'blob'
+          xhr.onload = () => {
+            // insert into dropzone
+            let blob = xhr.response
+            let f = new File(
+              [blob],
+              imageUri
+                .split('/')
+                .pop()
+                .split('?')
+                .shift() ||
+                'file.jpg',
+              { type: blob.type }
+            )
+            this.dropzone.addFile(f)
+          }
+          xhr.send()
+        }, (err) => {
+          console.error(err)
+        }, options)
+      } else {
+        this.dropzone.$el.click()
+      }
     },
 
     uploadFile () {

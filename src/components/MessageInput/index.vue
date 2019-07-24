@@ -25,13 +25,30 @@
               :user="$auth.user"
               class="text-input"
               ref="text"
-              :class="{'no-files': !showFileUpload}" />
+              :class="{
+                'no-files': !showFileUpload,
+                'hybrid': isCordovaPlatform,
+              }" />
 
           <button
-              v-if="showFileUpload"
+              v-if="showFileUpload && !isCordovaPlatform"
               class="upload-button input-button"
               @click="onPromptFilePicker">
               <span>+</span>
+          </button>
+
+          <!-- Add media buttons -->
+          <button
+              v-if="uiEnableMobileMediaSourceButtons()"
+              class="camera-button input-button"
+              @click.stop="onPromptCamera">
+              <font-awesome-icon icon="camera"></font-awesome-icon>
+          </button>
+          <button
+              v-if="uiEnableMobileMediaSourceButtons()"
+              class="galery-button input-button"
+              @click.stop="onPromptGalery">
+              <font-awesome-icon icon="images"></font-awesome-icon>
           </button>
 
           <button
@@ -205,6 +222,14 @@ export default {
   },
 
   methods: {
+    onPromptCamera () {
+      this.onPromptFilePicker(window.Camera.PictureSourceType.CAMERA)
+    },
+
+    onPromptGalery () {
+      this.onPromptFilePicker(window.Camera.PictureSourceType.PHOTOLIBRARY)
+    },
+
     onMousedown (e) {
       // Prevent it from stealing focus
       e.preventDefault()
@@ -226,8 +251,8 @@ export default {
       this.value = this.draft
     },
 
-    onPromptFilePicker () {
-      this.$emit('promptFilePicker', {})
+    onPromptFilePicker (sourceType) {
+      this.$emit('promptFilePicker', { sourceType })
     },
 
     // Override original submit event and extend event
@@ -347,6 +372,10 @@ $mobileInputWidth: 35px;
       float:right;
       padding-right: 48px;
 
+      &.hybrid {
+        width: 100%;
+      }
+
       ~ .send-button:disabled {
         pointer-events: none;
       }
@@ -392,7 +421,7 @@ $mobileInputWidth: 35px;
     .upload-button {
       border-right: 1px solid $secondary;
     }
-    .emoji-button {
+    .emoji-button, .camera-button, .galery-button {
       right: 0;
       font-size: 20px;
 
@@ -439,6 +468,11 @@ $mobileInputWidth: 35px;
         border: none;
         border-top: 1px solid transparent;
         padding-right: 60px;
+
+        &.hybrid {
+          width: 100%;
+          padding-right: 90px;
+        }
       }
       .input-button {
         width: $mobileInputWidth;
@@ -450,8 +484,11 @@ $mobileInputWidth: 35px;
             pointer-events: none;
           }
         }
-        &.emoji-button {
+        &.emoji-button, &.galery-button {
           right: 30px;
+        }
+        &.camera-button {
+          right: 60px;
         }
       }
     }

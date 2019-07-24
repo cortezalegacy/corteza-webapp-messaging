@@ -45,7 +45,7 @@
           :draft.sync="draft"
           :suggestionPriorities="getSp"
           @markAsRead="onMarkAsRead"
-          @promptFilePicker="onOpenFilePicker"
+          @promptFilePicker="$refs.upload.openFilePicker"
           @editLastMessage="editLastMessage=true" />
       </div>
     </template>
@@ -193,10 +193,6 @@ export default {
       messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, threadID: this.repliesTo }).then((mm) => {
         this.updateHistorySet(mm)
       })
-    },
-
-    onOpenFilePicker () {
-      this.$refs.upload.openFilePicker()
     },
 
     // Mark entire thread as read
