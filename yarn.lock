@@ -667,31 +667,31 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@fortawesome/fontawesome-common-types@^0.2.19":
-  version "0.2.19"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.19.tgz#754a0f85e1290858152e1c05700ab502b11197f1"
-  integrity sha512-nd2Ul/CUs8U9sjofQYAALzOGpgkVJQgEhIJnOHaoyVR/LeC3x2mVg4eB910a4kS6WgLPebAY0M2fApEI497raQ==
+"@fortawesome/fontawesome-common-types@^0.2.21":
+  version "0.2.21"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.21.tgz#f1c26ae24761cca583de7cafd1273ab4c70a4d87"
+  integrity sha512-iJtcrU2BtF9Wyr0zm3tHEJy3HqA6sADExhCqCv3SKaJJKKp4ORJ40t4nyHvcWXSVFtd7r1gcdqcRsAfoREGTFA==
 
-"@fortawesome/fontawesome-svg-core@1.2.19":
-  version "1.2.19"
-  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.19.tgz#0eca1ce9285c3d99e6e340633ee8f615f9d1a2e0"
-  integrity sha512-D4ICXg9oU08eF9o7Or392gPpjmwwgJu8ecCFusthbID95CLVXOgIyd4mOKD9Nud5Ckz+Ty59pqkNtThDKR0erA==
+"@fortawesome/fontawesome-svg-core@1.2.21":
+  version "1.2.21"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.21.tgz#5b08a28d6e1ea198e002447b158abba00fd12122"
+  integrity sha512-EhrgMZLJS0tTYZhUbodurZBqDgAFLDNdxJP/q5unrZJwiFo8Dd7xGvJdhAhY5WcX4khzkPQcbLTCMPHBtutD7Q==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.19"
+    "@fortawesome/fontawesome-common-types" "^0.2.21"
 
-"@fortawesome/free-regular-svg-icons@5.9.0":
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.9.0.tgz#b16b325bdcdf51abebc547313cb75c3ef722ca04"
-  integrity sha512-6ZO0jLhk/Yrso0u5pXeYYSfZiHCNoCF7SgtqStdlEX8WtWD4IOfAB1N+MlSnMo12P5KR4cmucX/K0NCOPrhJwg==
+"@fortawesome/free-regular-svg-icons@5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-regular-svg-icons/-/free-regular-svg-icons-5.10.1.tgz#4096d169520a5ed8ab31a34edb6d7710fefbe160"
+  integrity sha512-2qU3IE4PeqZjMrVuHsE5sjgK64HlpijMhBv66TEhFEGCLpB2bwRdGvies6vpUvmTRRHhUat4IcRayLUWuGbKXQ==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.19"
+    "@fortawesome/fontawesome-common-types" "^0.2.21"
 
-"@fortawesome/free-solid-svg-icons@5.9.0":
-  version "5.9.0"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.9.0.tgz#1c73e7bac17417d23f934d83f7fff5b100a7fda9"
-  integrity sha512-U8YXPfWcSozsCW0psCtlRGKjjRs5+Am5JJwLOUmVHFZbIEWzaz4YbP84EoPwUsVmSAKrisu3QeNcVOtmGml0Xw==
+"@fortawesome/free-solid-svg-icons@5.10.1":
+  version "5.10.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.10.1.tgz#535fd5429dbe99656de4f1a8ee42d9f8f5a7aef9"
+  integrity sha512-MKH+SCt0DnVoXdemxf6JEdTRtCPwYLMCWZcwgGccYU/ab6QcDtbAMn6Xm4Zub6YqQCcaiy0hU294YdHOldSBRA==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "^0.2.19"
+    "@fortawesome/fontawesome-common-types" "^0.2.21"
 
 "@fortawesome/vue-fontawesome@^0.1.5":
   version "0.1.6"
@@ -824,10 +824,10 @@
     lodash.kebabcase "^4.1.1"
     svg-tags "^1.0.0"
 
-"@vue/babel-preset-app@^3.9.2":
-  version "3.9.2"
-  resolved "https://registry.yarnpkg.com/@vue/babel-preset-app/-/babel-preset-app-3.9.2.tgz#b72a9b06abbe3f8f272783be13951271277be338"
-  integrity sha512-0suuCbu4jkVcVYBjPmuKxeDbrhwThYZHu3DUmtsVuOzFEGeXmco60VmXveniL/bnDUdZyknSuYP4FxgS34gw9w==
+"@vue/babel-preset-app@^3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/babel-preset-app/-/babel-preset-app-3.10.0.tgz#3f89d631dd0f174c8a72e769b55f081c533c4677"
+  integrity sha512-NzJLI4Qe0SYm9gVHQC9RXyP0YcPjI28TmZ0ds2RJa9NO96LXHLES2U1HqiMDN4+CVjOQFrWUNd7wWeaETRPXbg==
   dependencies:
     "@babel/helper-module-imports" "^7.0.0"
     "@babel/plugin-proposal-class-properties" "^7.0.0"
@@ -890,28 +890,28 @@
     "@vue/babel-plugin-transform-vue-jsx" "^1.0.0"
     camelcase "^5.0.0"
 
-"@vue/cli-overlay@^3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-3.9.0.tgz#11f513d1fa11b0135fb8ba8b88d228df0dc542e0"
-  integrity sha512-QfyvpJl2ChehBT2qzb5EvW921JxW94uFL3+lHa6VT42ImH8awrvkTGZmxTQWhHvATa7r0LKy7M7ZRMyo547esg==
+"@vue/cli-overlay@^3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-overlay/-/cli-overlay-3.10.0.tgz#9266c96fb2bffd35ca96edd8e1e1284ca8c00c94"
+  integrity sha512-DQCY6WIl1UN1nOuPirW63CcYWSBdIn6s4zdGfFodCfV+0PAEXGcrfNStygG+IKUsydQaJGTneV7SFxcS+9gyzA==
 
-"@vue/cli-plugin-babel@3.9.2":
-  version "3.9.2"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-3.9.2.tgz#8ff962a383aaeafd2b280998428a57ea23e9539c"
-  integrity sha512-XqfmGjUGnnJ3NA+HC31F6nkBvB9pFDhk4Lxeao8ZNJcEjKNEBYjlmHunJQdIe/jEXXum6U+U/ZE6DjDStHTIMw==
+"@vue/cli-plugin-babel@3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-babel/-/cli-plugin-babel-3.10.0.tgz#3c5300bd6daf30b53292a6c3982e3a681cba2c18"
+  integrity sha512-NHrg6ZYN2fh5ZiMMzCNRuDlH9mcTOu+GIti1Va/zPnG3qMkX2iZ0zZGFaOCltIFoVSXdyOfa0sMtJGDoP9Q7ZA==
   dependencies:
     "@babel/core" "^7.0.0"
-    "@vue/babel-preset-app" "^3.9.2"
-    "@vue/cli-shared-utils" "^3.9.0"
+    "@vue/babel-preset-app" "^3.10.0"
+    "@vue/cli-shared-utils" "^3.10.0"
     babel-loader "^8.0.5"
     webpack ">=4 < 4.29"
 
-"@vue/cli-plugin-eslint@3.9.2":
-  version "3.9.2"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-3.9.2.tgz#747c616b13a11f34ac80554eee899cbfcd1977b8"
-  integrity sha512-AdvWJN+4Px2r3hbTDM2/rCtTcS6VyI7XuRljbfr2V9nF9cJiH4qsXFrTCRj3OgupbXJ14fUGKrLxmznLZIm1jA==
+"@vue/cli-plugin-eslint@3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-eslint/-/cli-plugin-eslint-3.10.0.tgz#44a2abcecadc5b4854ee8fc4a7c5930f660293b0"
+  integrity sha512-grM3Z4je8XlPomhYqTC4ILB26rTrJKZhEkCwbXdduMrWtpn2Ggotl2nYayplOzDgoZ4Cx3ykJMkRulla2Zi47g==
   dependencies:
-    "@vue/cli-shared-utils" "^3.9.0"
+    "@vue/cli-shared-utils" "^3.10.0"
     babel-eslint "^10.0.1"
     eslint-loader "^2.1.2"
     globby "^9.2.0"
@@ -921,26 +921,26 @@
     eslint "^4.19.1"
     eslint-plugin-vue "^4.7.1"
 
-"@vue/cli-plugin-unit-mocha@3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-mocha/-/cli-plugin-unit-mocha-3.9.0.tgz#4fad75c7df06a2190305d591e1992c4f1f126dca"
-  integrity sha512-ukaPvFExcZ3Bw/ERpuVJX6+h29tY2zYYFdOQ6Vv4+MyL/tUfzSoWOB9y065mqe0nBzvRJlhq5FJ8zMYFkoSdow==
+"@vue/cli-plugin-unit-mocha@3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-plugin-unit-mocha/-/cli-plugin-unit-mocha-3.10.0.tgz#1ef0c6bd56e2b4f660c2b641444fd7cb208e34cf"
+  integrity sha512-78yf/R0qxKrbLnFh8tksZ90xRkAW/iVheqHDlQp5QOhJwXJmJVUi+Qm7UxBoRomkg1scuSSugSqT7fyCbkVS9w==
   dependencies:
-    "@vue/cli-shared-utils" "^3.9.0"
+    "@vue/cli-shared-utils" "^3.10.0"
     jsdom "^13.2.0"
     jsdom-global "^3.0.2"
     mocha "^5.2.0"
     mocha-webpack "^2.0.0-beta.0"
 
-"@vue/cli-service@3.9.2":
-  version "3.9.2"
-  resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-3.9.2.tgz#59c95500f1f20ab1cd1905c28f6c3b17c04d6de8"
-  integrity sha512-R4L9tCMpJ4DzLgu/aU9CEtl5QYsj/FXRrtEgXSKm+71OVtA/o2rkLTC8SLB2Bu7wHP/HCYbaoy4NZqSEQzTuLw==
+"@vue/cli-service@3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-service/-/cli-service-3.10.0.tgz#1e61afac9eeed5d902c124715c29719abeb743c5"
+  integrity sha512-aQaAjtkpSl4XFBM7Di9doh4GvHp1H8/H1QJKRK8bPJ5MVbt8Lt4tBo+YgK9Qs/9x0mrxCAa5UrR9+8ZWIQs2Zw==
   dependencies:
     "@intervolga/optimize-cssnano-plugin" "^1.0.5"
     "@soda/friendly-errors-webpack-plugin" "^1.7.1"
-    "@vue/cli-overlay" "^3.9.0"
-    "@vue/cli-shared-utils" "^3.9.0"
+    "@vue/cli-overlay" "^3.10.0"
+    "@vue/cli-shared-utils" "^3.10.0"
     "@vue/component-compiler-utils" "^2.6.0"
     "@vue/preload-webpack-plugin" "^1.1.0"
     "@vue/web-component-wrapper" "^1.2.0"
@@ -970,7 +970,7 @@
     hash-sum "^1.0.2"
     html-webpack-plugin "^3.2.0"
     launch-editor-middleware "^2.2.1"
-    lodash.defaultsdeep "^4.6.0"
+    lodash.defaultsdeep "^4.6.1"
     lodash.mapvalues "^4.6.0"
     lodash.transform "^4.6.0"
     mini-css-extract-plugin "^0.6.0"
@@ -994,10 +994,10 @@
     webpack-dev-server "^3.4.1"
     webpack-merge "^4.2.1"
 
-"@vue/cli-shared-utils@^3.9.0":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-3.9.0.tgz#cb56a443bf763a873849a11d07e9e7638aa16cc2"
-  integrity sha512-wumeMZTz5aQ+1Y6uxTKegIsgOXEWT3hT8f9sW2mj5SwNDVyQ+AHZTgSynYExTUJg3dH81uKgFDUpPdAvGxzh8g==
+"@vue/cli-shared-utils@^3.10.0":
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/@vue/cli-shared-utils/-/cli-shared-utils-3.10.0.tgz#9d156f3c0ef675a939319062489e98c8d3d80f7e"
+  integrity sha512-i96XBUtLdWeKFCC/ot12ngqnVikN/dXpelGdyxvNZczCkX7Je0FUdrZkiw0+uTYTu1RmuYWpLs+vb/YQerjiWg==
   dependencies:
     "@hapi/joi" "^15.0.1"
     chalk "^2.4.1"
@@ -1358,10 +1358,10 @@ amdefine@>=0.0.4:
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
 
-animejs@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/animejs/-/animejs-3.0.1.tgz#8b808bad575e3b6106489d8b04b92bc4062166fe"
-  integrity sha512-7mMoBQScvA7s4zm3EVgnuXXrtOu6TJNAhU+Ajo7HsXYH0NwbuZIcRHMO65a9NyUlmAXz4VPxlK5cENNOQbCi8g==
+animejs@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/animejs/-/animejs-3.1.0.tgz#748a90fc1d4bef3efed64508af9a6a82babf5c47"
+  integrity sha512-BjnCroPPQPEAngT0M89pz9TBcOGgOFLnVoq3+jV2upl4rn60k57/AXvESTnuILsNgOEjGuhMEOMp7IlQzk40kA==
 
 ansi-colors@^3.0.0:
   version "3.2.4"
@@ -4546,7 +4546,12 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
-highlight.js@9.15.8, highlight.js@^9.6.0:
+highlight.js@9.15.9:
+  version "9.15.9"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.9.tgz#865257da1dbb4a58c4552d46c4b3854f77f0e6d5"
+  integrity sha512-M0zZvfLr5p0keDMCAhNBp03XJbKBxUx5AfyfufMdFMEP4N/Xj6dh0IqC75ys7BAzceR34NgcvXjupRVaHBPPVQ==
+
+highlight.js@^9.6.0:
   version "9.15.8"
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-9.15.8.tgz#f344fda123f36f1a65490e932cf90569e4999971"
   integrity sha512-RrapkKQWwE+wKdF73VsOa2RQdIoO3mxwJ4P8mhbI6KYJUraUHRKM5w5zQQKXNk0xNL4UVRdulV9SBJcmzJNzVA==
@@ -4725,10 +4730,10 @@ https-browserify@^1.0.0:
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-1.0.0.tgz#ec06c10e0a34c0f2faf199f7fd7fc78fffd03c73"
   integrity sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=
 
-i18next-browser-languagedetector@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/i18next-browser-languagedetector/-/i18next-browser-languagedetector-3.0.1.tgz#a47c43176e8412c91e808afb7c6eb5367649aa8e"
-  integrity sha512-WFjPLNPWl62uu07AHY2g+KsC9qz0tyMq+OZEB/H7N58YKL/JLiCz9U709gaR20Mule/Ppn+uyfVx5REJJjn1HA==
+i18next-browser-languagedetector@3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/i18next-browser-languagedetector/-/i18next-browser-languagedetector-3.0.2.tgz#dddfdfae8702d79aeae13682063b3d05c3614a03"
+  integrity sha512-0gQK7FAHDPsJGHvPlfIgXZlZUHlgQy0I6WFFotvreK8m0fG33lkq7jvBvef/8cFeJYBtjYR9GbQF6/DxGCaneA==
 
 i18next-intervalplural-postprocessor@^1.0.2:
   version "1.0.2"
@@ -5572,10 +5577,10 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-lodash.defaultsdeep@^4.6.0:
-  version "4.6.0"
-  resolved "https://registry.yarnpkg.com/lodash.defaultsdeep/-/lodash.defaultsdeep-4.6.0.tgz#bec1024f85b1bd96cbea405b23c14ad6443a6f81"
-  integrity sha1-vsECT4WxvZbL6kBbI8FK1kQ6b4E=
+lodash.defaultsdeep@^4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/lodash.defaultsdeep/-/lodash.defaultsdeep-4.6.1.tgz#512e9bd721d272d94e3d3a63653fa17516741ca6"
+  integrity sha512-3j8wdDzYuWO3lM3Reg03MuQR957t287Rpcxp1njpEa8oDrikb+FwGdW3n+FELh/A6qib6yPit0j/pv9G/yeAqA==
 
 lodash.get@^4.4.2:
   version "4.4.2"
