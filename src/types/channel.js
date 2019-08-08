@@ -14,6 +14,7 @@ export class Channel {
     this.name = c.name
     this.topic = c.topic
     this.type = c.type
+    this.membershipPolicy = c.membershipPolicy
     this.membershipFlag = c.membershipFlag
     this.createdAt = c.createdAt
     this.updatedAt = c.updatedAt || null
@@ -26,6 +27,7 @@ export class Channel {
     this.canSendMessages = !!c.canSendMessages
     this.canDeleteMessages = !!c.canDeleteMessages
     this.canChangeMembers = !!c.canChangeMembers
+    this.canChangeMembershipPolicy = !!c.canChangeMembershipPolicy
     this.canUpdate = !!c.canUpdate
     this.canArchive = !!c.canArchive
     this.canDelete = !!c.canDelete
@@ -42,6 +44,10 @@ export class Channel {
 
   isMember (userID) {
     return this.members.indexOf(userID) !== -1
+  }
+
+  isFeatured () {
+    return (this.membershipPolicy === 'featured')
   }
 
   removeMember (user) {

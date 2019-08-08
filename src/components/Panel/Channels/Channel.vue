@@ -83,6 +83,10 @@ export default {
     cssClass () {
       let set = [this.channel.type]
 
+      if (this.channel.isFeatured()) {
+        set.push('featured')
+      }
+
       if (this.channel.type === 'group') {
         let online = 0
         this.channel.members.forEach(userID => { if (this.isPresent(userID)) online++ })

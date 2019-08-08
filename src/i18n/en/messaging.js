@@ -78,6 +78,7 @@ export default {
       channelTopicLabel: 'Topic',
       channelTopicPlaceholder: 'Things we talk about',
       channelPrivateLabel: 'Make this channel private',
+      channelMembershipPolicyFeatured: 'Featured (always list in the channel list)',
       selectedMembersLabel: 'Selected members',
       addMembersLabel: 'Add members',
       addMembersPlaceholder: 'Find users to add as members',

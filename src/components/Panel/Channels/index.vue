@@ -100,10 +100,10 @@ export default {
         (this.channel && this.channel.channelID === c.channelID) ||
 
         // Unless hidden, show channels we're members of
-        (c.isMember(userID) && c.membershipFlag !== 'hidden') ||
+        ((c.isFeatured() || c.isMember(userID)) && c.membershipFlag !== 'hidden') ||
 
         // Unless ignored, show channels with unread messages we're members of
-        (c.isMember(userID) && c.membershipFlag !== 'ignored' && this.unread(c).has) ||
+        ((c.isFeatured() || c.isMember(userID)) && c.membershipFlag !== 'ignored' && this.unread(c).has) ||
 
         // and ignore the rest...
         false

@@ -48,19 +48,20 @@
           ></font-awesome-icon>
         </label>
         <div class="dropdown-content">
-          <div v-if="!channel.isDirectMessage()">
-            <label
+          <div v-if="canViewMembers || canEdit">
+            <label v-if="canViewMembers"
               @click="$emit('openMembersPanel')">
               <i :title="$t('channel.memberListTooltip')" :aria-label="$t('channel.memberListTooltip')" class="icon icon-user"></i>
               {{ $t('channel.memberList', { count: (channel.members || []).length }) }}
             </label>
-            <label v-if="channel.canUpdate"
+            <label v-if="canEdit"
               @click="$router.push({name: 'edit-channel', params: {channelID: channel.channelID}})">
               <i :title="$t('channel.editTooltip')" :aria-label="$t('channel.editTooltip')" class="icon icon-edit-3"></i>
               {{ $t('channel.edit') }}
             </label>
             <hr>
           </div>
+          <div>
             <label v-if="channel.membershipFlag!=='pinned' && isMember" @click="onFlag('pinned')">
               <font-awesome-icon
                 :icon="['fas', 'star']"
@@ -89,6 +90,7 @@
               ></font-awesome-icon>
               {{ $t('channel.removeFlag') }}
             </label>
+          </div>
           <hr v-if="isMember">
           <div class="open-sidebar">
             <label
@@ -109,7 +111,7 @@
             </label>
           </div>
           <label
-            v-if="isMember && channel.canPart"
+            v-if="canPart"
             @click="onPart">
             <font-awesome-icon
               :icon="'door-open'"
@@ -118,7 +120,7 @@
             {{ $t('channel.leave') }}
           </label>
           <label
-            v-if="!isMember && channel.canJoin"
+            v-if="canJoin"
             @click="onJoin">
             <font-awesome-icon
               :icon="'door-open'"
@@ -162,7 +164,23 @@ export default {
     },
 
     isMember () {
-      return !!this.channel.members.find(ID => ID === this.$auth.user.userID)
+      return !!this.channel.isMember(this.$auth.user.userID)
+    },
+
+    canPart () {
+      return this.isMember && this.channel.canPart
+    },
+
+    canJoin () {
+      return !this.isMember && this.channel.canJoin
+    },
+
+    canViewMembers () {
+      return !this.channel.isDirectMessage()
+    },
+
+    canEdit () {
+      return this.channel.canUpdate && !this.channel.isDirectMessage()
     },
   },
 

@@ -34,7 +34,7 @@
               v-model.trim="channel.topic"
               :disabled="!channel.canUpdate"
               autocomplete="channel-topic"
-              :placeholder="$t('channel.editor.channelTopicPlaceholder')">
+              :placeholder="$t('channel.editor.channelTopicPlaceholder')" />
           </div>
 
           <div class="form-check" v-if="channel.type !== 'group'">
@@ -45,9 +45,23 @@
               v-model="channel.type"
               :disabled="!channel.canUpdate"
               true-value="private"
-              false-value="public">
+              false-value="public" />
             <label for="channel-type">
-                {{ $t('channel.editor.channelPrivateLabel') }}
+              {{ $t('channel.editor.channelPrivateLabel') }}
+            </label>
+          </div>
+
+          <div class="form-check">
+            <input
+              class="input-chk"
+              type="checkbox"
+              id="channel-membership-policy"
+              v-model="channel.membershipPolicy"
+              :disabled="channel.type !== 'public' || !channel.canChangeMembershipPolicy"
+              true-value="featured"
+              false-value="">
+            <label for="channel-membership-policy">
+              {{ $t('channel.editor.channelMembershipPolicyFeatured') }}
             </label>
           </div>
 
