@@ -1,19 +1,18 @@
-# Crust Unify webapp
+# Crust Messaging webapp
 
 ## Project setup
 
 ### Commands :
 ```bash
-yarn global add @vue/cli
-yarn install
+yarn
 ```
 
-In `/public` folder, create a copy of `config.sample.js` to `config.js` and modify it according to your needs.
+In `/public` folder, create a copy of `config.example.js` to `config.js` and modify it according to your needs.
 
 ### Compiles and hot-reloads for development
 
 ```bash
-yarn run serve
+yarn serve
 ```
 
 _If you are running multiple frontends (unify, messaging, ...) you
@@ -21,15 +20,15 @@ can spin up each one on a different port with `--port <PORT>` option._
 
 ### Compiles and minifies for production
 ```bash
-yarn run build
+yarn build
 ```
 
 ### Lints and fixes files
 ```bash
-yarn run lint
+yarn lint
 ```
 
 ### Run your unit tests
 ```bash
-yarn run test:unit
+yarn test:unit
 ```
