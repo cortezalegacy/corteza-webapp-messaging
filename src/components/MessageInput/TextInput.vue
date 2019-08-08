@@ -11,6 +11,7 @@ import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.bubble.css'
 import 'quill-mention'
+import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
 const fuzzysort = require('fuzzysort')
 
 const suggestionLimit = 10
@@ -97,6 +98,7 @@ export default {
               }
             },
             source: function (searchTerm, renderList, mentionChar) {
+              searchTerm = toNFD(searchTerm)
               let values
 
               const { userID: meID } = vm.user

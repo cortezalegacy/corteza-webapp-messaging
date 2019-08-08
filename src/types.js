@@ -1,3 +1,4 @@
+import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
 const fuzzysort = require('fuzzysort')
 const UINT64_ZEROPAD = '00000000000000000000'
 
@@ -112,7 +113,7 @@ export class User {
   }
 
   fuzzyKey () {
-    return fuzzysort.prepare(this.name || this.userID || '')
+    return fuzzysort.prepare(toNFD(this.name) || this.userID || '')
   }
 
   Match (q) {
