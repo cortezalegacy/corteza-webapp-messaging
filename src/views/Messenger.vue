@@ -101,6 +101,13 @@ export default {
 
       // What to do when emoji is picked
       emojiPickerCallback: null,
+
+      wakeCheck: {
+        timeout: 1000 * 60 * 1, // 1m
+        window: 1000 * 5, // 5s
+        last: null,
+        i: null, // interval
+      },
     }
   },
 
@@ -158,6 +165,7 @@ export default {
     window.removeEventListener('resize', this.windowResizeHandler)
     this.$bus.$off('ui.openEmojiPicker')
     this.$bus.$off('$core.newMessage', this.handleNotifications)
+    if (this.wakeCheck.i) window.clearInterval(this.wakeCheck.i)
   },
 
   methods: {
@@ -203,6 +211,27 @@ export default {
       this.$bus.$on('ui.closeEmojiPicker', () => {
         this.emojiPickerCallback = null
       })
+
+      // Load users, statuses & channels on wakeup
+      this.$root.$on('wake', () => {
+        this.loadUsers()
+        this.loadUserStatuses()
+        this.loadChannels().then(cc => {
+          cc.forEach((c) => this.updateChannelUnreads(c))
+        })
+      })
+
+      this.wakeCheck.i = setInterval(() => {
+        const currentTime = (new Date()).getTime()
+        if (this.wakeCheck.last) {
+          if (currentTime > (this.wakeCheck.last + this.wakeCheck.timeout + this.wakeCheck.window)) {
+            this.$root.$emit('wake', {
+              lost: currentTime - this.wakeCheck.last,
+            })
+          }
+        }
+        this.wakeCheck.last = currentTime
+      }, this.wakeCheck.timeout)
     },
 
     closePopups () {
