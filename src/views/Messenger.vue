@@ -159,6 +159,7 @@ export default {
       if (this.isCordovaPlatform) {
         this.$router.push({ name: 'auth' })
       } else {
+        this.$auth.open()
         window.location = '/auth'
       }
     })
