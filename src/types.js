@@ -113,7 +113,11 @@ export class User {
   }
 
   fuzzyKey () {
-    return fuzzysort.prepare(toNFD(this.name) || this.userID || '')
+    return fuzzysort.prepare(toNFD(this.suggestionLabel()))
+  }
+
+  suggestionLabel () {
+    return this.handle || this.name || (this.email || '').split('@')[0] || this.userID || ''
   }
 
   Match (q) {

@@ -91,10 +91,10 @@ export default {
               if (item.type === 'User') {
                 return `
                   <span class="user group ${item.online ? 'full-moon' : 'new-moon'} ${item.member ? 'member' : ''}">
-                    <span class="channel-name"><span class="label">${item.value}</span></span>
+                    <span class="channel-name"><span class="label">${item.value}<br/><small class="email">${item.user.email}</small></span></span>
                   </span>`
               } else {
-                return `<span class="channel ${item.opts.type}"><span class="channel-name ">${item.value}</span></span>`
+                return `<span class="channel ${item.channel.type}"><span class="channel-name ">${item.value}</span></span>`
               }
             },
             source: function (searchTerm, renderList, mentionChar) {
@@ -108,9 +108,9 @@ export default {
 
                 // In private & group channels, initally show only members
                 if (searchTerm.length === 0 && filterIn.find((e) => e === type)) {
-                  values = values.filter(a => members.find(m => m === a.id))
+                  values = values.filter(a => members.find(m => m === a.user.userID))
                 } else {
-                  values = values.map(v => ({ ...v, member: members.find(m => m === v.id) }))
+                  values = values.map(v => ({ ...v, member: members.find(m => m === v.user.userID) }))
                 }
 
                 // Fuzzy sort
@@ -121,7 +121,7 @@ export default {
                 // Extra sort by presence & membership
                 values = [ ...values ].sort((a, b) => {
                   if (a.online && !b.online && a.id !== meID) return -1
-                  if (members.find(m => m === a.id) && !members.find(m => m === b.id)) return -1
+                  if (members.find(m => m === a.user.userID) && !members.find(m => m === b.user.userID)) return -1
 
                   return 0
                 })
@@ -130,10 +130,10 @@ export default {
 
                 // Show named, not ignored, joined channels
                 if (searchTerm.length === 0) {
-                  values = values.filter(a => a.name && !ignoreFlags.find(e => e === a.opts.membershipFlag) && a.members.find((e) => e === meID))
+                  values = values.filter(a => a.channel.name && !ignoreFlags.find(e => e === a.channel.membershipFlag) && a.channel.members.find((e) => e === meID))
                 } else {
                   values = fuzzysort.go(searchTerm, values, fzsOpts)
-                    .filter(r => !ignoreFlags.find(e => e === r.obj.opts.membershipFlag) || -r.score < r.target.length * 0.65)
+                    .filter(r => !ignoreFlags.find(e => e === r.obj.channel.membershipFlag) || -r.score < r.target.length * 0.65)
                     .map(r => r.obj)
                 }
               }
@@ -322,6 +322,11 @@ export default {
     user-select: text;
   }
 
+  .ql-mention-list-item{
+    font-size: 14px;
+    line-height: inherit;
+  }
+
   @media (max-width: $wideminwidth - 1px)
   {
     .ql-editor
@@ -339,8 +344,10 @@ export default {
   {
     .ql-mention-list-item{
       font-size: 14px;
-      height: 30px;
-      line-height: 30px;
+
+      .email {
+        margin-left: 18px;
+      }
 
       &[data-denotation-char="@"] .label {
         color: $secondary;

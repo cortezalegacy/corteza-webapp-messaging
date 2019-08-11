@@ -40,7 +40,11 @@ export class Channel {
   }
 
   fuzzyKey () {
-    return fuzzysort.prepare(toNFD(this.name) || this.channelID || '')
+    return fuzzysort.prepare(toNFD(this.suggestionLabel()))
+  }
+
+  suggestionLabel () {
+    return this.name || this.channelID || ''
   }
 
   isMember (userID) {
