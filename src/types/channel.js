@@ -1,3 +1,4 @@
+import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
 const fuzzysort = require('fuzzysort')
 
 export class Channel {
@@ -39,7 +40,11 @@ export class Channel {
   }
 
   fuzzyKey () {
-    return fuzzysort.prepare(this.name || this.channelID || '')
+    return fuzzysort.prepare(toNFD(this.suggestionLabel()))
+  }
+
+  suggestionLabel () {
+    return this.name || this.channelID || ''
   }
 
   isMember (userID) {

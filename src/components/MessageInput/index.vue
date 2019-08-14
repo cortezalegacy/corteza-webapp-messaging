@@ -134,8 +134,13 @@ export default {
 
     channelSuggestions () {
       return this.channels.map(c => {
-        const value = c.name || c.channelID || ''
-        return { type: 'Channel', id: c.channelID, value, key: c.fuzzyKey(), members: c.members, name: c.name, opts: { membershipFlag: c.membershipFlag, type: c.type } }
+        return {
+          type: 'Channel',
+          id: c.channelID,
+          channel: c,
+          value: c.suggestionLabel(),
+          key: c.fuzzyKey(),
+        }
       })
     },
 
@@ -145,8 +150,14 @@ export default {
 
     userSuggestions () {
       return this.users.map(u => {
-        const value = u.name || u.userID || ''
-        return { type: 'User', id: u.userID, value, key: u.fuzzyKey(), online: this.onlineStatuses.has(u.userID), name: u.name }
+        return {
+          type: 'User',
+          id: u.userID,
+          user: u,
+          value: u.suggestionLabel(),
+          key: u.fuzzyKey(),
+          online: this.onlineStatuses.has(u.userID),
+        }
       })
     },
 
