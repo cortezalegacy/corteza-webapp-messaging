@@ -2624,7 +2624,7 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
 
 corteza-webapp-common@cortezaproject/corteza-webapp-common.git#master:
   version "2019.3.18"
-  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/21c815072cb3ab70dcfa42d110819094cef7ac18"
+  resolved "https://codeload.github.com/cortezaproject/corteza-webapp-common/tar.gz/c85da274b8351f7008b315970141cc859dd1e61d"
   dependencies:
     axios "^0.18.1"
     diff "^3.5.0"
