@@ -296,7 +296,7 @@ export default {
     },
 
     onQuillReady (quill) {
-      quill.root.addEventListener('keydown', ev => {
+      quill.root.addEventListener('keyup', ev => {
         // on arrow-up but only on empty input!
         if (ev.key === 'ArrowUp' && quill.getText().trim().length === 0) {
           this.$emit('editLastMessage', {})
