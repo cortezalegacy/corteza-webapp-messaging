@@ -40,6 +40,7 @@
         v-if="uiShowPreview"
         :src="uiShowPreview.pdf || uiShowPreview.src"
         :name="uiShowPreview.name"
+        :meta="uiShowPreview.meta"
         :alt="uiShowPreview.name"
         :labels="previewLabels"
         @close="uiShowPreview=null">
@@ -195,9 +196,10 @@ export default {
 
       this.$bus.$on('$core.newMessage', this.handleNotifications)
 
-      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, pdf = undefined }) => {
+      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, pdf = undefined, meta }) => {
         this.uiShowPreview = {
           pdf,
+          meta,
           src: url,
           download: downloadUrl,
           name: name,

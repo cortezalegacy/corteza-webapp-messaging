@@ -49,8 +49,7 @@
 </template>
 <script>
 import * as numeral from 'numeral'
-import { canPreview } from 'corteza-webapp-common/src/lib/file_preview'
-import { PreviewInline } from 'corteza-webapp-common/src/components/FilePreview/index'
+import { PreviewInline, canPreview } from 'corteza-webapp-common/src/components/FilePreview/'
 
 export default {
   components: {
@@ -61,8 +60,7 @@ export default {
 
   computed: {
     inlineMeta () {
-      // atm only images require special meta; dimensions.
-      return (this.attachment.meta.preview || {}).image || {}
+      return this.attachment.meta
     },
     inlineUrl () {
       return this.ext === 'pdf' ? this.attachment.downloadUrl : this.attachment.previewUrl
