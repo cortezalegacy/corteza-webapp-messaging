@@ -208,7 +208,7 @@ export default {
     // data with submitMeta data.
     onSubmit () {
       // Make a copy and reset component's version of a value to prevent dups
-      const value = exportToMarkdown(this.value).trim()
+      const value = !this.value ? '' : exportToMarkdown(this.value).trim()
       this.value = null
 
       // Delete draft
