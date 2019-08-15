@@ -39,8 +39,10 @@ export class Channel {
     this.members = c.members || [] // []string
   }
 
-  fuzzyKey () {
-    return fuzzysort.prepare(toNFD(this.suggestionLabel()))
+  fuzzyKeys () {
+    return {
+      name: fuzzysort.prepare(toNFD(this.name)),
+    }
   }
 
   suggestionLabel () {

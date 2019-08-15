@@ -20,6 +20,7 @@
               :submitOnEnter="!uiEnableSubmitButton()"
               :channels="channelSuggestions"
               :users="userSuggestions"
+              :suggestionPriorities="suggestionPriorities"
               :channel="channel"
               :user="$auth.user"
               class="text-input"
@@ -95,6 +96,11 @@ export default {
     showMarkAsUnreadButton: { type: Boolean, default: false },
 
     draft: { default: null },
+
+    suggestionPriorities: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   data () {
@@ -139,7 +145,7 @@ export default {
           id: c.channelID,
           channel: c,
           value: c.suggestionLabel(),
-          key: c.fuzzyKey(),
+          ...c.fuzzyKeys(),
         }
       })
     },
@@ -155,8 +161,8 @@ export default {
           id: u.userID,
           user: u,
           value: u.suggestionLabel(),
-          key: u.fuzzyKey(),
           online: this.onlineStatuses.has(u.userID),
+          ...u.fuzzyKeys(),
         }
       })
     },
