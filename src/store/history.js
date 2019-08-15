@@ -8,7 +8,6 @@ const types = {
   removeReaction: 'removeReaction',
   clearSet: 'clearSet',
   removeFromSet: 'removeFromSet',
-  updateAPI: 'updateAPI',
 }
 
 // Basic message filtering
@@ -18,7 +17,6 @@ export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
-      MessagingAPI,
       pending: false,
       set: [],
     },
@@ -40,7 +38,7 @@ export default function (MessagingAPI) {
     actions: {
       delete ({ commit, state }, { channelID, messageID }) {
         commit(types.pending)
-        state.MessagingAPI.messageDelete({ channelID, messageID }).then(() => {
+        MessagingAPI.messageDelete({ channelID, messageID }).then(() => {
           commit(types.removeFromSet, messageID)
           commit(types.completed)
         })
@@ -57,9 +55,9 @@ export default function (MessagingAPI) {
         }
 
         if (isPinned) {
-          state.MessagingAPI.messagePinRemove({ channelID, messageID }).then(response)
+          MessagingAPI.messagePinRemove({ channelID, messageID }).then(response)
         } else {
-          state.MessagingAPI.messagePinCreate({ channelID, messageID }).then(response)
+          MessagingAPI.messagePinCreate({ channelID, messageID }).then(response)
         }
       },
 
@@ -109,9 +107,9 @@ export default function (MessagingAPI) {
         }
 
         if (isBookmarked) {
-          state.MessagingAPI.messageBookmarkRemove({ channelID, messageID }).then(response)
+          MessagingAPI.messageBookmarkRemove({ channelID, messageID }).then(response)
         } else {
-          state.MessagingAPI.messageBookmarkCreate({ channelID, messageID }).then(response)
+          MessagingAPI.messageBookmarkCreate({ channelID, messageID }).then(response)
         }
       },
 
@@ -121,10 +119,6 @@ export default function (MessagingAPI) {
     },
 
     mutations: {
-      [types.updateAPI] (state, { MessagingAPI }) {
-        state.MessagingAPI = MessagingAPI
-      },
-
       [types.pending] (state) {
         state.pending = true
       },

@@ -4,14 +4,12 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   updateCommands: 'updateCommands',
-  updateAPI: 'updateAPI',
 }
 
 export default function (MessagingAPI) {
   return {
     namespaced: true,
     state: {
-      MessagingAPI,
       suggestions: [],
       suggestionsOpened: false,
       commands: [],
@@ -28,7 +26,7 @@ export default function (MessagingAPI) {
     actions: {
       async loadCommands ({ commit, state }) {
         commit(types.pending)
-        state.MessagingAPI.commandsList().then((commands) => {
+        MessagingAPI.commandsList().then((commands) => {
           commit(types.updateCommands, commands)
           commit(types.completed)
         })
@@ -44,7 +42,6 @@ export default function (MessagingAPI) {
       },
 
       [types.updateCommands] (state, commands) {
-        const MessagingAPI = state.MessagingAPI
         commands = commands.map(c => ({
           command: c.name,
           description: c.description,

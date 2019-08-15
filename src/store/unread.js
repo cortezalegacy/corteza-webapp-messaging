@@ -5,7 +5,6 @@ const types = {
   pending: 'pending',
   completed: 'completed',
   update: 'update',
-  updateAPI: 'updateAPI',
 }
 
 // // Maps Message or Channel object to internal struct
@@ -62,9 +61,9 @@ function update (clean, set, input) {
 }
 
 // Accepting Channel & Message (thread) objects
-function markAsRead (commit, state, payload) {
+function markAsRead (commit, MessagingAPI, payload) {
   commit(types.pending)
-  state.MessagingAPI.messageMarkAsRead(payload).then((unread) => {
+  MessagingAPI.messageMarkAsRead(payload).then((unread) => {
     commit(types.update, [{
       ...payload,
       ...unread,
@@ -79,7 +78,6 @@ export default (MessagingAPI) => {
     namespaced: true,
 
     state: {
-      MessagingAPI,
       pending: false,
       set: [],
     },
@@ -101,7 +99,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting channelID value')
         }
 
-        markAsRead(commit, state, {
+        markAsRead(commit, MessagingAPI, {
           channelID,
         })
       },
@@ -113,7 +111,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting channelID value')
         }
 
-        markAsRead(commit, state, {
+        markAsRead(commit, MessagingAPI, {
           channelID,
           threadID,
         })
@@ -129,7 +127,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting messageID (lastReadMessageID) value')
         }
 
-        markAsRead(commit, state, {
+        markAsRead(commit, MessagingAPI, {
           channelID,
           lastReadMessageID,
         })
@@ -145,7 +143,7 @@ export default (MessagingAPI) => {
           throw new Error('expecting messageID (lastReadMessageID) value')
         }
 
-        markAsRead(commit, state, {
+        markAsRead(commit, MessagingAPI, {
           channelID,
           threadID,
           lastReadMessageID,
@@ -221,10 +219,6 @@ export default (MessagingAPI) => {
     },
 
     mutations: {
-      [types.updateAPI] (state, { MessagingAPI }) {
-        state.MessagingAPI = MessagingAPI
-      },
-
       [types.pending] (state) {
         state.pending = true
       },
