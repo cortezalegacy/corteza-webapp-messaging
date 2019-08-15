@@ -91,7 +91,7 @@ export default {
               if (item.type === 'User') {
                 return `
                   <span class="user group ${item.online ? 'full-moon' : 'new-moon'} ${item.member ? 'member' : ''}">
-                    <span class="channel-name"><span class="label">${item.value}<br/><small class="email">${item.user.email}</small></span></span>
+                    <span class="channel-name"><span class="label">${item.value}</span></span>
                   </span>`
               } else {
                 return `<span class="channel ${item.channel.type}"><span class="channel-name ">${item.value}</span></span>`
@@ -322,11 +322,6 @@ export default {
     user-select: text;
   }
 
-  .ql-mention-list-item{
-    font-size: 14px;
-    line-height: inherit;
-  }
-
   @media (max-width: $wideminwidth - 1px)
   {
     .ql-editor
@@ -344,10 +339,8 @@ export default {
   {
     .ql-mention-list-item{
       font-size: 14px;
-
-      .email {
-        margin-left: 18px;
-      }
+      height: 30px;
+      line-height: 30px;
 
       &[data-denotation-char="@"] .label {
         color: $secondary;
