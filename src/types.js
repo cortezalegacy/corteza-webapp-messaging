@@ -112,12 +112,16 @@ export class User {
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
   }
 
+  emailName () {
+    return (this.email || '').split('@')[0]
+  }
+
   fuzzyKey () {
-    return fuzzysort.prepare(toNFD(this.suggestionLabel()))
+    return fuzzysort.prepare(toNFD(`${this.name} ${this.handle}`.trim() || this.emailName()))
   }
 
   suggestionLabel () {
-    return this.handle || this.name || (this.email || '').split('@')[0] || this.userID || ''
+    return this.name || this.handle || this.emailName() || this.userID || ''
   }
 
   Match (q) {
