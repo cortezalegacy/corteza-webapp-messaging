@@ -72,6 +72,7 @@
             v-if="inEditing && !readOnly"
             :hideFileUpload="true"
             :message="message"
+            :suggestionPriorities="suggestionPriorities"
             @submit="onInputSubmit"
             @cancel="inEditing=false"
             @deleteMessage="onDeleteMessage"
@@ -137,6 +138,10 @@ export default {
     currentUser: {
       type: Object,
       required: true,
+    },
+    suggestionPriorities: {
+      type: Object,
+      default: () => ({}),
     },
 
     readOnly: Boolean,

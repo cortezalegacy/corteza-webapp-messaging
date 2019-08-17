@@ -19,7 +19,11 @@ const fzsOpts = {
   threshold: -1000,
   limit: 10,
   allowTypo: true,
-  keys: [ 'email', 'name', 'handle' ],
+  keys: [
+    'email',
+    'name',
+    'handle',
+  ],
 
   scoreFn: (a) => {
     return a.sort((a, b) => {

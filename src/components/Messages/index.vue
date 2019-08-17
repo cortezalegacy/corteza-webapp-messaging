@@ -28,6 +28,7 @@
       :isLast="index === messages.length - 1"
       :highlightPinned="highlightPinned"
       :highlightBookmarked="highlightBookmarked"
+      :suggestionPriorities="suggestionPriorities"
       v-on="$listeners" />
     <li ref="anchor"></li>
   </ul>
@@ -51,6 +52,11 @@ export default {
     messages: {
       type: Array,
       required: true,
+    },
+
+    suggestionPriorities: {
+      type: Object,
+      default: () => ({}),
     },
 
     readOnly: Boolean,
