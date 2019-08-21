@@ -116,8 +116,16 @@ export class User {
     return (this.email || '').split('@')[0]
   }
 
-  fuzzyKey () {
-    return fuzzysort.prepare(toNFD(`${this.name} ${this.handle}`.trim() || this.emailName()))
+  fuzzyKeys () {
+    if (!this.name && !this.handle) {
+      return {
+        email: fuzzysort.prepare(toNFD(this.emailName())),
+      }
+    }
+    return {
+      name: fuzzysort.prepare(toNFD(this.name)),
+      handle: fuzzysort.prepare(toNFD(this.handle)),
+    }
   }
 
   suggestionLabel () {

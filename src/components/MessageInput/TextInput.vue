@@ -14,19 +14,38 @@ import 'quill-mention'
 import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
 const fuzzysort = require('fuzzysort')
 
-const suggestionLimit = 10
-const filterIn = ['group', 'private']
-const ignoreFlags = ['ignored', 'hidden']
+const calcMatch = ({ target, indexes }) => indexes.length / target.length
 const fzsOpts = {
   threshold: -1000,
-  limit: suggestionLimit,
+  limit: 10,
   allowTypo: true,
+  keys: [
+    'email',
+    'name',
+    'handle',
+  ],
 
-  key: 'key',
+  scoreFn: (a) => {
+    return a.sort((a, b) => {
+      if (!a) {
+        return -1
+      }
+      if (!b) {
+        return 0
+      }
+      return calcMatch(a) - calcMatch(b)
+    }).pop()
+  },
 }
 
 export default {
   props: {
+    // { <suggestionType>: Set(<typeID>) }
+    suggestionPriorities: {
+      type: Object,
+      default: () => ({}),
+    },
+
     value: {
       required: false,
       default: null,
@@ -99,46 +118,53 @@ export default {
             },
             source: function (searchTerm, renderList, mentionChar) {
               searchTerm = toNFD(searchTerm)
-              let values
-
+              let values = mentionChar === '@' ? vm.users : vm.channels
               const { userID: meID } = vm.user
-              if (mentionChar === '@') {
-                values = vm.users
-                let { type, members = [] } = vm.channel
 
-                // In private & group channels, initally show only members
-                if (searchTerm.length === 0 && filterIn.find((e) => e === type)) {
-                  values = values.filter(a => members.find(m => m === a.user.userID))
+              if (searchTerm.length !== 0) {
+                values = fuzzysort.go(searchTerm, values, fzsOpts)
+              } else {
+                values = values.map(obj => ({ obj }))
+              }
+
+              const p = []
+              const rest = []
+              values.forEach(v => {
+                const tmp = vm.suggestionPriorities[v.obj.type]
+                if (tmp && tmp.has(v.obj.id)) {
+                  p.push(v)
                 } else {
-                  values = values.map(v => ({ ...v, member: members.find(m => m === v.user.userID) }))
+                  rest.push(v)
+                }
+              })
+
+              values = rest.filter(({ score, obj }) => {
+                if (!p.length) {
+                  return true
                 }
 
-                // Fuzzy sort
-                if (searchTerm.length !== 0) {
-                  values = fuzzysort.go(searchTerm, values, fzsOpts).map(r => r.obj)
+                if (!score) {
+                  return false
                 }
+                return calcMatch(score) > 0.35
+              }).concat(p)
 
-                // Extra sort by presence & membership
+              values = values.map(r => r.obj)
+
+              if (mentionChar === '@') {
                 values = [ ...values ].sort((a, b) => {
-                  if (a.online && !b.online && a.id !== meID) return -1
-                  if (members.find(m => m === a.user.userID) && !members.find(m => m === b.user.userID)) return -1
+                  if (a.user.userID === meID) {
+                    return 0
+                  }
+                  if (a.online && !b.online) {
+                    return +1
+                  }
 
                   return 0
                 })
-              } else {
-                values = vm.channels
-
-                // Show named, not ignored, joined channels
-                if (searchTerm.length === 0) {
-                  values = values.filter(a => a.channel.name && !ignoreFlags.find(e => e === a.channel.membershipFlag) && a.channel.members.find((e) => e === meID))
-                } else {
-                  values = fuzzysort.go(searchTerm, values, fzsOpts)
-                    .filter(r => !ignoreFlags.find(e => e === r.obj.channel.membershipFlag) || -r.score < r.target.length * 0.65)
-                    .map(r => r.obj)
-                }
               }
 
-              renderList(values.slice(0, suggestionLimit), searchTerm)
+              renderList(values.reverse(), searchTerm)
             },
           },
 

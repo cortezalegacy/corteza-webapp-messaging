@@ -34,6 +34,11 @@ export default function (MessagingAPI) {
         return getters.list.filter(c => c.channelID === ID)[0] || undefined
       },
 
+      // Find channels where user is member; can skip flagged channels
+      findWhereMember: (state, getters) => (userID, ignoreFlagged = false) => {
+        return getters.list.filter(({ members, membershipFlag }) => members.includes(userID) && (!ignoreFlagged || (membershipFlag !== 'ignored' && membershipFlag !== 'hidden')))
+      },
+
       // Find direct/group channel for a specific set of members
       findByMembership: (state, getters) => (...userIDs) => {
         const userCount = userIDs.length

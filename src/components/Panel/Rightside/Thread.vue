@@ -28,6 +28,7 @@
         :lastReadMessageID="unread.lastMessageID"
         :editLastMessage="editLastMessage"
         :readOnly="!channel.canSendMessages"
+        :suggestionPriorities="getSp"
         hide-replies
         @markAsUnread="onMarkAsUnread"
         @scrollTop="onScrollTop"
@@ -42,6 +43,7 @@
           :replyTo="message"
           :show-mark-as-unread-button="unread.count > 0"
           :draft.sync="draft"
+          :suggestionPriorities="getSp"
           @markAsRead="onMarkAsRead"
           @promptFilePicker="onOpenFilePicker"
           @editLastMessage="editLastMessage=true" />
@@ -98,7 +100,15 @@ export default {
       getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',
       unreadFinder: 'unread/find',
+      findWhereMember: 'channels/findWhereMember',
     }),
+
+    getSp () {
+      return {
+        User: new Set((this.channel || {}).members || []),
+        Channel: new Set(this.findWhereMember(this.$auth.user.userID, true).map(({ channelID }) => channelID)),
+      }
+    },
 
     draft: {
       get () {
