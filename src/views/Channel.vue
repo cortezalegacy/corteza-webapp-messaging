@@ -43,7 +43,7 @@
         :draft.sync="draft"
         :suggestionPriorities="getSp"
         @markAsRead="onMarkAsRead"
-        @promptFilePicker="$refs.upload.openFilePicker"
+        @promptFilePicker="onPromptFilePicker"
         @editLastMessage="editLastMessage=true" />
     </div>
   </div>
@@ -173,6 +173,10 @@ export default {
       markAllAsRead: 'unread/markChannelAsRead',
       fromMessage: 'unread/fromMessage',
     }),
+
+    onPromptFilePicker (e) {
+      this.$refs.upload.openFilePicker(e)
+    },
 
     isFollowing ({ channelID, replyTo }) {
       return document.hasFocus() && this.channel.channelID === channelID && !replyTo

@@ -45,7 +45,7 @@
           :draft.sync="draft"
           :suggestionPriorities="getSp"
           @markAsRead="onMarkAsRead"
-          @promptFilePicker="$refs.upload.openFilePicker"
+          @promptFilePicker="onPromptFilePicker"
           @editLastMessage="editLastMessage=true" />
       </div>
     </template>
@@ -183,6 +183,10 @@ export default {
     ...mapActions({
       markAllAsRead: 'unread/markThreadAsRead',
     }),
+
+    onPromptFilePicker (e) {
+      this.$refs.upload.openFilePicker(e)
+    },
 
     isFollowing ({ replyTo }) {
       return document.hasFocus() && this.repliesTo === replyTo
