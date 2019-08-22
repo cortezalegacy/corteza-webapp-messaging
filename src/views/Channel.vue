@@ -163,6 +163,13 @@ export default {
     },
   },
 
+  created () {
+    this.$root.$on('wake', this.fetchNewMessages)
+  },
+  beforeDestroy () {
+    this.$root.$off('wake', this.fetchNewMessages)
+  },
+
   methods: {
     ...mapMutations({
       // @todo remove direct access to mutations!
@@ -209,6 +216,17 @@ export default {
           this.updateHistorySet(mm)
         })
       }
+    },
+
+    fetchNewMessages () {
+      let lmID
+      if (this.messages.length) {
+        lmID = (this.messages[this.messages.length - 1]).messageID
+      }
+      // @note this will be improved when the delta endpoint arrives
+      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, afterMessageID: lmID }).then((mm) => {
+        this.updateHistorySet(mm)
+      })
     },
 
     onScrollBottom () {
