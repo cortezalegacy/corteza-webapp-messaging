@@ -497,7 +497,27 @@ em{
   .message-content {
     font-size: 14px;
     word-break: break-word;
+    /deep/table {
+      border-collapse: collapse;
+      td, th {
+        padding: 5px 15px;
+      }
+      tr {
+        border-top: 1px solid black;
+      }
+      thead {
+        font-family: 'nunito_sansbold';
+        tr {
+          border-top: none;
+        }
+      }
+    }
+    /deep/hr {
+      border: 1px solid black;
+    }
+    /deep/strong {
+      font-family: 'nunito_sansbold';
+    }
   }
-
 }
 </style>
