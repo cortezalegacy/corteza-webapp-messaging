@@ -4,7 +4,7 @@
     @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.membersHeader') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: getLabel(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle') }} {{ channel.name }}</template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">

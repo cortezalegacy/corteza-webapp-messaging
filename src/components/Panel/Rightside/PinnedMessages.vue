@@ -4,7 +4,7 @@
     @onclick="$emit('openDirectMessage', u.userID);">
     <template slot="header">{{ $t('panel.pinnedMessagesHeader') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.pinnedGroupMessagesSubtitle', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.pinnedMessagesSubtitle', { label: getLabel(channel) }) }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.pinnedMessagesSubtitle') }} {{ channel.name }}</template>
 
     <template slot="main">
       <messages
