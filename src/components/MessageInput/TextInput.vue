@@ -17,7 +17,6 @@ const fuzzysort = require('fuzzysort')
 const calcMatch = ({ target, indexes }) => indexes.length / target.length
 const fzsOpts = {
   threshold: -1000,
-  limit: 10,
   allowTypo: true,
   keys: [
     'email',
@@ -154,9 +153,9 @@ export default {
               if (mentionChar === '@') {
                 values = [ ...values ].sort((a, b) => {
                   if (a.user.userID === meID) {
-                    return 0
+                    return -1
                   }
-                  if (a.online && !b.online) {
+                  if (a.online && a.user.userID !== meID && !b.online) {
                     return +1
                   }
 
