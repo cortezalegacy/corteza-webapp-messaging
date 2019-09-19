@@ -1,7 +1,7 @@
 import i18next from 'i18next'
 
 export default class {
-  construct (brand = 'Crust') {
+  construct (brand = 'Corteza') {
     this.brand = brand
     this.channelName = null
     this.flashInterval = 1500
@@ -24,7 +24,7 @@ export default class {
 
   generateTitle ({ incNew = false }) {
     // NOTE: Possible issue; should be `const brand = this.brand`?
-    const brand = 'Crust'
+    const brand = 'Corteza'
     let title = []
 
     if (incNew) {
