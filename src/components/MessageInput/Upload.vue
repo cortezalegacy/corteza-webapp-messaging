@@ -19,7 +19,7 @@
         <i18next path="message.file.uploadHeader" tag="h2">
           <span><br/>
             <template v-if="replyTo">{{ $t('message.file.replyToThread') }}</template>
-            <template v-else>{{ getLabel(channel) }}</template>
+            <template v-else>{{ getLabel(channel) }}test</template>
           <br/></span>
         </i18next>
       </vue-dropzone>
@@ -37,7 +37,7 @@
             <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
 
             <template v-else>
-              {{ $t('message.file.uploadToChannel', { label: getLabel(channel) }) }}<br/>
+              {{ $t('message.file.uploadToChannel') }} {{ channel.name }}.<br/>
               {{ $t('message.file.uploadTarget') }}
             </template>
           </span>
