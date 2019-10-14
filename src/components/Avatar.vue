@@ -2,7 +2,6 @@
 <template>
   <span>
     <i class="u-avatar"
-       :title="title"
        :class="{online: isOnline }"
        :style="img?'background-image:'+img:''">
       <span aria-hidden="true">{{ initials }}</span>
@@ -49,14 +48,6 @@ export default {
       }
 
       return '?'
-    },
-
-    title () {
-      if (!this.user) {
-        return this.user.name || this.user.username
-      }
-
-      return this.$t('general.label.na')
     },
 
     isOnline () {
