@@ -25,15 +25,13 @@ const fzsOpts = {
   ],
 
   scoreFn: (a) => {
-    return a.sort((a, b) => {
-      if (!a) {
-        return -1
-      }
-      if (!b) {
-        return 0
-      }
-      return calcMatch(a) - calcMatch(b)
-    }).pop()
+    // Check only relavant matches
+    const fltr = a.filter(mm => !!mm)
+    if (!fltr.length) {
+      return -1001
+    }
+
+    return fltr.sort((a, b) => calcMatch(a) - calcMatch(b)).pop()
   },
 }
 
