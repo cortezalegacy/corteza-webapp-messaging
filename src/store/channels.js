@@ -134,7 +134,7 @@ export default function (MessagingAPI) {
         }
       },
 
-      [types.channelPart] (state, { channelID, userID }) {
+      [types.channelPart] (state, { channelID, userID, cUser = {} }) {
         const ch = state.list.findIndex(c => c.channelID === channelID)
 
         if (ch >= 0) {
@@ -145,8 +145,9 @@ export default function (MessagingAPI) {
             state.list.splice(ch, 1, channel)
           }
 
-          // Remove non-public channels, groups from the list
-          if (channel.type !== 'public') {
+          // If current user parted & the channel is non-public
+          // remove channel from the list
+          if (cUser.userID === userID && channel.type !== 'public') {
             state.list.splice(ch, 1)
           }
         }

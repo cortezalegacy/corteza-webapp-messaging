@@ -44,7 +44,7 @@ export default {
     })
 
     this.$bus.$on('$ws.channelPart', (part) => {
-      this.$store.commit('channels/channelPart', part)
+      this.$store.commit('channels/channelPart', { ...part, cUser: this.$auth.user })
     })
 
     let activeUserIDs = new Set()
