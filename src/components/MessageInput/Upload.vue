@@ -250,6 +250,15 @@ export default {
   width: 100%;
   height: 100vh;
   background: rgba(255,255,255,.1);
+
+  /deep/ .dz-message{
+    pointer-events: none;
+
+    h2{
+      color: $white;
+      font-size: 26px;
+    }
+  }
   &.dz-started{
     max-width: 800px;
     height: auto;
@@ -263,12 +272,6 @@ export default {
         margin: 0 auto;
       }
     }
-  }
-}
-.dz-message{
-  h2{
-    color: $white;
-    font-size: 26px;
   }
 }
 .vue-dropzone{
