@@ -1,8 +1,8 @@
 <template>
   <div
     class="droparea"
-    @dragend="$emit('close')"
-    @dragleave="$emit('close')">
+    @dragend="onHide"
+    @dragleave="onHide">
 
     <div class="message-confirm">
       <vue-dropzone
@@ -122,6 +122,12 @@ export default {
   },
 
   methods: {
+    onHide () {
+      if (!this.dropzone.getAcceptedFiles().length) {
+        this.$emit('close')
+      }
+    },
+
     onDrop (e) {
       // Check if files are valid; folders won't have a type
       if (![...e.dataTransfer.files].filter(f => f.type).length) this.$emit('update:typeSupported', false)
