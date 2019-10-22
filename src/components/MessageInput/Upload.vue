@@ -96,10 +96,8 @@ export default {
         paramName: 'upload',
         // @todo make maxFilesize configurable
         maxFilesize: 10, // mb
-        url: () => {
-          return `${this.$MessagingAPI.baseURL}/channels/${this.channelID}/attach`
-        },
-        params: { replyTo: this.replyTo },
+        url: () => `${this.$MessagingAPI.baseURL}/channels/${this.channelID}/attach`,
+        params: () => ({ replyTo: this.replyTo }),
         thumbnailMethod: 'contain',
         thumbnailWidth: 350,
         thumbnailHeight: 400,
