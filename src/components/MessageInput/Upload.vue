@@ -37,7 +37,7 @@
             <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
 
             <template v-else>
-              {{ $t('message.file.uploadToChannel') }} {{ channel.name }}.<br/>
+              {{ $t('message.file.uploadToChannel', { label: channel.name }) }}.<br/>
               {{ $t('message.file.uploadTarget') }}
             </template>
           </span>

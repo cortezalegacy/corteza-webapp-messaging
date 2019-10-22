@@ -5,7 +5,7 @@
       class="actions">
       <a :href="attachment.downloadUrl">
         <button class="action">
-          <font-awesome-icon :icon="['fas', 'file-download']" :title="$t('message.file.download')"></font-awesome-icon>
+          <font-awesome-icon :icon="['fas', 'file-download']" :title="$t('message.file.download', { label: attachment.name })" />
         </button>
       </a>
     </div>

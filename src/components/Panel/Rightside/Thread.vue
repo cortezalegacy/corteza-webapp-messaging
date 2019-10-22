@@ -6,7 +6,7 @@
 
     <template slot="header">{{ $t('panel.thread') }}</template>
     <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat') }} {{ channel.name }}</template>
+    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: channel.name }) }}</template>
     <template v-if="message" slot="main">
       <upload v-show="channel && showUploadArea"
         @close="showUploadArea=false; uploadFileTypeSupported=true"
