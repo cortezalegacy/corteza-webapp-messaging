@@ -2,38 +2,63 @@
   <header class="header">
     <label
       class="channel-toggle"
-      @click="$emit('toggleChannelPanel', null)">
-      <i class="icon-menu4"></i></label>
+      @click="$emit('toggleChannelPanel', null)"
+    >
+      <i class="icon-menu4" /></label>
 
     <div class="channel-header">
-      <span class="channel-name" :class="[channel.type]">
+      <span
+        class="channel-name"
+        :class="[channel.type]"
+      >
         <channel-label :channel="channel" />
-        <span v-if="channel.membershipFlag==='pinned'" @click="onFlag('')">
+        <span
+          v-if="channel.membershipFlag==='pinned'"
+          @click="onFlag('')"
+        >
           <label>
             <font-awesome-icon
               :icon="['fas', 'star']"
-            ></font-awesome-icon>
+            />
           </label>
         </span>
-        <span v-else-if="channel.membershipFlag==='hidden'" @click="onFlag('')">
+        <span
+          v-else-if="channel.membershipFlag==='hidden'"
+          @click="onFlag('')"
+        >
           <label>
             <font-awesome-icon
               :icon="['far', 'eye-slash']"
-            ></font-awesome-icon>
+            />
           </label>
         </span>
-        <span v-else-if="channel.membershipFlag==='ignored'" @click="onFlag('')">
+        <span
+          v-else-if="channel.membershipFlag==='ignored'"
+          @click="onFlag('')"
+        >
           <label>
             <font-awesome-icon
               :icon="['far', 'bell-slash']"
-            ></font-awesome-icon>
+            />
           </label>
         </span>
       </span>
-      <span v-if="isOnline" class="is-online">{{ $t('channel.online') }}</span>
-      <span v-else-if="channel.isDirectMessage()" class="is-offline">{{ $t('channel.offline') }}</span>
-      <span v-else-if="channel.isPrivate()" class="topic">{{ $t('channel.private') }}</span>
-      <span v-else-if="channel.topic" class="topic">
+      <span
+        v-if="isOnline"
+        class="is-online"
+      >{{ $t('channel.online') }}</span>
+      <span
+        v-else-if="channel.isDirectMessage()"
+        class="is-offline"
+      >{{ $t('channel.offline') }}</span>
+      <span
+        v-else-if="channel.isPrivate()"
+        class="topic"
+      >{{ $t('channel.private') }}</span>
+      <span
+        v-else-if="channel.topic"
+        class="topic"
+      >
         {{ $t('channel.topic', { topic: channel.topic }) }}
       </span>
     </div>
@@ -45,93 +70,120 @@
             :icon="['fas', 'ellipsis-v']"
             :title="$t('channel.bookmarkedMessagesTooltip')"
             class="dropbtn"
-          ></font-awesome-icon>
+          />
         </label>
         <div class="dropdown-content">
           <div v-if="canViewMembers || canEdit">
-            <label v-if="canViewMembers"
-              @click="$emit('openMembersPanel')">
-              <i :title="$t('channel.memberListTooltip')" :aria-label="$t('channel.memberListTooltip')" class="icon icon-user"></i>
+            <label
+              v-if="canViewMembers"
+              @click="$emit('openMembersPanel')"
+            >
+              <i
+                :title="$t('channel.memberListTooltip')"
+                :aria-label="$t('channel.memberListTooltip')"
+                class="icon icon-user"
+              />
               {{ $t('channel.memberList', { count: (channel.members || []).length }) }}
             </label>
-            <label v-if="canEdit"
-              @click="$router.push({name: 'edit-channel', params: {channelID: channel.channelID}})">
-              <i :title="$t('channel.editTooltip')" :aria-label="$t('channel.editTooltip')" class="icon icon-edit-3"></i>
+            <label
+              v-if="canEdit"
+              @click="$router.push({name: 'edit-channel', params: {channelID: channel.channelID}})"
+            >
+              <i
+                :title="$t('channel.editTooltip')"
+                :aria-label="$t('channel.editTooltip')"
+                class="icon icon-edit-3"
+              />
               {{ $t('channel.edit') }}
             </label>
             <hr>
           </div>
           <div>
-            <label v-if="channel.membershipFlag!=='pinned' && isMember" @click="onFlag('pinned')">
+            <label
+              v-if="channel.membershipFlag!=='pinned' && isMember"
+              @click="onFlag('pinned')"
+            >
               <font-awesome-icon
                 :icon="['fas', 'star']"
                 :title="$t('channel.pinTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.pin') }}
             </label>
-            <label v-if="channel.membershipFlag!=='hidden' && isMember" @click="onFlag('hidden')">
+            <label
+              v-if="channel.membershipFlag!=='hidden' && isMember"
+              @click="onFlag('hidden')"
+            >
               <font-awesome-icon
                 :icon="['far', 'eye-slash']"
                 :title="$t('channel.hideTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.hide') }}
             </label>
-            <label v-if="channel.membershipFlag!=='ignored' && isMember" @click="onFlag('ignored')">
+            <label
+              v-if="channel.membershipFlag!=='ignored' && isMember"
+              @click="onFlag('ignored')"
+            >
               <font-awesome-icon
                 :icon="['far', 'bell-slash']"
                 :title="$t('channel.ignoreTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.ignore') }}
             </label>
-            <label v-if="channel.membershipFlag" @click="onFlag('')">
+            <label
+              v-if="channel.membershipFlag"
+              @click="onFlag('')"
+            >
               <font-awesome-icon
                 :icon="'eraser'"
                 :title="$t('channel.removeFlagTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.removeFlag') }}
             </label>
           </div>
           <hr v-if="isMember">
           <div class="open-sidebar">
             <label
-              @click="$emit('openBookmarkedMessagesPanel')">
+              @click="$emit('openBookmarkedMessagesPanel')"
+            >
               <font-awesome-icon
                 :icon="['far', 'bookmark']"
                 :title="$t('channel.bookmarkedMessagesTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.bookmarkedMessages') }}
             </label>
             <label
-              @click="$emit('openPinnedMessagesPanel')">
+              @click="$emit('openPinnedMessagesPanel')"
+            >
               <font-awesome-icon
                 icon="thumbtack"
                 :title="$t('channel.pinnedMessagesTooltip')"
-              ></font-awesome-icon>
+              />
               {{ $t('channel.pinnedMessages') }}
             </label>
           </div>
           <label
             v-if="canPart"
-            @click="onPart">
+            @click="onPart"
+          >
             <font-awesome-icon
               :icon="'door-open'"
               :title="$t('channel.leaveTooltip')"
-            ></font-awesome-icon>
+            />
             {{ $t('channel.leave') }}
           </label>
           <label
             v-if="canJoin"
-            @click="onJoin">
+            @click="onJoin"
+          >
             <font-awesome-icon
               :icon="'door-open'"
               :title="$t('channel.joinTooltip')"
-            ></font-awesome-icon>
+            />
             {{ $t('channel.join') }}
           </label>
         </div>
       </div>
     </div>
-
   </header>
 </template>
 <script>
@@ -139,7 +191,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ChannelLabel from 'corteza-webapp-messaging/src/components/Channel/ChannelLabel'
 
 export default {
-  name: 'channel-header',
+  name: 'ChannelHeader',
 
   components: {
     ChannelLabel,
@@ -161,6 +213,7 @@ export default {
       if (this.channel.isDirectMessage()) {
         return this.isPresent(this.channel.members.find(ID => ID !== this.$auth.user.userID))
       }
+      return undefined
     },
 
     isMember () {

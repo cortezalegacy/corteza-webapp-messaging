@@ -1,40 +1,66 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.userID);">
-    <template slot="header">{{ $t('panel.membersHeader') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.membersGroupSubtitle', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.membersSubtitle', { label: channel.name }) }}</template>
+    @onclick="$emit('openDirectMessage', u.userID);"
+  >
+    <template slot="header">
+      {{ $t('panel.membersHeader') }}
+    </template>
+    <template
+      v-if="channel.type === 'group'"
+      slot="subtitle"
+    >
+      {{ $t('panel.membersGroupSubtitle', { label: getLabel(channel) }) }}
+    </template>
+    <template
+      v-else
+      slot="subtitle"
+    >
+      {{ $t('panel.membersSubtitle', { label: channel.name }) }}
+    </template>
     <template slot="main">
       <div class="current-members">
         <ul v-if="members">
           <li
             v-for="u in members"
             :key="u.userID"
-            @click="$emit('openDirectMessage', u.userID);">
-            <user-avatar :userID="u.userID" />
+            @click="$emit('openDirectMessage', u.userID);"
+          >
+            <user-avatar :user-i-d="u.userID" />
             <span class="member-name">{{ getLabel(u) }}</span>
             <confirmation-toggle
-              @confirmed="remove(u.userID)"
-              :cta="$t('panel.remove')"
               v-if="channel.canChangeMembers && u.userID != $auth.user.userID && channel.type !== 'group'"
-              class="confirmation-buttons">
-            </confirmation-toggle>
+              :cta="$t('panel.remove')"
+              class="confirmation-buttons"
+              @confirmed="remove(u.userID)"
+            />
           </li>
         </ul>
       </div>
-      <div class="add-members" v-if="channel.canChangeMembers && channel.type !== 'group'">
+      <div
+        v-if="channel.canChangeMembers && channel.type !== 'group'"
+        class="add-members"
+      >
         <div class="header">
           <h1>{{ $t('panel.add') }}</h1>
-          <search-input v-model="userQuery" :focus="true"></search-input>
+          <search-input
+            v-model="userQuery"
+            :focus="true"
+          />
         </div>
         <ul v-if="searchResults">
           <li
             v-for="u in searchResults"
-            :key="u.userID">
-            <user-avatar :userID="u.userID" />
+            :key="u.userID"
+          >
+            <user-avatar :user-i-d="u.userID" />
             <span class="member-name">{{ getLabel(u) }}</span>
-            <button @click="add(u.userID)" class="btn">{{ $t('general.label.add') }}</button>
+            <button
+              class="btn"
+              @click="add(u.userID)"
+            >
+              {{ $t('general.label.add') }}
+            </button>
           </li>
         </ul>
       </div>

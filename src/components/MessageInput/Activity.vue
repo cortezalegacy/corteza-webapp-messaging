@@ -1,16 +1,19 @@
 <!-- template for the user avatar component -->
 <template>
-    <span v-if="users.length > 0" class="typing">
-      <template v-if="users.length > limit">
-        {{ $t('message.activity.activityOverflow', { userList: users.slice(0, limit).map(u => getLabel(u)).join(', '), count: users.length - limit, activity }) }}
-      </template>
-      <template v-else-if="users.length > 1">
-        {{ $t('message.activity.activityMultiple', { userList: users.map(u => getLabel(u)).join(', '), activity }) }}
-      </template>
-      <template v-else>
-        {{ $t('message.activity.activityOne', { user: getLabel(users[0]), activity }) }}
-      </template>
-    </span>
+  <span
+    v-if="users.length > 0"
+    class="typing"
+  >
+    <template v-if="users.length > limit">
+      {{ $t('message.activity.activityOverflow', { userList: users.slice(0, limit).map(u => getLabel(u)).join(', '), count: users.length - limit, activity }) }}
+    </template>
+    <template v-else-if="users.length > 1">
+      {{ $t('message.activity.activityMultiple', { userList: users.map(u => getLabel(u)).join(', '), activity }) }}
+    </template>
+    <template v-else>
+      {{ $t('message.activity.activityOne', { user: getLabel(users[0]), activity }) }}
+    </template>
+  </span>
 </template>
 <script>
 export default {

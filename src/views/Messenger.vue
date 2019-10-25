@@ -4,37 +4,42 @@
       v-if="$auth.is()"
       :channel="channel"
       @openQuickSearch="uiShowQuickSearch=true"
-      @searchSubmit="searchQuery=$event">
-
-      <div key="content" class="main">
+      @searchSubmit="searchQuery=$event"
+    >
+      <div
+        key="content"
+        class="main"
+      >
         <router-view
           :key="$route.name"
           @toggleChannelPanel="$bus.$emit('Messenger/toggleChannelSidePanel', $event)"
           @openThreadPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'thread', e: $event })"
           @openMembersPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'members', e: $event })"
           @openPinnedMessagesPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'pinnedMessages', e: $event })"
-          @openBookmarkedMessagesPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'bookmarkedMessages', e: $event })" />
+          @openBookmarkedMessagesPanel="$bus.$emit('Messenger/switchRightSidePanel', { type: 'bookmarkedMessages', e: $event })"
+        />
 
         <component
+          :is="emojiPickerLoader"
           v-show="emojiPickerCallback"
           class="emoji-picker"
           set="apple"
-          :is="emojiPickerLoader"
-          :showSkinTones="false"
-          :showPreview="false"
-          :sheetSize="32"
-          :infiniteScroll="false"
-          @select="onEmojiSelect" />
-
+          :show-skin-tones="false"
+          :show-preview="false"
+          :sheet-size="32"
+          :infinite-scroll="false"
+          @select="onEmojiSelect"
+        />
       </div>
     </messenger-base>
 
     <div class="helpers">
       <search-results
         v-if="searchQuery"
-        :searchQuery="searchQuery"
+        :search-query="searchQuery"
         @close="searchQuery=null"
-        @goToMessage="onGoToMessage" />
+        @goToMessage="onGoToMessage"
+      />
 
       <preview-lightbox
         v-if="uiShowPreview"
@@ -43,8 +48,8 @@
         :meta="uiShowPreview.meta"
         :alt="uiShowPreview.name"
         :labels="previewLabels"
-        @close="uiShowPreview=null">
-
+        @close="uiShowPreview=null"
+      >
         <p slot="header.left">
           {{ uiShowPreview.name }}
         </p>
@@ -58,14 +63,14 @@
 
       <quick-search
         v-if="uiShowQuickSearch"
-        @close="uiShowQuickSearch=false" />
-
+        @close="uiShowQuickSearch=false"
+      />
     </div>
     <global-events
       @keydown.esc.exact="closePopups"
       @keydown.meta.k.exact="toggleQuickSearch"
-      @keydown.ctrl.k.exact="toggleQuickSearch" />
-
+      @keydown.ctrl.k.exact="toggleQuickSearch"
+    />
   </div>
 </template>
 <script>

@@ -3,25 +3,35 @@
     <header class="header">
       <label
         class="channel-toggle"
-        @click="$emit('toggleChannelPanel', null)">
-        <i class="icon-menu4"></i></label>
+        @click="$emit('toggleChannelPanel', null)"
+      >
+        <i class="icon-menu4" /></label>
       <span class="title">{{ $t('channel.allThreads') }}</span>
     </header>
     <main v-if="getThreads.length > 0">
-      <section v-for="(thread) in getThreads" :key="thread.messageID">
+      <section
+        v-for="(thread) in getThreads"
+        :key="thread.messageID"
+      >
         <section>
           <messages
             ref="messages"
             :messages="getThread(thread.messageID)"
-            :currentUser="$auth.user"
+            :current-user="$auth.user"
             origin="threads"
             :scrollable="false"
-            v-on="$listeners" />
+            v-on="$listeners"
+          />
         </section>
-        <hr/>
+        <hr>
       </section>
     </main>
-    <empty v-else class="empty">{{ $t('channel.noThreads') }}</empty>
+    <empty
+      v-else
+      class="empty"
+    >
+      {{ $t('channel.noThreads') }}
+    </empty>
   </div>
 </template>
 <script>

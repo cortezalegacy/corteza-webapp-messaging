@@ -1,8 +1,10 @@
 <template>
   <router-link
+    :to="{ name: 'channel', params: { channelID: ID } }"
     @click.native="$emit('click', $event)"
-    :to="{ name: 'channel', params: { channelID: ID } }">
-    <slot>{{ getLabel(channel) }}</slot></router-link>
+  >
+    <slot>{{ getLabel(channel) }}</slot>
+  </router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'

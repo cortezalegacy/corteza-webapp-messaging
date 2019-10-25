@@ -1,38 +1,65 @@
 <template>
-  <li class="layer-item-wrap" :class="cssClass" @click="$emit('close')">
-    <router-link v-if="channel.membershipFlag==='ignored'"
-                 class="ignored layer-item layer-selectable channel-name"
-                 :to="{name:'channel', params:{channelID:channel.channelID}}">
+  <li
+    class="layer-item-wrap"
+    :class="cssClass"
+    @click="$emit('close')"
+  >
+    <router-link
+      v-if="channel.membershipFlag==='ignored'"
+      class="ignored layer-item layer-selectable channel-name"
+      :to="{name:'channel', params:{channelID:channel.channelID}}"
+    >
       <label>
         <font-awesome-icon
           :icon="['far', 'bell-slash']"
-        ></font-awesome-icon>
+        />
       </label>
       <channel-label :channel="channel" />
     </router-link>
-    <router-link v-else
-                 class="layer-item layer-selectable channel-name"
-                 :class="[channelColor(index), { current: (current||{}).channelID === channel.channelID }]"
-                 :to="{name:'channel', params:{channelID:channel.channelID}}">
-      <channel-label :channel="channel"/>
+    <router-link
+      v-else
+      class="layer-item layer-selectable channel-name"
+      :class="[channelColor(index), { current: (current || {}).channelID === channel.channelID }]"
+      :to="{name:'channel', params:{channelID:channel.channelID}}"
+    >
+      <channel-label :channel="channel" />
     </router-link>
-    <transition v-if="unread.count || unread.threadCount"
-                name="slide-fade">
-        <span class="unread" v-if="unread.count > maxUnread">{{ maxUnread }}+</span>
-        <span class="unread" v-else-if="unread.count">{{ unread.count }}</span>
-        <span class="unread" v-else-if="unread.threadCount"><i class="icon-message-circle-left-speak" /></span>
+    <transition
+      v-if="unread.count || unread.threadCount"
+      name="slide-fade"
+    >
+      <span
+        v-if="unread.count > maxUnread"
+        class="unread"
+      >{{ maxUnread }}+</span>
+      <span
+        v-else-if="unread.count"
+        class="unread"
+      >{{ unread.count }}</span>
+      <span
+        v-else-if="unread.threadCount"
+        class="unread"
+      ><i class="icon-message-circle-left-speak" /></span>
     </transition>
-    <span v-else-if="channel.isPinned()" class="starred" @click="onFlag()">
+    <span
+      v-else-if="channel.isPinned()"
+      class="starred"
+      @click="onFlag()"
+    >
       <font-awesome-icon
         :icon="['fas', 'star']"
         :title="$t('panel.removeStar')"
-      ></font-awesome-icon>
+      />
     </span>
-    <span v-else class="hide" @click="onFlag('hidden')">
+    <span
+      v-else
+      class="hide"
+      @click="onFlag('hidden')"
+    >
       <font-awesome-icon
         :icon="['fas', 'times']"
         :title="$t('panel.hideChannel')"
-      ></font-awesome-icon>
+      />
     </span>
   </li>
 </template>
@@ -54,6 +81,7 @@ export default {
     current: {
       type: Object,
       required: false,
+      default: undefined,
     },
 
     index: {

@@ -3,54 +3,57 @@
     <div class="flex-grid">
       <!-- Left panel -->
       <base-side-panel
+        key="leftPanel"
         orientation="left"
         :width="250"
         :pinned="isChannelPanelPinned"
         :hidden.sync="uiHideChannelSidePanel"
-        :disableGestures="isLeftPanelDisableGestures"
-        key="leftPanel">
-
+        :disable-gestures="isLeftPanelDisableGestures"
+      >
         <channels-panel
-            @close="toggleChannelSidePanel(true)"
-            :channel="channel"
-            @openQuickSearch="openQuickSearch"
-            @searchSubmit="searchSubmit" />
-
+          :channel="channel"
+          @close="toggleChannelSidePanel(true)"
+          @openQuickSearch="openQuickSearch"
+          @searchSubmit="searchSubmit"
+        />
       </base-side-panel>
 
       <!-- Content -->
-      <slot></slot>
+      <slot />
 
       <!-- Right panel -->
       <base-side-panel
         v-if="uiRightSidePanelContent"
+        key="rightPanel"
         orientation="right"
         :hidden.sync="uiHideRightSidePanel"
         :width="400"
         :pinned="uiPinRightSidePanel"
-        key="rightPanel">
-
+      >
         <members-panel
           v-if="isMembersPanel"
           :channel="channel"
-          @close="switchRightSidePanel()" />
+          @close="switchRightSidePanel()"
+        />
 
         <thread-panel
           v-if="isThreadPanel"
-          :repliesTo="uiRightSidePanelThreadMessageID"
-          @close="switchRightSidePanel()" />
+          :replies-to="uiRightSidePanelThreadMessageID"
+          @close="switchRightSidePanel()"
+        />
 
         <pinned-messages-panel
           v-if="isPinnedMessagesPanel"
           :channel="channel"
           @openThreadPanel="switchRightSidePanel('thread', $event)"
-          @close="switchRightSidePanel()" />
+          @close="switchRightSidePanel()"
+        />
 
         <bookmarked-messages-panel
           v-if="isBookmarkedMessagesPanel"
           @openThreadPanel="switchRightSidePanel('thread', $event)"
-          @close="switchRightSidePanel()" />
-
+          @close="switchRightSidePanel()"
+        />
       </base-side-panel>
     </div>
   </div>

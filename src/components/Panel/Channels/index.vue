@@ -2,60 +2,84 @@
   <nav>
     <search-input
       :focus="true"
-      v-on="$listeners" />
+      v-on="$listeners"
+    />
 
     <div class="scrollable">
       <div class="shortcuts">
         <ul>
           <li @click="gotoAndClose({name: 'threads'})">
-            <i class="icon icon-left icon-Fichier-2"></i>{{ $t('panel.threads') }}
+            <i class="icon icon-left icon-Fichier-2" />{{ $t('panel.threads') }}
           </li>
           <!--<li @click="gotoAndClose({name: 'unreads'})">-->
-            <!--<i class="icon icon-left icon-bell2"></i>All unreads-->
+          <!--<i class="icon icon-left icon-bell2"></i>All unreads-->
           <!--</li>-->
         </ul>
       </div>
 
-      <group v-if="unreadChannels.length > 0"
-             v-on="$listeners"
-             :list="unreadChannels"
-             :current="channel"
-             class="channel-group">{{ $t('panel.unreadMessages') }}</group>
+      <group
+        v-if="unreadChannels.length > 0"
+        :list="unreadChannels"
+        :current="channel"
+        class="channel-group"
+        v-on="$listeners"
+      >
+        {{ $t('panel.unreadMessages') }}
+      </group>
 
-      <group v-if="pinnedChannels.length > 0"
-             v-on="$listeners"
-             :list="pinnedChannels"
-             :current="channel"
-             class="channel-group">{{ $t('panel.pinned') }}</group>
+      <group
+        v-if="pinnedChannels.length > 0"
+        :list="pinnedChannels"
+        :current="channel"
+        class="channel-group"
+        v-on="$listeners"
+      >
+        {{ $t('panel.pinned') }}
+      </group>
 
-      <group v-on="$listeners"
-             :link="{name: 'new-channel', params: { type: 'public' } }"
-             :list="publicChannels"
-             :canCreate="canCreatePublicChannel"
-             :current="channel"
-             class="channel-group">{{ $t('panel.channel.public') }}</group>
+      <group
+        :link="{name: 'new-channel', params: { type: 'public' } }"
+        :list="publicChannels"
+        :can-create="canCreatePublicChannel"
+        :current="channel"
+        class="channel-group"
+        v-on="$listeners"
+      >
+        {{ $t('panel.channel.public') }}
+      </group>
 
       <div class="browse">
         <a @click="$emit('openQuickSearch')">+ {{ $t('panel.channel.browse') }}</a>
       </div>
 
-      <group v-on="$listeners"
-             :link="{name: 'new-channel', params: { type: 'private' } }"
-             :list="privateChannels"
-             :canCreate="canCreatePrivateChannel"
-             :current="channel">{{ $t('panel.channel.private') }}</group>
+      <group
+        :link="{name: 'new-channel', params: { type: 'private' } }"
+        :list="privateChannels"
+        :can-create="canCreatePrivateChannel"
+        :current="channel"
+        v-on="$listeners"
+      >
+        {{ $t('panel.channel.private') }}
+      </group>
 
-      <group v-on="$listeners"
-             :link="{name: 'new-channel', params: { type: 'group' } }"
-             :list="groupChannels"
-             :canCreate="canCreateGroupChannel"
-             :current="channel">{{ $t('panel.channel.group') }}</group>
+      <group
+        :link="{name: 'new-channel', params: { type: 'group' } }"
+        :list="groupChannels"
+        :can-create="canCreateGroupChannel"
+        :current="channel"
+        v-on="$listeners"
+      >
+        {{ $t('panel.channel.group') }}
+      </group>
 
       <!-- Temporary -->
-      <router-link v-if="isCordovaPlatform"
-                   :to="{ name: 'auth:logout' }">Log out</router-link>
+      <router-link
+        v-if="isCordovaPlatform"
+        :to="{ name: 'auth:logout' }"
+      >
+        Log out
+      </router-link>
     </div>
-
   </nav>
 </template>
 
@@ -74,11 +98,13 @@ export default {
     searchQuery: {
       type: String,
       required: false,
+      default: undefined,
     },
 
     channel: {
       type: Object,
       required: false,
+      default: undefined,
     },
   },
 

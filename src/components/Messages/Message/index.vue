@@ -1,106 +1,129 @@
 <template>
-    <li
-      :id="message.messageID"
-      @click.alt.exact.prevent="$emit('markAsUnread', { message })"
-      @click.meta.exact.prevent="onOpenThread"
-      class="message-n-meta"
-      :class="{
-        'consecutive': consecutive,
-        'first': !consecutive,
-        'attachment' : message.attachment,
-        'valid' : message.attachment && message.attachment.size > 0,
-        'with-replies' : message.replies,
-        'edited' : message.updatedAt,
-        'pinned' : highlightPinned && message.isPinned,
-        'bookmarked' : highlightBookmarked && message.isBookmarked,
-        'last-read': isLastRead && !isLast,
-        'unread': isUnread,
-        'type-channel-event': message.type === 'channelEvent',
-        'last' : isLast && !isFirst,
+  <li
+    :id="message.messageID"
+    ref="message"
+    :key="message.messageID"
+    class="message-n-meta"
+    :class="{
+      'consecutive': consecutive,
+      'first': !consecutive,
+      'attachment' : message.attachment,
+      'valid' : message.attachment && message.attachment.size > 0,
+      'with-replies' : message.replies,
+      'edited' : message.updatedAt,
+      'pinned' : highlightPinned && message.isPinned,
+      'bookmarked' : highlightBookmarked && message.isBookmarked,
+      'last-read': isLastRead && !isLast,
+      'unread': isUnread,
+      'type-channel-event': message.type === 'channelEvent',
+      'last' : isLast && !isFirst,
+    }"
+    @click.alt.exact.prevent="$emit('markAsUnread', { message })"
+    @click.meta.exact.prevent="onOpenThread"
+  >
+    <div
+      v-if="isLastRead && !isLast"
+      class="label"
+      @click="$emit('markAsUnread', { message })"
+    >
+      {{ $t('message.newMessages') }}
+    </div>
+    <section v-if="message.type !== 'channelEvent'">
+      <em
+        v-if="!consecutive"
+        class="avatar"
+      >
+        <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+          <avatar :user-i-d="message.userID" />
+        </router-link>
+      </em>
+      <em
+        v-if="!consecutive"
+        class="author selectable"
+      >
+        <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
+          {{ labelUser(message.userID) }}
+        </router-link>
+      </em>
+      <i18next
+        path="message.postedDate"
+        tag="span"
+        class="date"
+      >
+        <span place="relative">{{ moment(message.createdAt).fromNow() }}</span>
+
+        <span place="time">
+          <template v-if="!isToday(message.createdAt)">{{ $t('message.relativeTime', { time: momentHourMinute(message.createdAt) }) }}</template>
+        </span>
+      </i18next>
+
+      <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
+      <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+
+      <actions
+        v-if="!hideActions && !inEditing"
+        class="actions"
+        v-bind="$props"
+        @editMessage="inEditing=true"
+        @pinMessage="onPinMessage"
+        @bookmarkMessage="onBookmarkMessage"
+        @deleteMessage="onDeleteMessage"
+        v-on="$listeners"
+      />
+    </section>
+    <section v-else>
+      <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
+    </section>
+    <div
+      class="selectable"
+      :class="{ from_me: message.userID === currentUser.userID,
+                'message' : !inEditing,
       }"
-      ref="message"
-      :key="message.messageID">
-        <div v-if="isLastRead && !isLast"
-             @click="$emit('markAsUnread', { message })"
-             class="label">{{ $t('message.newMessages') }}</div>
-        <section v-if="message.type !== 'channelEvent'">
-          <em v-if="!consecutive" class="avatar">
-            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-              <avatar :userID="message.userID" />
-            </router-link>
-          </em>
-          <em  v-if="!consecutive" class="author selectable">
-            <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-              {{ labelUser(message.userID) }}
-            </router-link>
-          </em>
-          <i18next path="message.postedDate" tag="span" class="date">
-            <span place="relative">{{ moment(message.createdAt).fromNow() }}</span>
+    >
+      <attachment
+        v-if="message.attachment"
+        class="message-content"
+        :attachment="message.attachment"
+      />
 
-            <span place="time">
-              <template v-if="!isToday(message.createdAt)">{{ $t('message.relativeTime', { time: momentHourMinute(message.createdAt) }) }}</template>
-            </span>
-          </i18next>
-
-          <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
-          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
-
-          <actions
-            class="actions"
-            v-if="!hideActions && !inEditing"
-            v-bind="$props"
-            @editMessage="inEditing=true"
-            @pinMessage="onPinMessage"
-            @bookmarkMessage="onBookmarkMessage"
-            @deleteMessage="onDeleteMessage"
-            v-on="$listeners" />
-        </section>
-        <section v-else>
-          <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
-        </section>
-        <div
-          class="selectable"
-          :class="{ from_me: message.userID === currentUser.userID,
-          'message' : !inEditing,
-           }">
-          <attachment
-            v-if="message.attachment"
-            class="message-content"
-            :attachment="message.attachment" />
-
-          <message-input
-            v-if="inEditing && !readOnly"
-            :hideFileUpload="true"
-            :message="message"
-            :suggestionPriorities="suggestionPriorities"
-            @submit="onInputSubmit"
-            @cancel="inEditing=false"
-            @deleteMessage="onDeleteMessage"
-            ref="channelInput" />
-
-          <contents
-            v-if="!inEditing"
-            class="message-content"
-            :id="message.messageID"
-            :content="message.message" />
-
-          <embedded-box
-            v-if="embeded"
-            :src="embeded.src" />
-        </div>
-
-      <reactions
-        v-if="!hideReactions && message.type !== 'channelEvent'"
-        class="reactions"
-        @reaction="onReaction"
-        :class="{'no-reactions': message.reactions.length === 0}"
-        :reactions="message.reactions" />
-
-      <footnote
+      <message-input
+        v-if="inEditing && !readOnly"
+        ref="channelInput"
+        :hide-file-upload="true"
         :message="message"
-        :hide-replies="hideReplies"
-        v-on="$listeners" />
-    </li>
+        :suggestion-priorities="suggestionPriorities"
+        @submit="onInputSubmit"
+        @cancel="inEditing=false"
+        @deleteMessage="onDeleteMessage"
+      />
+
+      <contents
+        v-if="!inEditing"
+        :id="message.messageID"
+        class="message-content"
+        :content="message.message"
+      />
+
+      <embedded-box
+        v-if="embeded"
+        :src="embeded.src"
+      />
+    </div>
+
+    <reactions
+      v-if="!hideReactions && message.type !== 'channelEvent'"
+      class="reactions"
+      :class="{'no-reactions': message.reactions.length === 0}"
+      :reactions="message.reactions"
+      @reaction="onReaction"
+    />
+
+    <footnote
+      :message="message"
+      :hide-replies="hideReplies"
+      v-on="$listeners"
+    />
+  </li>
 </template>
 <script>
 import { mapActions } from 'vuex'
@@ -188,6 +211,7 @@ export default {
         }
         return false
       }
+      return undefined
     },
 
     inEditing: {

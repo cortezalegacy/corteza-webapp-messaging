@@ -1,8 +1,11 @@
 <template>
   <section>
-    <label><slot></slot></label>
+    <label><slot /></label>
     <div class="actions">
-      <confirmation-toggle v-bind="$props" v-on="$listeners"></confirmation-toggle>
+      <confirmation-toggle
+        v-bind="$props"
+        v-on="$listeners"
+      />
     </div>
   </section>
 </template>
@@ -14,10 +17,22 @@ export default {
   },
 
   props: {
-    cta: String,
-    ctaClass: { type: String, default: 'danger' },
-    disabled: Boolean,
-    error: String,
+    cta: {
+      type: String,
+      default: undefined,
+    },
+    ctaClass: {
+      type: String,
+      default: 'danger',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    error: {
+      type: String,
+      default: undefined,
+    },
   },
 
   data () {

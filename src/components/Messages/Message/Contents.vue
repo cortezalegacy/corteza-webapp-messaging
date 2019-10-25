@@ -10,6 +10,7 @@ export default {
     },
 
     id: {
+      type: String,
       required: true,
       default: null,
     },
@@ -27,6 +28,8 @@ export default {
     if (trimmed.length > 0) {
       return createElement('div', null, vdomifyEmojis(markdown2VDOM(trimmed).toVue(createElement), createElement))
     }
+    // @todo ...
+    return undefined
   },
 }
 </script>

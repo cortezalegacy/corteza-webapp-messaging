@@ -1,11 +1,17 @@
 <template>
-  <div></div>
+  <div />
 </template>
 <script>
 export default {
   props: {
-    userID: String,
-    required: true,
+    userID: {
+      type: String,
+      default: undefined,
+    },
+    required: {
+      type: Boolean,
+      default: true,
+    },
   },
 
   beforeMount () {

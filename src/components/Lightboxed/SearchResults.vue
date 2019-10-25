@@ -1,35 +1,51 @@
 <template>
   <lightbox>
-      <header>
-          <span class="closer" @click="onClose">&times;</span>
-          <section>
-              <search-input :preset="searchQuery" :focus="true" @searchSubmit="onSearchSubmit" />
-          </section>
-      </header>
-      <main>
-          <section v-for="(r) in results" :key="r.channel.channelID">
-
-            <i18next path="search.searchResultsIn" tag="h2">
-              <channel-link :ID="r.channel.channelID" @click="onClose"></channel-link>
-            </i18next>
-              <messages
-                  ref="messages"
-                  :messages="r.messages"
-                  :currentUser="$auth.user"
-                  :hideActionGoToMessage="false"
-                  :hideActionOpenThread="true"
-                  :hideActionsMenu="true"
-                  :hideReactions="true"
-                  :hidePinning="true"
-                  :hideMarkAsUnread="true"
-                  :hideBookmarking="true"
-                  origin="search"
-                  :scrollable="false"
-                  v-on="$listeners"
-                  class="search-messages"/>
-            </section>
-      </main>
-      <footer></footer>
+    <header>
+      <span
+        class="closer"
+        @click="onClose"
+      >&times;</span>
+      <section>
+        <search-input
+          :preset="searchQuery"
+          :focus="true"
+          @searchSubmit="onSearchSubmit"
+        />
+      </section>
+    </header>
+    <main>
+      <section
+        v-for="(r) in results"
+        :key="r.channel.channelID"
+      >
+        <i18next
+          path="search.searchResultsIn"
+          tag="h2"
+        >
+          <channel-link
+            :i-d="r.channel.channelID"
+            @click="onClose"
+          />
+        </i18next>
+        <messages
+          ref="messages"
+          :messages="r.messages"
+          :current-user="$auth.user"
+          :hide-action-go-to-message="false"
+          :hide-action-open-thread="true"
+          :hide-actions-menu="true"
+          :hide-reactions="true"
+          :hide-pinning="true"
+          :hide-mark-as-unread="true"
+          :hide-bookmarking="true"
+          origin="search"
+          :scrollable="false"
+          class="search-messages"
+          v-on="$listeners"
+        />
+      </section>
+    </main>
+    <footer />
   </lightbox>
 </template>
 

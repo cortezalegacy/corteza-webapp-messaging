@@ -3,31 +3,51 @@
     <header class="header sub-header">
       <label
         class="channel-toggle"
-        @click="$emit('toggleChannelPanel', null)">
-        <i class="icon-menu4"></i></label>
+        @click="$emit('toggleChannelPanel', null)"
+      >
+        <i class="icon-menu4" /></label>
 
       <span class="title">{{ $t('message.unread') }}</span>
-      <button @click="markAllAsRead()" class="btn">{{ $t('message.markAllAsUnread') }} [@todo]</button>
+      <button
+        class="btn"
+        @click="markAllAsRead()"
+      >
+        {{ $t('message.markAllAsUnread') }} [@todo]
+      </button>
     </header>
     <main v-if="unreadChannels && unreadChannels.length > 0">
-      <section v-for="(unread) in unreadChannels" :key="unread.channelID" v-if="findChannelByID(unread.channelID)">
+      <section
+        v-for="unread in getUnreadChannels"
+        :key="unread.channelID"
+      >
         <header class="channel-unread">
-          {{ labelChannel(unread.channelID) }} ({{unread.count}})
-          <button @click="markAsRead(unread)" class="btn">{{ $t('message.markAsRead') }}</button>
+          {{ labelChannel(unread.channelID) }} ({{ unread.count }})
+          <button
+            class="btn"
+            @click="markAsRead(unread)"
+          >
+            {{ $t('message.markAsRead') }}
+          </button>
         </header>
         <section>
           <messages
             ref="messages"
             :messages="unreadInChannel(unread.channelID, unread.lastMessageID)"
-            :currentUser="$auth.user"
+            :current-user="$auth.user"
             origin="unreads"
             :scrollable="false"
-            v-on="$listeners" />
+            v-on="$listeners"
+          />
         </section>
-        <hr/>
+        <hr>
       </section>
     </main>
-    <empty v-else class="empty">{{ $t('message.noUnread') }}</empty>
+    <empty
+      v-else
+      class="empty"
+    >
+      {{ $t('message.noUnread') }}
+    </empty>
   </div>
 </template>
 <script>
@@ -49,6 +69,10 @@ export default {
       findChannelByID: 'channels/findByID',
       unreadInChannel: 'history/unreadInChannel',
     }),
+
+    getUnreadChannels () {
+      return this.unreadChannels.filter(u => this.findChannelByID(u.channelID))
+    },
   },
 
   watch: {

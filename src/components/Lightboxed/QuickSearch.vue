@@ -1,27 +1,45 @@
 <template>
   <lightbox>
-      <header>
-          <span class="closer" @click="onClose">&times;</span>
-      </header>
-      <main class="quick-search">
-          <search-input focus="true" v-model="query"
-          :placeholder="$t('search.quick.placeholder')"  />
-          <ol>
-              <li v-if="query && filtered.length===0" class="no-results">
-                {{ $t('search.noMatchesFound') }}
-              </li>
-              <li v-for="i in (query ? filtered : preferred).slice(0, 10)"
-                  @click="onClose"
-                  :key="i.ID">
-                <component :is="i.cmp" :ID="i.ID" :canCreateGroupChannel="canCreateGroupChannel" ></component>
-              </li>
-          </ol>
-      </main>
-      <i18next path="search.quick.footnote" tag="footer">
-        <kbd>
-          {{ $t('search.quick.shortcut') }}
-        </kbd>
-      </i18next>
+    <header>
+      <span
+        class="closer"
+        @click="onClose"
+      >&times;</span>
+    </header>
+    <main class="quick-search">
+      <search-input
+        v-model="query"
+        focus="true"
+        :placeholder="$t('search.quick.placeholder')"
+      />
+      <ol>
+        <li
+          v-if="query && filtered.length===0"
+          class="no-results"
+        >
+          {{ $t('search.noMatchesFound') }}
+        </li>
+        <li
+          v-for="i in (query ? filtered : preferred).slice(0, 10)"
+          :key="i.ID"
+          @click="onClose"
+        >
+          <component
+            :is="i.cmp"
+            :i-d="i.ID"
+            :can-create-group-channel="canCreateGroupChannel"
+          />
+        </li>
+      </ol>
+    </main>
+    <i18next
+      path="search.quick.footnote"
+      tag="footer"
+    >
+      <kbd>
+        {{ $t('search.quick.shortcut') }}
+      </kbd>
+    </i18next>
   </lightbox>
 </template>
 

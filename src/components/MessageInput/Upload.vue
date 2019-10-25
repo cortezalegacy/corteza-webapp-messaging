@@ -2,51 +2,72 @@
   <div
     class="droparea"
     @dragend="onHide"
-    @dragleave="onHide">
-
+    @dragleave="onHide"
+  >
     <div class="message-confirm">
       <vue-dropzone
         v-if="typeSupported"
-        ref="dropzone"
         id="dropzone"
+        ref="dropzone"
+        :use-custom-slot="true"
+        :options="options"
         @vdropzone-drop="onDrop"
         @vdropzone-file-added="onFileAdded"
         @vdropzone-file-added-manually="onFileAdded"
         @vdropzone-complete="onComplete"
-        :useCustomSlot="true"
-        :options="options">
-
-        <i18next path="message.file.uploadHeader" tag="h2">
-          <span><br/>
+      >
+        <i18next
+          path="message.file.uploadHeader"
+          tag="h2"
+        >
+          <span><br>
             <template v-if="replyTo">{{ $t('message.file.replyToThread') }}</template>
             <template v-else>{{ getLabel(channel) }}test</template>
-          <br/></span>
+            <br></span>
         </i18next>
       </vue-dropzone>
 
-      <div v-else class="dz-message unsupported">
-          <h2>{{ $t('message.file.unsupportedType') }}</h2>
-          <button class="btn btn-blue" @click="$emit('close')">
-            {{ $t('message.file.ok') }}
-          </button>
-        </div>
+      <div
+        v-else
+        class="dz-message unsupported"
+      >
+        <h2>{{ $t('message.file.unsupportedType') }}</h2>
+        <button
+          class="btn btn-blue"
+          @click="$emit('close')"
+        >
+          {{ $t('message.file.ok') }}
+        </button>
+      </div>
 
-      <div class="button-group" v-if="queued && typeSupported">
-        <i18next path="message.file.willUploadTo" tag="h3">
+      <div
+        v-if="queued && typeSupported"
+        class="button-group"
+      >
+        <i18next
+          path="message.file.willUploadTo"
+          tag="h3"
+        >
           <span>
             <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
 
             <template v-else>
-              {{ $t('message.file.uploadToChannel', { label: channel.name }) }}.<br/>
+              {{ $t('message.file.uploadToChannel', { label: channel.name }) }}.<br>
               {{ $t('message.file.uploadTarget') }}
             </template>
           </span>
         </i18next>
 
-        <button class="btn btn-blue" @click="uploadFile">
+        <button
+          class="btn btn-blue"
+          @click="uploadFile"
+        >
           {{ $t('message.file.send') }}
         </button>
-        <button class="btn" @click="resetUpload">
+        <button
+          class="btn"
+          @click="resetUpload"
+        >
           {{ $t('message.file.cancel') }}
         </button>
       </div>
@@ -72,7 +93,11 @@ export default {
 
   props: {
     channelID: { type: String, required: true },
-    replyTo: { type: String, required: false },
+    replyTo: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
     typeSupported: { type: Boolean, default: true },
   },
 

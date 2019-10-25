@@ -1,7 +1,13 @@
 <template>
   <footer>
     <h3>{{ $t('channel.observing', { label: getLabel(channel) }) }}</h3>
-    <button @click="onJoin" class="btn btn-green" v-if="channel.canJoin">{{ $t('channel.join') }}</button>
+    <button
+      v-if="channel.canJoin"
+      class="btn btn-green"
+      @click="onJoin"
+    >
+      {{ $t('channel.join') }}
+    </button>
   </footer>
 </template>
 <script>

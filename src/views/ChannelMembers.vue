@@ -1,12 +1,28 @@
 <template>
   <section class="members">
-    <a @click="$router.back()" class="closer">&times;</a>
+    <a
+      class="closer"
+      @click="$router.back()"
+    >&times;</a>
     <h1>{{ $t('channel.members.label') }}</h1>
     <table>
-      <tr v-for="u in users" :key="u.userID">
+      <tr
+        v-for="u in users"
+        :key="u.userID"
+      >
         <td class="right">
-          <button @click="remove(u.userID)" v-if="isMember(u.userID)">{{ $t('channel.members.remove') }}</button>
-          <button @click="add(u.userID)" v-if="!isMember(u.userID)">{{ $t('channel.members.add') }}</button>
+          <button
+            v-if="isMember(u.userID)"
+            @click="remove(u.userID)"
+          >
+            {{ $t('channel.members.remove') }}
+          </button>
+          <button
+            v-if="!isMember(u.userID)"
+            @click="add(u.userID)"
+          >
+            {{ $t('channel.members.add') }}
+          </button>
         </td>
         <td>{{ getLabel(u) }}</td>
       </tr>
@@ -17,8 +33,13 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'channel-members',
-  props: ['channelID'],
+  name: 'ChannelMembers',
+  props: {
+    channelID: {
+      type: String,
+      default: undefined,
+    },
+  },
 
   data () {
     return {

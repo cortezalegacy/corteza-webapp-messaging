@@ -1,13 +1,18 @@
 <template>
   <div class="message-infos">
-    <a class="info"
-       :class="{unread: unread.count}"
-       v-if="!hideReplies && message.replies"
-       @click="$emit('openThreadPanel', { message })">
+    <a
+      v-if="!hideReplies && message.replies"
+      class="info"
+      :class="{unread: unread.count}"
+      @click="$emit('openThreadPanel', { message })"
+    >
       {{ $t('message.replies', { postProcess: 'interval', count: message.replies }) }}
       <span v-if="unread.count > 0 && unread.count < message.replies">({{ $t('message.newReplies', { postProcess: 'interval', count: unread.count }) }})</span>
     </a>
-    <span class="info" v-if="message.updatedAt">{{ $t('message.edited') }}</span>
+    <span
+      v-if="message.updatedAt"
+      class="info"
+    >{{ $t('message.edited') }}</span>
   </div>
 </template>
 <script>

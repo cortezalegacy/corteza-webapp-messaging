@@ -1,6 +1,10 @@
 <template>
   <span>
-    <span v-for="(m, index) in members" :key="index" :class="{ 'offline': !m.present }">
+    <span
+      v-for="(m, index) in members"
+      :key="index"
+      :class="{ 'offline': !m.present }"
+    >
       {{ m.label }}<span v-if="index !== members.length - 1">,</span>
     </span>
   </span>

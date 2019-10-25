@@ -1,19 +1,33 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.userID);">
-    <template slot="header">{{ $t('panel.pinnedMessagesHeader') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.pinnedGroupMessagesSubtitle', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.pinnedMessagesSubtitle', { label: channel.name }) }}</template>
+    @onclick="$emit('openDirectMessage', u.userID);"
+  >
+    <template slot="header">
+      {{ $t('panel.pinnedMessagesHeader') }}
+    </template>
+    <template
+      v-if="channel.type === 'group'"
+      slot="subtitle"
+    >
+      {{ $t('panel.pinnedGroupMessagesSubtitle', { label: getLabel(channel) }) }}
+    </template>
+    <template
+      v-else
+      slot="subtitle"
+    >
+      {{ $t('panel.pinnedMessagesSubtitle', { label: channel.name }) }}
+    </template>
 
     <template slot="main">
       <messages
         :messages="pinned"
-        :currentUser="$auth.user"
-        origin="pinned"
+        :current-user="$auth.user"
+        :origin="{ thread: 'pinned' }"
         :scrollable="false"
-        :highlightPinned="false"
-        v-on="$listeners" />
+        :highlight-pinned="false"
+        v-on="$listeners"
+      />
     </template>
   </base-panel>
 </template>

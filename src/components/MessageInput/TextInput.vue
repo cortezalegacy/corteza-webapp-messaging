@@ -1,7 +1,7 @@
 <template>
   <div class="quill-editor">
-    <slot name="toolbar"></slot>
-    <div ref="editor"></div>
+    <slot name="toolbar" />
+    <div ref="editor" />
   </div>
 </template>
 
@@ -44,20 +44,26 @@ export default {
     },
 
     value: {
+      type: Object,
       required: false,
       default: null,
     },
 
-    placeholder: { type: String },
+    placeholder: {
+      type: String,
+      default: undefined,
+    },
 
     channels: {
       type: Array,
       required: false,
+      default: () => [],
     },
 
     users: {
       type: Array,
       required: false,
+      default: () => [],
     },
 
     channel: {

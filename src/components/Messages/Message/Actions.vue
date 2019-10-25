@@ -1,60 +1,77 @@
 
 <template>
-  <div class="actions" >
+  <div class="actions">
     <div>
-      <i class="action icon-smile"
-         :title="$t('message.reaction')"
-         @click.stop="onReaction"
-      ></i>
-      <i class="action icon-message-circle-left-speak"
-         :title="$t('message.replyInThread')"
-         v-if="message.canReply && !hideActionOpenThread"
-         @click="$emit('openThreadPanel', { message })"
-      ></i>
-      <i class="action icon-circle-right"
-         :title="$t('message.goto')"
-         v-if="!hideActionGoToMessage"
-         @click="$emit('goToMessage', { message })"
-      ></i>
-      <i class="action icon-checkmark"
-         :title="$t('message.markAsUnread')"
-         v-if="!hideMarkAsUnread"
-         @click="$emit('markAsUnread', { message })"
-      ></i>
+      <i
+        class="action icon-smile"
+        :title="$t('message.reaction')"
+        @click.stop="onReaction"
+      />
+      <i
+        v-if="message.canReply && !hideActionOpenThread"
+        class="action icon-message-circle-left-speak"
+        :title="$t('message.replyInThread')"
+        @click="$emit('openThreadPanel', { message })"
+      />
+      <i
+        v-if="!hideActionGoToMessage"
+        class="action icon-circle-right"
+        :title="$t('message.goto')"
+        @click="$emit('goToMessage', { message })"
+      />
+      <i
+        v-if="!hideMarkAsUnread"
+        class="action icon-checkmark"
+        :title="$t('message.markAsUnread')"
+        @click="$emit('markAsUnread', { message })"
+      />
       <font-awesome-icon
+        v-if="!hidePinning && !readOnly"
         class="action"
         icon="thumbtack"
-        v-if="!hidePinning && !readOnly"
         :class="{pinned:message.isPinned}"
         :title="$t('message.pin')"
         @click="$emit('pinMessage', { message })"
-      ></font-awesome-icon>
+      />
       <font-awesome-icon
+        v-if="!hideBookmarking"
         class="action"
         :icon="['far', 'bookmark']"
-        v-if="!hideBookmarking"
         :class="{bookmarked:message.isBookmarked}"
         :title="$t('message.bookmark')"
         @click="$emit('bookmarkMessage', { message })"
-      ></font-awesome-icon>
-      <i v-if="!isContextMenuOpen && isContextMenuEnabled"
-        class="action icon-plus" @click="onContextMenuOpen()"></i>
-      <i v-else-if="isContextMenuEnabled"
-        class="action icon-x" @click="isContextMenuOpen=false"></i>
+      />
+      <i
+        v-if="!isContextMenuOpen && isContextMenuEnabled"
+        class="action icon-plus"
+        @click="onContextMenuOpen()"
+      />
+      <i
+        v-else-if="isContextMenuEnabled"
+        class="action icon-x"
+        @click="isContextMenuOpen=false"
+      />
     </div>
-    <div class="context-menu" v-if="isContextMenuOpen && isContextMenuEnabled">
+    <div
+      v-if="isContextMenuOpen && isContextMenuEnabled"
+      class="context-menu"
+    >
       <ul class="context-menu-list">
-        <li v-if="message.canEdit"
-            class="extra-action"
-            @click="$emit('editMessage', { message });isContextMenuOpen=false">
-            <i class="icon icon-edit"></i>
-            <span>{{ $t('message.edit') }}</span>
+        <li
+          v-if="message.canEdit"
+          class="extra-action"
+          @click="$emit('editMessage', { message });isContextMenuOpen=false"
+        >
+          <i class="icon icon-edit" />
+          <span>{{ $t('message.edit') }}</span>
         </li>
-        <li v-if="message.canDelete"
-            class="extra-action"
-            @click="$emit('deleteMessage', { message });isContextMenuOpen=false">
-            <i class="icon icon-trash"></i>
-            <span>{{ $t('message.delete') }}</span>
+        <li
+          v-if="message.canDelete"
+          class="extra-action"
+          @click="$emit('deleteMessage', { message });isContextMenuOpen=false"
+        >
+          <i class="icon icon-trash" />
+          <span>{{ $t('message.delete') }}</span>
         </li>
       </ul>
     </div>

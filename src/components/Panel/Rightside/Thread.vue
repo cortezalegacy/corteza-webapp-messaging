@@ -2,51 +2,73 @@
   <base-panel
     v-on="$listeners"
     @dragover="handleShow($event, () => showUploadArea = true)"
-    @dragenter="handleShow($event, () => showUploadArea = true)">
-
-    <template slot="header">{{ $t('panel.thread') }}</template>
-    <template slot="subtitle" v-if="channel.type === 'group'">{{ $t('panel.inGroupChat', { label: getLabel(channel) }) }}</template>
-    <template slot="subtitle" v-else>{{ $t('panel.inChannelChat', { label: channel.name }) }}</template>
-    <template v-if="message" slot="main">
-      <upload v-show="channel && showUploadArea"
+    @dragenter="handleShow($event, () => showUploadArea = true)"
+  >
+    <template slot="header">
+      {{ $t('panel.thread') }}
+    </template>
+    <template
+      v-if="channel.type === 'group'"
+      slot="subtitle"
+    >
+      {{ $t('panel.inGroupChat', { label: getLabel(channel) }) }}
+    </template>
+    <template
+      v-else
+      slot="subtitle"
+    >
+      {{ $t('panel.inChannelChat', { label: channel.name }) }}
+    </template>
+    <template
+      v-if="message"
+      slot="main"
+    >
+      <upload
+        v-show="channel && showUploadArea"
+        ref="upload"
+        :channel-i-d="channel.channelID"
+        :reply-to="repliesTo"
+        :type-supported.sync="uploadFileTypeSupported"
         @close="showUploadArea=false; uploadFileTypeSupported=true"
         @show="showUploadArea=true"
-        :channelID="channel.channelID"
-        :replyTo="repliesTo"
-        :typeSupported.sync="uploadFileTypeSupported"
-        ref="upload" />
+      />
 
       <messages
-        class="messages"
         ref="messages"
+        class="messages"
         :messages="messages"
-        :currentUser="$auth.user"
+        :current-user="$auth.user"
         :origin="message"
         :scrollable="true"
         :consecutive="true"
-        :hideActionOpenThread="true"
-        :lastReadMessageID="unread.lastMessageID"
-        :editLastMessage="editLastMessage"
-        :readOnly="!channel.canSendMessages"
-        :suggestionPriorities="getSp"
+        :hide-action-open-thread="true"
+        :last-read-message-i-d="unread.lastMessageID"
+        :edit-last-message="editLastMessage"
+        :read-only="!channel.canSendMessages"
+        :suggestion-priorities="getSp"
         hide-replies
         @markAsUnread="onMarkAsUnread"
         @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
         @cancelEditing="editLastMessage=false"
-        v-on="$listeners" />
+        v-on="$listeners"
+      />
     </template>
-    <template v-if="message" slot="footer">
+    <template
+      v-if="message"
+      slot="footer"
+    >
       <div class="footer">
         <message-input
           v-if="channel.canSendMessages"
-          :replyTo="message"
+          :reply-to="message"
           :show-mark-as-unread-button="unread.count > 0"
           :draft.sync="draft"
-          :suggestionPriorities="getSp"
+          :suggestion-priorities="getSp"
           @markAsRead="onMarkAsRead"
           @promptFilePicker="onPromptFilePicker"
-          @editLastMessage="editLastMessage=true" />
+          @editLastMessage="editLastMessage=true"
+        />
       </div>
     </template>
   </base-panel>

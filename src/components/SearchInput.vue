@@ -1,17 +1,18 @@
 <!-- template for the user avatar component -->
 <template>
   <form @submit.prevent="$emit('searchSubmit', query)">
-      <span class="badge badge-block">
-          <i class="icon-search"></i>
-          <input
-            v-focus="focus"
-            ref="input"
-            type="text"
-            v-model="query"
-            :placeholder="getPlaceholder"
-            autocomplete="true"
-            class="txt no-border">
-      </span>
+    <span class="badge badge-block">
+      <i class="icon-search" />
+      <input
+        ref="input"
+        v-model="query"
+        v-focus="focus"
+        type="text"
+        :placeholder="getPlaceholder"
+        autocomplete="true"
+        class="txt no-border"
+      >
+    </span>
   </form>
 </template>
 <script>
@@ -23,11 +24,21 @@ export default {
   },
 
   props: {
-    value: String,
-    placeholder: { type: String },
-    focus: false,
+    value: {
+      type: String,
+      default: undefined,
+    },
+    placeholder: {
+      type: String,
+      default: undefined,
+    },
+    focus: {
+      type: Boolean,
+      default: false,
+    },
     preset: {
       type: String,
+      default: undefined,
     },
   },
 

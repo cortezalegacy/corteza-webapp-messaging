@@ -1,9 +1,11 @@
 <!-- template for the user avatar component -->
 <template>
   <span>
-    <i class="u-avatar"
-       :class="{online: isOnline }"
-       :style="img?'background-image:'+img:''">
+    <i
+      class="u-avatar"
+      :class="{online: isOnline }"
+      :style="img?'background-image:'+img:''"
+    >
       <span aria-hidden="true">{{ initials }}</span>
     </i>
   </span>
@@ -13,7 +15,7 @@
 import { mapGetters } from 'vuex'
 
 export default {
-  name: 'avatar',
+  name: 'Avatar',
   // require user param
   props: {
     userID: {

@@ -1,7 +1,7 @@
 <!-- template for the user avatar component -->
 <template>
   <main>
-    <slot></slot>
+    <slot />
   </main>
 </template>
 <style scoped>

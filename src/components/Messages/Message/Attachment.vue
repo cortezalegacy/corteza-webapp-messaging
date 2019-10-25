@@ -2,33 +2,37 @@
   <div class="attachment">
     <div
       v-if="canPreview"
-      class="actions">
+      class="actions"
+    >
       <a :href="attachment.downloadUrl">
         <button class="action">
-          <font-awesome-icon :icon="['fas', 'file-download']" :title="$t('message.file.download', { label: attachment.name })" />
+          <font-awesome-icon
+            :icon="['fas', 'file-download']"
+            :title="$t('message.file.download', { label: attachment.name })"
+          />
         </button>
       </a>
     </div>
 
     <template v-if="canPreview">
       <preview-inline
-        @openPreview="openPreview"
         :src="inlineUrl"
         :meta="inlineMeta"
         :name="attachment.name"
         :alt="attachment.name"
-        :labels="previewLabels" />
-
+        :labels="previewLabels"
+        @openPreview="openPreview"
+      />
     </template>
     <template v-else-if="attachment.meta.original">
       <span class="no-preview">
         <!-- file has size but not image -->
-        <a v-bind:href="attachment.downloadUrl">
+        <a :href="attachment.downloadUrl">
           <div>
             <font-awesome-icon
               :icon="['far', 'file-'+ext]"
               :title="$t('message.openBookmarks')"
-            ></font-awesome-icon>
+            />
           </div>
           <div>
             <span>{{ $t('message.file.download', { label: attachment.name }) }}</span><br>
@@ -40,8 +44,11 @@
     <template v-else>
       <!-- @todo : added file has no size so probably error, maybe other possible errors -->
       <span class="missing">
-        <i18next path="message.file.missing" tag="i">
-          <template><br/>{{attachment.name}}<br/></template>
+        <i18next
+          path="message.file.missing"
+          tag="i"
+        >
+          <template><br>{{ attachment.name }}<br></template>
         </i18next>
       </span>
     </template>
@@ -56,7 +63,12 @@ export default {
     PreviewInline,
   },
 
-  props: [ 'attachment', 'inline' ],
+  props: {
+    attachment: {
+      type: Object,
+      default: undefined,
+    },
+  },
 
   computed: {
     inlineMeta () {

@@ -4,20 +4,24 @@
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
-
           <div class="modal-header">
-            <slot name="header">&lt;{{ $t('general.label.header') }}&gt;</slot>
-            <span class="modal-close-button" @click="$emit('close')">
+            <slot name="header">
+              &lt;{{ $t('general.label.header') }}&gt;
+            </slot>
+            <span
+              class="modal-close-button"
+              @click="$emit('close')"
+            >
               &times;
             </span>
           </div>
 
           <div class="modal-body">
-            <slot></slot>
+            <slot />
           </div>
 
           <div class="modal-footer">
-            <slot name="footer"></slot>
+            <slot name="footer" />
           </div>
         </div>
       </div>
@@ -25,7 +29,7 @@
   </transition>
 </template>
 <script>
-export default { name: 'modal' }
+export default { name: 'Modal' }
 </script>
 <style scoped>
 

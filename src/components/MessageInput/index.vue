@@ -1,78 +1,93 @@
 <template>
-
   <observer-footer
-      v-if="readonly"
-      :channel="channel" />
+    v-if="readonly"
+    :channel="channel"
+  />
 
-  <div v-else class="container"
-       :class="{editing:!!message, inThread:!!replyTo}">
+  <div
+    v-else
+    class="container"
+    :class="{editing:!!message, inThread:!!replyTo}"
+  >
+    <div class="group">
+      <text-input
+        ref="text"
+        v-model="value"
+        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
+        :submit-on-enter="!uiEnableSubmitButton()"
+        :channels="channelSuggestions"
+        :users="userSuggestions"
+        :suggestion-priorities="suggestionPriorities"
+        :channel="channel"
+        :user="$auth.user"
+        class="text-input"
+        :class="{
+          'no-files': !showFileUpload,
+          'hybrid': isCordovaPlatform,
+        }"
+        @editLastMessage="$emit('editLastMessage', $event)"
+        @cancel="$emit('cancel', $event)"
+        @submit="onSubmit"
+        @change="onChange"
+        @focus="onFocus"
+      />
 
-      <div class="group">
+      <button
+        v-if="showFileUpload && !isCordovaPlatform"
+        class="upload-button input-button"
+        @click="onPromptFilePicker"
+      >
+        <span>+</span>
+      </button>
 
-          <text-input
-              @editLastMessage="$emit('editLastMessage', $event)"
-              @cancel="$emit('cancel', $event)"
-              @submit="onSubmit"
-              @change="onChange"
-              @focus="onFocus"
-              v-model="value"
-              :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
-              :submitOnEnter="!uiEnableSubmitButton()"
-              :channels="channelSuggestions"
-              :users="userSuggestions"
-              :suggestionPriorities="suggestionPriorities"
-              :channel="channel"
-              :user="$auth.user"
-              class="text-input"
-              ref="text"
-              :class="{
-                'no-files': !showFileUpload,
-                'hybrid': isCordovaPlatform,
-              }" />
+      <!-- Add media buttons -->
+      <button
+        v-if="uiEnableMobileMediaSourceButtons()"
+        class="camera-button input-button"
+        @click.stop="onPromptCamera"
+      >
+        <font-awesome-icon icon="camera" />
+      </button>
+      <button
+        v-if="uiEnableMobileMediaSourceButtons()"
+        class="galery-button input-button"
+        @click.stop="onPromptGalery"
+      >
+        <font-awesome-icon icon="images" />
+      </button>
 
-          <button
-              v-if="showFileUpload && !isCordovaPlatform"
-              class="upload-button input-button"
-              @click="onPromptFilePicker">
-              <span>+</span>
-          </button>
+      <button
+        v-if="uiEnableEmojiButton()"
+        class="emoji-button input-button"
+        @click.stop="onEmojiPickerClick"
+      >
+        <span class="icon-smile" />
+      </button>
 
-          <!-- Add media buttons -->
-          <button
-              v-if="uiEnableMobileMediaSourceButtons()"
-              class="camera-button input-button"
-              @click.stop="onPromptCamera">
-              <font-awesome-icon icon="camera"></font-awesome-icon>
-          </button>
-          <button
-              v-if="uiEnableMobileMediaSourceButtons()"
-              class="galery-button input-button"
-              @click.stop="onPromptGalery">
-              <font-awesome-icon icon="images"></font-awesome-icon>
-          </button>
-
-          <button
-              v-if="uiEnableEmojiButton()"
-              class="emoji-button input-button"
-              @click.stop="onEmojiPickerClick">
-              <span class="icon-smile"></span>
-          </button>
-
-          <button
-              v-if="uiEnableSubmitButton()"
-              class="input-button send-button"
-              :disabled="submitDisabled"
-              @click="onSubmitBtnClick"
-              @mousedown="onMousedown">
-              <span class="icon-hsend"></span>
-          </button>
-      </div>
-      <div class="activity">
-        <activity v-if="!replyTo && !message" :users="channelActivity(channelID, 'typing')" :activity="$t('message.typing')"></activity>
-        <button class="btn float-right"
-                v-show="showMarkAsUnreadButton"
-                @click.prevent="$emit('markAsRead')">{{ $t('message.markAsRead') }}</button>
-      </div>
+      <button
+        v-if="uiEnableSubmitButton()"
+        class="input-button send-button"
+        :disabled="submitDisabled"
+        @click="onSubmitBtnClick"
+        @mousedown="onMousedown"
+      >
+        <span class="icon-hsend" />
+      </button>
+    </div>
+    <div class="activity">
+      <activity
+        v-if="!replyTo && !message"
+        :users="channelActivity(channelID, 'typing')"
+        :activity="$t('message.typing')"
+      />
+      <button
+        v-show="showMarkAsUnreadButton"
+        class="btn float-right"
+        @click.prevent="$emit('markAsRead')"
+      >
+        {{ $t('message.markAsRead') }}
+      </button>
+    </div>
   </div>
 </template>
 
@@ -99,23 +114,38 @@ export default {
   },
 
   props: {
-    hideFileUpload: false,
+    hideFileUpload: {
+      type: Boolean,
+      default: false,
+    },
 
     // Message we're editing, if any...
-    message: Object,
+    message: {
+      type: Object,
+      default: undefined,
+    },
 
     // Replying to a message, if any...
-    replyTo: Object,
+    replyTo: {
+      type: Object,
+      default: undefined,
+    },
 
     // Channel we're posting to
-    channel: Object,
+    channel: {
+      type: Object,
+      default: undefined,
+    },
 
     focus: { type: Boolean, default: true },
     readonly: { type: Boolean, default: false },
 
     showMarkAsUnreadButton: { type: Boolean, default: false },
 
-    draft: { default: null },
+    draft: {
+      type: Object,
+      default: null,
+    },
 
     suggestionPriorities: {
       type: Object,

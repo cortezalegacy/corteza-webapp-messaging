@@ -1,10 +1,13 @@
 <template>
   <ul :class="{'has-reactions':reactions.length > 0}">
-    <li v-for="(r) in reactions"
-        v-if="r.reaction"
-        :title="labels(r.userIDs)"
-        @click="$emit('reaction', { reaction: r.reaction })"
-        :key="r.reaction"><span v-html="emoji(r.reaction)"></span><sup>{{r.count}}</sup></li>
+    <li
+      v-for="(r) in getReactions"
+      :key="r.reaction"
+      :title="labels(r.userIDs)"
+      @click="$emit('reaction', { reaction: r.reaction })"
+    >
+      <span v-html="emoji(r.reaction)" /><sup>{{ r.count }}</sup>
+    </li>
   </ul>
 </template>
 <script>
@@ -18,7 +21,13 @@ export default {
   props: {
     reactions: {
       type: Array,
-      value: [],
+      default: () => [],
+    },
+  },
+
+  computed: {
+    getReactions () {
+      return this.reactions.filter(r => r.reaction)
     },
   },
 

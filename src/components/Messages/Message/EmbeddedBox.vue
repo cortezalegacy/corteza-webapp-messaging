@@ -6,8 +6,8 @@
       height="265"
       frameborder="0"
       allowfullscreen
-      :src="src" />
-
+      :src="src"
+    />
   </div>
 </template>
 

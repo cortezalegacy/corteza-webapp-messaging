@@ -1,36 +1,39 @@
 <template>
-  <ul @scroll="onScrollThrottled"
-      ref="list"
-      :class="{scrollable:scrollable}"
-      @click="$bus.$emit('ui.closeEmojiPicker')">
+  <ul
+    ref="list"
+    :class="{scrollable:scrollable}"
+    @scroll="onScrollThrottled"
+    @click="$bus.$emit('ui.closeEmojiPicker')"
+  >
     <message
       v-for="(msg, index) in messages"
       ref="message"
-      @cancelEditing="$emit('cancelEditing')"
-      :readOnly="readOnly"
+      :key="msg.messageID"
+      :read-only="readOnly"
       :message="msg"
       :consecutive="consecutive && isConsecutive(messages, index)"
-      :currentUser="currentUser"
-      :key="msg.messageID"
-      :isUnread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
-      :isLastRead="lastReadMessageID === msg.messageID"
-      :isFirst="index === 0"
-      :showEditor="showEditor(msg)"
-      :hideActions="hideActions"
-      :hideReactions="hideReactions"
-      :hideMarkAsUnread="hideMarkAsUnread || index === messages.length - 1 || index === 0"
-      :hidePinning="hidePinning"
-      :hideBookmarking="hideBookmarking"
-      :hideActionGoToMessage="hideActionGoToMessage"
-      :hideActionOpenThread="hideActionOpenThread"
-      :hideActionsMenu="hideActionsMenu"
-      :hideReplies="hideReplies"
-      :isLast="index === messages.length - 1"
-      :highlightPinned="highlightPinned"
-      :highlightBookmarked="highlightBookmarked"
-      :suggestionPriorities="suggestionPriorities"
-      v-on="$listeners" />
-    <li ref="anchor"></li>
+      :current-user="currentUser"
+      :is-unread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
+      :is-last-read="lastReadMessageID === msg.messageID"
+      :is-first="index === 0"
+      :show-editor="showEditor(msg)"
+      :hide-actions="hideActions"
+      :hide-reactions="hideReactions"
+      :hide-mark-as-unread="hideMarkAsUnread || index === messages.length - 1 || index === 0"
+      :hide-pinning="hidePinning"
+      :hide-bookmarking="hideBookmarking"
+      :hide-action-go-to-message="hideActionGoToMessage"
+      :hide-action-open-thread="hideActionOpenThread"
+      :hide-actions-menu="hideActionsMenu"
+      :hide-replies="hideReplies"
+      :is-last="index === messages.length - 1"
+      :highlight-pinned="highlightPinned"
+      :highlight-bookmarked="highlightBookmarked"
+      :suggestion-priorities="suggestionPriorities"
+      @cancelEditing="$emit('cancelEditing')"
+      v-on="$listeners"
+    />
+    <li ref="anchor" />
   </ul>
 </template>
 <script>
@@ -63,16 +66,27 @@ export default {
 
     // We can not just watch for updates of messages
     // sometime we need to react only when origin changes (whatever origin is)
-    origin: { required: true },
+    origin: {
+      type: Object,
+      required: true,
+      default: undefined,
+    },
 
-    scrollable: { type: Boolean, value: true },
+    scrollable: {
+      type: Boolean,
+      default: true,
+    },
 
     // When set, we scroll to that message
-    scrollToMessage: String,
+    scrollToMessage: {
+      type: String,
+      default: undefined,
+    },
 
     // This will help us mark new messages
     lastReadMessageID: {
       type: String,
+      default: undefined,
     },
 
     // Is provided message list is consecutive

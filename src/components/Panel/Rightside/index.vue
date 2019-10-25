@@ -1,16 +1,21 @@
 <template>
-  <div class="rightside-panel-container" v-on="$listeners">
+  <div
+    class="rightside-panel-container"
+    v-on="$listeners"
+  >
     <div class="header">
-      <span class="title"><slot name="header"></slot></span>
-      <span class="subtitle"><slot name="subtitle"></slot></span>
-      <label class="closer"
-             @click="$emit('close')"><i class="icon-x"></i></label>
+      <span class="title"><slot name="header" /></span>
+      <span class="subtitle"><slot name="subtitle" /></span>
+      <label
+        class="closer"
+        @click="$emit('close')"
+      ><i class="icon-x" /></label>
     </div>
     <div class="main">
-      <slot name="main"></slot>
+      <slot name="main" />
     </div>
     <div class="footer">
-      <slot name="footer"></slot>
+      <slot name="footer" />
     </div>
   </div>
 </template>

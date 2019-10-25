@@ -1,17 +1,23 @@
 <template>
   <base-panel
     v-on="$listeners"
-    @onclick="$emit('openDirectMessage', u.userID);">
-    <template slot="header">{{ $t('panel.bookmarkedMessagesHeader') }}</template>
-    <template slot="subtitle">{{ $t('panel.bookmarkedMessagesSubtitle') }}</template>
+    @onclick="$emit('openDirectMessage', u.userID);"
+  >
+    <template slot="header">
+      {{ $t('panel.bookmarkedMessagesHeader') }}
+    </template>
+    <template slot="subtitle">
+      {{ $t('panel.bookmarkedMessagesSubtitle') }}
+    </template>
     <template slot="main">
       <messages
         :messages="bookmarked"
-        :currentUser="$auth.user"
-        origin="bookmarked"
+        :current-user="$auth.user"
+        :origin="{ thread: 'bookmarked' }"
         :scrollable="false"
-        :highlightBookmarked="false"
-        v-on="$listeners" />
+        :highlight-bookmarked="false"
+        v-on="$listeners"
+      />
     </template>
   </base-panel>
 </template>

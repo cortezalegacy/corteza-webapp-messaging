@@ -1,38 +1,43 @@
 <template>
-  <div class="channel"
+  <div
+    v-if="channel"
+    class="channel"
     @dragover="handleShow($event, () => showUploadArea = true)"
     @dragenter="handleShow($event, () => showUploadArea = true)"
-    v-if="channel">
+  >
     <upload
       v-show="showUploadArea"
+      ref="upload"
+      :channel-i-d="channel.channelID"
+      :type-supported.sync="uploadFileTypeSupported"
       @close="showUploadArea=false; uploadFileTypeSupported=true"
       @show="showUploadArea=true"
-      :channelID="channel.channelID"
-      :typeSupported.sync="uploadFileTypeSupported"
-      ref="upload" />
+    />
 
     <channel-header
+      :channel="channel"
       v-on="$listeners"
-      :channel="channel"></channel-header>
+    />
 
     <div class="messages">
       <messages
         ref="messages"
         :messages="messages"
-        :currentUser="$auth.user"
+        :current-user="$auth.user"
         :origin="channel"
         :scrollable="true"
         :scroll-to-message="messageID"
         :consecutive="true"
-        :lastReadMessageID="unread.lastMessageID"
-        :editLastMessage="editLastMessage"
-        :readOnly="!channel.canSendMessages"
-        :suggestionPriorities="getSp"
+        :last-read-message-i-d="unread.lastMessageID"
+        :edit-last-message="editLastMessage"
+        :read-only="!channel.canSendMessages"
+        :suggestion-priorities="getSp"
         @markAsUnread="onMarkAsUnread"
         @cancelEditing="editLastMessage=false"
         @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
-        v-on="$listeners" />
+        v-on="$listeners"
+      />
     </div>
     <div class="footer">
       <message-input
@@ -41,10 +46,11 @@
         :focus="uiFocusMessageInput()"
         :show-mark-as-unread-button="(unread.count || 0) + (unread.threadCount || 0) > 0"
         :draft.sync="draft"
-        :suggestionPriorities="getSp"
+        :suggestion-priorities="getSp"
         @markAsRead="onMarkAsRead"
         @promptFilePicker="onPromptFilePicker"
-        @editLastMessage="editLastMessage=true" />
+        @editLastMessage="editLastMessage=true"
+      />
     </div>
   </div>
 </template>
@@ -81,6 +87,7 @@ export default {
     messageID: {
       // go-to-message will fill this prop.
       type: String,
+      default: undefined,
     },
   },
 

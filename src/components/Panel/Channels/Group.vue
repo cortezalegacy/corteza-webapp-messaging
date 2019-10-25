@@ -1,14 +1,24 @@
 <template>
   <section>
     <div>
-      <router-link v-if="link && canCreate" :to="link" @click.native="$emit('close')">
-        <i class="icon icon-left icon-plus btn"></i>
+      <router-link
+        v-if="link && canCreate"
+        :to="link"
+        @click.native="$emit('close')"
+      >
+        <i class="icon icon-left icon-plus btn" />
       </router-link>
       <a @click="expanded=!expanded">
-        <slot></slot>
+        <slot />
         <span v-if="list">
-          <i v-if="expanded" class="icon-chevron-up"></i>
-          <i v-else class="icon-chevron-down"></i>
+          <i
+            v-if="expanded"
+            class="icon-chevron-up"
+          />
+          <i
+            v-else
+            class="icon-chevron-down"
+          />
         </span>
       </a>
     </div>
@@ -19,7 +29,8 @@
         :channel="ch"
         :current="current"
         :index="index"
-        v-on="$listeners" />
+        v-on="$listeners"
+      />
     </ul>
   </section>
 </template>
@@ -40,11 +51,13 @@ export default {
     link: {
       type: Object,
       required: false,
+      default: undefined,
     },
 
     current: {
       type: Object,
       required: false,
+      default: undefined,
     },
 
     canCreate: {

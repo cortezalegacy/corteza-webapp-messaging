@@ -1,6 +1,10 @@
 <template>
-  <aside :style="styles" :class="classes" ref="panel">
-    <div><slot></slot></div>
+  <aside
+    ref="panel"
+    :style="styles"
+    :class="classes"
+  >
+    <div><slot /></div>
   </aside>
 </template>
 <script>

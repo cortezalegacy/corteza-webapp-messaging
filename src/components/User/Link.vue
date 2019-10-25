@@ -1,7 +1,9 @@
 <template>
   <router-link
+    :to="linkProps"
+    :class="{ 'current-user': highlight && ID === $auth.user.userID }"
     @click="$emit('click', $event)"
-    :to="linkProps" :class="{ 'current-user': highlight && ID === $auth.user.userID }">
+  >
     <slot>{{ getLabel(user) }}</slot>
   </router-link>
 </template>

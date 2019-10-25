@@ -1,3 +1,3 @@
 <template>
-  <div class="landing"></div>
+  <div class="landing" />
 </template>
