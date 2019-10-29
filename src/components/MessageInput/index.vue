@@ -44,6 +44,7 @@
 import Drawer from './components/Drawer'
 import { Editor, EditorContent } from 'tiptap'
 import { Placeholder, History } from 'tiptap-extensions'
+import { contentEmpty } from './lib'
 
 export default {
   components: {
@@ -84,19 +85,14 @@ export default {
       drawerFor: undefined,
       drawerProps: {},
 
+      // Helper to determine if current content differes from prop's content
+      emittedContent: false,
+
       editor: undefined,
     }
   },
 
   computed: {
-    /**
-     * Manages editor's content
-     * @todo ...
-     */
-    content () {
-      return undefined
-    },
-
     /**
      * Provides editor's placeholder. Fallbacks to the default set in i18n.
      * @returns {String}
@@ -119,6 +115,18 @@ export default {
       handler: function (ph) {
         this.editor.extensions.options.placeholder.emptyNodeText = ph
       },
+    },
+
+    value: {
+      handler: function (val) {
+        // Update happened due to external content change, not model change
+        if (!this.emittedContent) {
+          this.editor.setContent(val)
+        }
+
+        this.emittedContent = false
+      },
+      deep: true,
     },
   },
 
@@ -149,7 +157,18 @@ export default {
             showOnlyWhenEditable: false,
           }),
         ],
-        content: ``,
+        content: this.value,
+
+        onUpdate: ({ getJSON }) => {
+          this.emittedContent = true
+
+          const c = getJSON()
+          if (contentEmpty(c)) {
+            this.$emit('input', null)
+            return
+          }
+          this.$emit('input', c)
+        },
       })
     },
   },
