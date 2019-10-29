@@ -1,0 +1,18 @@
+@import 'corteza-webapp-messaging/src/themes/corteza-base/channel-names.scss';
+
+.suggestion {
+  list-style-type: none;
+  padding: 5px 15px;
+  box-sizing: border-box;
+
+  &:hover {
+    background-color: rgba($primary, 0.12);
+  }
+
+  &.selected {
+    background-color: rgba($primary, 0.12);
+    &:hover {
+      background-color: rgba($primary, 0.24);
+    }
+  }
+}

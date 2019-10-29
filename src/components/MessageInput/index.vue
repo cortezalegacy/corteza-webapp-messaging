@@ -44,7 +44,8 @@
 import Drawer from './components/Drawer'
 import { Editor, EditorContent } from 'tiptap'
 import { Placeholder, History } from 'tiptap-extensions'
-import { contentEmpty } from './lib'
+import { Mention } from './extensions'
+import { contentEmpty, getMatches } from './lib'
 
 export default {
   components: {
@@ -76,6 +77,33 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+
+    currentUser: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+
+    userSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    channelSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    commandSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    suggestionPriorities: {
+      type: Object,
+      required: false,
+      default: () => ({}),
     },
   },
 
@@ -156,6 +184,40 @@ export default {
             emptyNodeText: this.getPlaceholder,
             showOnlyWhenEditable: false,
           }),
+
+          // users
+          new Mention({
+            items: () => this.userSuggestions,
+            onEnter: this.onSuggestionsStart,
+            onChange: this.onSuggestionsChange,
+            onExit: this.onSuggestCancel,
+            onKeyDown: this.onKeyDown,
+            onFilter: this.onFilterUserSuggestions,
+            mentionClass: 'mention mention-user',
+
+            matcher: {
+              char: '@',
+              allowSpaces: false,
+              startOfLine: false,
+            },
+          }),
+
+          // channels
+          new Mention({
+            items: () => this.channelSuggestions,
+            onEnter: this.onSuggestionsStart,
+            onChange: this.onSuggestionsChange,
+            onExit: this.onSuggestCancel,
+            onKeyDown: this.onKeyDown,
+            onFilter: this.onFilterChannelSuggestions,
+            mentionClass: 'mention mention-channel',
+
+            matcher: {
+              char: '#',
+              allowSpaces: false,
+              startOfLine: false,
+            },
+          }),
         ],
         content: this.value,
 
@@ -168,6 +230,128 @@ export default {
             return
           }
           this.$emit('input', c)
+        },
+      })
+    },
+
+    /**
+     * Handle when user invokes suggestions. Prepare state.
+     * @param {Array} items A set of available suggestions
+     * @param {String} query Query string
+     * @param {Range} range Tiptap's range object; used for mention insertion
+     * @param {Function} command Callback to insert the mention
+     */
+    onSuggestionsStart ({ items: suggestions, query, range, command }) {
+      this.drawerFor = 'Mention'
+      // Use $set to invoke reactivity, required by drawer component.
+      this.$set(this, 'drawerProps', {
+        suggestions,
+        query,
+        range,
+        command,
+        // Current suggestion selection
+        selection: 0,
+      })
+    },
+
+    /**
+     * Handle when suggestion's state changes (query changed, new items, ...). Update state.
+     * @param {Array} items A set of available suggestions
+     * @param {String} query Query string
+     * @param {Range} range Tiptap's range object; used for mention insertion
+     */
+    onSuggestionsChange ({ items, query, range }) {
+      this.$set(this.drawerProps, 'range', range)
+      this.$set(this.drawerProps, 'query', query)
+      this.$set(this.drawerProps, 'suggestions', items)
+
+      // Make sure selection has a valid value
+      // @todo improve this, so the selection will be preserved
+      this.drawerProps.selection = Math.min(this.drawerProps.selection, items.length - 1)
+    },
+
+    /**
+     * Handle when mentioning gets canceled. Reset state.
+     */
+    onSuggestCancel () {
+      this.drawerProps = {}
+      this.drawerFor = undefined
+    },
+
+    /**
+     * Handle when keyboard event happenes while sugesstions are invoked.
+     * Handle suggestion navigation, insertion.
+     * @param {Event} event Keyboard event
+     */
+    onKeyDown ({ event }) {
+      // Up arrow
+      if (event.keyCode === 38) {
+        // Handle overflow
+        if (this.drawerProps.selection <= 0) {
+          this.drawerProps.selection = this.drawerProps.suggestions.length
+        }
+
+        this.drawerProps.selection--
+        return true
+      }
+
+      // Down arrow
+      if (event.keyCode === 40) {
+        this.drawerProps.selection = (this.drawerProps.selection + 1) % this.drawerProps.suggestions.length
+        return true
+      }
+
+      // Enter
+      if (event.keyCode === 13) {
+        this.onSuggestSelect(this.drawerProps.suggestions[this.drawerProps.selection])
+        return true
+      }
+
+      return false
+    },
+
+    /**
+     * Handle to filter user suggestions.
+     * @param {Array} items A set of available users. These objects should be pre-processed for fuzzysort
+     * @param {String} query Query string
+     * @returns {Array} A set of users, that matches the given query
+     */
+    onFilterUserSuggestions (items, query) {
+      items = getMatches({ items, query, priorities: this.suggestionPriorities.User })
+
+      // Aditionally sort matches based on status
+      return [ ...items ].sort((a, b) => {
+        if (a.user.userID === this.currentUser.userID) {
+          return -1
+        }
+        if (a.online && a.user.userID !== this.currentUser.userID && !b.online) {
+          return +1
+        }
+
+        return 0
+      }).reverse()
+    },
+
+    /**
+     * Handle to filter channel suggestions.
+     * @param {Array} items A set of available channels. These objects should be pre-processed for fuzzysort
+     * @param {String} query Query string
+     * @returns {Array} A set of channels, that matches the given query
+     */
+    onFilterChannelSuggestions (items, query) {
+      return getMatches({ items, query, priorities: this.suggestionPriorities.Channel }).reverse()
+    },
+
+    /**
+     * Handle to create a mention from the given suggestion
+     * @param {Object} suggestion The suggestion to be inserted
+     */
+    onSuggestSelect (suggestion) {
+      this.drawerProps.command({
+        range: this.drawerProps.range,
+        attrs: {
+          id: suggestion.id,
+          label: suggestion.value,
         },
       })
     },
@@ -220,6 +404,16 @@ $mobileInputWidth: 35px;
           pointer-events: none;
           height: 0;
           font-style: italic;
+        }
+
+        .mention-suggestion {
+          opacity: 0.7;
+        }
+        .mention {
+          border: 1px solid $primary;
+          border-radius: 4px;
+          padding: 1px 2px;
+          background-color: rgba($primary, 0.05);
         }
       }
     }
