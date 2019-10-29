@@ -7,7 +7,7 @@
  */
 export function contentEmpty ({ content } = {}) {
   // Check if any nested node has any content
-  return !content || !content || !content.reduce((acc, cur) => acc && !!cur.content, true)
+  return !content || !content || !content.reduce((acc, cur) => acc || !!cur.content, false)
 }
 
 /**
