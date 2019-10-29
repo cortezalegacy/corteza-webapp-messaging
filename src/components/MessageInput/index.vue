@@ -44,7 +44,7 @@
 import Drawer from './components/Drawer'
 import { Editor, EditorContent } from 'tiptap'
 import { Placeholder, History } from 'tiptap-extensions'
-import { Mention } from './extensions'
+import { Mention, Keyboard } from './extensions'
 import { contentEmpty, getMatches } from './lib'
 
 export default {
@@ -185,6 +185,13 @@ export default {
             showOnlyWhenEditable: false,
           }),
 
+          new Keyboard({
+            map: {
+              'ArrowUp': this.onArrowUp,
+              'Enter': this.onEnter,
+            },
+          }),
+
           // users
           new Mention({
             items: () => this.userSuggestions,
@@ -232,6 +239,22 @@ export default {
           this.$emit('input', c)
         },
       })
+    },
+
+    onEnter ({ doc }) {
+      if (!this.submitOnEnter || !doc.textContent) {
+        return
+      }
+
+      this.$emit('submit')
+      return true
+    },
+
+    onArrowUp ({ doc }) {
+      if (!doc.textContent) {
+        this.$emit('editLastMessage')
+        return false
+      }
     },
 
     /**
