@@ -46,6 +46,8 @@ import { Editor, EditorContent } from 'tiptap'
 import { Placeholder, History } from 'tiptap-extensions'
 import { Mention, Keyboard } from './extensions'
 import { contentEmpty, getMatches } from './lib'
+import { insertText } from 'tiptap-commands'
+import { baseKeymap } from 'prosemirror-commands'
 
 export default {
   components: {
@@ -66,10 +68,23 @@ export default {
       default: undefined,
     },
 
-    focus: {
+    noFocus: {
       type: Boolean,
       required: false,
-      default: true,
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    // Allows input to determine when source changed
+    source: {
+      type: String,
+      required: false,
+      default: undefined,
     },
 
     // Needed for the hybrid app
@@ -133,8 +148,12 @@ export default {
   watch: {
     disabled: {
       // Toggle enabled/disabled
-      handler: function (disabled) {
-        // @todo ...
+      handler: function (editable) {
+        if (this.editor) {
+          this.editor.setOptions({
+            editable,
+          })
+        }
       },
       immediate: true,
     },
@@ -145,11 +164,21 @@ export default {
       },
     },
 
+    source: {
+      handler: function () {
+        if (!this.noFocus) {
+          this.focus()
+          this.correctSelection()
+        }
+      },
+    },
+
     value: {
       handler: function (val) {
         // Update happened due to external content change, not model change
         if (!this.emittedContent) {
           this.editor.setContent(val)
+          this.correctSelection()
         }
 
         this.emittedContent = false
@@ -161,6 +190,9 @@ export default {
   mounted () {
     this.$nextTick(() => {
       this.initEditor()
+      this.$nextTick(() => {
+        this.correctSelection()
+      })
     })
   },
 
@@ -173,10 +205,15 @@ export default {
   methods: {
     /**
      * Initializes the editor, sets up extensions, ...
-     * @todo ...
      */
     initEditor () {
       this.editor = new Editor({
+        // General options
+        autoFocus: !this.noFocus,
+        editable: this.editable,
+        content: this.value,
+
+        // Extensions
         extensions: [
           new History(),
           new Placeholder({
@@ -189,6 +226,9 @@ export default {
             map: {
               'ArrowUp': this.onArrowUp,
               'Enter': this.onEnter,
+              'Escape': this.onEscape,
+              // Mimic Enter's behaviour
+              's-Enter': baseKeymap.Enter,
             },
           }),
 
@@ -226,8 +266,8 @@ export default {
             },
           }),
         ],
-        content: this.value,
 
+        // Listeners
         onUpdate: ({ getJSON }) => {
           this.emittedContent = true
 
@@ -238,7 +278,48 @@ export default {
           }
           this.$emit('input', c)
         },
+
+        onFocus: () => {
+          this.$emit('focus')
+        },
+        onBlur: () => {
+          this.$emit('blur')
+        },
       })
+    },
+
+    /**
+     * Helper for inserting content into tiptap editor.
+     * When adding new/more complex content, this should be extended
+     * @param {String} content Content to insert
+     */
+    insert ({ content }) {
+      insertText(content)(this.editor.view.state, this.editor.view.dispatch, this.editor.view)
+    },
+
+    /**
+     * Helper to focus the input -- shouldbe used by wrapper components
+     */
+    focus () {
+      this.editor.focus()
+    },
+
+    /**
+     * Helper to blur (loose focus) the input -- shouldbe used by wrapper components
+     */
+    blur () {
+      this.editor.blur()
+    },
+
+    /**
+     * Helper to correct the selection
+     */
+    correctSelection () {
+      if (this.noFocus) {
+        return
+      }
+
+      this.editor.setSelection(0, this.editor.state.doc.textContent.length + 1)
     },
 
     onEnter ({ doc }) {
@@ -255,6 +336,10 @@ export default {
         this.$emit('editLastMessage')
         return false
       }
+    },
+
+    onEscape () {
+      this.$emit('cancel')
     },
 
     /**
@@ -388,12 +473,20 @@ export default {
 $inputWidth: 50px;
 $mobileInputWidth: 35px;
 
+/deep/ .ProseMirror {
+  min-height: 100px;
+
+  // Disabled editor preserves pointer events - it seams like a bug
+  &[contenteditable="false"] {
+    pointer-events: none;
+  }
+}
+
 .container {
   padding: 4px 15px 0;
   height: 100%;
 
   .group {
-    float: left;
     width: 100%;
     position: relative;
     margin-bottom: 2px;
