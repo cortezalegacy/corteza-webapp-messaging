@@ -147,14 +147,12 @@ export default {
     source () {
       return `${this.channelID}${this.replyToID || ''}`
     },
-
-    // @todo unreads
   },
 
   watch: {
     channelID: {
       handler: function (nID, oID) {
-        // On channel change, reload draft
+        // On source change, update drafts
         if (oID) {
           this.flushDraft(oID, this.replyToID)
         }
@@ -168,9 +166,9 @@ export default {
       handler: function (nID, oID) {
         // On thread change, reload draft
         if (oID) {
-          this.flushDraft(oID, (this.replyTo || {}).messageID)
+          this.flushDraft(this.channelID, oID)
         }
-        this.draft = this.loadDraft(nID)
+        this.draft = this.loadDraft(this.channelID, nID)
       },
       immediate: true,
       deep: true,
@@ -182,6 +180,10 @@ export default {
       },
       deep: true,
     },
+  },
+
+  beforeDestroy () {
+    this.flushDraft(this.channelID, this.replyToID)
   },
 
   methods: {
