@@ -323,7 +323,7 @@ export default {
     },
 
     onEnter ({ doc }) {
-      if (!this.submitOnEnter || !doc.textContent) {
+      if (!this.submitOnEnter) {
         return
       }
 
