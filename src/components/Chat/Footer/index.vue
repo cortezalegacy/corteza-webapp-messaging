@@ -262,16 +262,6 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-.container {
-  padding: 4px 15px 0;
-
-  .group {
-    width: 100%;
-    position: relative;
-    margin-bottom: 2px;
-  }
-}
 
 <style lang="scss" scoped>
 @import 'corteza-webapp-messaging/src/components/Chat/Footer/common.scss';
