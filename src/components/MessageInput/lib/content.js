@@ -5,8 +5,12 @@
  * @param {Object} content A JSON object provided by tiptap
  * @returns {Boolean}
  */
-export function contentEmpty ({ content } = {}) {
+export function contentEmpty (document) {
+  if (!document) {
+    return true
+  }
   // Check if any nested node has any content
+  const { content } = document
   return !content || !content || !content.reduce((acc, cur) => acc || !!cur.content, false)
 }
 
@@ -33,6 +37,10 @@ export const mentionRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
  * @returns {String}
  */
 export function stringifyDocument (doc = {}) {
+  if (!doc) {
+    return
+  }
+
   let out = ``
   for (const c of doc.content || []) {
     if (c.type === 'paragraph') {
