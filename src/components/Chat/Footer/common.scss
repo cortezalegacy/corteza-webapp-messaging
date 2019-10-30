@@ -1,0 +1,15 @@
+.container {
+  padding: 4px 15px 0;
+
+  .group {
+    width: 100%;
+    position: relative;
+    margin-bottom: 2px;
+
+    .input-button {
+      &.send-button:disabled {
+        pointer-events: none;
+      }
+    }
+  }
+}
