@@ -16,6 +16,7 @@
         :channel-suggestions="channelSuggestions"
         :current-user="currentUser"
         :source="source"
+        :suggestion-priorities="suggestionPriorities"
         @submit="onSubmit"
         @focus="onFocus"
         v-on="$listeners"

@@ -44,6 +44,12 @@ export default {
       required: false,
       default: false,
     },
+
+    suggestionPriorities: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
   },
 
   data () {
@@ -74,7 +80,7 @@ export default {
      */
     channelSuggestions () {
       // @todo remove this slice!
-      return this.channels.slice(0, 10).map(c => {
+      return this.channels.map(c => {
         return {
           type: 'Channel',
           id: c.channelID,
@@ -102,7 +108,7 @@ export default {
      */
     userSuggestions () {
       // @todo remove this slice!
-      return this.users.slice(0, 10).map(u => {
+      return this.users.map(u => {
         return {
           type: 'User',
           id: u.userID,
