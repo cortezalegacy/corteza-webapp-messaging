@@ -64,7 +64,7 @@ function stringifyLine ({ content = [] }) {
     if (type === 'text') {
       line += rest.text
     } else {
-      line += `<${type.split('-').pop()}${rest.attrs.id}>`
+      line += `<${type.split('-').pop()}${rest.attrs.id} ${rest.attrs.label}>`
     }
   }
 

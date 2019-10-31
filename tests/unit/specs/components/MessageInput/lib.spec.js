@@ -67,7 +67,7 @@ describe('src/components/MessageInput/lib', () => {
               },
             ]
           },
-          expected: `text <@111> text`,
+          expected: `text <@111 Mention User> text`,
         },
 
         {
@@ -84,7 +84,7 @@ describe('src/components/MessageInput/lib', () => {
               },
             ]
           },
-          expected: `text <#222> text`,
+          expected: `text <#222 Mention Channel> text`,
         },
       ]
 
