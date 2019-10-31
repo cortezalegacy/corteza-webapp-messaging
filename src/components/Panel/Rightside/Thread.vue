@@ -43,53 +43,50 @@
         :consecutive="true"
         :hide-action-open-thread="true"
         :last-read-message-i-d="unread.lastMessageID"
-        :edit-last-message="editLastMessage"
+        :edit="edit"
+        :channel="channel"
         :read-only="!channel.canSendMessages"
         :suggestion-priorities="getSp"
         hide-replies
         @markAsUnread="onMarkAsUnread"
         @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
-        @cancelEditing="editLastMessage=false"
+        @cancelEditing="onCancelEditing"
+        @editMessage="onEditMessage"
         v-on="$listeners"
       />
     </template>
-    <template
+
+    <chat-footer
       v-if="message"
       slot="footer"
-    >
-      <div class="footer">
-        <message-input
-          v-if="channel.canSendMessages"
-          :reply-to="message"
-          :show-mark-as-unread-button="unread.count > 0"
-          :draft.sync="draft"
-          :suggestion-priorities="getSp"
-          @markAsRead="onMarkAsRead"
-          @promptFilePicker="onPromptFilePicker"
-          @editLastMessage="editLastMessage=true"
-        />
-      </div>
-    </template>
+      :channel="channel"
+      :has-unread="unread.count > 0"
+      :submit-on-enter="submitOnEnter"
+      :reply-to="message"
+      :suggestion-priorities="getSp"
+      @markAsRead="onMarkAsRead"
+      @promptFilePicker="onPromptFilePicker"
+      @editLastMessage="onEditLastMessage"
+    />
   </base-panel>
 </template>
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import BasePanel from './.'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
-import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
-import Upload from 'corteza-webapp-messaging/src/components/MessageInput/Upload'
+import Upload from 'corteza-webapp-messaging/src/components/Upload'
 import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
 import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
 import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
-import Delta from 'quill-delta'
+import ChatFooter from 'corteza-webapp-messaging/src/components/Chat/Footer'
 
 export default {
   components: {
-    MessageInput,
     Upload,
     Messages,
     BasePanel,
+    ChatFooter,
   },
 
   mixins: [
@@ -106,9 +103,8 @@ export default {
 
   data () {
     return {
-      // Controls if last message in the list
-      // should be have editing enabled or not
-      editLastMessage: false,
+      // Controlls what message should be edited
+      edit: undefined,
 
       showUploadArea: false,
       uploadFileTypeSupported: true,
@@ -125,29 +121,23 @@ export default {
       findWhereMember: 'channels/findWhereMember',
     }),
 
+    /**
+     * Helper to determine if enter should submit. If not, a send button will be visible
+     * @returns {Boolean}
+     */
+    submitOnEnter () {
+      return !this.uiEnableSubmitButton()
+    },
+
+    /**
+     * Helper to determine suggestion priorities for each mentionable type.
+     * @returns {Object}
+     */
     getSp () {
       return {
         User: new Set((this.channel || {}).members || []),
         Channel: new Set(this.findWhereMember(this.$auth.user.userID, true).map(({ channelID }) => channelID)),
       }
-    },
-
-    draft: {
-      get () {
-        const d = this.$drafts.get({ messageID: this.repliesTo })
-        if (d) {
-          return new Delta(d)
-        }
-        return d
-      },
-
-      set ({ dest, value }) {
-        if (dest.remove) {
-          this.$drafts.remove(dest)
-        } else {
-          this.$drafts.set(dest, value)
-        }
-      },
     },
 
     message () {
@@ -209,6 +199,28 @@ export default {
     ...mapActions({
       markAllAsRead: 'unread/markThreadAsRead',
     }),
+
+    /**
+     * Helper to cancel message editing
+     */
+    onCancelEditing () {
+      this.edit = undefined
+    },
+
+    /**
+     * Helper to set a given message as beeing edited
+     * @param {Object} message Message to edit
+     */
+    onEditMessage ({ message }) {
+      this.edit = message.messageID
+    },
+
+    /**
+     * Helper to set the last message as beeing edited
+     */
+    onEditLastMessage () {
+      this.onEditMessage({ message: this.lastMessage })
+    },
 
     onPromptFilePicker (e) {
       this.$refs.upload.openFilePicker(e)
