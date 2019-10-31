@@ -70,12 +70,13 @@ export default {
 .nav-info {
   position: sticky;
   bottom: 0;
-  padding: 3px 10px;
+  padding: 5px 10px;
   background-color: $primary;
   color: $white;
 
   p {
     margin: 0;
+
     .spaced {
       margin-left: 10px;
     }

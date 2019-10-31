@@ -1,8 +1,7 @@
 <template>
   <li
-    class="suggestion"
+    class="suggestion user"
     :class="{
-      [suggestion.user.type]: true,
       selected: index === selection,
     }"
     @click="onClick"
