@@ -1,4 +1,5 @@
 import { Mention as MentionBase } from 'tiptap-extensions'
+import { mentionTypes } from '../lib'
 
 /**
  * This is an adjustment to the original extension provided by tiptap.
@@ -12,6 +13,6 @@ export default class Mention extends MentionBase {
    * @returns {String}
    */
   get name () {
-    return `mention-${this.options.matcher.char}`
+    return `mention-${mentionTypes.find(({ char }) => char === this.options.matcher.char).type}`
   }
 }

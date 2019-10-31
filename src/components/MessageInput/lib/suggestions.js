@@ -5,6 +5,12 @@ import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
 // Specifies when a non prioritized match is considered good
 const goodMatchThreshold = 0.35
 
+// Provides a set of available mention types
+export const mentionTypes = [
+  { char: '@', type: 'user' },
+  { char: '#', type: 'channel' },
+]
+
 /**
  * Helper function to calculate match score [0, 1] for a given key
  * @param {Object} target Key, on which to calculate match score

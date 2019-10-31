@@ -1,4 +1,5 @@
 // Provides content related helpers, such as content stringification, parsing, ...
+import { mentionTypes } from './.'
 
 /**
  * Helper to determine if given content is empty or not.
@@ -64,7 +65,8 @@ function stringifyLine ({ content = [] }) {
     if (type === 'text') {
       line += rest.text
     } else {
-      line += `<${type.split('-').pop()}${rest.attrs.id} ${rest.attrs.label}>`
+      const mentionType = type.split('-').pop()
+      line += `<${mentionTypes.find(m => m.type === mentionType).char}${rest.attrs.id} ${rest.attrs.label}>`
     }
   }
 
@@ -121,7 +123,7 @@ function parseLine (line = '') {
     } else {
       const [ , denotationChar, id, , label ] = mentionRE.exec(chunks[i])
       content.push({
-        type: `mention-${denotationChar}`,
+        type: `mention-${mentionTypes.find(({ char }) => char === denotationChar).type}`,
         attrs: {
           id,
           label,

@@ -61,7 +61,7 @@ describe('src/components/MessageInput/lib', () => {
                 type: 'paragraph',
                 content: [
                   { type: 'text', text: 'text ' },
-                  { type: 'mention-@', attrs: { id: '111', label: 'Mention User' } },
+                  { type: 'mention-user', attrs: { id: '111', label: 'Mention User' } },
                   { type: 'text', text: ' text' },
                 ],
               },
@@ -78,7 +78,7 @@ describe('src/components/MessageInput/lib', () => {
                 type: 'paragraph',
                 content: [
                   { type: 'text', text: 'text ' },
-                  { type: 'mention-#', attrs: { id: '222', label: 'Mention Channel' } },
+                  { type: 'mention-channel', attrs: { id: '222', label: 'Mention Channel' } },
                   { type: 'text', text: ' text' },
                 ],
               },
@@ -133,7 +133,7 @@ describe('src/components/MessageInput/lib', () => {
                 type: 'paragraph',
                 content: [
                   { type: 'text', text: 'text ' },
-                  { type: 'mention-@', attrs: { id: '111', label: 'Mention User' } },
+                  { type: 'mention-user', attrs: { id: '111', label: 'Mention User' } },
                   { type: 'text', text: ' text' },
                 ],
               },
@@ -151,7 +151,7 @@ describe('src/components/MessageInput/lib', () => {
                 type: 'paragraph',
                 content: [
                   { type: 'text', text: 'text ' },
-                  { type: 'mention-#', attrs: { id: '222', label: 'Mention Channel' } },
+                  { type: 'mention-channel', attrs: { id: '222', label: 'Mention Channel' } },
                   { type: 'text', text: ' text' },
                 ],
               },
