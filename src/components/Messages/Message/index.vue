@@ -60,11 +60,11 @@
       <em class="time selectable">{{ momentHourMinute(message.createdAt) }}</em>
       <em class="day selectable">{{ momentDayMonth(message.createdAt) }}</em>
 
+      <!-- @todo this should be moved away & managed with portal-vue -->
       <actions
-        v-if="!hideActions && !inEditing"
+        v-if="!hideActions && !isEditing"
         class="actions"
         v-bind="$props"
-        @editMessage="inEditing=true"
         @pinMessage="onPinMessage"
         @bookmarkMessage="onBookmarkMessage"
         @deleteMessage="onDeleteMessage"
@@ -77,7 +77,7 @@
     <div
       class="selectable"
       :class="{ from_me: message.userID === currentUser.userID,
-                'message' : !inEditing,
+                'message' : !isEditing,
       }"
     >
       <attachment
@@ -86,19 +86,18 @@
         :attachment="message.attachment"
       />
 
-      <message-input
-        v-if="inEditing && !readOnly"
+      <inline-edit
+        v-if="isEditing"
         ref="channelInput"
-        :hide-file-upload="true"
+        :submit-on-enter="submitOnEnter"
+        :channel="channel"
         :message="message"
-        :suggestion-priorities="suggestionPriorities"
-        @submit="onInputSubmit"
-        @cancel="inEditing=false"
         @deleteMessage="onDeleteMessage"
+        @cancel="$emit('cancelEditing')"
       />
 
       <contents
-        v-if="!inEditing"
+        v-if="!isEditing"
         :id="message.messageID"
         class="message-content"
         :content="message.message"
@@ -135,7 +134,7 @@ import EmbeddedBox from './EmbeddedBox'
 import Footnote from './Footnote'
 import Actions from './Actions'
 import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
-import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
+import InlineEdit from './InlineEdit'
 
 export default {
   components: {
@@ -143,7 +142,7 @@ export default {
     Contents,
     Avatar,
     Reactions,
-    MessageInput,
+    InlineEdit,
     EmbeddedBox,
     Footnote,
     Actions,
@@ -153,6 +152,16 @@ export default {
     message: {
       type: Object,
       required: true,
+    },
+    channel: {
+      type: Object,
+      required: true,
+      default: () => ({}),
+    },
+    edit: {
+      type: String,
+      required: false,
+      default: undefined,
     },
     consecutive: {
       type: Boolean,
@@ -165,6 +174,11 @@ export default {
     suggestionPriorities: {
       type: Object,
       default: () => ({}),
+    },
+    submitOnEnter: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
 
     readOnly: Boolean,
@@ -214,16 +228,12 @@ export default {
       return undefined
     },
 
-    inEditing: {
-      get () {
-        return this.showEditor || this.showEditorInternal
-      },
-      set (value) {
-        this.showEditorInternal = value
-        if (!value) {
-          this.$emit('cancelEditing')
-        }
-      },
+    /**
+     * Helper to determine if given message should be in editing
+     * @returns {Boolean}
+     */
+    isEditing () {
+      return this.message.messageID === this.edit
     },
   },
 

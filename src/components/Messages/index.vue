@@ -9,29 +9,16 @@
       v-for="(msg, index) in messages"
       ref="message"
       :key="msg.messageID"
-      :read-only="readOnly"
+      v-bind="$props"
       :message="msg"
       :consecutive="consecutive && isConsecutive(messages, index)"
-      :current-user="currentUser"
       :is-unread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
       :is-last-read="lastReadMessageID === msg.messageID"
       :is-first="index === 0"
-      :show-editor="showEditor(msg)"
-      :hide-actions="hideActions"
-      :hide-reactions="hideReactions"
       :hide-mark-as-unread="hideMarkAsUnread || index === messages.length - 1 || index === 0"
-      :hide-pinning="hidePinning"
-      :hide-bookmarking="hideBookmarking"
-      :hide-action-go-to-message="hideActionGoToMessage"
-      :hide-action-open-thread="hideActionOpenThread"
-      :hide-actions-menu="hideActionsMenu"
-      :hide-replies="hideReplies"
       :is-last="index === messages.length - 1"
-      :highlight-pinned="highlightPinned"
-      :highlight-bookmarked="highlightBookmarked"
-      :suggestion-priorities="suggestionPriorities"
-      @cancelEditing="$emit('cancelEditing')"
       v-on="$listeners"
+      @cancelEditing="$emit('cancelEditing')"
     />
     <li ref="anchor" />
   </ul>
@@ -57,12 +44,30 @@ export default {
       required: true,
     },
 
+    edit: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+
+    channel: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+
     suggestionPriorities: {
       type: Object,
       default: () => ({}),
     },
 
     readOnly: Boolean,
+
+    submitOnEnter: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
 
     // We can not just watch for updates of messages
     // sometime we need to react only when origin changes (whatever origin is)
@@ -124,16 +129,6 @@ export default {
       // of new messages are added
       lastMessageID: null,
     }
-  },
-
-  computed: {
-    getLastEditable () {
-      return this.editLastMessage && this.getLastMessageByUserID(this.messages, this.currentUser.userID)
-    },
-
-    showEditor () {
-      return ({ messageID }) => this.getLastEditable && this.getLastEditable.messageID === messageID
-    },
   },
 
   watch: {
@@ -224,10 +219,6 @@ export default {
       if (atBottom) {
         this.$emit('scrollBottom', { messageID: getLastID(this.messages) })
       }
-    },
-
-    getLastMessageByUserID: (set, userID) => {
-      return [...set].reverse().find(m => m.userID === userID)
     },
   },
 }
