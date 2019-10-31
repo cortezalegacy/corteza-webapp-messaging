@@ -87,6 +87,14 @@ export default {
       close: '$t(general.label.close)',
     },
   },
+  messageInput: {
+    drawer: {
+      noComponent: 'Extension has no defined Drawer component',
+      mention: {
+        navigation: '{{0}}{{1}} to navigate {{2}} or click to select',
+      },
+    },
+  },
   message: {
     reaction: 'Reaction',
     replyInThread: 'Reply in thread',

@@ -1,4 +1,4 @@
 # Chat Footer Component
 
-Defines chat's footer. Also provides API interactions for creating messages,
-user statuses, ...
+Component represents the bottom of the chat. It provides a message input,
+message & activity related metadata creation, channel activity display, ...

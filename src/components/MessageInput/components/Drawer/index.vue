@@ -1,6 +1,5 @@
 <template>
   <div class="drawer">
-    <!-- This is where main content should go -->
     <component
       :is="getComponent"
       v-if="getComponent"
@@ -12,7 +11,9 @@
       v-else
       class="invalid"
     >
-      <h5>Invalid</h5>
+      <h5>
+        {{ $t('messageInput.drawer.noComponent') }}
+      </h5>
     </div>
   </div>
 </template>

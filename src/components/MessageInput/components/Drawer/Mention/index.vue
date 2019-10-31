@@ -14,7 +14,18 @@
     </ul>
 
     <footer class="nav-info">
-      <p>Use arrow keys to navigate, ...</p>
+      <i18next
+        path="messageInput.drawer.mention.navigation"
+        tag="p"
+      >
+        <font-awesome-icon icon="arrow-up" />
+        <font-awesome-icon icon="arrow-down" />
+        <font-awesome-icon
+          icon="level-up-alt"
+          transform="down-2 rotate-90"
+          class="spaced"
+        />
+      </i18next>
     </footer>
   </div>
 </template>
@@ -65,6 +76,9 @@ export default {
 
   p {
     margin: 0;
+    .spaced {
+      margin-left: 10px;
+    }
   }
 }
 

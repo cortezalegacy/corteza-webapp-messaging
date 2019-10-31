@@ -3,6 +3,10 @@ import { mapGetters } from 'vuex'
 import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
 import { getDraft, contentEmpty } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
 
+/**
+ * This base component should be extended by any components that provide
+ * message creation. It provides base props & helper functions.
+ */
 export default {
   components: {
     MessageInput,
@@ -79,7 +83,6 @@ export default {
      * @returns {Array}
      */
     channelSuggestions () {
-      // @todo remove this slice!
       return this.channels.map(c => {
         return {
           type: 'Channel',
@@ -107,7 +110,6 @@ export default {
      * @returns {Array}
      */
     userSuggestions () {
-      // @todo remove this slice!
       return this.users.map(u => {
         return {
           type: 'User',
