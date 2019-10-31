@@ -9,6 +9,7 @@
       <message-input
         ref="input"
         v-model="draft"
+        class="message-input"
         :channel="channel"
         :focus="focus"
         :submit-on-enter="submitOnEnter"
@@ -20,58 +21,56 @@
         @submit="onSubmit"
         @focus="onFocus"
         v-on="$listeners"
+      />
+
+      <button
+        v-if="!hideUpload"
+        class="upload-button input-button"
+        @mousedown.stop.prevent="onPromptFilePicker"
       >
-        <template slot="sectionLeft">
-          <button
-            v-if="!hideUpload"
-            class="upload-button input-button"
-            @click="onPromptFilePicker"
-          >
-            <span>+</span>
-          </button>
-        </template>
+        <span>+</span>
+      </button>
 
-        <template slot="sectionRight">
-          <!-- Add media buttons -->
-          <button
-            v-if="!hideEmojiButton"
-            class="emoji-button input-button"
-            @click.prevent="onEmojiClick"
-          >
-            <span class="icon-smile" />
-          </button>
+      <!-- Add media buttons -->
+      <button
+        v-if="!hideEmojiButton"
+        class="emoji-button input-button"
+        @mousedown.stop.prevent="onEmojiClick"
+      >
+        <span class="icon-smile" />
+      </button>
 
-          <!-- Media source s for the hybrid app -->
-          <button
-            v-if="showCameraSource"
-            class="camera-button input-button"
-            @click.stop="onPromptCamera"
-          >
-            <font-awesome-icon icon="camera" />
-          </button>
-          <button
-            v-if="showGalerySource"
-            class="galery-button input-button"
-            @click.stop="onPromptGalery"
-          >
-            <font-awesome-icon icon="images" />
-          </button>
+      <!-- Media source s for the hybrid app -->
+      <button
+        v-if="showCameraSource"
+        class="camera-button input-button"
+        @mousedown.stop.prevent="onPromptCamera"
+      >
+        <font-awesome-icon icon="camera" />
+      </button>
+      <button
+        v-if="showGalerySource"
+        class="galery-button input-button"
+        @mousedown.stop.prevent="onPromptGalery"
+      >
+        <font-awesome-icon icon="images" />
+      </button>
 
-          <button
-            v-if="!submitOnEnter"
-            class="input-button send-button"
-            :disabled="submitDisabled"
-            @click="onSubmit"
-            @mousedown="eventSink"
-          >
-            <span class="icon-hsend" />
-          </button>
-        </template>
-      </message-input>
+      <button
+        v-if="!submitOnEnter"
+        class="input-button send-button"
+        :disabled="submitDisabled"
+        @mousedown.stop.prevent="onSubmit"
+      >
+        <span class="icon-hsend" />
+      </button>
+    </div>
 
-      <div class="meta-bar container">
+    <div class="group borderless">
+      <div class="meta-bar">
         <activity
           v-if="!replyTo"
+          class="activity"
           :users="getChannelActivity"
           :activity="$t('message.typing')"
         />
@@ -266,5 +265,17 @@ export default {
 
 <style lang="scss" scoped>
 @import 'corteza-webapp-messaging/src/components/Chat/Footer/common.scss';
+
+.container .meta-bar {
+  min-height: 25px;
+  width: 100%;
+  display: inline-block;
+  border: 1px solid transparent;
+
+  .activity {
+    position: absolute;
+    margin-top: 2px;
+  }
+}
 
 </style>

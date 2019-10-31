@@ -1,42 +1,22 @@
 <template>
-  <div class="container">
-    <div class="group message-input">
-      <!-- Left sction of the input -- file prompt, ... -->
-      <div
-        v-if="$slots.sectionLeft"
-        class="section-left"
-      >
-        <slot name="sectionLeft" />
-      </div>
+  <div class="message-input">
+    <!-- Drawer for non-inline user-extension interaction -->
+    <drawer
+      v-if="drawerFor"
 
-      <!-- Main section -- editor, drawer, ... -->
-      <div class="main">
-        <!-- Drawer for non-inline user-extension interaction -->
-        <drawer
-          v-if="drawerFor"
-          class="extension-drawer"
-          :plugin="drawerFor"
-          v-bind="drawerProps || {}"
-          @suggestionSelect="onSuggestSelect"
-        />
+      class="extension-drawer"
+      :plugin="drawerFor"
+      v-bind="drawerProps || {}"
+      @suggestionSelect="onSuggestSelect"
+    />
 
-        <!-- The editor -->
-        <editor-content
-          v-if="editor"
-          ref="editor"
-          class="editor"
-          :editor="editor"
-        />
-      </div>
-
-      <!-- Right section of the input -- send, mobile buttons, ... -->
-      <div
-        v-if="$slots.sectionRight"
-        class="section-right"
-      >
-        <slot name="sectionRight" />
-      </div>
-    </div>
+    <!-- The editor -->
+    <editor-content
+      v-if="editor"
+      ref="editor"
+      class="editor"
+      :editor="editor"
+    />
   </div>
 </template>
 
@@ -468,69 +448,72 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
+.message-input {
+  width: 100%;
+  position: relative;
 
-$inputWidth: 50px;
-$mobileInputWidth: 35px;
-
-/deep/ .ProseMirror {
-  min-height: 100px;
-
-  // Disabled editor preserves pointer events - it seams like a bug
-  &[contenteditable="false"] {
-    pointer-events: none;
-  }
-}
-
-.container {
-  padding: 4px 15px 0;
-  height: 100%;
-
-  .group {
+  .extension-drawer {
+    position: absolute;
     width: 100%;
-    position: relative;
-    margin-bottom: 2px;
-    border: 1px solid $secondary;
+    transform: translateY(-100%);
   }
 
-  .message-input {
-    display: flex;
+  // @fixme This is a bandage solution; do more research for a nicer grammarly integration.
+  /deep/ grammarly-extension {
+    margin-top: 3px;
+  }
 
-    .main {
-      flex-grow: 1;
-      position: relative;
+  /deep/ .ProseMirror {
+    user-select: text;
+    max-height: 30vh;
+    padding: 12px 15px;
+    padding-right: 0;
+    line-height: 1.42;
+    height: 100%;
+    outline: none;
+    overflow-y: auto;
+    tab-size: 4;
 
-      .extension-drawer {
-        position: absolute;
-        width: 100%;
-        transform: translateY(-100%);
-      }
+    // Disabled editor preserves pointer events - it seams like a bug
+    &[contenteditable="false"] {
+      pointer-events: none;
+    }
 
-      .editor /deep/ {
-        p {
-          margin: 0;
-          padding: 0;
-        }
+    p {
+      margin: 0;
+      padding: 0;
+    }
 
-        // This is required by the placeholder plugin
-        .placeholder:first-child::before {
-          content: attr(data-empty-text);
-          float: left;
-          color: rgba($black, 0.45);
-          pointer-events: none;
-          height: 0;
-          font-style: italic;
-        }
+    // This is required by the placeholder plugin
+    .placeholder:first-child::before {
+      color: rgba($black, 0.6);
+      content: attr(data-empty-text);
+      font-style: italic;
+      left: 15px;
+      pointer-events: none;
+      position: absolute;
+      right: 15px;
+    }
 
-        .mention-suggestion {
-          opacity: 0.7;
-        }
-        .mention {
-          border: 1px solid $primary;
-          border-radius: 4px;
-          padding: 1px 2px;
-          background-color: rgba($primary, 0.05);
-        }
+    .mention-suggestion {
+      opacity: 0.7;
+    }
+    .mention {
+      border-radius: 4px;
+      padding: 3px 2px;
+      border: 1px solid rgba($primary, 0.3);
+      background-color: rgba($primary, 0.15);
+    }
+  }
+
+  @media (max-width: $wideminwidth - 1px) {
+    /deep/ .ProseMirror {
+      padding: 7px 3px 5px 5px;
+      line-height: 18px;
+
+      .placeholder:first-child::before {
+        left: 5px;
+        right: 5px;
       }
     }
   }

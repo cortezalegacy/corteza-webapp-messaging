@@ -1,15 +1,136 @@
+@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
+
+$inputWidth: 50px;
+$mobileInputWidth: 35px;
+
 .container {
   padding: 4px 15px 0;
 
   .group {
+    float: left;
     width: 100%;
     position: relative;
     margin-bottom: 2px;
 
-    .input-button {
-      &.send-button:disabled {
+    &:not(.borderless) {
+      border: 1px solid $secondary;
+    }
+
+    .message-input {
+      width: calc(100% - #{$inputWidth});
+      float:right;
+      padding-right: 48px;
+
+      border: 1px solid transparent;
+      background-color:transparent;
+
+      &.hybrid {
+        width: 100%;
+      }
+
+      ~ .send-button:disabled {
         pointer-events: none;
+      }
+
+      &:focus-within {
+        outline: none;
+        border-color: $success;
+
+        ~ .upload-button {
+          background-color:rgba($success,0.1);
+          border-color: $success;
+          color: $success;
+        }
+        ~ .send-button:not(:disabled){
+          span{
+            color: $success;
+          }
+        }
       }
     }
   }
+
+  .input-button {
+    border: 1px solid transparent;
+    background-color:transparent;
+    width: $inputWidth;
+    position: absolute;
+    height: 100%;
+    text-align: center;
+    vertical-align: middle;
+    color: $secondary;
+    cursor: pointer;
+    font-size:28px;
+    span{
+      margin-top: -3px;
+      display: block;
+    }
+    &:focus{
+      outline: none;
+    }
+  }
+
+  .upload-button {
+    border-right: 1px solid $secondary;
+  }
+  .emoji-button, .camera-button, .galery-button {
+    right: 0;
+    font-size: 20px;
+
+    &:hover span{
+      color: $success;
+    }
+  }
+}
+
+@media (max-width: $wideminwidth) {
+  .container {
+    padding: 0;
+
+    .group {
+      margin-bottom: 0;
+      border: none;
+      &:not(.borderless) {
+        border-top: 1px solid $secondary;
+      }
+      border-radius: 0;
+
+      .message-input {
+        width: calc(100% - #{$mobileInputWidth});
+        // border: none;
+        border-top: 1px solid transparent;
+        padding-right: 60px;
+
+        &.hybrid {
+          width: 100%;
+          padding-right: 90px;
+        }
+      }
+
+      .input-button {
+        width: $mobileInputWidth;
+
+        &.send-button{
+          font-size: 20px;
+          right: 0;
+
+          span {
+            pointer-events: none;
+          }
+        }
+
+        &.emoji-button, &.galery-button {
+          right: 30px;
+        }
+
+        &.camera-button {
+          right: 60px;
+        }
+      }
+    }
+  }
+}
+
+.float-right {
+  float:right;
 }

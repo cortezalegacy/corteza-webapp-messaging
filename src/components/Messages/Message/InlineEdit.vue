@@ -1,39 +1,38 @@
 <template>
-  <div class="editing">
-    <message-input
-      ref="input"
-      v-model="draft"
-      :channel="channel"
-      :focus="focus"
-      :submit-on-enter="submitOnEnter"
-      :user-suggestions="userSuggestions"
-      :channel-suggestions="channelSuggestions"
-      :current-user="currentUser"
-      :source="channelID"
-      @submit="onSubmit"
-      @focus="onFocus"
-      v-on="$listeners"
-    >
-      <template slot="sectionRight">
-        <button
-          v-if="!hideEmojiButton"
-          class="emoji-button input-button"
-          @click.stop="onEmojiClick"
-        >
-          <span class="icon-smile" />
-        </button>
+  <div class="container editing">
+    <div class="group">
+      <message-input
+        ref="input"
+        v-model="draft"
+        :channel="channel"
+        :focus="focus"
+        :submit-on-enter="submitOnEnter"
+        :user-suggestions="userSuggestions"
+        :channel-suggestions="channelSuggestions"
+        :current-user="currentUser"
+        :source="channelID"
+        @submit="onSubmit"
+        @focus="onFocus"
+        v-on="$listeners"
+      />
+      <button
+        v-if="!hideEmojiButton"
+        class="emoji-button input-button"
+        @click.stop="onEmojiClick"
+      >
+        <span class="icon-smile" />
+      </button>
 
-        <button
-          v-if="!submitOnEnter"
-          class="input-button send-button"
-          :disabled="submitDisabled"
-          @click="onSubmit"
-          @mousedown="eventSink"
-        >
-          <span class="icon-hsend" />
-        </button>
-      </template>
-    </message-input>
+      <button
+        v-if="!submitOnEnter"
+        class="input-button send-button"
+        :disabled="submitDisabled"
+        @click="onSubmit"
+        @mousedown="eventSink"
+      >
+        <span class="icon-hsend" />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -93,5 +92,26 @@ export default {
 </script>
 <style lang="scss" scoped>
 @import 'corteza-webapp-messaging/src/components/Chat/Footer/common.scss';
+
+.container.editing {
+  display: inline-block;
+  width: 100%;
+  padding: 0 10px 0 0;
+  overflow: visible;
+
+  .message-input {
+    width: 100%;
+  }
+
+  .group {
+    background-color:white;
+  }
+
+  .activity {
+    border: none;
+    display: none;
+  }
+
+}
 
 </style>

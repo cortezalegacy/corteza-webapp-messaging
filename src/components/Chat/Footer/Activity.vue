@@ -55,9 +55,3 @@ export default {
   },
 }
 </script>
-<style lang="scss" scoped>
-  .activity {
-    min-height: 30px;
-    margin-top: 2px;
-  }
-</style>
