@@ -29,48 +29,46 @@
         :scroll-to-message="messageID"
         :consecutive="true"
         :last-read-message-i-d="unread.lastMessageID"
-        :edit-last-message="editLastMessage"
+        :edit="editMessage"
+        :channel="channel"
         :read-only="!channel.canSendMessages"
         :suggestion-priorities="getSp"
         @markAsUnread="onMarkAsUnread"
-        @cancelEditing="editLastMessage=false"
+        @cancelEditing="onCancelEditing"
         @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
+        @editMessage="onEditMessage"
         v-on="$listeners"
       />
     </div>
-    <div class="footer">
-      <message-input
-        :channel="channel"
-        :readonly="!isMember"
-        :focus="uiFocusMessageInput()"
-        :show-mark-as-unread-button="(unread.count || 0) + (unread.threadCount || 0) > 0"
-        :draft.sync="draft"
-        :suggestion-priorities="getSp"
-        @markAsRead="onMarkAsRead"
-        @promptFilePicker="onPromptFilePicker"
-        @editLastMessage="editLastMessage=true"
-      />
-    </div>
+
+    <chat-footer
+      :channel="channel"
+      :has-unread="hasUnread"
+      :submit-on-enter="submitOnEnter"
+      :suggestion-priorities="getSp"
+      @markAsRead="onMarkAsRead"
+      @promptFilePicker="onPromptFilePicker"
+      @editLastMessage="onEditLastMessage"
+    />
   </div>
 </template>
 <script>
 import { mapGetters, mapActions, mapMutations } from 'vuex'
 import ChannelHeader from 'corteza-webapp-messaging/src/components/Channel/Header'
-import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
-import Upload from 'corteza-webapp-messaging/src/components/MessageInput/Upload'
+import Upload from 'corteza-webapp-messaging/src/components/Upload'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
 import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
 import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
-import Delta from 'quill-delta'
+import ChatFooter from 'corteza-webapp-messaging/src/components/Chat/Footer'
 
 export default {
   components: {
     Messages,
-    MessageInput,
     Upload,
     ChannelHeader,
+    ChatFooter,
   },
 
   mixins: [
@@ -99,9 +97,8 @@ export default {
       // Assists with on-scroll loading
       previousFetchFirstMessageID: null,
 
-      // Controls if last message in the list
-      // should be have editing enabled or not
-      editLastMessage: false,
+      // Controlls what message should be edited
+      editMessage: undefined,
     }
   },
 
@@ -114,29 +111,31 @@ export default {
       findWhereMember: 'channels/findWhereMember',
     }),
 
+    /**
+     * Helper to determine if given channel has unread items.
+     * @returns {Boolean}
+     */
+    hasUnread () {
+      return (this.unread.count || 0) + (this.unread.threadCount || 0) > 0
+    },
+
+    /**
+     * Helper to determine if enter should submit. If not, a send button will be visible
+     * @returns {Boolean}
+     */
+    submitOnEnter () {
+      return !this.uiEnableSubmitButton()
+    },
+
+    /**
+     * Helper to determine suggestion priorities for each mentionable type.
+     * @returns {Object}
+     */
     getSp () {
       return {
         User: new Set((this.channel || {}).members || []),
         Channel: new Set(this.findWhereMember(this.$auth.user.userID, true).map(({ channelID }) => channelID)),
       }
-    },
-
-    draft: {
-      get () {
-        const d = this.$drafts.get({ channelID: this.channelID })
-        if (d) {
-          return new Delta(d)
-        }
-        return d
-      },
-
-      set ({ dest, value }) {
-        if (dest.remove) {
-          this.$drafts.remove(dest)
-        } else {
-          this.$drafts.set(dest, value)
-        }
-      },
     },
 
     messages () {
@@ -178,6 +177,28 @@ export default {
   },
 
   methods: {
+    /**
+     * Helper to cancel message editing
+     */
+    onCancelEditing () {
+      this.editMessage = undefined
+    },
+
+    /**
+     * Helper to set a given message as beeing edited
+     * @param {Object} message Message to edit
+     */
+    onEditMessage ({ message = {} }) {
+      this.editMessage = message.messageID
+    },
+
+    /**
+     * Helper to set the last message as beeing edited
+     */
+    onEditLastMessage () {
+      this.onEditMessage({ message: this.messages[this.messages.length - 1] })
+    },
+
     ...mapMutations({
       // @todo remove direct access to mutations!
       updateHistorySet: 'history/updateSet',
