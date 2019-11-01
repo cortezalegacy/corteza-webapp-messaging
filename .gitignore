@@ -15,3 +15,6 @@ dist
 
 # Config files
 public/config.js
+
+.nyc_output
+coverage

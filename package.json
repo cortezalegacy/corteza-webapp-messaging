@@ -12,6 +12,7 @@
     "build": "vue-cli-service build --mode production",
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
+    "test:unit:cc": "nyc vue-cli-service test:unit",
     "cdeps": "yarn upgrade corteza-webapp-common"
   },
   "gitHooks": {
@@ -25,6 +26,7 @@
     "@panter/vue-i18next": "^0.15.0",
     "alloyfinger": "^0.1.16",
     "animejs": "3.1.0",
+    "babel-plugin-istanbul": "^5.2.0",
     "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "2.6.6",
@@ -71,5 +73,25 @@
     "node-sass": "4.12.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17"
+  },
+
+  "nyc": {
+    "all": true,
+    "reporter": [
+      "lcov",
+      "text"
+    ],
+    "include": [
+      "src/**/*.{js, vue}"
+    ],
+    "exclude": [
+      "**/*.spec.js"
+    ],
+    "check-coverage": true,
+    "per-file": true,
+    "branches": 0,
+    "lines": 0,
+    "functions": 0,
+    "statements": 0
   }
 }
