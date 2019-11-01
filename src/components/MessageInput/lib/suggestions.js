@@ -46,11 +46,11 @@ export const fuzzyOptions = {
  * A helper function to determine a subset of items, that match the specified criteria.
  * @param {Array} items A set of available items
  * @param {String} query Query string
- * @param {Array|undefined} priorities A set of items to prioritize. Omit if not needed
+ * @param {Set|undefined} priorities A set of items to prioritize. Omit if not needed
  * @param {Object|undefined} options Options to overwrite default fuzzy options
  * @returns {Array} A set of items that match the given criteria
  */
-export function getMatches ({ items, query, priorities, options = {} }) {
+export function getMatches ({ items, query = '', priorities, options = {} }) {
   query = toNFD(query)
 
   // Prepare a set of items that match the given query

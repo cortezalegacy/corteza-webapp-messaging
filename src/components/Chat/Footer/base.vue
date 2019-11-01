@@ -49,6 +49,17 @@ export default {
       default: false,
     },
 
+    showCameraSource: {
+      type: Boolean,
+      required: false,
+      default: !!process.env.CORDOVA_PLATFORM,
+    },
+    showGallerySource: {
+      type: Boolean,
+      required: false,
+      default: !!process.env.CORDOVA_PLATFORM,
+    },
+
     suggestionPriorities: {
       type: Object,
       required: false,
@@ -57,12 +68,8 @@ export default {
   },
 
   data () {
-    const isCordova = !!process.env.CORDOVA_PLATFORM
-
     return {
       draft: null,
-      showCameraSource: isCordova,
-      showGalerySource: isCordova,
     }
   },
 
@@ -162,7 +169,7 @@ export default {
      * Helper to prompt attachment selection from galery.
      * Currently only used by hybrid app.
      */
-    onPromptGalery () {
+    onPromptGallery () {
       this.onPromptFilePicker(window.Camera.PictureSourceType.PHOTOLIBRARY)
     },
 
@@ -211,14 +218,6 @@ export default {
      */
     onFocus () {
       this.$bus.$emit('ui.closeEmojiPicker')
-    },
-
-    /**
-     * Event sik. Throw any unwanted events in here
-     * @param {Event} e
-     */
-    eventSink (e) {
-      e.preventDefault()
     },
   },
 }

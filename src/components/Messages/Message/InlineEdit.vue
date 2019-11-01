@@ -18,7 +18,7 @@
       <button
         v-if="!hideEmojiButton"
         class="emoji-button input-button"
-        @click.stop="onEmojiClick"
+        @mousedown.stop.prevent="onEmojiClick"
       >
         <span class="icon-smile" />
       </button>
@@ -27,8 +27,7 @@
         v-if="!submitOnEnter"
         class="input-button send-button"
         :disabled="submitDisabled"
-        @click="onSubmit"
-        @mousedown="eventSink"
+        @mousedown.stop.prevent="onSubmit"
       >
         <span class="icon-hsend" />
       </button>
@@ -74,7 +73,6 @@ export default {
      */
     onSubmit () {
       const message = stringifyDocument(this.draft)
-      console.log('x', { message })
       const stdResponse = (m) => {
         this.draft = null
         this.$emit('cancel')

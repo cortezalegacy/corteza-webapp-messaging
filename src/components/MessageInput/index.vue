@@ -66,8 +66,6 @@ export default {
       required: false,
       default: undefined,
     },
-
-    // Needed for the hybrid app
     submitOnEnter: {
       type: Boolean,
       required: false,
@@ -128,14 +126,13 @@ export default {
   watch: {
     disabled: {
       // Toggle enabled/disabled
-      handler: function (editable) {
+      handler: function (disabled) {
         if (this.editor) {
           this.editor.setOptions({
-            editable,
+            editable: !disabled,
           })
         }
       },
-      immediate: true,
     },
 
     getPlaceholder: {
@@ -190,7 +187,7 @@ export default {
       this.editor = new Editor({
         // General options
         autoFocus: !this.noFocus,
-        editable: this.editable,
+        editable: !this.disabled,
         content: this.value,
 
         // Extensions
@@ -247,7 +244,10 @@ export default {
           }),
         ],
 
-        // Listeners
+        /**
+         * Handle on update events. Process current document & update data model
+         * @param {Function} getJSON Converts current document to JSON
+         */
         onUpdate: ({ getJSON }) => {
           this.emittedContent = true
 
@@ -259,9 +259,16 @@ export default {
           this.$emit('input', c)
         },
 
+        /**
+         * Handle on focus. Emit
+         */
         onFocus: () => {
           this.$emit('focus')
         },
+
+        /**
+         * Handle on blur. Emit
+         */
         onBlur: () => {
           this.$emit('blur')
         },
@@ -275,6 +282,15 @@ export default {
      */
     insert ({ content }) {
       insertText(content)(this.editor.view.state, this.editor.view.dispatch, this.editor.view)
+    },
+
+    /**
+     * Helper for setting content into tiptap editor -- overwrites current content.
+     * When adding new/more complex content, this should be extended
+     * @param {String} content Content to insert
+     */
+    set ({ content }) {
+      this.editor.setContent(content)
     },
 
     /**
@@ -302,13 +318,15 @@ export default {
       this.editor.setSelection(0, this.editor.state.doc.textContent.length + 1)
     },
 
-    onEnter ({ doc }) {
-      if (!this.submitOnEnter) {
-        return
-      }
-
+    /**
+     * On enter, emit submit. Parent should handle if content should actually be submitted
+     * @param {Document} doc Document object
+     * @returns {Boolean} If editor should continue with further actions
+     */
+    onEnter () {
       this.$emit('submit')
-      return true
+
+      return this.submitOnEnter
     },
 
     onArrowUp ({ doc }) {
@@ -330,7 +348,6 @@ export default {
      * @param {Function} command Callback to insert the mention
      */
     onSuggestionsStart ({ items: suggestions, query, range, command }) {
-      this.drawerFor = 'Mention'
       // Use $set to invoke reactivity, required by drawer component.
       this.$set(this, 'drawerProps', {
         suggestions,
@@ -340,6 +357,8 @@ export default {
         // Current suggestion selection
         selection: 0,
       })
+      // Should be in bottom, since test utils don't make batches
+      this.drawerFor = 'Mention'
     },
 
     /**

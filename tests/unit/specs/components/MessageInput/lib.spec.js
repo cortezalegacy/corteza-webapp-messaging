@@ -2,13 +2,31 @@
 /* ESLint didn't like some expects */
 
 import { expect } from 'chai'
+import fuzzysort from 'fuzzysort'
 import {
+  contentEmpty,
   getDraft,
   stringifyDocument,
   parseDocument,
+  getMatches,
 } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
 
 describe('src/components/MessageInput/lib', () => {
+  describe('contentEmpty', () => {
+    const tests = [
+      { name: 'undefined should be empty', document: undefined, expected: true },
+      { name: 'null should be empty', document: null, expected: true },
+      { name: 'empty object should be empty', document: {}, expected: true },
+      { name: 'empty content should be empty', document: { content: [] }, expected: true },
+      { name: 'valid and not empty document should not be empty', document: { content: [{ content: 'hi!' }] }, expected: false },
+    ]
+
+    for (const t of tests) {
+      const vv = contentEmpty(t.document)
+      expect(vv, t.namee).to.eq(t.expected)
+    }
+  })
+
   describe('getDraft', () => {
     it('determine draft object', () => {
       const tests = [
@@ -85,6 +103,12 @@ describe('src/components/MessageInput/lib', () => {
             ]
           },
           expected: `text <#222 Mention Channel> text`,
+        },
+
+        {
+          name: 'null values',
+          doc: null,
+          expected: undefined,
         },
       ]
 
@@ -163,6 +187,52 @@ describe('src/components/MessageInput/lib', () => {
       for (const t of tests) {
         const ss = parseDocument(t.message)
         expect(ss, t.name).to.deep.eq(t.expected)
+      }
+    })
+  })
+
+  describe('suggestion matching - getMatches', () => {
+    it('convert query to NFD', () => {
+      const items = [
+        { name: fuzzysort.prepare('Zccs'), type: 'User', id: '0001' },
+      ]
+      const ss = getMatches({ items, query: 'Žćčš' })
+      expect(ss).to.have.length(1)
+    })
+
+    it('no fuzyness if query is empty', () => {
+      const items = [
+        { name: fuzzysort.prepare('a'), type: 'User', id: '0001' },
+        { name: fuzzysort.prepare('b'), type: 'User', id: '0002' },
+        { name: fuzzysort.prepare('c'), type: 'User', id: '0003' },
+      ]
+      const ss = getMatches({ items })
+      expect(ss).to.have.length(3)
+    })
+
+    it('determine final list based on priorities & scores', () => {
+      const items = [
+        { name: fuzzysort.prepare('testko'), email: fuzzysort.prepare('testko'), type: 'User', id: '0001' },
+        { name: fuzzysort.prepare('testko1'), email: fuzzysort.prepare('testko1'), type: 'User', id: '0002' },
+        { name: fuzzysort.prepare('testko2'), email: fuzzysort.prepare('testko2'), type: 'User', id: '0003' },
+        { name: fuzzysort.prepare('notin'), email: fuzzysort.prepare('notin'), type: 'User', id: '0004' },
+      ]
+      const priorities = new Set([
+        '0001',
+      ])
+
+      const tests = [
+        { name: 'match not good enough for non-prioritized items', query: 'te', expected: { length: 1, id: '0001' } },
+        { name: 'include good matches', query: 'testk', expected: { length: 3 } },
+        { name: 'no priority matches, continue with regular items', query: 'not', expected: { length: 1, id: '0004' } },
+      ]
+
+      for (const t of tests) {
+        const ss = getMatches({ items, priorities, query: t.query })
+        expect(ss, t.name).to.have.length(t.expected.length)
+        if (t.expected.id) {
+          expect(ss[0].id, t.name).to.eq(t.expected.id)
+        }
       }
     })
   })

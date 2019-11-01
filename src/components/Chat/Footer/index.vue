@@ -49,9 +49,9 @@
         <font-awesome-icon icon="camera" />
       </button>
       <button
-        v-if="showGalerySource"
-        class="galery-button input-button"
-        @mousedown.stop.prevent="onPromptGalery"
+        v-if="showGallerySource"
+        class="gallery-button input-button"
+        @mousedown.stop.prevent="onPromptGallery"
       >
         <font-awesome-icon icon="images" />
       </button>
@@ -159,24 +159,25 @@ export default {
         this.draft = this.loadDraft(nID, this.replyToID)
       },
       immediate: true,
-      deep: true,
     },
 
     replyToID: {
       handler: function (nID, oID) {
+        if (!nID) {
+          return
+        }
+
         // On thread change, reload draft
         if (oID) {
           this.flushDraft(this.channelID, oID)
         }
         this.draft = this.loadDraft(this.channelID, nID)
       },
-      immediate: true,
-      deep: true,
     },
 
     draft: {
       handler: function (d) {
-        this.sendActivity(!d)
+        this.sendActivityDebounced(!d)
       },
       deep: true,
     },
@@ -235,10 +236,15 @@ export default {
     },
 
     /**
+     * Wrapper to debounce activity sending. Used for testing.
+     */
+    sendActivityDebounced: throttle(function (...e) { this.sendActivity(...e) }, 2000),
+
+    /**
      * Handler to set current user's activity; eg.: typing.
      * @param {Boolean} empty If current draft's value is empty
      */
-    sendActivity: throttle(function (empty) {
+    sendActivity (empty) {
       let params
       if (empty) {
         return
@@ -251,7 +257,7 @@ export default {
       if (params) {
         this.$MessagingAPI.activitySend(params)
       }
-    }, 2000),
+    },
 
     /**
      * Mark entire channel as read

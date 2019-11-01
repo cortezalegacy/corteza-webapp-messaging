@@ -42,7 +42,6 @@ export default {
       return components[this.plugin]
     },
   },
-
 }
 </script>
 
