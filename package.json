@@ -26,7 +26,6 @@
     "@panter/vue-i18next": "^0.15.0",
     "alloyfinger": "^0.1.16",
     "animejs": "3.1.0",
-    "babel-plugin-istanbul": "^5.2.0",
     "corteza-webapp-common": "cortezaproject/corteza-webapp-common.git#master",
     "emoji-js": "^3.4.1",
     "emoji-mart-vue": "2.6.6",
@@ -65,16 +64,17 @@
     "@vue/cli-plugin-unit-mocha": "3.10.0",
     "@vue/cli-service": "3.10.0",
     "@vue/eslint-config-standard": "^4.0.0",
+    "babel-plugin-istanbul": "^5.2.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "5.2.3",
     "babel-eslint": "10.0.2",
     "@vue/test-utils": "^1.0.0-beta.20",
     "chai": "^4.1.2",
     "node-sass": "4.12.0",
+    "nyc": "^14.1.1",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17"
   },
-
   "nyc": {
     "all": true,
     "reporter": [
@@ -82,10 +82,15 @@
       "text"
     ],
     "include": [
-      "src/**/*.{js, vue}"
+      "src/**/*.{js,vue}"
     ],
     "exclude": [
+      "**/index.js",
       "**/*.spec.js"
+    ],
+    "extension": [
+      ".js",
+      ".vue"
     ],
     "check-coverage": true,
     "per-file": true,
