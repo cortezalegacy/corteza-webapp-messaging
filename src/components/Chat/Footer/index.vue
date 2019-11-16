@@ -1,5 +1,11 @@
 <template>
+  <observer-footer
+    v-if="readonly"
+    :channel="channel"
+  />
+
   <div
+    v-else
     class="container"
     :class="{
       inThread: !!replyTo,
@@ -90,6 +96,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import Activity from './Activity'
+import ObserverFooter from './ObserverFooter'
 import { stringifyDocument } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
 import { throttle } from 'lodash'
 import base from './base'
@@ -104,6 +111,7 @@ const activityKinds = {
 export default {
   components: {
     Activity,
+    ObserverFooter,
   },
 
   extends: base,
@@ -118,6 +126,11 @@ export default {
     hasUnread: {
       type: Boolean,
       required: false,
+      default: false,
+    },
+
+    readonly: {
+      type: Boolean,
       default: false,
     },
   },

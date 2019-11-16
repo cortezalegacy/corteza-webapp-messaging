@@ -1,6 +1,9 @@
 <template>
   <footer>
-    <h3>{{ $t('channel.observing', { label: getLabel(channel) }) }}</h3>
+    <h3>
+      {{ $t('channel.observing', { label: getLabel(channel) }) }}
+    </h3>
+
     <button
       v-if="channel.canJoin"
       class="btn btn-green"
@@ -11,6 +14,10 @@
   </footer>
 </template>
 <script>
+
+/**
+ * Component defines a footer that should be shown to non-members (observers).
+ */
 export default {
   props: {
     channel: {
@@ -20,8 +27,14 @@ export default {
   },
 
   methods: {
+    /**
+     * Handles channel joining.
+     */
     onJoin () {
-      this.$MessagingAPI.channelJoin({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
+      this.$MessagingAPI.channelJoin({
+        channelID: this.channel.channelID,
+        userID: this.$auth.user.userID,
+      })
     },
   },
 }

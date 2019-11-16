@@ -47,6 +47,7 @@
       :has-unread="hasUnread"
       :submit-on-enter="submitOnEnter"
       :suggestion-priorities="getSp"
+      :readonly="!isMember"
       @markAsRead="onMarkAsRead"
       @promptFilePicker="onPromptFilePicker"
       @editLastMessage="onEditLastMessage"
