@@ -470,6 +470,7 @@ export default {
 .message-input {
   width: 100%;
   position: relative;
+  font-family: Helvetica, Arial, sans-serif;
 
   .extension-drawer {
     position: absolute;
