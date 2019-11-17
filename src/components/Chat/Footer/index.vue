@@ -11,11 +11,11 @@
       inThread: !!replyTo,
     }"
   >
-    <div class="group">
+    <div class="group float-left">
       <message-input
         ref="input"
         v-model="draft"
-        class="message-input"
+        class="message-input float-right"
         :channel="channel"
         :focus="focus"
         :submit-on-enter="submitOnEnter"
@@ -72,7 +72,7 @@
       </button>
     </div>
 
-    <div class="group borderless">
+    <div class="group borderless float-left">
       <div class="meta-bar">
         <activity
           v-if="!replyTo"

@@ -7,7 +7,7 @@
     @click="onClick"
   >
     <span
-      class="user group"
+      class="user group float-left"
       :class="{
         'full-moon': suggestion.online,
         'new-moon': !suggestion.online,

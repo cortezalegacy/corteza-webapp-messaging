@@ -7,7 +7,6 @@ $mobileInputWidth: 35px;
   padding: 4px 15px 0;
 
   .group {
-    float: left;
     width: 100%;
     position: relative;
     margin-bottom: 2px;
@@ -18,7 +17,6 @@ $mobileInputWidth: 35px;
 
     .message-input {
       width: calc(100% - #{$inputWidth});
-      float:right;
       padding-right: 48px;
 
       border: 1px solid transparent;
@@ -132,5 +130,8 @@ $mobileInputWidth: 35px;
 }
 
 .float-right {
-  float:right;
+  float: right;
+}
+.float-left {
+  float: left;
 }

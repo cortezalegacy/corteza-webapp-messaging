@@ -1,6 +1,6 @@
 <template>
   <div class="container editing">
-    <div class="group">
+    <div class="group float-left">
       <message-input
         ref="input"
         v-model="draft"
