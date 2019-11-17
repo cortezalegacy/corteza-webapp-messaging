@@ -324,7 +324,7 @@ export default {
      * @returns {Boolean} If editor should continue with further actions
      */
     onEnter () {
-      this.$emit('submit')
+      this.$emit('submit', this.submitOnEnter)
 
       return this.submitOnEnter
     },

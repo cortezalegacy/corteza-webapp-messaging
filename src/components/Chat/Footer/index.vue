@@ -211,8 +211,9 @@ export default {
      *  - if it's a command: execute the command
      *  - else: create a message
      */
-    onSubmit () {
-      if (this.submitDisabled) {
+    onSubmit (submit) {
+      // explicit check for false since undefined can happen
+      if (this.submitDisabled || submit === false) {
         return
       }
 

@@ -71,7 +71,12 @@ export default {
      *  - if content is empty: prompt message delete
      *  - else: edit the given message
      */
-    onSubmit () {
+    onSubmit (submit) {
+      // explicit check for false since undefined can happen
+      if (submit === false) {
+        return
+      }
+
       const message = stringifyDocument(this.draft)
       const stdResponse = (m) => {
         this.draft = null
