@@ -471,6 +471,7 @@ export default {
   width: 100%;
   position: relative;
   font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
 
   .extension-drawer {
     position: absolute;
