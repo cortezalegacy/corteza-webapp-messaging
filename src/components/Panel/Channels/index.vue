@@ -74,7 +74,7 @@
 
       <!-- Temporary -->
       <router-link
-        v-if="isCordovaPlatform"
+        v-if="$store.getters['ui/isCordovaPlatform']"
         :to="{ name: 'auth:logout' }"
       >
         Log out

@@ -163,7 +163,7 @@ export default {
     // },
 
     openFilePicker ({ sourceType, opts = {} } = {}) {
-      if (sourceType !== undefined && this.isCordovaPlatform) {
+      if (sourceType !== undefined && this.$store.getters['ui/isCordovaPlatform']) {
         const options = {
           quality: 100,
           destinationType: window.Camera.DestinationType.FILE_URI,

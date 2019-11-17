@@ -29,6 +29,7 @@
         :scroll-to-message="messageID"
         :consecutive="true"
         :last-read-message-i-d="unread.lastMessageID"
+        :submit-on-enter="submitOnEnter"
         :edit="editMessage"
         :channel="channel"
         :read-only="!channel.canSendMessages"
@@ -110,6 +111,7 @@ export default {
       channelHistory: 'history/getByChannelID',
       unreadFinder: 'unread/find',
       findWhereMember: 'channels/findWhereMember',
+      uiEnableSubmitButton: 'ui/enableSubmitButton',
     }),
 
     /**
@@ -125,7 +127,7 @@ export default {
      * @returns {Boolean}
      */
     submitOnEnter () {
-      return !this.uiEnableSubmitButton()
+      return !this.uiEnableSubmitButton
     },
 
     /**

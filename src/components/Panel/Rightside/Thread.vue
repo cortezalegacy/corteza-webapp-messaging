@@ -43,6 +43,7 @@
         :consecutive="true"
         :hide-action-open-thread="true"
         :last-read-message-i-d="unread.lastMessageID"
+        :submit-on-enter="submitOnEnter"
         :edit="edit"
         :channel="channel"
         :read-only="!channel.canSendMessages"
@@ -126,7 +127,7 @@ export default {
      * @returns {Boolean}
      */
     submitOnEnter () {
-      return !this.uiEnableSubmitButton()
+      return !this.$store.getters['ui/enableSubmitButton']
     },
 
     /**

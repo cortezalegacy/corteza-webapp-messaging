@@ -11,6 +11,7 @@ import unread from './unread'
 import settings from './settings'
 import suggestions from './suggestions'
 import session from './session'
+import ui from './ui'
 
 Vue.use(Vuex)
 
@@ -24,6 +25,7 @@ const store = new Vuex.Store({
     suggestions: suggestions(MessagingAPI),
     unread: unread(MessagingAPI),
     session: session(MessagingAPI),
+    ui: ui(),
   },
 })
 
