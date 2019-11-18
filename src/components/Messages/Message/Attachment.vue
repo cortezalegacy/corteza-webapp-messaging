@@ -112,9 +112,11 @@ export default {
     previewLabels () {
       return {
         loading: this.$t('preview.pdf.loading'),
+        noPages: this.$t('preview.pdf.noPages'),
         firstPagePreview: this.$t('preview.pdf.firstPagePreview'),
         pageLoadFailed: this.$t('preview.pdf.pageLoadFailed'),
         pageLoading: this.$t('preview.pdf.pageLoading'),
+        clickToRetry: this.$t('preview.pdf.clickToRetry'),
       }
     },
   },

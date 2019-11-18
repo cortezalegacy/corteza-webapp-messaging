@@ -43,7 +43,7 @@
 
       <preview-lightbox
         v-if="uiShowPreview"
-        :src="uiShowPreview.pdf || uiShowPreview.src"
+        :src="uiShowPreview.document || uiShowPreview.src"
         :name="uiShowPreview.name"
         :meta="uiShowPreview.meta"
         :alt="uiShowPreview.name"
@@ -209,9 +209,9 @@ export default {
 
       this.$bus.$on('$core.newMessage', this.handleNotifications)
 
-      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, pdf = undefined, meta }) => {
+      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, document = undefined, meta }) => {
         this.uiShowPreview = {
-          pdf,
+          document,
           meta,
           src: url,
           download: downloadUrl,
