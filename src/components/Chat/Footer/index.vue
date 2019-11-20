@@ -84,7 +84,7 @@
         <button
           v-if="hasUnread"
           class="btn float-right"
-          @click.prevent="onMarkAsRead"
+          @click.prevent="$emit('markAsRead')"
         >
           {{ $t('message.markAsRead') }}
         </button>
@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import Activity from './Activity'
 import ObserverFooter from './ObserverFooter'
 import { stringifyDocument } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
@@ -201,10 +201,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      markAllAsRead: 'unread/markChannelAsRead',
-    }),
-
     /**
      * Handle input's submit event. Cases:
      *  - if replying to a message: create a thread message
@@ -271,13 +267,6 @@ export default {
       if (params) {
         this.$MessagingAPI.activitySend(params)
       }
-    },
-
-    /**
-     * Mark entire channel as read
-     */
-    onMarkAsRead () {
-      this.markAllAsRead(this.channel)
     },
   },
 }
