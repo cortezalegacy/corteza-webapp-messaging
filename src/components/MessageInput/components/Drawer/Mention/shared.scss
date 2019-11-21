@@ -1,0 +1,41 @@
+@import 'corteza-webapp-messaging/src/themes/corteza-base/channel-names.scss';
+
+.suggestion {
+  list-style-type: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 44px;
+  line-height: 44px;
+  font-size: 16px;
+  padding: 0 20px;
+  vertical-align: middle;
+  color: $dark;
+
+  &.user {
+    .new-moon {
+      color: $secondary;
+    }
+
+    .member {
+      font-weight: bold;
+    }
+  }
+
+  &:hover {
+    background-color: rgba($primary, 0.10);
+  }
+  &.selected {
+    background-color: rgba($primary, 0.12);
+    &:hover {
+      background-color: rgba($primary, 0.24);
+    }
+  }
+}
+
+@media (min-width: $wideminwidth) {
+  .suggestion {
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+  }
+}

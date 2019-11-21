@@ -133,6 +133,8 @@ export default {
       findUserByID: 'users/findByID',
       users: 'users/list',
       getSettings: 'settings/get',
+      uiIsCordovaPlatform: 'ui/isCordovaPlatform',
+      uiIsWide: 'ui/isWide',
     }),
 
     emojiPickerLoader () {
@@ -161,7 +163,7 @@ export default {
       this.init()
       this.$ws.connect()
     }).catch(() => {
-      if (this.isCordovaPlatform) {
+      if (this.uiIsCordovaPlatform) {
         this.$router.push({ name: 'auth' })
       } else {
         this.$auth.open()
@@ -197,7 +199,7 @@ export default {
       this.loadUsers()
       this.loadCommands()
       this.loadSession()
-      if (this.isCordovaPlatform) {
+      if (this.uiIsCordovaPlatform) {
         setTimeout(navigator.splashscreen.hide, 1000)
       }
 
@@ -330,7 +332,8 @@ export default {
     },
 
     windowResizeHandler () {
-      const wide = this.uiIsWide()
+      const wide = this.uiIsWide
+
       // Avoid unneded events
       if (wide !== this.uiWide) {
         this.$bus.$emit('Messenger/uiWide', wide)

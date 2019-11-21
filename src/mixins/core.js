@@ -152,6 +152,15 @@ export default {
     }, autheticationRecheck)
   },
 
+  mounted () {
+    this.$nextTick(() => {
+      window.addEventListener('resize', () => {
+        this.$store.commit('ui/update', window)
+      })
+      this.$store.commit('ui/update', window)
+    })
+  },
+
   destroyed () {
     // Remove all events
     this.$bus.$off()

@@ -1,5 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapPin, faThumbtack, faSearch, faEllipsisV, faDoorOpen, faEraser, faMapMarker, faStar, faTimes, faUserCog, faFileDownload } from '@fortawesome/free-solid-svg-icons'
+import { faMapPin, faThumbtack, faSearch, faEllipsisV, faDoorOpen, faEraser, faMapMarker, faStar, faTimes, faUserCog, faFileDownload, faArrowUp, faArrowDown, faLevelUpAlt } from '@fortawesome/free-solid-svg-icons'
 import { faBookmark, faFileAlt, faFileWord, faFilePdf, faFilePowerpoint, faFileArchive, faFileExcel, faFileVideo, faEyeSlash, faBellSlash, faPlusSquare } from '@fortawesome/free-regular-svg-icons'
 
 library.add(
@@ -25,4 +25,7 @@ library.add(
   faPlusSquare,
   faUserCog,
   faFileDownload,
+  faArrowUp,
+  faArrowDown,
+  faLevelUpAlt,
 )

@@ -1,540 +1,543 @@
 <template>
-  <observer-footer
-    v-if="readonly"
-    :channel="channel"
-  />
+  <div class="message-input">
+    <!-- Drawer for non-inline user-extension interaction -->
+    <drawer
+      v-if="drawerFor"
 
-  <div
-    v-else
-    class="container"
-    :class="{editing:!!message, inThread:!!replyTo}"
-  >
-    <div class="group">
-      <text-input
-        ref="text"
-        v-model="value"
-        :focus="keepFocusOnSubmit || (focus && uiFocusMessageInput())"
-        :submit-on-enter="!uiEnableSubmitButton()"
-        :channels="channelSuggestions"
-        :users="userSuggestions"
-        :suggestion-priorities="suggestionPriorities"
-        :channel="channel"
-        :user="$auth.user"
-        class="text-input"
-        :class="{
-          'no-files': !showFileUpload,
-          'hybrid': isCordovaPlatform,
-        }"
-        @editLastMessage="$emit('editLastMessage', $event)"
-        @cancel="$emit('cancel', $event)"
-        @submit="onSubmit"
-        @change="onChange"
-        @focus="onFocus"
-      />
+      class="extension-drawer"
+      :plugin="drawerFor"
+      v-bind="drawerProps || {}"
+      @suggestionSelect="onSuggestSelect"
+    />
 
-      <button
-        v-if="showFileUpload && !isCordovaPlatform"
-        class="upload-button input-button"
-        @click="onPromptFilePicker"
-      >
-        <span>+</span>
-      </button>
-
-      <!-- Add media buttons -->
-      <button
-        v-if="uiEnableMobileMediaSourceButtons()"
-        class="camera-button input-button"
-        @click.stop="onPromptCamera"
-      >
-        <font-awesome-icon icon="camera" />
-      </button>
-      <button
-        v-if="uiEnableMobileMediaSourceButtons()"
-        class="galery-button input-button"
-        @click.stop="onPromptGalery"
-      >
-        <font-awesome-icon icon="images" />
-      </button>
-
-      <button
-        v-if="uiEnableEmojiButton()"
-        class="emoji-button input-button"
-        @click.stop="onEmojiPickerClick"
-      >
-        <span class="icon-smile" />
-      </button>
-
-      <button
-        v-if="uiEnableSubmitButton()"
-        class="input-button send-button"
-        :disabled="submitDisabled"
-        @click="onSubmitBtnClick"
-        @mousedown="onMousedown"
-      >
-        <span class="icon-hsend" />
-      </button>
-    </div>
-    <div class="activity">
-      <activity
-        v-if="!replyTo && !message"
-        :users="channelActivity(channelID, 'typing')"
-        :activity="$t('message.typing')"
-      />
-      <button
-        v-show="showMarkAsUnreadButton"
-        class="btn float-right"
-        @click.prevent="$emit('markAsRead')"
-      >
-        {{ $t('message.markAsRead') }}
-      </button>
-    </div>
+    <!-- The editor -->
+    <editor-content
+      v-if="editor"
+      ref="editor"
+      class="editor"
+      :editor="editor"
+    />
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import { throttle } from 'lodash'
-import TextInput from './TextInput'
-import ObserverFooter from 'corteza-webapp-messaging/src/components/Channel/ObserverFooter'
-import Activity from './Activity'
-import { enrichMentions } from 'corteza-webapp-messaging/src/lib/mentions'
-import { exportToMarkdown } from './src/markdown'
-
-const kinds = {
-  editing: 'editing',
-  replying: 'replying',
-  typing: 'typing',
-}
+import Drawer from './components/Drawer'
+import { Editor, EditorContent } from 'tiptap'
+import { Placeholder, History } from 'tiptap-extensions'
+import { Mention, Keyboard } from './extensions'
+import { contentEmpty, getMatches } from './lib'
+import { insertText } from 'tiptap-commands'
+import { baseKeymap } from 'prosemirror-commands'
 
 export default {
   components: {
-    TextInput,
-    Activity,
-    ObserverFooter,
+    EditorContent,
+    Drawer,
   },
 
   props: {
-    hideFileUpload: {
-      type: Boolean,
-      default: false,
-    },
-
-    // Message we're editing, if any...
-    message: {
+    value: {
       type: Object,
-      default: undefined,
-    },
-
-    // Replying to a message, if any...
-    replyTo: {
-      type: Object,
-      default: undefined,
-    },
-
-    // Channel we're posting to
-    channel: {
-      type: Object,
-      default: undefined,
-    },
-
-    focus: { type: Boolean, default: true },
-    readonly: { type: Boolean, default: false },
-
-    showMarkAsUnreadButton: { type: Boolean, default: false },
-
-    draft: {
-      type: Object,
+      required: false,
       default: null,
     },
 
+    placeholder: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+
+    noFocus: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    // Allows input to determine when source changed
+    source: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
+    submitOnEnter: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    currentUser: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+
+    userSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    channelSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    commandSuggestions: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
     suggestionPriorities: {
       type: Object,
+      required: false,
       default: () => ({}),
     },
   },
 
   data () {
-    let value
-    if (this.message) {
-      value = enrichMentions(this.message.message)
-    } else if (this.draft && !value) {
-      value = this.draft
-    }
-
     return {
-      inputBoxValue: '',
-      cursorIndex: -1,
-      value,
+      // Specify for what plugin, the drawer should be shown
+      drawerFor: undefined,
+      drawerProps: {},
 
-      keepFocusOnSubmit: false,
-      submitDisabled: true,
+      // Helper to determine if current content differes from prop's content
+      emittedContent: false,
+
+      editor: undefined,
     }
   },
 
   computed: {
-    ...mapGetters({
-      users: 'users/list',
-      channels: 'channels/list',
-      channelActivity: 'users/channelActivity',
-      messageActivity: 'users/messageActivity',
-      statuses: 'users/statuses',
-    }),
-
-    channelID () {
-      // Returns channelID from one of the provided params
-      return (this.channel || {}).channelID || (this.message || {}).channelID || (this.replyTo || {}).channelID
-    },
-
-    replyToMessageID () {
-      return (this.replyTo || {}).messageID
-    },
-
-    channelSuggestions () {
-      return this.channels.map(c => {
-        return {
-          type: 'Channel',
-          id: c.channelID,
-          channel: c,
-          value: c.suggestionLabel(),
-          ...c.fuzzyKeys(),
-        }
-      })
-    },
-
-    onlineStatuses () {
-      return new Set(this.statuses.filter(s => s.present === 'online').map(s => s.userID))
-    },
-
-    userSuggestions () {
-      return this.users.map(u => {
-        return {
-          type: 'User',
-          id: u.userID,
-          user: u,
-          value: u.suggestionLabel(),
-          online: this.onlineStatuses.has(u.userID),
-          ...u.fuzzyKeys(),
-        }
-      })
-    },
-
-    showFileUpload () {
-      // Hide file upload when editing
-      return !this.hideFileUpload || !this.message
+    /**
+     * Provides editor's placeholder. Fallbacks to the default set in i18n.
+     * @returns {String}
+     */
+    getPlaceholder () {
+      return this.placeholder || this.$t('message.newPlaceholder')
     },
   },
 
   watch: {
-    channelID (newValue, oldValue) {
-      this.sendDraft({ channelID: oldValue })
+    disabled: {
+      // Toggle enabled/disabled
+      handler: function (disabled) {
+        if (this.editor) {
+          this.editor.setOptions({
+            editable: !disabled,
+          })
+        }
+      },
     },
 
-    replyToMessageID (newValue, oldValue) {
-      this.sendDraft({ messageID: oldValue })
+    getPlaceholder: {
+      handler: function (ph) {
+        this.editor.extensions.options.placeholder.emptyNodeText = ph
+      },
+    },
+
+    source: {
+      handler: function () {
+        if (!this.noFocus) {
+          this.focus()
+          this.correctSelection()
+        }
+      },
+    },
+
+    value: {
+      handler: function (val) {
+        // Update happened due to external content change, not model change
+        if (!this.emittedContent) {
+          this.editor.setContent(val)
+          this.correctSelection()
+        }
+
+        this.emittedContent = false
+      },
+      deep: true,
     },
   },
 
-  created () {
-    this.$bus.$on('$core.unload', this.sendDraft)
+  mounted () {
+    this.$nextTick(() => {
+      this.initEditor()
+      this.$nextTick(() => {
+        this.correctSelection()
+      })
+    })
   },
 
   beforeDestroy () {
-    this.sendDraft()
-
-    this.$bus.$off('$core.unload', this.sendDraft)
-  },
-
-  beforeMount () {
-    if (!this.channelID) {
-      console.error('Could not mount message input without at least one of channel/message/replyTo props')
-      return false
+    if (this.editor) {
+      this.editor.destroy()
     }
   },
 
   methods: {
-    onPromptCamera () {
-      this.onPromptFilePicker(window.Camera.PictureSourceType.CAMERA)
-    },
+    /**
+     * Initializes the editor, sets up extensions, ...
+     */
+    initEditor () {
+      this.editor = new Editor({
+        // General options
+        autoFocus: !this.noFocus,
+        editable: !this.disabled,
+        content: this.value,
 
-    onPromptGalery () {
-      this.onPromptFilePicker(window.Camera.PictureSourceType.PHOTOLIBRARY)
-    },
+        // Extensions
+        extensions: [
+          new History(),
+          new Placeholder({
+            emptyNodeClass: 'placeholder',
+            emptyNodeText: this.getPlaceholder,
+            showOnlyWhenEditable: false,
+          }),
 
-    onMousedown (e) {
-      // Prevent it from stealing focus
-      e.preventDefault()
-    },
+          new Keyboard({
+            map: {
+              'ArrowUp': this.onArrowUp,
+              'Enter': this.onEnter,
+              'Escape': this.onEscape,
+              // Mimic Enter's behaviour
+              's-Enter': baseKeymap.Enter,
+            },
+          }),
 
-    sendDraft ({ value, messageID, channelID, remove } = {}) {
-      if (this.message) {
-        return
-      }
+          // users
+          new Mention({
+            items: () => this.userSuggestions,
+            onEnter: this.onSuggestionsStart,
+            onChange: this.onSuggestionsChange,
+            onExit: this.onSuggestCancel,
+            onKeyDown: this.onKeyDown,
+            onFilter: this.onFilterUserSuggestions,
+            mentionClass: 'mention mention-user',
 
-      // Draft current value
-      value = value || this.value
-      messageID = messageID || this.replyToMessageID
-      channelID = channelID || this.channelID
-      remove = remove || !(this.value && this.value.length() > 1)
-      this.$emit('update:draft', { value, dest: { messageID, channelID, remove } })
+            matcher: {
+              char: '@',
+              allowSpaces: false,
+              startOfLine: false,
+            },
+          }),
 
-      // Use new draft value
-      this.value = this.draft
-    },
+          // channels
+          new Mention({
+            items: () => this.channelSuggestions,
+            onEnter: this.onSuggestionsStart,
+            onChange: this.onSuggestionsChange,
+            onExit: this.onSuggestCancel,
+            onKeyDown: this.onKeyDown,
+            onFilter: this.onFilterChannelSuggestions,
+            mentionClass: 'mention mention-channel',
 
-    onPromptFilePicker (sourceType) {
-      this.$emit('promptFilePicker', { sourceType })
-    },
+            matcher: {
+              char: '#',
+              allowSpaces: false,
+              startOfLine: false,
+            },
+          }),
+        ],
 
-    // Override original submit event and extend event
-    // data with submitMeta data.
-    onSubmit () {
-      // Make a copy and reset component's version of a value to prevent dups
-      const value = !this.value ? '' : exportToMarkdown(this.value).trim()
-      this.value = null
+        /**
+         * Handle on update events. Process current document & update data model
+         * @param {Function} getJSON Converts current document to JSON
+         */
+        onUpdate: ({ getJSON }) => {
+          this.emittedContent = true
 
-      // Delete draft
-      this.$emit('update:draft', { dest: { messageID: this.replyToMessageID, channelID: this.channelID, remove: true } })
+          const c = getJSON()
+          if (contentEmpty(c)) {
+            this.$emit('input', null)
+            return
+          }
+          this.$emit('input', c)
+        },
 
-      const stdResponse = (m) => {
-        // Trigger remounting
-        this.value = null
+        /**
+         * Handle on focus. Emit
+         */
+        onFocus: () => {
+          this.$emit('focus')
+        },
 
-        // Tell parent we're done with editing.
-        this.$emit('cancel', {})
-      }
-
-      if (this.message && value.length === 0) {
-        this.$emit('deleteMessage')
-      } else if (value.length === 0) {
-        // nothing to do here...
-        return false
-      } else if (this.message) {
-        // Doing update
-        this.$MessagingAPI.messageEdit({ channelID: this.message.channelID, messageID: this.message.messageID, message: value }).then(stdResponse)
-      } else if (this.replyTo) {
-        // Sending reply
-        this.$MessagingAPI.messageReplyCreate({ channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, message: value }).then(stdResponse)
-      } else if (this.channel) {
-        this.keepFocusOnSubmit = true
-
-        // Sending message
-        if (this.$commands.test(value)) {
-          this.$commands.exec(this, value, { channel: this.channel })
-          this.value = null
-          return
-        }
-
-        this.$MessagingAPI.messageCreate({ channelID: this.channel.channelID, message: value }).then(stdResponse)
-      }
-    },
-
-    onSubmitBtnClick ($event) {
-      this.onSubmit()
-      this.value = null
-    },
-
-    onEmojiPickerClick () {
-      this.$bus.$emit('ui.openEmojiPicker', {
-        callback: ({ colons, native }) => {
-          const q = this.$refs.text.quill
-          q.insertText(q.getSelection() || q.scroll.length() - 1, native || colons)
+        /**
+         * Handle on blur. Emit
+         */
+        onBlur: () => {
+          this.$emit('blur')
         },
       })
     },
 
-    // Update channel activity once in a while while typing
-    onChange (value) {
-      this.sendActivity(value)
-      this.submitDisabled = !value.text.trim('\n')
+    /**
+     * Helper for inserting content into tiptap editor.
+     * When adding new/more complex content, this should be extended
+     * @param {String} content Content to insert
+     */
+    insert ({ content }) {
+      insertText(content)(this.editor.view.state, this.editor.view.dispatch, this.editor.view)
     },
 
-    sendActivity: throttle(function (value) {
-      // @todo emoji closing on focus interaction should be handled by core.js
-      this.$bus.$emit('ui.closeEmojiPicker')
+    /**
+     * Helper for setting content into tiptap editor -- overwrites current content.
+     * When adding new/more complex content, this should be extended
+     * @param {String} content Content to insert
+     */
+    set ({ content }) {
+      this.editor.setContent(content)
+    },
 
-      let params
-      if (value.text.length === 0) {
+    /**
+     * Helper to focus the input -- shouldbe used by wrapper components
+     */
+    focus () {
+      this.editor.focus()
+    },
+
+    /**
+     * Helper to blur (loose focus) the input -- shouldbe used by wrapper components
+     */
+    blur () {
+      this.editor.blur()
+    },
+
+    /**
+     * Helper to correct the selection
+     */
+    correctSelection () {
+      if (this.noFocus) {
         return
-      } else if (this.message !== undefined) {
-        params = { channelID: this.message.channelID, messageID: this.message.messageID, kind: kinds.editing }
-      } else if (this.replyTo !== undefined) {
-        params = { channelID: this.replyTo.channelID, messageID: this.replyTo.messageID, kind: kinds.replying }
-      } else {
-        params = { channelID: this.channelID, kind: kinds.typing }
       }
 
-      if (params) {
-        this.$MessagingAPI.activitySend(params)
-      }
-    }, 2000),
+      this.editor.setSelection(0, this.editor.state.doc.textContent.length + 1)
+    },
 
-    onFocus () {
-      // @todo emoji closing on focus interaction should be handled by core.js
-      this.$bus.$emit('ui.closeEmojiPicker')
+    /**
+     * On enter, emit submit. Parent should handle if content should actually be submitted
+     * @param {Document} doc Document object
+     * @returns {Boolean} If editor should continue with further actions
+     */
+    onEnter () {
+      this.$emit('submit', this.submitOnEnter)
+
+      return this.submitOnEnter
+    },
+
+    onArrowUp ({ doc }) {
+      if (!doc.textContent) {
+        this.$emit('editLastMessage')
+        return false
+      }
+    },
+
+    onEscape () {
+      this.$emit('cancel')
+    },
+
+    /**
+     * Handle when user invokes suggestions. Prepare state.
+     * @param {Array} items A set of available suggestions
+     * @param {String} query Query string
+     * @param {Range} range Tiptap's range object; used for mention insertion
+     * @param {Function} command Callback to insert the mention
+     */
+    onSuggestionsStart ({ items: suggestions, query, range, command }) {
+      // Use $set to invoke reactivity, required by drawer component.
+      this.$set(this, 'drawerProps', {
+        suggestions,
+        query,
+        range,
+        command,
+        // Current suggestion selection
+        selection: 0,
+      })
+      // Should be in bottom, since test utils don't make batches
+      this.drawerFor = 'Mention'
+    },
+
+    /**
+     * Handle when suggestion's state changes (query changed, new items, ...). Update state.
+     * @param {Array} items A set of available suggestions
+     * @param {String} query Query string
+     * @param {Range} range Tiptap's range object; used for mention insertion
+     */
+    onSuggestionsChange ({ items, query, range }) {
+      this.$set(this.drawerProps, 'range', range)
+      this.$set(this.drawerProps, 'query', query)
+      this.$set(this.drawerProps, 'suggestions', items)
+
+      // Make sure selection has a valid value
+      // @todo improve this, so the selection will be preserved
+      this.drawerProps.selection = Math.min(this.drawerProps.selection, items.length - 1)
+    },
+
+    /**
+     * Handle when mentioning gets canceled. Reset state.
+     */
+    onSuggestCancel () {
+      this.drawerProps = {}
+      this.drawerFor = undefined
+    },
+
+    /**
+     * Handle when keyboard event happenes while sugesstions are invoked.
+     * Handle suggestion navigation, insertion.
+     * @param {Event} event Keyboard event
+     */
+    onKeyDown ({ event }) {
+      // Up arrow
+      if (event.keyCode === 38) {
+        // Handle overflow
+        if (this.drawerProps.selection <= 0) {
+          this.drawerProps.selection = this.drawerProps.suggestions.length
+        }
+
+        this.drawerProps.selection--
+        return true
+      }
+
+      // Down arrow
+      if (event.keyCode === 40) {
+        this.drawerProps.selection = (this.drawerProps.selection + 1) % this.drawerProps.suggestions.length
+        return true
+      }
+
+      // Enter
+      if (event.keyCode === 13) {
+        this.onSuggestSelect(this.drawerProps.suggestions[this.drawerProps.selection])
+        return true
+      }
+
+      return false
+    },
+
+    /**
+     * Handle to filter user suggestions.
+     * @param {Array} items A set of available users. These objects should be pre-processed for fuzzysort
+     * @param {String} query Query string
+     * @returns {Array} A set of users, that matches the given query
+     */
+    onFilterUserSuggestions (items, query) {
+      items = getMatches({ items, query, priorities: this.suggestionPriorities.User })
+
+      // Aditionally sort matches based on status
+      return [ ...items ].sort((a, b) => {
+        if (a.user.userID === this.currentUser.userID) {
+          return -1
+        }
+        if (a.online && a.user.userID !== this.currentUser.userID && !b.online) {
+          return +1
+        }
+
+        return 0
+      }).reverse()
+    },
+
+    /**
+     * Handle to filter channel suggestions.
+     * @param {Array} items A set of available channels. These objects should be pre-processed for fuzzysort
+     * @param {String} query Query string
+     * @returns {Array} A set of channels, that matches the given query
+     */
+    onFilterChannelSuggestions (items, query) {
+      return getMatches({ items, query, priorities: this.suggestionPriorities.Channel }).reverse()
+    },
+
+    /**
+     * Handle to create a mention from the given suggestion
+     * @param {Object} suggestion The suggestion to be inserted
+     */
+    onSuggestSelect (suggestion) {
+      this.drawerProps.command({
+        range: this.drawerProps.range,
+        attrs: {
+          id: suggestion.id,
+          label: suggestion.value,
+        },
+      })
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
+.message-input {
+  width: 100%;
+  position: relative;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
 
-$inputWidth: 50px;
-$mobileInputWidth: 35px;
-
-.container {
-  padding: 4px 15px 0;
-  .activity {
-    min-height: 25px;
+  .extension-drawer {
+    position: absolute;
     width: 100%;
-    display: inline-block;
-    border: 1px solid transparent;
+    transform: translateY(-100%);
   }
 
-  .group {
-    float: left;
-    width: 100%;
-    position: relative;
-    margin-bottom: 2px;
-    border: 1px solid $secondary;
-    .text-input {
-      width: calc(100% - #{$inputWidth});
-      float:right;
-      padding-right: 48px;
+  // @fixme This is a bandage solution; do more research for a nicer grammarly integration.
+  /deep/ grammarly-extension {
+    margin-top: 3px;
+  }
 
-      &.hybrid {
-        width: 100%;
-      }
+  /deep/ .ProseMirror {
+    user-select: text;
+    max-height: 30vh;
+    padding: 12px 15px;
+    padding-right: 0;
+    line-height: 1.42;
+    height: 100%;
+    outline: none;
+    overflow-y: auto;
+    tab-size: 4;
 
-      ~ .send-button:disabled {
-        pointer-events: none;
-      }
-      &:focus-within {
-        outline: none;
-        border-color: $success;
-
-        ~ .upload-button {
-          background-color:rgba($success,0.1);
-          border-color: $success;
-          color: $success;
-        }
-        ~ .send-button:not(:disabled){
-          span{
-            color: $success;
-          }
-        }
-      }
+    // Disabled editor preserves pointer events - it seams like a bug
+    &[contenteditable="false"] {
+      pointer-events: none;
     }
-    .input-button {
-      width: $inputWidth;
+
+    p {
+      margin: 0;
+      padding: 0;
+    }
+
+    // This is required by the placeholder plugin
+    .placeholder:first-child::before {
+      color: rgba($black, 0.6);
+      content: attr(data-empty-text);
+      font-style: italic;
+      left: 15px;
+      pointer-events: none;
       position: absolute;
-      height: 100%;
-      text-align: center;
-      vertical-align: middle;
-      color: $secondary;
-      cursor: pointer;
-      font-size:28px;
-      span{
-        margin-top: -3px;
-        display: block;
-      }
-      &:focus{
-        outline: none;
-      }
+      right: 15px;
     }
-    .input-button,
-    .text-input
-    {
-      border: 1px solid transparent;
-      background-color:transparent;
-    }
-    .upload-button {
-      border-right: 1px solid $secondary;
-    }
-    .emoji-button, .camera-button, .galery-button {
-      right: 0;
-      font-size: 20px;
 
-      &:hover span{
-        color: $success;
-      }
+    .mention-suggestion {
+      opacity: 0.7;
+    }
+    .mention {
+      border-radius: 4px;
+      padding: 3px 2px;
+      border: 1px solid rgba($primary, 0.3);
+      background-color: rgba($primary, 0.15);
     }
   }
 
-  &.editing {
-    display: inline-block;
-    width: 100%;
-    padding: 0 10px 0 0;
-    overflow: visible;
-    .text-input {
-      width: 100%;
-    }
-    .group
-    {
-      background-color:white;
-    }
-    .activity {
-      border: none;
-      display: none;
-    }
+  @media (max-width: $wideminwidth - 1px) {
+    /deep/ .ProseMirror {
+      padding: 7px 3px 5px 5px;
+      line-height: 18px;
 
-  }
-}
-/deep/ .ql-editor {
-  max-height: 30vh;
-  padding-right: 0;
-}
-
-@media (max-width: $wideminwidth) {
-  .container {
-    padding: 0;
-    .group {
-      margin-bottom: 0;
-      border: none;
-      border-top: 1px solid $secondary;
-      border-radius: 0;
-      .text-input {
-        width: calc(100% - #{$mobileInputWidth});
-        border: none;
-        border-top: 1px solid transparent;
-        padding-right: 60px;
-
-        &.hybrid {
-          width: 100%;
-          padding-right: 90px;
-        }
-      }
-      .input-button {
-        width: $mobileInputWidth;
-        &.send-button{
-          font-size: 20px;
-          right: 0;
-
-          span {
-            pointer-events: none;
-          }
-        }
-        &.emoji-button, &.galery-button {
-          right: 30px;
-        }
-        &.camera-button {
-          right: 60px;
-        }
-      }
-    }
-    .activity{
-      display: none;
-    }
-    &.editing{
-      .text-input{
-        width: 100%;
+      .placeholder:first-child::before {
+        left: 5px;
+        right: 5px;
       }
     }
   }
 }
 
-.float-right
-{
-    float:right;
-}
 </style>
