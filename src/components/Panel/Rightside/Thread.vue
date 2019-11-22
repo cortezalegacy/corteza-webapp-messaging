@@ -11,13 +11,13 @@
       v-if="channel.type === 'group'"
       slot="subtitle"
     >
-      {{ $t('panel.inGroupChat', { label: getLabel(channel) }) }}
+      <span v-html="$t('panel.inGroupChat', { label: getLabel(channel) })" />
     </template>
     <template
       v-else
       slot="subtitle"
     >
-      {{ $t('panel.inChannelChat', { label: channel.name }) }}
+      <span v-html="$t('panel.inChannelChat', { label: channel.name })" />
     </template>
     <template
       v-if="message"
