@@ -52,7 +52,10 @@ export default {
     selection: {
       handler: function (nv) {
         const p = this.$parent.$el
-        const c = this.$refs[`si-${nv}`][0].$el
+        const c = ((this.$refs[`si-${nv}`] || [])[0] || {}).$el
+        if (!c) {
+          return
+        }
         const off = this.checkPositioning(p, c)
         if (off !== undefined) {
           p.scrollTop = off
