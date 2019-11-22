@@ -48,7 +48,36 @@ export default {
     },
   },
 
+  watch: {
+    selection: {
+      handler: function (nv) {
+        const p = this.$parent.$el
+        const c = this.$refs[`si-${nv}`][0].$el
+        const off = this.checkPositioning(p, c)
+        if (off !== undefined) {
+          p.scrollTop = off
+        }
+      },
+    },
+  },
+
   methods: {
+    /**
+     * Helper to determine if scroll position should be adjusted or not
+     * @param {Node} p Parent container
+     * @param {Node} c Node in question
+     * @returns {Number|undefined} if undefined, no adjustment is needed
+     */
+    checkPositioning (p, c, downBuffer = 2) {
+      if (c.offsetTop < p.scrollTop) {
+        // adjust up
+        return c.offsetTop
+      } else if ((c.offsetTop + c.clientHeight * downBuffer) > p.scrollTop + p.clientHeight) {
+        // adjust down
+        return (c.offsetTop + c.clientHeight * downBuffer) - p.clientHeight
+      }
+    },
+
     /**
      * Determine component to be used with the given suggestion type
      * @param {String} type Suggestion's type

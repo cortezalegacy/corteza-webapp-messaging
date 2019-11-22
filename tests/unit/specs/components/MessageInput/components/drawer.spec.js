@@ -4,6 +4,7 @@
 import { expect } from 'chai'
 import { shallowMount, fullMount } from 'corteza-webapp-messaging/tests/lib/helpers'
 import Drawer from 'corteza-webapp-messaging/src/components/MessageInput/components/Drawer'
+import Mention from 'corteza-webapp-messaging/src/components/MessageInput/components/Drawer/Mention'
 import sinon from 'sinon'
 
 describe('components/MessageInput/components/Drawer', () => {
@@ -107,6 +108,53 @@ describe('components/MessageInput/components/Drawer', () => {
         sinon.assert.calledOnce(suggestionSelect)
 
         sinon.restore()
+      }
+    })
+
+    it('correctly determine scroll adjustments', () => {
+      const tests = [
+        {
+          name: 'no need to adjust - top edge',
+          p: { clientHeight: 100, scrollTop: 0 },
+          c: { clientHeight: 10, offsetTop: 0 },
+          expected: undefined,
+        },
+        {
+          name: 'no need to adjust - top',
+          p: { clientHeight: 100, scrollTop: 0 },
+          c: { clientHeight: 10, offsetTop: 10 },
+          expected: undefined,
+        },
+        {
+          name: 'adjust - top',
+          p: { clientHeight: 100, scrollTop: 10 },
+          c: { clientHeight: 10, offsetTop: 0 },
+          expected: 0,
+        },
+
+        {
+          name: 'no need to adjust - bottom',
+          p: { clientHeight: 100, scrollTop: 0 },
+          c: { clientHeight: 10, offsetTop: 80 },
+          expected: undefined,
+        },
+        {
+          name: 'no need to adjust - bottom edge',
+          p: { clientHeight: 100, scrollTop: 0 },
+          c: { clientHeight: 10, offsetTop: 90 },
+          expected: undefined,
+        },
+        {
+          name: 'adjust - bottom',
+          p: { clientHeight: 100, scrollTop: 0 },
+          c: { clientHeight: 10, offsetTop: 100 },
+          expected: 10,
+        },
+      ]
+
+      const fn = Mention.methods.checkPositioning
+      for (const t of tests) {
+        expect(fn(t.p, t.c, 1), t.name).to.eq(t.expected)
       }
     })
   })
