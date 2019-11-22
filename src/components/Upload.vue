@@ -22,7 +22,7 @@
         >
           <span><br>
             <template v-if="replyTo">{{ $t('message.file.replyToThread') }}</template>
-            <template v-else>{{ getLabel(channel) }}test</template>
+            <template v-else>{{ getLabel(channel) }}</template>
             <br></span>
         </i18next>
       </vue-dropzone>
