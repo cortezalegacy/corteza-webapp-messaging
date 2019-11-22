@@ -1,6 +1,9 @@
 <template>
   <div>
-    <ul class="suggestion-list">
+    <ul
+      v-if="suggestions && suggestions.length"
+      class="suggestion-list"
+    >
       <component
         :is="sc(s)"
         v-for="(s, i) of suggestions"
@@ -12,6 +15,15 @@
         v-on="$listeners"
       />
     </ul>
+
+    <div
+      v-else
+      class="no-results"
+    >
+      <p>
+        {{ $t('messageInput.drawer.mention.noResults') }}
+      </p>
+    </div>
 
     <footer class="nav-info">
       <i18next
@@ -97,6 +109,17 @@ export default {
 .suggestion-list {
   padding: 0;
   margin: 0;
+}
+
+.no-results {
+  padding: 0 20px;
+  min-height: 33px;
+  display: flex;
+  align-items: center;
+
+  p {
+    margin: 0;
+  }
 }
 
 .nav-info {

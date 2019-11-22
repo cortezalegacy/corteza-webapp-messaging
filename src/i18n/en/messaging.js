@@ -92,6 +92,7 @@ export default {
       noComponent: 'Extension has no defined Drawer component',
       mention: {
         navigation: '{{0}}{{1}} to navigate {{2}} or click to select',
+        noResults: 'No suggestions found',
       },
     },
   },

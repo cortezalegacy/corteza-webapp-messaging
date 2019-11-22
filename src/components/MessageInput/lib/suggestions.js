@@ -1,6 +1,7 @@
 // Provides mention related helpers, such as fuzzy-search definitions
 import fuzzysort from 'fuzzysort'
 import { toNFD } from 'corteza-webapp-messaging/src/lib/normalizers'
+const maxSuggestionCount = 20
 
 // Specifies when a non prioritized match is considered good
 const goodMatchThreshold = 0.35
@@ -81,5 +82,7 @@ export function getMatches ({ items, query = '', priorities, options = {} }) {
       return false
     }
     return fuzzyMatch(score) > goodMatchThreshold
-  }).concat(p).map(r => r.obj)
+  }).concat(p)
+    .map(r => r.obj)
+    .slice(0, maxSuggestionCount)
 }
