@@ -44,6 +44,7 @@
     </div>
 
     <chat-footer
+      class="ch-footer"
       :channel="channel"
       :has-unread="hasUnread"
       :submit-on-enter="submitOnEnter"
@@ -272,6 +273,10 @@ export default {
   flex-flow: column nowrap;
   height: 100vh;
   position: relative;
+
+  .ch-footer {
+    z-index: 100;
+  }
 
   & > div.messages {
     flex: 1 100%;
