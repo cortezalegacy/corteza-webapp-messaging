@@ -129,6 +129,7 @@ export default {
       size: 'Size {{size}}',
       missing: 'Oups... {{0}} is no longer here...',
       unsupportedType: 'Unsupported file type',
+      attachmentsDisabled: 'Attachments disabled',
       uploadHeader: 'Drop files to upload to {{0}}',
       replyToThread: 'thread',
       willUploadTo: 'Your file is going to be uploaded to {{0}}',

@@ -296,7 +296,9 @@ export default {
      * @param {String} sourceType What source the picker should use.
      */
     onPromptFilePicker (sourceType) {
-      this.$emit('promptFilePicker', { sourceType })
+      if (this.$s('Message.Attachments.Enabled', true)) {
+        this.$emit('promptFilePicker', { sourceType })
+      }
     },
 
     /**

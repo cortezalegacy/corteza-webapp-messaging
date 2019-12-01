@@ -1,7 +1,7 @@
 <template>
   <div>
     <messenger-base
-      v-if="$auth.is()"
+      v-if="$auth.is() && loaded"
       :channel="channel"
       @openQuickSearch="uiShowQuickSearch=true"
       @searchSubmit="searchQuery=$event"
@@ -98,6 +98,8 @@ export default {
 
   data () {
     return {
+      loaded: false,
+
       searchQuery: null,
 
       // UI control
@@ -158,9 +160,11 @@ export default {
 
   created () {
     this.$auth.check(this.$SystemAPI).then(() => {
-      this.init()
-      this.$ws.connect()
-    }).catch(() => {
+      this.$Settings.init({ api: this.$MessagingAPI }).then(() => {
+        this.init()
+        this.$ws.connect()
+      })
+    }).catch((e) => {
       if (this.uiIsCordovaPlatform) {
         this.$router.push({ name: 'auth' })
       } else {
@@ -240,6 +244,8 @@ export default {
         }
         this.wakeCheck.last = currentTime
       }, this.wakeCheck.timeout)
+
+      this.loaded = true
     },
 
     closePopups () {

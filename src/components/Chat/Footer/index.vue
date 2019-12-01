@@ -33,6 +33,8 @@
       <button
         v-if="!hideUpload"
         class="upload-button input-button"
+        :class="{ 'not-allowed': !enableAttachments }"
+        :disabled="!enableAttachments"
         @mousedown.stop.prevent="onPromptFilePicker"
       >
         <span>+</span>
@@ -40,7 +42,7 @@
 
       <!-- Add media buttons -->
       <button
-        v-if="!hideEmojiButton"
+        v-if="!hideEmojiButton && $s('UI.Emoji.Enabled', true)"
         class="emoji-button input-button"
         @mousedown.stop.prevent="onEmojiClick"
       >
@@ -49,14 +51,14 @@
 
       <!-- Media source s for the hybrid app -->
       <button
-        v-if="showCameraSource"
+        v-if="enableAttachments && showCameraSource && $s('Message.Attachments.Source.Camera.Enabled', true)"
         class="camera-button input-button"
         @mousedown.stop.prevent="onPromptCamera"
       >
         <font-awesome-icon icon="camera" />
       </button>
       <button
-        v-if="showGallerySource"
+        v-if="enableAttachments && showGallerySource && $s('Message.Attachments.Source.Gallery.Enabled', true)"
         class="gallery-button input-button"
         @mousedown.stop.prevent="onPromptGallery"
       >
@@ -133,6 +135,9 @@ export default {
   },
 
   computed: {
+    enableAttachments () {
+      return this.$s('Message.Attachments.Enabled', true)
+    },
 
     replyToID () {
       return (this.replyTo || {}).messageID
@@ -273,4 +278,7 @@ export default {
   }
 }
 
+.not-allowed {
+  cursor: not-allowed !important;
+}
 </style>

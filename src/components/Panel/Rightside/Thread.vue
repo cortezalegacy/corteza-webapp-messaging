@@ -24,6 +24,7 @@
       slot="main"
     >
       <upload
+        v-if="$s('Message.Attachments.Enabled', true)"
         v-show="channel && showUploadArea"
         ref="upload"
         :channel-i-d="channel.channelID"

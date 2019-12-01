@@ -23,6 +23,11 @@ export default {
      * @returns {Promise<*>}
      */
     async handleNotifications (message) {
+      if (!this.$s('UI.BrowserNotifications.Enabled', true)) {
+        // Ignoring if not allowed
+        return
+      }
+
       if (message.updatedAt !== null || message.deletedAt !== null || message.replies > 0) {
         // Ignoring deletes, removals and thread-messages with reply updates
         return
@@ -60,19 +65,32 @@ export default {
       }
 
       // Please note that this will not work on non secure domains. "http://localhost" is an exception.
-      let user = this.users[message.userID]
-      if (!user) {
-        user = await this.getUsers(message).then(users => users[message.userID])
-        if (!user) {
+      let usr = this.users[message.userID]
+      if (!usr) {
+        usr = await this.getUsers(message).then(users => users[message.userID])
+        if (!usr) {
           return
         }
       }
 
+      // Determine header
+      // eslint-disable-next-line
+      const user = usr.label
+      // eslint-disable-next-line
+      const channel = ch.name
+      // eslint-disable-next-line
+      const headerTpl = this.$s('UI.BrowserNotifications.Header', '${user.label} in ${channel.name}')
+      // eslint-disable-next-line
+      const header = eval('`' + headerTpl + '`')
+
+      // Determine body
+      const bodyTrim = this.$s('UI.BrowserNotifications.MessageTrim', 200)
+
       const body = cleanMentions(message.message, this.users, this.channels)
       this.$notification.show(
-        `${user.label} in ${ch.name} | Crust`,
+        header,
         {
-          body: body.length > 200 ? body.substring(0, 200) + '...' : body,
+          body: body.length > bodyTrim ? body.substring(0, bodyTrim) + '...' : body,
         },
         {
           onclick: () => {

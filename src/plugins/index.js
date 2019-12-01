@@ -9,6 +9,7 @@ import store from 'corteza-webapp-messaging/src/store'
 import system from 'corteza-webapp-common/src/plugins/system'
 import messaging from 'corteza-webapp-common/src/plugins/messaging'
 import auth from 'corteza-webapp-common/src/plugins/auth'
+import settings from 'corteza-webapp-common/src/plugins/settings'
 
 import ws from './ws'
 import bus from './bus'
@@ -22,6 +23,7 @@ Vue.use(Router)
 Vue.use(VueNativeNotification)
 
 Vue.use(messaging)
+Vue.use(settings)
 Vue.use(bus, { eventbus })
 Vue.use(system)
 Vue.use(commands, { store })

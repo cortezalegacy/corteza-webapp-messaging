@@ -6,12 +6,12 @@
     @dragenter="handleShow($event, () => showUploadArea = true)"
   >
     <upload
+      v-if="$s('Message.Attachments.Enabled', true)"
       v-show="showUploadArea"
       ref="upload"
       :channel-i-d="channel.channelID"
       :type-supported.sync="uploadFileTypeSupported"
       @close="showUploadArea=false; uploadFileTypeSupported=true"
-      @show="showUploadArea=true"
     />
 
     <channel-header
@@ -205,6 +205,7 @@ export default {
   created () {
     this.$root.$on('wake', this.fetchNewMessages)
   },
+
   beforeDestroy () {
     this.$root.$off('wake', this.fetchNewMessages)
   },

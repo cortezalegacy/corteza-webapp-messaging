@@ -31,7 +31,12 @@
         v-else
         class="dz-message unsupported"
       >
-        <h2>{{ $t('message.file.unsupportedType') }}</h2>
+        <h2
+          v-if="!typeSupported"
+        >
+          {{ $t('message.file.unsupportedType') }}
+        </h2>
+
         <button
           class="btn btn-blue"
           @click="$emit('close')"
@@ -80,6 +85,7 @@ import { mapGetters } from 'vuex'
 import vueDropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import 'corteza-webapp-messaging/src/themes/corteza-base/file-upload.scss'
+import { validateFileType } from 'corteza-webapp-common/src/lib/utils'
 import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
 
 export default {
@@ -119,8 +125,7 @@ export default {
     options () {
       return {
         paramName: 'upload',
-        // @todo make maxFilesize configurable
-        maxFilesize: 10, // mb
+        maxFilesize: this.$s('Message.Attachments.MaxSize', 10), // mb
         url: () => `${this.$MessagingAPI.baseURL}/channels/${this.channelID}/attach`,
         params: () => ({ replyTo: this.replyTo }),
         thumbnailMethod: 'contain',
@@ -132,6 +137,7 @@ export default {
         addRemoveLinks: false,
         disablePreview: true,
         dictRemoveFile: 'Remove',
+        acceptedFiles: null,
         headers: {
           // https://github.com/enyo/dropzone/issues/1154
           'Cache-Control': '',
@@ -223,6 +229,13 @@ export default {
 
     onFileAdded (file) {
       this.$emit('show', {})
+
+      // Check if file type is allowed
+      if (!validateFileType(file.name, this.$s('Message.Attachments.Mimetypes'))) {
+        this.$emit('update:typeSupported', false)
+        this.dropzone.removeFile(file)
+        return
+      }
 
       // If file is already in DZ, remove it and use current one
       const qFiles = this.dropzone.getQueuedFiles()
