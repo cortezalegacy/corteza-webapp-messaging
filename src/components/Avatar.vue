@@ -3,8 +3,8 @@
   <span>
     <i
       class="u-avatar"
-      :class="{online: isOnline }"
-      :style="img?'background-image:'+img:''"
+      :class="{online: user.online }"
+      :style="getStyle"
     >
       <span aria-hidden="true">{{ initials }}</span>
     </i>
@@ -12,30 +12,34 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
   name: 'Avatar',
   // require user param
   props: {
-    userID: {
-      type: String,
+    user: {
+      type: Object,
       required: true,
+    },
+
+    size: {
+      type: Number,
+      required: false,
+      default: 32,
     },
   },
 
   computed: {
-    ...mapGetters({
-      findByID: 'users/findByID',
-      isPresent: 'users/isPresent',
-    }),
-
-    user () {
-      return this.findByID(this.userID) || {}
-    },
-
-    img () {
-      return this.user.avatar || this.$t('general.label.na')
+    /**
+     * Determines what style the given avatar should have
+     * @returns {Object}
+     */
+    getStyle () {
+      return {
+        'background-image': this.user.avatar || '',
+        width: this.size + 'px',
+        height: this.size + 'px',
+        'font-size': (this.size / 2) + 'px',
+      }
     },
 
     initials () {
@@ -51,10 +55,6 @@ export default {
 
       return '?'
     },
-
-    isOnline () {
-      return !!this.isPresent(this.userID)
-    },
   },
 }
 </script>
@@ -62,15 +62,13 @@ export default {
 <style scoped lang="scss">
 .u-avatar
 {
-  display:inline-block;
-  font-size:16px;
-  height:32px;
-  width:32px;
+  display: inline-flex;
   border:solid 1px $secondary;
   border-radius:100%;
   background:url('/static/pics/no-profile-pic.png') center center no-repeat;
   background-size:contain;
-  line-height:28px;
+  align-items: center;
+  justify-content: center;
   text-align:center;
   font-style:normal;
   background-color:rgba($secondary,0.08);;
