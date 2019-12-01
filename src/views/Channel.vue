@@ -16,6 +16,7 @@
 
     <channel-header
       :channel="channel"
+      :users="users"
       v-on="$listeners"
     />
 
@@ -39,6 +40,10 @@
         @scrollTop="onScrollTop"
         @scrollBottom="onScrollBottom"
         @editMessage="onEditMessage"
+        @mentionSelect="onMentionSelect"
+        @messageReaction="onMessageReaction"
+        @bookmarkMessage="onBookmarkMessage"
+        @pinMessage="onPinMessage"
         v-on="$listeners"
       />
     </div>
@@ -50,6 +55,7 @@
       :submit-on-enter="submitOnEnter"
       :suggestion-priorities="getSp"
       :readonly="!isMember"
+      :users="users"
       @markAsRead="onMarkAsRead"
       @promptFilePicker="onPromptFilePicker"
       @editLastMessage="onEditLastMessage"
@@ -57,14 +63,26 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions, mapMutations } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import ChannelHeader from 'corteza-webapp-messaging/src/components/Channel/Header'
 import Upload from 'corteza-webapp-messaging/src/components/Upload'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
 import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
-import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 import ChatFooter from 'corteza-webapp-messaging/src/components/Chat/Footer'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
+
+const msgMinHeight = 30
+const msgBuffer = 1
+
+/**
+ * Helper to calculate how many messages should be loaded
+ * @returns {Number}
+ */
+function calcMsgCount () {
+  return Math.ceil(window.innerHeight / msgMinHeight) + msgBuffer
+}
 
 export default {
   components: {
@@ -77,6 +95,8 @@ export default {
   mixins: [
     mixinUnread,
     mixinUpload,
+    users,
+    messages,
   ],
 
   props: {
@@ -108,12 +128,20 @@ export default {
   computed: {
     ...mapGetters({
       channelByID: 'channels/findByID',
-      findUserByID: 'users/findByID',
-      channelHistory: 'history/getByChannelID',
       unreadFinder: 'unread/find',
       findWhereMember: 'channels/findWhereMember',
       uiEnableSubmitButton: 'ui/enableSubmitButton',
+      findChannelByMembership: 'channels/findByMembership',
+      canCreateGroupChannel: 'session/canCreateGroupChannel',
     }),
+
+    /**
+     * Determines current data source. Used for watchers
+     * @returns {String}
+     */
+    source () {
+      return this.channelID
+    },
 
     /**
      * Helper to determine if given channel has unread items.
@@ -142,10 +170,6 @@ export default {
       }
     },
 
-    messages () {
-      return this.channelHistory(this.channel.channelID)
-    },
-
     // Serves as a helper for unread procedures
     lastMessage () {
       return this.messages.length ? this.messages[this.messages.length - 1] : null
@@ -156,6 +180,9 @@ export default {
     },
 
     isMember () {
+      if (!this.channel) {
+        return false
+      }
       return this.channel.isMember(this.$auth.user.userID)
     },
 
@@ -165,10 +192,11 @@ export default {
   },
 
   watch: {
-    channelID: {
+    source: {
       immediate: true,
       handler () {
         this.loadMessages()
+        this.getUsers([this.channel])
       },
     },
   },
@@ -203,11 +231,6 @@ export default {
       this.onEditMessage({ message: this.messages[this.messages.length - 1] })
     },
 
-    ...mapMutations({
-      // @todo remove direct access to mutations!
-      updateHistorySet: 'history/updateSet',
-    }),
-
     ...mapActions({
       markAllAsRead: 'unread/markChannelAsRead',
       fromMessage: 'unread/fromMessage',
@@ -225,11 +248,12 @@ export default {
       this.editLastMessage = false
 
       this.previousFetchFirstMessageID = null
-      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, fromMessageID: this.messageID }).then((mm) => {
-        this.updateHistorySet(mm)
-
-        // Process loaded messages and extract unread info
-        mm.forEach(m => this.fromMessage(m))
+      this.messagesLoad(this.$MessagingAPI, {
+        channelID: this.channelID,
+        fromMessageID: this.messageID,
+        limit: calcMsgCount(),
+      }).then(messages => {
+        messages.forEach(m => this.fromMessage(m))
       })
     },
 
@@ -239,13 +263,15 @@ export default {
     },
 
     onScrollTop ({ messageID }) {
-      if (this.previousFetchFirstMessageID !== messageID) {
+      if (this.previousFetchFirstMessageID !== messageID && messageID) {
         // Make sure we do not fetch for the same lastID
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, beforeMessageID: messageID }).then((mm) => {
-          this.updateHistorySet(mm)
+        this.messagesLoad(this.$MessagingAPI, {
+          channelID: this.channelID,
+          beforeMessageID: messageID,
+          limit: 50,
         })
       }
     },
@@ -256,8 +282,9 @@ export default {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
       // @note this will be improved when the delta endpoint arrives
-      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, afterMessageID: lmID }).then((mm) => {
-        this.updateHistorySet(mm)
+      this.messagesLoad(this.$MessagingAPI, {
+        channelID: this.channelID,
+        afterMessageID: lmID,
       })
     },
 
