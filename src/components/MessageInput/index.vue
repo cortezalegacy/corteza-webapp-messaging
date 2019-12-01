@@ -162,6 +162,31 @@ export default {
       },
       deep: true,
     },
+
+    userSuggestions: {
+      handler: function (val, ov) {
+        // \shrug; Vue wanting to be smart and saying I might have a loop without this
+        if (!val || val === ov) {
+          return
+        }
+
+        // Determine new suggestions for current query
+        if (this.drawerProps.suggestions) {
+          this.drawerProps.suggestions = this.getUserSuggestions(val, this.drawerProps.query)
+        }
+      },
+      deep: true,
+    },
+
+    channelSuggestions: {
+      handler: function (val) {
+        if (this.drawerProps.suggestions) {
+          const suggestions = this.onFilterChannelSuggestions(val, this.drawerProps.query)
+          this.drawerProps.suggestions = suggestions
+        }
+      },
+      deep: true,
+    },
   },
 
   mounted () {
@@ -351,6 +376,7 @@ export default {
       // Use $set to invoke reactivity, required by drawer component.
       this.$set(this, 'drawerProps', {
         suggestions,
+        prevQuery: undefined,
         query,
         range,
         command,
@@ -418,12 +444,35 @@ export default {
     },
 
     /**
+     * Helper to request new suggestions
+     * @param {String} type Suggestion type
+     * @param {String} query Query to use
+     */
+    requestSuggestions (type, query) {
+      if (query && query !== this.drawerProps.prevQuery) {
+        this.$emit('requestSuggestions', { type, query })
+      }
+    },
+
+    /**
      * Handle to filter user suggestions.
      * @param {Array} items A set of available users. These objects should be pre-processed for fuzzysort
      * @param {String} query Query string
      * @returns {Array} A set of users, that matches the given query
      */
     onFilterUserSuggestions (items, query) {
+      this.$set(this.drawerProps, 'prevQuery', this.drawerProps.query)
+      this.requestSuggestions('user', query)
+      return this.getUserSuggestions(items, query)
+    },
+
+    /**
+     * Determines user suggestions
+     * @param {Array<Object>} items Available user mentions
+     * @param {String} query Query to use
+     * @returns {Array<Object>}
+     */
+    getUserSuggestions (items, query) {
       items = getMatches({ items, query, priorities: this.suggestionPriorities.User })
 
       // Aditionally sort matches based on status
@@ -446,6 +495,9 @@ export default {
      * @returns {Array} A set of channels, that matches the given query
      */
     onFilterChannelSuggestions (items, query) {
+      this.$set(this.drawerProps, 'prevQuery', this.drawerProps.query)
+      this.requestSuggestions('channel', query)
+
       return getMatches({ items, query, priorities: this.suggestionPriorities.Channel }).reverse()
     },
 

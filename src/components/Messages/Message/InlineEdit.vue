@@ -4,6 +4,7 @@
       <message-input
         ref="input"
         v-model="draft"
+        class="float-right"
         :channel="channel"
         :focus="focus"
         :submit-on-enter="submitOnEnter"
@@ -13,6 +14,7 @@
         :source="channelID"
         @submit="onSubmit"
         @focus="onFocus"
+        @requestSuggestions="onRequestSuggestions"
         v-on="$listeners"
       />
       <button

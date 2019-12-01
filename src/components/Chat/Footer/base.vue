@@ -2,7 +2,10 @@
 import { mapGetters } from 'vuex'
 import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
 import { getDraft, contentEmpty } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
+import { User } from 'corteza-webapp-messaging/src/types'
+import { throttle } from 'lodash'
 
+const maxUserSuggestions = 10
 /**
  * This base component should be extended by any components that provide
  * message creation. It provides base props & helper functions.
@@ -70,6 +73,8 @@ export default {
   data () {
     return {
       draft: null,
+      pulledUsers: [],
+      prioritizedUsers: [],
     }
   },
 
@@ -77,8 +82,15 @@ export default {
     ...mapGetters({
       users: 'users/list',
       channels: 'channels/list',
-      statuses: 'users/statuses',
     }),
+
+    /**
+     * Provides all available user suggestions
+     * @returns {Array<Object>}
+     */
+    userSuggestions () {
+      return this.prioritizedUsers.concat(this.pulledUsers)
+    },
 
     channelID () {
       return this.channel.channelID
@@ -101,48 +113,73 @@ export default {
       })
     },
 
+    currentUser () {
+      return this.$auth.user
+    },
+
     /**
      * Helper to provide a set of online user statuses.
      * This is moved outside of `userSuggestions`, so it won't be re-evaluated
      * if some user bit changes.
      * @returns {Array}
      */
-    onlineStatuses () {
-      return new Set(this.statuses.filter(s => s.present === 'online').map(s => s.userID))
-    },
-
-    /**
-     * Determines available user suggestions. These values are already
-     * pre-processed by the fuzzy search library.
-     * @returns {Array}
-     */
-    userSuggestions () {
-      return this.users.map(u => {
-        return {
-          type: 'User',
-          id: u.userID,
-          user: u,
-          value: u.suggestionLabel(),
-          online: this.onlineStatuses.has(u.userID),
-          ...u.fuzzyKeys(),
+  watch: {
+    suggestionPriorities: {
+      handler: function (ps) {
+        if (ps.User) {
+          // Fetch new prioritized users
+          this.$SystemAPI.userList({ userID: [...ps.User] })
+            .then(e => {
+              this.prioritizedUsers = e.set.map(u => new User(u)).map(this.prepUserSuggestion)
+            })
         }
-      })
-    },
-
-    currentUser () {
-      return this.$auth.user
-    },
-
-    /**
-     * Determines if submit should be ignored.
-     * @returns {Boolean}
-     */
-    submitDisabled () {
-      return contentEmpty(this.draft)
+      },
+      deep: true,
+      immediate: true,
     },
   },
 
+
   methods: {
+    /**
+     * Fetches new suggestions of the given type for the given query
+     * @param {String} type Type of suggestions
+     * @param {String} query Query to use
+     */
+    onRequestSuggestions: throttle(function ({ type, query }) {
+      if (type === 'user') {
+        this.$SystemAPI.userList({ query, perPage: maxUserSuggestions })
+          .then(({ set: users = [] }) => {
+            this.pulledUsers.push(
+              ...users
+                .filter(u => !this.userSuggestions.find(({ id }) => id === u.userID))
+                .map(u => new User(u)).map(this.prepUserSuggestion)
+            )
+
+            // Limit how manny we can have at once
+            if (this.pulledUsers.length > maxUserSuggestions) {
+              this.pulledUsers.splice(this.pulledUsers.length - maxUserSuggestions - 1, this.pulledUsers.length)
+            }
+          })
+      }
+    }, 500),
+
+    /**
+     * Pre-processes user suggestions into fuzzy-search objects + meta
+     * @returns {Object}
+     */
+    prepUserSuggestion (u) {
+      return {
+        type: 'User',
+        id: u.userID,
+        user: u,
+        value: u.suggestionLabel(),
+        online: false,
+        member: !!this.channel.members.find(uID => uID === u.userID),
+        ...u.fuzzyKeys(),
+      }
+    },
+
     /**
      * Handler for prompting emoji picker. It creates a callback that inserts
      * the emoji at current position.

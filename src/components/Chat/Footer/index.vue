@@ -26,6 +26,7 @@
         :suggestion-priorities="suggestionPriorities"
         @submit="onSubmit"
         @focus="onFocus"
+        @requestSuggestions="onRequestSuggestions"
         v-on="$listeners"
       />
 
