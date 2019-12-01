@@ -1,15 +1,15 @@
 <template>
-  <router-link
-    :to="linkProps"
+  <a
     :class="{ 'current-user': highlight && ID === $auth.user.userID }"
-    @click="$emit('click', $event)"
+    class="mention"
+    @click.prevent
+    @click="$parent.$emit('mentionSelect', { userID: ID, type: 'user' })"
   >
-    <slot>{{ getLabel(user) }}</slot>
-  </router-link>
+    @{{ (label || ID).trim() }}
+  </a>
 </template>
-<script>
-import { mapGetters } from 'vuex'
 
+<script>
 export default {
   props: {
     ID: {
@@ -24,47 +24,25 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
-
-  computed: {
-    ...mapGetters({
-      findUserByID: 'users/findByID',
-      findChannelByMembership: 'channels/findByMembership',
-    }),
-
-    linkProps () {
-      let ch = this.findChannelByMembership(this.ID, this.$auth.user.userID)
-      if (ch) {
-        return { name: 'channel', params: { channelID: ch.channelID } }
-      } else {
-        if (this.canCreateGroupChannel) {
-          return { name: 'profile', params: { userID: this.ID } }
-        } else {
-          // Cant click on a user if no previous conversation and no permission
-          return ''
-        }
-      }
-    },
-
-    user () {
-      return this.findUserByID(this.ID)
+    label: {
+      type: String,
+      required: false,
+      default: undefined,
     },
   },
+
 }
 </script>
 
 <style scoped lang="scss">
-a{
+.mention {
   color: $dark;
   font-weight: 900;
   text-decoration: none;
+  cursor: pointer;
+
   &.current-user{
     color: $primary;
-  }
-
-  &:before {
-    content: "@";
-    text-decoration: none;
   }
 }
 </style>
