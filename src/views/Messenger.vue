@@ -77,11 +77,11 @@
 import { mapGetters, mapActions } from 'vuex'
 import QuickSearch from 'corteza-webapp-messaging/src/components/Lightboxed/QuickSearch'
 import SearchResults from 'corteza-webapp-messaging/src/components/Lightboxed/SearchResults'
-import { cleanMentions } from 'corteza-webapp-messaging/src/lib/mentions'
 import TitleNotifications from 'corteza-webapp-messaging/src/lib/title_notifications'
 import core from 'corteza-webapp-messaging/src/mixins/core'
 import MessengerBase from 'corteza-webapp-messaging/src/components/MessengerBase'
 import { PreviewLightbox } from 'corteza-webapp-common/src/components/FilePreview/index'
+import pusher from 'corteza-webapp-messaging/src/mixins/pusher'
 
 const titleNtf = new TitleNotifications(document)
 
@@ -94,7 +94,7 @@ export default {
     PreviewLightbox,
   },
 
-  mixins: [ core ],
+  mixins: [ core, pusher ],
 
   data () {
     return {
@@ -130,8 +130,6 @@ export default {
     ...mapGetters({
       findChannelByID: 'channels/findByID',
       channels: 'channels/list',
-      findUserByID: 'users/findByID',
-      users: 'users/list',
       getSettings: 'settings/get',
       uiIsCordovaPlatform: 'ui/isCordovaPlatform',
       uiIsWide: 'ui/isWide',
@@ -177,15 +175,12 @@ export default {
     window.removeEventListener('focus', this.titleNotificationsHandler)
     window.removeEventListener('resize', this.windowResizeHandler)
     this.$bus.$off('ui.openEmojiPicker')
-    this.$bus.$off('$core.newMessage', this.handleNotifications)
     if (this.wakeCheck.i) window.clearInterval(this.wakeCheck.i)
   },
 
   methods: {
     ...mapActions({
       loadChannels: 'channels/load',
-      loadUsers: 'users/load',
-      loadUserStatuses: 'users/loadStatuses',
       loadCommands: 'suggestions/loadCommands',
       updateChannelUnreads: 'unread/fromChannel',
       loadSession: 'session/load',
@@ -196,7 +191,6 @@ export default {
         cc.forEach((c) => this.updateChannelUnreads(c))
       })
 
-      this.loadUsers()
       this.loadCommands()
       this.loadSession()
       if (this.uiIsCordovaPlatform) {
@@ -208,8 +202,6 @@ export default {
       window.addEventListener('focus', this.titleNotificationsHandler)
 
       titleNtf.update()
-
-      this.$bus.$on('$core.newMessage', this.handleNotifications)
 
       this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, document = undefined, meta }) => {
         this.uiShowPreview = {
@@ -231,10 +223,7 @@ export default {
         this.emojiPickerCallback = null
       })
 
-      // Load users, statuses & channels on wakeup
       this.$root.$on('wake', () => {
-        this.loadUsers()
-        this.loadUserStatuses()
         this.loadChannels().then(cc => {
           cc.forEach((c) => this.updateChannelUnreads(c))
         })
@@ -271,60 +260,6 @@ export default {
     onEmojiSelect (emoji) {
       this.emojiPickerCallback(emoji)
       this.emojiPickerCallback = null
-    },
-
-    handleNotifications ({ message }) {
-      if (message.updatedAt !== null || message.deletedAt !== null || message.replies > 0) {
-        // Ignoring deletes, removals and thread-messages with reply updates
-        return
-      }
-
-      if (!this.$auth.user || this.$auth.user.userID === message.userID) {
-        // Ignore messages we've authored
-        return
-      }
-
-      if (this.channel && this.channel.channelID === message.channelID && document.hasFocus()) {
-        // We're already paying attention
-        return
-      }
-
-      // Set window title so user maybe notice the action in the channel (notifications mixin)
-      // @todo not very stable & consistent...
-      // titleNtf.flashNew()
-      const ch = this.findChannelByID(message.channelID)
-      if (!ch) {
-        return
-      }
-
-      if (ch.membershipFlag === 'ignored') {
-        // Ignore by membership-flag
-        return
-      }
-
-      if (!(ch.isGroup() && ch.isMember(this.$auth.user.userID))) {
-        if (!message.isMentioned(this.$auth.user.userID)) {
-          // User is not mentioned.
-          // @todo this needs to be a bit more intelligent, take user's settings into account etc...
-          return
-        }
-      }
-
-      if (this.getSettings('mute.all')) {
-        return
-      }
-
-      const body = cleanMentions(message.message, this.users, this.channels)
-      const msgChannel = this.findChannelByID(message.channelID)
-
-      // Please note that this will not work on non secure domains. "http://localhost" is an exception.
-      this.$notification.show(`${this.getLabel(this.findUserByID(message.userID))} in ${msgChannel.name} | Crust`, {
-        body: body.length > 200 ? body.substring(0, 200) + '...' : body,
-      }, {
-        onclick: () => {
-          this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
-        },
-      })
     },
 
     titleNotificationsHandler () {
