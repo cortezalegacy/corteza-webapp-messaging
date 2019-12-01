@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="channel-editor">
     <header class="header">
       <label
         class="closer"
@@ -103,38 +103,42 @@
           </label>
         </div>
 
-        <div class="selected-members">
-          <label v-if="members.length > 0">{{ $t('channel.editor.selectedMembersLabel') }}</label>
-          <ul>
-            <li
-              v-for="(u) in members"
-              :key="u.userID"
-            >
-              <user-avatar :user-i-d="u.userID" />
-              {{ getLabel(u) }}
-              <button
-                class="btn-i"
-                @click.prevent="removeMember(u)"
-              >
-                <i class="icon-x" />
-              </button>
-            </li>
-          </ul>
-        </div>
+        <div class="members">
+          <!-- selected members section -->
+          <div class="selected-members">
+            <template v-if="members.length > 0">
+              <label>
+                {{ $t('channel.editor.selectedMembersLabel') }}
+              </label>
+              <ul class="members showcase">
+                <member-item
+                  v-for="u in members"
+                  :key="u.userID"
+                  :user="u"
+                  @removeMember="onRemoveMember"
+                />
+              </ul>
+            </template>
+          </div>
 
-        <div v-if="!channel.channelID">
-          <label class="label-block">{{ $t('channel.editor.addMembersLabel') }}</label>
-          <vue-simple-suggest
-            v-model="selectedMember"
-            :list="nonMembers"
-            :placeholder="$t('channel.editor.addMembersPlaceholder')"
-            :filter-by-query="true"
-            value-attribute="ID"
-            display-attribute="name"
-            class="select-members"
-            :destyled="true"
-            @select="onMemberSelect"
-          />
+          <!-- Add members section -->
+          <div class="add-members">
+            <label>
+              {{ $t('channel.editor.addMembersLabel') }}
+            </label>
+
+            <vue-select
+              class="user-search"
+              :filterable="false"
+              :options="filterResults()"
+              option-value="userID"
+              :get-option-label="o => o.label"
+              :placeholder="$t('channel.editor.addMembersPlaceholder')"
+              :close-on-select="false"
+              @search="onQuery"
+              @input="onMemberSelect"
+            />
+          </div>
         </div>
 
         <div class="actions">
@@ -202,26 +206,26 @@
   </section>
 </template>
 <script>
-import { Channel } from 'corteza-webapp-messaging/src/types'
-import { mapGetters, mapMutations } from 'vuex'
+import { Channel, User } from 'corteza-webapp-messaging/src/types'
+import { mapMutations } from 'vuex'
 import ConfirmationRow from 'corteza-webapp-messaging/src/components/Form/ConfirmationRow'
-import VueSimpleSuggest from 'vue-simple-suggest/lib/vue-simple-suggest'
-import 'vue-simple-suggest/dist/styles.css'
-import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
-
-const action = {
-  add: 'add',
-  remove: 'remove',
-}
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import MemberItem from 'corteza-webapp-messaging/src/components/Channel/MemberItem'
+import { throttle } from 'lodash'
+import { VueSelect } from 'vue-select'
 
 export default {
   name: 'ChannelEditor',
 
   components: {
-    VueSimpleSuggest,
+    VueSelect,
     ConfirmationRow,
-    'user-avatar': Avatar,
+    MemberItem,
   },
+
+  mixins: [
+    users,
+  ],
 
   props: {
     channelID: {
@@ -237,32 +241,20 @@ export default {
   data () {
     return {
       channel: new Channel(),
+      // Needed for diffing
+      oldMembers: [],
       error: null,
-
-      actionsUser: {},
-
-      selectedMember: null,
-      autoCompleteStyle: {
-        vueSimpleSuggest: 'position-relative',
-        inputWrapper: '',
-        defaultInput: 'form-control',
-        suggestions: 'position-absolute list-group z-1000',
-        suggestItem: 'list-group-item',
-      },
+      fetchedUsers: [],
     }
   },
 
   computed: {
-    ...mapGetters({
-      users: 'users/list',
-    }),
-
-    nonMembers () {
-      return this.users.filter(u => !this.channel.isMember(u.userID) && u.userID !== this.$auth.user.userID)
-    },
-
+    /**
+     * Provides user objects for channel members
+     * @returns {Array<User>}
+     */
     members () {
-      return this.users.filter(u => this.channel.isMember(u.userID))
+      return this.channel.members.map(m => this.users[m]).filter(m => m)
     },
   },
 
@@ -272,7 +264,9 @@ export default {
     },
 
     'type' (newType) {
-      if (!this.channel.channelID) this.load()
+      if (!this.channel.channelID) {
+        this.load()
+      }
     },
   },
 
@@ -285,74 +279,129 @@ export default {
       removeChannelFromList: 'channels/removeFromList',
     }),
 
-    removeMember (u) {
-      if (!this.actionsUser[u.userID]) {
-        this.$set(this.actionsUser, u.userID, [])
-      }
+    /**
+     * Filter fetched users
+     * @returns {Array<User>}
+     */
+    filterResults () {
+      return this.fetchedUsers.filter(({ userID }) => !this.users[userID])
+    },
 
-      this.actionsUser[u.userID].push(action.remove)
+    /**
+     * Helper to remove the given member from the given channel
+     * @param {User} u The user in question
+     */
+    onRemoveMember (u) {
       this.channel.removeMember(u)
     },
 
+    /**
+     * Prepare data to edit this channel. If channel is not defined,
+     * then create a new Channel object
+     * @param {String} channelID Channel in question
+     */
     load (channelID) {
       if (channelID) {
+        // Load channel to edit
         this.$MessagingAPI.channelRead({ channelID }).then((ch) => {
           this.channel = new Channel(ch)
+          this.oldMembers = [...this.channel.members]
+          this.getUsers(this.channel)
         }).catch((error) => {
           console.error('Failed to load channel info', { error })
-        }).finally(() => {
-          // this.disabled = false
         })
       } else {
+        // Create a new channel
         this.channel = new Channel()
+        this.oldMembers = []
         if (this.type) {
           this.channel.type = this.type
         }
       }
     },
 
+    /**
+     * Handles query requests
+     * @param {String} query Requested query
+     */
+    onQuery: throttle(function (query) {
+      if (!query) {
+        return
+      }
+      this.$SystemAPI.userList(({ query, limit: 15 }))
+        .then(({ set = [] }) => {
+          this.fetchedUsers = (set || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
+        })
+    }, 500),
+
     // moving channels between deleted, undeleted, archived, unarchived states
     updateChannelState (state) {
       this.$MessagingAPI.channelState({ channelID: this.channel.channelID, state }).then((ch) => {
         this.channel = new Channel(ch)
+        this.oldMembers = [ ...this.channel.members ]
       }).catch(({ message }) => {
         this.error = message
       })
     },
 
+    /**
+     * Create or update the given channel
+     */
     onSubmit () {
-      const channelID = this.channel.channelID
-      if (channelID) {
-        console.debug('Updating channel', this.channel)
-        // Update member list; if the list was altered
-        const actions = Object.entries(this.actionsUser)
-        if (actions.length) {
-          for (const [ userID ] of actions) {
-            // @note When we allow memer adding in this interface; this should be updated
-            this.$MessagingAPI.channelPart({ channelID, userID })
-          }
-        }
-        // Update channel
-        this.$MessagingAPI.channelUpdate({ ...this.channel, channelID: channelID }).then((ch) => {
-          console.debug('Channel updated', ch)
-          this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
-        }).catch((error) => {
-          this.error = error.message
-        })
+      if (this.channel.channelID) {
+        this.channelUpdate(this.channel, this.oldMembers)
       } else {
-        console.debug('Creating channel', this.channel)
-        this.$MessagingAPI.channelCreate(this.channel).then((ch) => {
-          console.debug('Channel created', ch)
-          this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
-        }).catch(({ error }) => {
-          this.error = error
-        })
+        this.channelCreate(this.channel)
       }
     },
 
+    /**
+     * Creates a new channel
+     * @param {Channel} channel The channel to be created
+     */
+    channelCreate (channel) {
+      this.$MessagingAPI.channelCreate(this.channel).then((ch) => {
+        this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
+      }).catch(({ error }) => {
+        this.error = error
+      })
+    },
+
+    /**
+     * Updates the given channel & it's members
+     * @param {Channel} channel The channel to be updated
+     * @param {Array<String>} oldMembers Previous memberships
+     */
+    channelUpdate (channel, oldMembers = []) {
+      // Determine members delta
+      const joined = channel.members.filter(m => !oldMembers.includes(m))
+      const parted = oldMembers.filter(m => !channel.members.includes(m))
+
+      for (const m of joined) {
+        this.$MessagingAPI.channelJoin({ channelID: channel.channelID, userID: m })
+      }
+      for (const m of parted) {
+        this.$MessagingAPI.channelPart({ channelID: channel.channelID, userID: m })
+      }
+
+      // Update channel
+      this.$MessagingAPI.channelUpdate(this.channel).then((ch) => {
+        this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
+      }).catch((error) => {
+        this.error = error.message
+      })
+    },
+
+    /**
+     * Add member to the channel
+     * @param {User} user The user to add
+     */
     onMemberSelect (user) {
-      if (!user) return
-      this.selectedMember = ''
+      if (!user) {
+        return
+      }
+
+      this.$set(this.users, user.userID, user)
       this.channel.members.push(user.userID)
     },
   },
@@ -385,11 +434,21 @@ form {
   }
 }
 
-section.toggle-state {
-  border-top: 1px solid $secondary;
-  font-size: 1.5em;
-  padding: 20px 10px 30px 10px;
-  margin: 20px;
+.channel-editor {
+  height: 100%;
+  overflow-y: scroll;
+
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .toggle-state {
+    border-top: 1px solid $secondary;
+    font-size: 1.5em;
+    padding: 20px 10px 30px 10px;
+    margin: 20px;
+  }
 }
 
 .default-input{
@@ -421,21 +480,27 @@ section.toggle-state {
   font-size: 14px;
 }
 
-ul {
+.members {
   padding: 0;
   margin-top: 5px;
+
+  >div {
+    display: inline-block;
+    padding: 0 10px;
+  }
+
+  &.showcase {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
   li {
     list-style: none;
-    display: inline-block;
-    margin-right: 5px;
+    margin: 10px 5px;
     vertical-align: bottom;
   }
 }
 
-.btn-i {
-  padding: 0 10px 0 0;
-  margin-top: -5px;
-}
 .select-members{
   /deep/ .input-wrapper{
     input{
@@ -458,7 +523,8 @@ ul {
     background: $light;
     padding: 0 10px 20px 10px;
     overflow: scroll;
-    max-height: 100px;
+    width: 98%;
+    max-height: 200px;
     .suggest-item {
       cursor: pointer;
       padding: 5px 0 0;
@@ -466,6 +532,24 @@ ul {
           color: $primary;
         }
     }
+  }
+}
+
+@media (max-width: $wideminwidth - 1) {
+  .selected-members {
+    width: 100%;
+  }
+  .add-members {
+    width: 100%;
+  }
+}
+
+@media (min-width: $wideminwidth) {
+  .selected-members {
+    width: 70%;
+  }
+  .add-members {
+    width: 30%;
   }
 }
 
