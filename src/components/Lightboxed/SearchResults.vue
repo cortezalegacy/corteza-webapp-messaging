@@ -24,21 +24,22 @@
         >
           <channel-link
             :i-d="r.channel.channelID"
+            :users="users"
             @click="onClose"
           />
         </i18next>
         <messages
           ref="messages"
           :messages="r.messages"
+          :users="users"
           :current-user="$auth.user"
           :hide-action-go-to-message="false"
           :hide-action-open-thread="true"
           :hide-actions-menu="true"
-          :hide-reactions="true"
           :hide-pinning="true"
           :hide-mark-as-unread="true"
           :hide-bookmarking="true"
-          origin="search"
+          :origin="{ type: 'search' }"
           :scrollable="false"
           class="search-messages"
           v-on="$listeners"
@@ -57,6 +58,8 @@ import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import ChannelLink from 'corteza-webapp-messaging/src/components/Channel/Link'
 import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
 import { Message } from 'corteza-webapp-messaging/src/types'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
@@ -68,6 +71,8 @@ export default {
 
   mixins: [
     emitCloseOnEscape,
+    users,
+    messages,
   ],
 
   props: {
@@ -77,17 +82,27 @@ export default {
     },
   },
 
-  data () {
-    return {
-      results: [],
-    }
-  },
-
   computed: {
     ...mapGetters({
       findChannelByID: 'channels/findByID',
-      findUserByID: 'users/findByID',
     }),
+
+    /**
+     * Groups messages under their channels
+     * @returns {Array<Object>}
+     */
+    results () {
+      return this.groupByChannel(this.messages)
+    },
+  },
+
+  watch: {
+    results: {
+      handler: function (rr) {
+        this.getUsers(rr.map(({ channel }) => channel))
+      },
+      deep: true,
+    },
   },
 
   mounted () {
@@ -97,9 +112,7 @@ export default {
   methods: {
     search (query) {
       this.results = []
-      this.$MessagingAPI.searchMessages({ query }).then(mm => {
-        this.results = this.groupByChannel(mm)
-      })
+      this.messagesLoad({ query })
     },
 
     groupByChannel (mm) {
@@ -120,7 +133,7 @@ export default {
           groups.push({ messages: [], channel })
         }
 
-        groups[gindex[channelID]].messages.push(new Message({ ...message, user: this.findUserByID(message.userID) }))
+        groups[gindex[channelID]].messages.push(new Message({ ...message, userID: message.userID }))
       }
 
       return groups

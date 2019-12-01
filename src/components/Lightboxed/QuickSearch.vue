@@ -76,7 +76,6 @@ export default {
   computed: {
     ...mapGetters({
       channels: 'channels/list',
-      users: 'users/list',
       canCreateGroupChannel: 'session/canCreateGroupChannel',
     }),
 
@@ -96,7 +95,7 @@ export default {
 
     channelsAndUsers () {
       return [
-        ...this.users.filter(u => u.userID !== this.$auth.user.userID).map(cmp('user')),
+        // no need to search over users, since we don't provide profiles at the moment
         ...this.channels.filter(c => !c.isDirectMessage()).map(cmp('channel')),
       ]
     },
