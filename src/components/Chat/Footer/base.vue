@@ -2,17 +2,23 @@
 import { mapGetters } from 'vuex'
 import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
 import { getDraft, contentEmpty } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
+import { Activity, activityTTL } from './types'
+import CActivity from './Activity'
 import { User } from 'corteza-webapp-messaging/src/types'
 import { throttle } from 'lodash'
 
 const maxUserSuggestions = 10
+
 /**
  * This base component should be extended by any components that provide
  * message creation. It provides base props & helper functions.
  */
 export default {
   components: {
+    // eslint-disable-next-line
     MessageInput,
+    // eslint-disable-next-line
+    CActivity,
   },
 
   props: {
@@ -68,19 +74,27 @@ export default {
       required: false,
       default: () => ({}),
     },
+
+    users: {
+      type: Object,
+      required: true,
+    },
   },
 
   data () {
     return {
       draft: null,
+      channelActivities: [],
+
       pulledUsers: [],
       prioritizedUsers: [],
+
+      activityTimeout: undefined,
     }
   },
 
   computed: {
     ...mapGetters({
-      users: 'users/list',
       channels: 'channels/list',
     }),
 
@@ -90,6 +104,22 @@ export default {
      */
     userSuggestions () {
       return this.prioritizedUsers.concat(this.pulledUsers)
+    },
+
+    /**
+     * Provides user objects for given activity
+     * @returns {Array<User>}
+     */
+    activityUsers () {
+      return this.channelActivities.map(({ userID }) => this.users[userID])
+    },
+
+    /**
+     * Helper to get channel activities -- eg.: who's typing.
+     * @returns {Array}
+     */
+    getChannelActivity () {
+      return this.channelActivity
     },
 
     channelID () {
@@ -118,11 +148,14 @@ export default {
     },
 
     /**
-     * Helper to provide a set of online user statuses.
-     * This is moved outside of `userSuggestions`, so it won't be re-evaluated
-     * if some user bit changes.
-     * @returns {Array}
+     * Determines if submit should be ignored.
+     * @returns {Boolean}
      */
+    submitDisabled () {
+      return contentEmpty(this.draft)
+    },
+  },
+
   watch: {
     suggestionPriorities: {
       handler: function (ps) {
@@ -139,6 +172,15 @@ export default {
     },
   },
 
+  created () {
+    this.$bus.$on('user.activity', this.onActivity)
+    this.statusCleanup()
+  },
+
+  beforeDestroy () {
+    this.$bus.$off('user.activity', this.onActivity)
+    window.clearTimeout(this.activityTimeout)
+  },
 
   methods: {
     /**
@@ -192,6 +234,43 @@ export default {
           input.focus()
         },
       })
+    },
+
+    /**
+     * Cleanup stale statuses
+     */
+    statusCleanup () {
+      this.activityTimeout = window.setTimeout(() => {
+        this.channelActivities = this.channelActivities.filter(s => !s.isStale(activityTTL))
+        this.statusCleanup()
+      }, activityTTL)
+    },
+
+    /**
+     * Handle activities
+     * @param {Object} activity Activity to process
+     */
+    onActivity (activity) {
+      if (activity.userID === this.currentUser.userID) {
+        return
+      }
+
+      if (activity.channelID !== this.channelID) {
+        return
+      }
+
+      if (this.replyToID && activity.kind !== 'replying' && activity.messageID !== this.replyToID) {
+        return
+      } else if (!this.replyToID && activity.kind !== 'typing') {
+        return
+      }
+
+      const i = this.channelActivities.findIndex(Activity.activityFinder(activity))
+      if (i > -1) {
+        this.channelActivities.splice(i, 1, this.channelActivities[i].update())
+      } else {
+        this.channelActivities.push(new Activity(activity))
+      }
     },
 
     /**

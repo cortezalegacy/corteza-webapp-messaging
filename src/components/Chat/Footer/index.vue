@@ -75,10 +75,9 @@
 
     <div class="group borderless float-left">
       <div class="meta-bar">
-        <activity
-          v-if="!replyTo"
+        <c-activity
           class="activity"
-          :users="getChannelActivity"
+          :users="activityUsers"
           :activity="$t('message.typing')"
         />
 
@@ -95,8 +94,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Activity from './Activity'
 import ObserverFooter from './ObserverFooter'
 import { stringifyDocument } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
 import { throttle } from 'lodash'
@@ -111,7 +108,6 @@ const activityKinds = {
 
 export default {
   components: {
-    Activity,
     ObserverFooter,
   },
 
@@ -137,20 +133,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      channelActivity: 'users/channelActivity',
-    }),
 
     replyToID () {
       return (this.replyTo || {}).messageID
-    },
-
-    /**
-     * Helper to get channel activities -- eg.: who's typing.
-     * @returns {Array}
-     */
-    getChannelActivity () {
-      return this.channelActivity(this.channelID, 'typing')
     },
 
     /**

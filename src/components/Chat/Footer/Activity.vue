@@ -50,7 +50,11 @@ export default {
      * @returns {String}
      */
     stringify (lim) {
-      return this.users.slice(0, lim).map(u => this.getLabel(u)).join(', ')
+      return this.users
+        .slice(0, lim)
+        .filter(u => u)
+        .map(u => u.label)
+        .join(', ')
     },
   },
 }
