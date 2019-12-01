@@ -20,6 +20,7 @@
       <group
         v-if="unreadChannels.length > 0"
         :list="unreadChannels"
+        :users="users"
         :current="channel"
         class="channel-group"
         v-on="$listeners"
@@ -65,6 +66,7 @@
       <group
         :link="{name: 'new-channel', params: { type: 'group' } }"
         :list="groupChannels"
+        :users="users"
         :can-create="canCreateGroupChannel"
         :current="channel"
         v-on="$listeners"
@@ -87,12 +89,17 @@
 import { mapGetters } from 'vuex'
 import Group from 'corteza-webapp-messaging/src/components/Panel/Channels/Group'
 import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
+import users from 'corteza-webapp-messaging/src/mixins/users'
 
 export default {
   components: {
     Group,
     SearchInput,
   },
+
+  mixins: [
+    users,
+  ],
 
   props: {
     searchQuery: {
@@ -119,8 +126,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      isPresent: 'users/isPresent',
-      findUserByID: 'users/findByID',
       channels: 'channels/list',
       unreadFinder: 'unread/find',
       canCreateGroupChannel: 'session/canCreateGroupChannel',
@@ -176,6 +181,33 @@ export default {
     },
   },
 
+  watch: {
+    groupChannels: {
+      immediate: true,
+      handler (newChannels = []) {
+        const memberIDs = new Set()
+        newChannels.forEach(({ members }) => {
+          members.reduce((s, e) => s.add(e), memberIDs)
+        })
+        this.fetchUsers([...memberIDs])
+      },
+    },
+
+    unreadChannels: {
+      immediate: true,
+      handler (channels = []) {
+        const memberIDs = new Set()
+        channels.filter(({ type }) => type === 'group').forEach(({ members, type }) => {
+          if (type === 'group') {
+            members.forEach(memberIDs.add)
+          }
+        })
+
+        this.fetchUsers([...memberIDs])
+      },
+    },
+  },
+
   methods: {
     gotoAndClose (params) {
       this.$emit('close')
@@ -197,7 +229,7 @@ export default {
     // Sorts channels: 1) valid channels, directs with everyone online, some online, all offline and others
     channelSlicer (cc, sortFn) {
       const presenceFilter = (c, cnd) => {
-        const present = c.members.filter(m => this.isPresent(m)).length
+        const present = c.members.filter(m => (this.users[m] || {}).online).length
 
         switch (cnd) {
           case 'everyone':
@@ -231,8 +263,8 @@ export default {
     },
 
     sortByOnlineStatus (a, b) {
-      const aLen = a.members.filter(m => this.isPresent(m)).length
-      const bLen = b.members.filter(m => this.isPresent(m)).length
+      const aLen = a.members.filter(m => (this.users[m] || {}).online).length
+      const bLen = b.members.filter(m => (this.users[m] || {}).online).length
       if (aLen !== bLen) return bLen - aLen
       return this.sortChannelByName(a, b)
     },

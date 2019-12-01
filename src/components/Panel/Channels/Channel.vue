@@ -14,7 +14,10 @@
           :icon="['far', 'bell-slash']"
         />
       </label>
-      <channel-label :channel="channel" />
+      <channel-label
+        :channel="channel"
+        :users="users"
+      />
     </router-link>
     <router-link
       v-else
@@ -22,7 +25,10 @@
       :class="[channelColor(index), { current: (current || {}).channelID === channel.channelID }]"
       :to="{name:'channel', params:{channelID:channel.channelID}}"
     >
-      <channel-label :channel="channel" />
+      <channel-label
+        :channel="channel"
+        :users="users"
+      />
     </router-link>
     <transition
       v-if="unread.count || unread.threadCount"
@@ -88,6 +94,11 @@ export default {
       type: Number,
       required: true,
     },
+
+    users: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   data () {
@@ -99,8 +110,6 @@ export default {
   computed: {
     ...mapGetters({
       otherMembersOf: 'channels/otherMembersOf',
-      findUserByID: 'users/findByID',
-      isPresent: 'users/isPresent',
       unreadFinder: 'unread/find',
     }),
 
@@ -117,7 +126,12 @@ export default {
 
       if (this.channel.type === 'group') {
         let online = 0
-        this.channel.members.forEach(userID => { if (this.isPresent(userID)) online++ })
+        this.channel.members.forEach(userID => {
+          if ((this.users[userID] || {}).online) {
+            online++
+          }
+        })
+
         const total = this.channel.members.length
 
         if (online === total) {
