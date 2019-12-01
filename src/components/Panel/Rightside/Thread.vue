@@ -57,6 +57,7 @@
         @mentionSelect="onMentionSelect"
         @messageReaction="onMessageReaction"
         @bookmarkMessage="onBookmarkMessage"
+        @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
     </template>

@@ -44,6 +44,7 @@
         @messageReaction="onMessageReaction"
         @bookmarkMessage="onBookmarkMessage"
         @pinMessage="onPinMessage"
+        @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
     </div>

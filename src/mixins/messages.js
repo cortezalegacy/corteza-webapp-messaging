@@ -356,5 +356,15 @@ export default {
         this.$MessagingAPI.messageReactionCreate({ ...message, reaction })
       }
     },
+
+    /**
+     * Deletes the given message.
+     * @param {Message} message Message to delete
+     */
+    onDeleteMessage ({ message }) {
+      if (confirm(this.$t('message.deleteConfirm'))) {
+        this.$MessagingAPI.messageDelete(message)
+      }
+    },
   },
 }

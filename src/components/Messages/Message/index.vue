@@ -69,7 +69,6 @@
         class="actions"
         v-bind="$props"
         @reaction="onReaction"
-        @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
     </section>
@@ -95,7 +94,7 @@
         :channel="channel"
         :message="message"
         v-bind="$props"
-        @deleteMessage="onDeleteMessage"
+        v-on="$listeners"
         @cancel="$emit('cancelEditing')"
       />
 
@@ -264,13 +263,6 @@ export default {
     // Wrapper that append message info to event
     onReaction ({ reaction }) {
       this.$emit('messageReaction', { message: this.message, reaction })
-    },
-
-    onDeleteMessage () {
-      // @todo a more slick, inline confirmation...
-      if (confirm(this.$t('message.deleteConfirm'))) {
-        this.deleteMessage(this.message)
-      }
     },
 
     onOpenThread () {
