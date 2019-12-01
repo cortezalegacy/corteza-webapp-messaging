@@ -54,6 +54,9 @@
         @scrollBottom="onScrollBottom"
         @cancelEditing="onCancelEditing"
         @editMessage="onEditMessage"
+        @mentionSelect="onMentionSelect"
+        @messageReaction="onMessageReaction"
+        @bookmarkMessage="onBookmarkMessage"
         v-on="$listeners"
       />
     </template>
@@ -66,6 +69,7 @@
       :submit-on-enter="submitOnEnter"
       :reply-to="message"
       :suggestion-priorities="getSp"
+      :users="users"
       @markAsRead="onMarkAsRead"
       @promptFilePicker="onPromptFilePicker"
       @editLastMessage="onEditLastMessage"
@@ -73,14 +77,15 @@
   </base-panel>
 </template>
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import BasePanel from './.'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import Upload from 'corteza-webapp-messaging/src/components/Upload'
 import mixinUnread from 'corteza-webapp-messaging/src/mixins/unread'
 import mixinUpload from 'corteza-webapp-messaging/src/mixins/upload'
-import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
 import ChatFooter from 'corteza-webapp-messaging/src/components/Chat/Footer'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
@@ -93,11 +98,13 @@ export default {
   mixins: [
     mixinUnread,
     mixinUpload,
+    users,
+    messages,
   ],
 
   props: {
-    repliesTo: {
-      type: String,
+    message: {
+      type: Object,
       required: true,
     },
   },
@@ -114,13 +121,23 @@ export default {
 
   computed: {
     ...mapGetters({
-      getMessageByID: 'history/getByID',
-      findUserByID: 'users/findByID',
-      getThread: 'history/getThread',
       getChannelByID: 'channels/findByID',
       unreadFinder: 'unread/find',
       findWhereMember: 'channels/findWhereMember',
+      canCreateGroupChannel: 'session/canCreateGroupChannel',
     }),
+
+    repliesTo () {
+      return this.message.messageID
+    },
+
+    channel () {
+      return this.getChannelByID(this.message.channelID) || {}
+    },
+
+    channelID () {
+      return this.message.channelID
+    },
 
     /**
      * Helper to determine if enter should submit. If not, a send button will be visible
@@ -141,23 +158,6 @@ export default {
       }
     },
 
-    message () {
-      // Thread start
-      return this.getMessageByID(this.repliesTo)
-    },
-
-    channelID () {
-      return (this.message || {}).channelID
-    },
-
-    channel () {
-      return this.getChannelByID(this.channelID) || {}
-    },
-
-    messages () {
-      return this.getThread(this.repliesTo)
-    },
-
     // Serves as a helper for unread procedures
     lastMessage () {
       return this.messages.length ? this.messages[this.messages.length - 1] : null
@@ -176,15 +176,16 @@ export default {
       }
     },
 
-    repliesTo (newRepliesTo, oldRepliesTo) {
-      if (newRepliesTo && newRepliesTo !== oldRepliesTo) {
+    repliesTo: {
+      handler: function (newRepliesTo, oldRepliesTo) {
+        this.updateMessages(this.message)
         this.loadMessages()
-      }
+      },
+      immediate: true,
     },
   },
 
   created () {
-    this.loadMessages()
     this.$root.$on('wake', this.fetchNewMessages)
   },
   beforeDestroy () {
@@ -192,11 +193,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations({
-      // @todo remove direct access to mutations!
-      updateHistorySet: 'history/updateSet',
-    }),
-
     ...mapActions({
       markAllAsRead: 'unread/markThreadAsRead',
     }),
@@ -233,9 +229,11 @@ export default {
 
     // Preloads thread
     loadMessages () {
-      messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, threadID: this.repliesTo }).then((mm) => {
-        this.updateHistorySet(mm)
-      })
+      const params = {
+        channelID: this.channelID,
+        threadID: this.repliesTo,
+      }
+      this.messagesLoad(this.$MessagingAPI, params)
     },
 
     // Mark entire thread as read
@@ -249,8 +247,9 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        messagesLoad(this.$MessagingAPI, this.findUserByID, { channelID: this.channelID, threadID: this.repliesTo }).then((mm) => {
-          this.updateHistorySet(mm)
+        this.messagesLoad(this.$MessagingAPI, {
+          channelID: this.channelID,
+          threadID: this.repliesTo,
         })
       }
     },
@@ -265,8 +264,9 @@ export default {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
       // @note this will be improved when the delta endpoint arrives
-      messagesLoad(this.$MessagingAPI, this.findUserByID, { threadID: this.repliesTo, afterMessageID: lmID }).then((mm) => {
-        this.updateHistorySet(mm)
+      this.messagesLoad(this.$MessagingAPI, {
+        threadID: this.repliesTo,
+        afterMessageID: lmID,
       })
     },
   },

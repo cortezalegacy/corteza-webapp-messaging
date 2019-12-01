@@ -38,7 +38,7 @@
 
         <thread-panel
           v-if="isThreadPanel"
-          :replies-to="uiRightSidePanelThreadMessageID"
+          :message="uiRightSidePanelThreadMessage"
           @close="switchRightSidePanel()"
         />
 
@@ -87,7 +87,7 @@ export default {
   data () {
     return {
       // UI control
-      uiRightSidePanelThreadMessageID: null,
+      uiRightSidePanelThreadMessage: null,
       uiRightSidePanelContent: null,
       uiPinChannelSidePanel: true,
       uiHideChannelSidePanel: false,
@@ -169,7 +169,7 @@ export default {
 
       switch (panel) {
         case 'thread':
-          this.uiRightSidePanelThreadMessageID = $event.message.messageID
+          this.uiRightSidePanelThreadMessage = $event.message
       }
     },
 
