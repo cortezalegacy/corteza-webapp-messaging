@@ -13,7 +13,6 @@ import auth from 'corteza-webapp-common/src/plugins/auth'
 import ws from './ws'
 import bus from './bus'
 import commands from './commands'
-import triggers from './triggers'
 import drafts from './drafts'
 
 const eventbus = new Vue()
@@ -29,9 +28,3 @@ Vue.use(commands, { store })
 Vue.use(ws, { eventbus })
 Vue.use(auth)
 Vue.use(drafts)
-Vue.use(triggers, {
-  userByID: store.getters['users/findByID'],
-  userList: store.getters['users/listOnDemand'],
-  channelByID: store.getters['channels/findByID'],
-  channelList: store.getters['channels/listOnDemand'],
-})
