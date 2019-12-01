@@ -21,7 +21,7 @@
         :key="unread.channelID"
       >
         <header class="channel-unread">
-          {{ labelChannel(unread.channelID) }} ({{ unread.count }})
+          {{ labelChannel(unread.channelID, users) }} ({{ unread.count }})
           <button
             class="btn"
             @click="markAsRead(unread)"
@@ -54,13 +54,19 @@
 import { mapGetters, mapActions } from 'vuex'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import Empty from 'corteza-webapp-messaging/src/components/Empty'
-import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
     Messages,
     Empty,
   },
+
+  mixins: [
+    users,
+    messages,
+  ],
 
   computed: {
     ...mapGetters({
@@ -94,7 +100,7 @@ export default {
       if (!this.unreadChannels) return
 
       this.unreadChannels.forEach(u => {
-        messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { channelID: u.channelID, fromMessageID: u.lastMessageID }).then((msgs) => {
+        this.messagesLoad(this.$MessagingAPI, { channelID: u.channelID, fromMessageID: u.lastMessageID }).then((msgs) => {
           this.$store.commit('history/updateSet', msgs)
         })
       })
