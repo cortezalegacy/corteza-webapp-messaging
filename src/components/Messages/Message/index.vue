@@ -34,7 +34,10 @@
         class="avatar"
       >
         <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-          <avatar :user-i-d="message.userID" />
+          <avatar
+            :user-i-d="message.userID"
+            :user="message.user"
+          />
         </router-link>
       </em>
       <em
@@ -42,7 +45,7 @@
         class="author selectable"
       >
         <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-          {{ labelUser(message.userID) }}
+          {{ message.user.label || ' ' }}
         </router-link>
       </em>
       <i18next
@@ -65,8 +68,7 @@
         v-if="!hideActions && !isEditing"
         class="actions"
         v-bind="$props"
-        @pinMessage="onPinMessage"
-        @bookmarkMessage="onBookmarkMessage"
+        @reaction="onReaction"
         @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
@@ -92,6 +94,7 @@
         :submit-on-enter="submitOnEnter"
         :channel="channel"
         :message="message"
+        v-bind="$props"
         @deleteMessage="onDeleteMessage"
         @cancel="$emit('cancelEditing')"
       />
@@ -101,6 +104,7 @@
         :id="message.messageID"
         class="message-content"
         :content="message.message"
+        v-on="$listeners"
       />
 
       <embedded-box
@@ -125,7 +129,6 @@
   </li>
 </template>
 <script>
-import { mapActions } from 'vuex'
 import * as moment from 'moment'
 import Attachment from './Attachment'
 import Contents from './Contents'
@@ -238,12 +241,6 @@ export default {
   },
 
   methods: {
-    ...mapActions({
-      pinMessage: 'history/pin',
-      bookmarkMessage: 'history/bookmark',
-      deleteMessage: 'history/delete',
-    }),
-
     onInputSubmit ({ value }) {
       this.showEditor = false
     },
@@ -264,21 +261,9 @@ export default {
       return (moment().startOf('day').unix() === moment(timeString).startOf('day').unix())
     },
 
-    getChunks (text) {
-      return this.$triggers.getChunks(text)
-    },
-
     // Wrapper that append message info to event
     onReaction ({ reaction }) {
-      this.$bus.$emit('message.reaction', { message: this.message, reaction })
-    },
-
-    onPinMessage () {
-      this.pinMessage(this.message)
-    },
-
-    onBookmarkMessage () {
-      this.bookmarkMessage(this.message)
+      this.$emit('messageReaction', { message: this.message, reaction })
     },
 
     onDeleteMessage () {
@@ -461,6 +446,7 @@ em{
 }
 
 .author{
+  min-height: 16px;
   a {
     text-decoration: none;
     color: $secondary;

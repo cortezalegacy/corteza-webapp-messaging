@@ -120,7 +120,7 @@ export default {
       this.$bus.$emit('ui.openEmojiPicker', {
         callback: ({ colons }) => {
           // Got called back from the emoji picker, now send the reaction to this message...
-          this.$bus.$emit('message.reaction', { message: this.message, reaction: colons })
+          this.$emit('reaction', { reaction: colons })
         },
       })
     },
