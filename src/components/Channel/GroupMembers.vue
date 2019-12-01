@@ -17,14 +17,19 @@ export default {
       type: Object,
       required: true,
     },
+
+    users: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   computed: {
     members () {
       return this.$store.getters['channels/otherMembersOf'](this.group.channelID, this.$auth.user.userID)
-        .filter(o => this.$store.getters['users/findByID'](o) !== undefined)
         .map(o => {
-          return { label: this.labelUser(o), present: this.$store.getters['users/isPresent'](o) }
+          const user = this.users[o] || o
+          return { label: user.label, present: user.online }
         }).sort((a, b) => {
           return b.present - a.present
         })

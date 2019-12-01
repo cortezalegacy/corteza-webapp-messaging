@@ -11,6 +11,11 @@ export default {
       type: Object,
       required: true,
     },
+
+    users: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   render (createElement) {
@@ -18,10 +23,11 @@ export default {
       return createElement(GroupMembers, {
         props: {
           group: this.channel,
+          users: this.users,
         },
       })
     } else {
-      return createElement('span', this.labelChannel(this.channel))
+      return createElement('span', this.labelChannel(this.channel, this.users))
     }
   },
 }
