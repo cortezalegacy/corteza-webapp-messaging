@@ -16,6 +16,7 @@
     "cdeps": "yarn upgrade corteza-webapp-common"
   },
   "gitHooks": {
+    "pre-commit": "yarn lint"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "1.2.21",
