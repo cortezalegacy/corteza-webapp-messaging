@@ -31,6 +31,7 @@
       <group
         v-if="pinnedChannels.length > 0"
         :list="pinnedChannels"
+        :users="users"
         :current="channel"
         class="channel-group"
         v-on="$listeners"
