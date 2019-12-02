@@ -48,7 +48,8 @@ export default {
      */
     async fetchUsers (IDs = []) {
       const userIDs = new Set(IDs)
-      const fetch = ([...userIDs]).filter(uID => !this.users[uID])
+      const fetch = ([...userIDs])
+        .filter(uID => !this.users[uID] && uID !== '0')
       if (!fetch.length) {
         return this.users
       }
