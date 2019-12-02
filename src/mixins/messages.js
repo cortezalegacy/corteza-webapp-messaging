@@ -9,7 +9,11 @@ import { parseDocument, stringifyDocument } from 'corteza-webapp-messaging/src/c
 function mentionsFromDoc (doc) {
   const mentions = []
 
-  for (const c of doc.content) {
+  for (const c of doc.content || []) {
+    if (!c) {
+      break
+    }
+
     if (c.type === 'paragraph') {
       mentions.push(...mentionsFromDoc(c))
     } else if (c.type === 'mention-user') {
