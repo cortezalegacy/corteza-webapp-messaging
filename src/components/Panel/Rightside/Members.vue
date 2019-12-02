@@ -150,6 +150,9 @@ export default {
      * @param {User} user User to add
      */
     onAdd (user) {
+      if (!user) {
+        return
+      }
       const { userID } = user
       const { channelID } = this.ch
 
