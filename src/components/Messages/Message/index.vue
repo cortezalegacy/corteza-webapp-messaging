@@ -454,6 +454,9 @@ em{
 .avatar {
   position: absolute;
   left: 20px;
+  a {
+    text-decoration: none;
+  }
 }
 
 .author,
