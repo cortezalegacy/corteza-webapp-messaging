@@ -110,7 +110,6 @@ export class User {
     this.handle = u.handle || ''
     this.name = u.name || ''
     this.email = u.email || ''
-    // @todo...
     this.online = u.online || false
 
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
