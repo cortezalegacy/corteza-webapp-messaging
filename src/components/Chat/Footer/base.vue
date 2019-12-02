@@ -259,17 +259,19 @@ export default {
         return
       }
 
-      if (this.replyToID && activity.kind !== 'replying' && activity.messageID !== this.replyToID) {
-        return
-      } else if (!this.replyToID && activity.kind !== 'typing') {
-        return
+      const handle = () => {
+        const i = this.channelActivities.findIndex(Activity.activityFinder(activity))
+        if (i > -1) {
+          this.channelActivities.splice(i, 1, this.channelActivities[i].update())
+        } else {
+          this.channelActivities.push(new Activity(activity))
+        }
       }
 
-      const i = this.channelActivities.findIndex(Activity.activityFinder(activity))
-      if (i > -1) {
-        this.channelActivities.splice(i, 1, this.channelActivities[i].update())
-      } else {
-        this.channelActivities.push(new Activity(activity))
+      if (activity.kind === 'replying' && this.replyToID && activity.messageID === this.replyToID) {
+        handle()
+      } else if (activity.kind === 'typing') {
+        handle()
       }
     },
 

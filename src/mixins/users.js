@@ -58,8 +58,8 @@ export default {
       })
 
       return this.$SystemAPI.userList({ userID: fetch })
-        .then(({ set = [] }) => {
-          (set || []).map(user => {
+        .then(({ set: users = [] }) => {
+          (users || []).map(user => {
             // Mark me as online
             if (user.userID === this.$auth.user.userID) {
               user.online = true
@@ -130,7 +130,7 @@ export default {
      * Helper method to apply a given set of activities to our state
      * @param {Array<Object>} activities Activities that we would like to apply
      */
-    updateStatuses (activities) {
+    updateStatuses (activities = []) {
       // Include cached activities
       activities = activities.concat(this.activities)
       this.activities = []

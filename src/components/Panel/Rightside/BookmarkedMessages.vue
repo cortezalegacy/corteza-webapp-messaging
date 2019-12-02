@@ -38,9 +38,6 @@ export default {
     messages,
   ],
 
-  computed: {
-  },
-
   mounted () {
     this.messagesLoad(this.$MessagingAPI, { bookmarkedOnly: true })
   },

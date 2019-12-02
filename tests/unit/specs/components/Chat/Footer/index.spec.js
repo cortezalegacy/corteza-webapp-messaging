@@ -5,11 +5,14 @@ import { expect } from 'chai'
 import { shallowMount } from 'corteza-webapp-messaging/tests/lib/helpers'
 import Footer from 'corteza-webapp-messaging/src/components/Chat/Footer'
 import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
+import { Activity } from 'corteza-webapp-messaging/src/components/Chat/Footer/types'
+import CActivity from 'corteza-webapp-messaging/src/components/Chat/Footer/Activity'
 import { Channel } from 'corteza-webapp-messaging/src/types/channel'
+import { User } from 'corteza-webapp-messaging/src/types'
 import fp from 'flush-promises'
 import sinon from 'sinon'
 import Vuex from 'vuex'
-import { createLocalVue } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -19,20 +22,28 @@ describe('components/Chat/Footer/Footer', () => {
     sinon.restore()
   })
 
-  let propsData, $MessagingAPI, $auth, mocks, store, $commands
+  let propsData, $MessagingAPI, $SystemAPI, $auth, mocks, store, $commands
   beforeEach(() => {
     propsData = {
-      channel: { channelID: '0001' },
+      channel: { channelID: '0001', members: [] },
+      users: {
+        'u.0001': new User({ name: 'user.0001', userID: 'u.0001' }),
+        'u.0002': new User({ name: 'user.0002', userID: 'u.0002' }),
+      },
     }
 
     $auth = {
-      user: {},
+      user: { userID: 'u.0001' },
     }
 
     $MessagingAPI = {
       activitySend: sinon.stub().resolves({}),
       messageReplyCreate: sinon.stub().resolves({}),
       messageCreate: sinon.stub().resolves({}),
+    }
+
+    $SystemAPI = {
+      userList: sinon.stub().resolves({}),
     }
 
     $commands = {
@@ -42,10 +53,15 @@ describe('components/Chat/Footer/Footer', () => {
 
     mocks = {
       $MessagingAPI,
+      $SystemAPI,
       $auth,
       $drafts: { get: sinon.stub(), set: sinon.stub(), remove: sinon.stub() },
       $commands,
-      $bus: { $emit: sinon.stub() },
+      $bus: {
+        $on: sinon.stub(),
+        $off: sinon.stub(),
+        $emit: sinon.stub(),
+      },
     }
 
     store = new Vuex.Store({ modules: {
@@ -265,5 +281,135 @@ describe('components/Chat/Footer/Footer', () => {
     wrap.find('.input-button.emoji-button').trigger('mousedown')
 
     sinon.assert.calledOnce(mocks.$bus.$emit)
+  })
+
+  describe('suggestions', () => {
+    it('fetch prioritized users on load', async () => {
+      propsData.suggestionPriorities = {
+        User: new Set(['u.0001', 'u.0002']),
+      }
+      $SystemAPI.userList = sinon.stub().resolves({ set: [{ name: 'test.user.1' }, { name: 'test.user.2' }] })
+
+      const wrap = mountFooter()
+      const input = wrap.find(MessageInput)
+      await fp()
+
+      const { userSuggestions } = input.props()
+      expect(userSuggestions).to.have.length(2)
+      expect(userSuggestions[0].user.name).to.eq('test.user.1')
+      expect(userSuggestions[1].user.name).to.eq('test.user.2')
+    })
+
+    it('request suggestions', async () => {
+      const wrap = mountFooter()
+      const input = wrap.find(MessageInput)
+
+      $SystemAPI.userList = sinon.stub().resolves({ set: [{ name: 'test.user.1' }, { name: 'test.user.2' }] })
+      input.vm.$emit('requestSuggestions', { type: 'user', query: 'test.user' })
+      await fp()
+
+      const { userSuggestions } = input.props()
+      expect(userSuggestions).to.have.length(2)
+      expect(userSuggestions[0].user.name).to.eq('test.user.1')
+      expect(userSuggestions[1].user.name).to.eq('test.user.2')
+    })
+  })
+
+  describe('activities', () => {
+    it('react to new activity', () => {
+      const tests = [
+        {
+          name: 'ignore if owner',
+          activity: {
+            userID: $auth.user.userID,
+          },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(0)
+          },
+        },
+        {
+          name: 'ignore if not relevant for channel',
+          activity: {
+            userID: 'u.0002',
+            channelID: 'c.0002',
+          },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(0)
+          },
+        },
+        {
+          name: 'ignore if not relevant for thread',
+          activity: {
+            userID: 'u.0002',
+            channelID: propsData.channel.channelID,
+            messageID: 'm.0002',
+            kind: 'replying',
+          },
+          propsData: { replyToID: 'm.0001' },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(0)
+          },
+        },
+        {
+          name: 'ignore if not a desired type',
+          activity: {
+            userID: 'u.0002',
+            channelID: propsData.channel.channelID,
+            messageID: 'm.0002',
+            kind: 'something',
+          },
+          propsData: { replyToID: 'm.0001' },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(0)
+          },
+        },
+        {
+          name: 'update existing',
+          activity: {
+            userID: 'u.0002',
+            channelID: propsData.channel.channelID,
+            kind: 'typing',
+          },
+          stateData: { channelActivities: [new Activity({ kind: 'typing', userID: 'u.0002', channelID: propsData.channel.channelID })] },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(1)
+          },
+        },
+        {
+          name: 'add new',
+          activity: {
+            userID: 'u.0002',
+            channelID: propsData.channel.channelID,
+            kind: 'typing',
+          },
+          expected: function (act) {
+            expect(act.props().users).to.have.length(1)
+          },
+        },
+      ]
+
+      for (const t of tests) {
+        propsData = { ...propsData, ...t.propsData }
+        const wrap = mountFooter()
+        wrap.setData({ ...t.stateData })
+        wrap.vm.onActivity(t.activity)
+        const act = wrap.find(CActivity)
+        expect(act.exists(), t.name).to.be.true
+        t.expected(act)
+      }
+    })
+
+    it('determine users for given activities', () => {
+      const wrap = mountFooter()
+      wrap.vm.onActivity({
+        userID: 'u.0002',
+        channelID: propsData.channel.channelID,
+        kind: 'typing',
+      })
+      const act = wrap.find(CActivity)
+
+
+      expect(act.props().users).to.have.length(1)
+    })
   })
 })

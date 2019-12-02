@@ -140,8 +140,8 @@ export default {
         return
       }
       this.$SystemAPI.userList(({ query, limit: 15 }))
-        .then(({ set = [] }) => {
-          this.fetchedUsers = (set || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
+        .then(({ set: users = [] }) => {
+          this.fetchedUsers = (users || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
         })
     }, 500),
 
