@@ -21,7 +21,7 @@
 
     <template slot="main">
       <messages
-        :messages="pinned"
+        :messages="messages"
         :current-user="$auth.user"
         :origin="{ thread: 'pinned' }"
         :scrollable="false"
@@ -32,16 +32,21 @@
   </base-panel>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import BasePanel from './.'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
-import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
     BasePanel,
     Messages,
   },
+
+  mixins: [
+    users,
+    messages,
+  ],
 
   props: {
     channel: {
@@ -50,20 +55,8 @@ export default {
     },
   },
 
-  computed: {
-    ...mapGetters({
-      allPinned: 'history/getPinned',
-    }),
-
-    pinned () {
-      return this.allPinned.filter(m => m.channelID === this.channel.channelID)
-    },
-  },
-
   mounted () {
-    messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { pinnedOnly: true, channelID: this.channelID }).then((msgs) => {
-      this.$store.commit('history/updateSet', msgs)
-    })
+    this.messagesLoad(this.$MessagingAPI, { pinnedOnly: true, channelID: this.channelID })
   },
 }
 </script>

@@ -37,27 +37,38 @@ describe('components/Messages/Message/InlineEdit', () => {
     sinon.restore()
   })
 
-  let propsData, $MessagingAPI, $auth, mocks
+  let propsData, $MessagingAPI, $SystemAPI, $auth, mocks, $bus
   beforeEach(() => {
     propsData = {
-      channel: { channelID: '0001' },
-      message: { messageID: '1001', message: 'test' }
+      channel: { channelID: '0001', members: [] },
+      message: { messageID: '1001', message: 'test' },
+      users: {},
     }
 
     $auth = {
       user: {},
+    }
+    $bus = {
+      $on: sinon.stub(),
+      $off: sinon.stub(),
+      $emit: sinon.stub(),
     }
 
     $MessagingAPI = {
       messageEdit: sinon.stub().resolves({}),
     }
 
+    $SystemAPI = {
+      userList: sinon.stub().resolves({}),
+    }
+
     mocks = {
       $MessagingAPI,
+      $SystemAPI,
       $auth,
       $drafts: { get: sinon.stub(), set: sinon.stub(), remove: sinon.stub() },
       $commands: { test: () => false },
-      $bus: { $emit: sinon.stub() },
+      $bus,
     }
   })
 
@@ -121,5 +132,23 @@ describe('components/Messages/Message/InlineEdit', () => {
     wrap.find('.input-button.emoji-button').trigger('mousedown')
 
     sinon.assert.calledOnce(mocks.$bus.$emit)
+  })
+
+  describe('suggestions', () => {
+    it('fetch prioritized users on load', async () => {
+      propsData.suggestionPriorities = {
+        User: new Set(['u.0001', 'u.0002']),
+      }
+      $SystemAPI.userList = sinon.stub().resolves({ set: [{ name: 'test.user.1' }, { name: 'test.user.2' }] })
+
+      const wrap = mountIE()
+      const input = wrap.find(MessageInput)
+      await fp()
+
+      const { userSuggestions } = input.props()
+      expect(userSuggestions).to.have.length(2)
+      expect(userSuggestions[0].user.name).to.eq('test.user.1')
+      expect(userSuggestions[1].user.name).to.eq('test.user.2')
+    })
   })
 })

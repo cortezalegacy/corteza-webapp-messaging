@@ -19,68 +19,61 @@
       {{ $t('panel.membersSubtitle', { label: channel.name }) }}
     </template>
     <template slot="main">
-      <div class="current-members">
-        <ul v-if="members">
-          <li
-            v-for="u in members"
-            :key="u.userID"
-            @click="$emit('openDirectMessage', u.userID);"
-          >
-            <user-avatar :user-i-d="u.userID" />
-            <span class="member-name">{{ getLabel(u) }}</span>
-            <confirmation-toggle
-              v-if="channel.canChangeMembers && u.userID != $auth.user.userID && channel.type !== 'group'"
-              :cta="$t('panel.remove')"
-              class="confirmation-buttons"
-              @confirmed="remove(u.userID)"
-            />
-          </li>
-        </ul>
-      </div>
       <div
-        v-if="channel.canChangeMembers && channel.type !== 'group'"
+        v-if="canManageMembers"
         class="add-members"
       >
-        <div class="header">
-          <h1>{{ $t('panel.add') }}</h1>
-          <search-input
-            v-model="userQuery"
-            :focus="true"
-          />
-        </div>
-        <ul v-if="searchResults">
-          <li
-            v-for="u in searchResults"
+        <vue-select
+          class="user-search"
+          :filterable="false"
+          :options="filterResults()"
+          option-value="userID"
+          :get-option-label="o => o.label"
+          :placeholder="$t('channel.editor.addMembersPlaceholder')"
+          :close-on-select="false"
+          @search="onQuery"
+          @input="onAdd"
+        />
+      </div>
+      <div
+        class="current-members"
+        :class="{ 'full-height': !canManageMembers }"
+      >
+        <ul
+          v-if="members.length"
+          class="members"
+        >
+          <member-item
+            v-for="u in members"
             :key="u.userID"
-          >
-            <user-avatar :user-i-d="u.userID" />
-            <span class="member-name">{{ getLabel(u) }}</span>
-            <button
-              class="btn"
-              @click="add(u.userID)"
-            >
-              {{ $t('general.label.add') }}
-            </button>
-          </li>
+            class="member-item"
+            :user="u"
+            variant="list"
+            @removeMember="onRemove"
+          />
         </ul>
       </div>
     </template>
   </base-panel>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import BasePanel from './.'
-import Avatar from 'corteza-webapp-messaging/src/components/Avatar'
-import SearchInput from '../../SearchInput'
-import ConfirmationToggle from 'corteza-webapp-messaging/src/components/Form/ConfirmationToggle'
+import { VueSelect } from 'vue-select'
+import { User, Channel } from 'corteza-webapp-messaging/src/types'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import MemberItem from 'corteza-webapp-messaging/src/components/Channel/MemberItem'
+import { throttle } from 'lodash'
 
 export default {
   components: {
-    SearchInput,
-    'user-avatar': Avatar,
+    VueSelect,
     BasePanel,
-    ConfirmationToggle,
+    MemberItem,
   },
+
+  mixins: [
+    users,
+  ],
 
   props: {
     channel: {
@@ -91,105 +84,135 @@ export default {
 
   data () {
     return {
-      userQuery: null,
+      query: null,
+      ch: null,
+      fetchedUsers: [],
     }
   },
 
   computed: {
-    ...mapGetters({
-      users: 'users/list',
-    }),
-
+    /**
+     * Provides user objects for given members
+     * @returns {Array<User>}
+     */
     members () {
-      return this.users.filter(u => this.channel.isMember(u.userID))
+      if (!this.ch) {
+        return []
+      }
+      return this.ch.members.map(m => this.users[m]).filter(u => u)
     },
 
-    searchResults () {
-      return this.users.filter(u => !this.channel.isMember(u.userID) && u.Match(this.userQuery))
+    /**
+     * Determines if channel's members can be managed
+     * @returns {Boolean}
+     */
+    canManageMembers () {
+      return this.channel.canChangeMembers && this.channel.type !== 'group'
+    },
+  },
+
+  watch: {
+    'channel.channelID': {
+      immediate: true,
+      handler () {
+        this.ch = new Channel(this.channel)
+        this.getUsers(this.ch)
+      },
     },
   },
 
   methods: {
-    add (userID) {
-      this.$MessagingAPI.channelJoin({ channelID: this.channel.channelID, userID })
+    /**
+     * Filter fetched users
+     * @returns {Array<User>}
+     */
+    filterResults () {
+      // If user is not a member of this channel
+      return this.fetchedUsers.filter(({ userID }) => !this.ch.members.find(u => u === userID))
     },
 
-    remove (userID) {
-      this.$MessagingAPI.channelPart({ channelID: this.channel.channelID, userID })
+    /**
+     * Handles query requests
+     * @param {String} query Requested query
+     */
+    onQuery: throttle(function (query) {
+      if (!query) {
+        return
+      }
+      this.$SystemAPI.userList(({ query, limit: 15 }))
+        .then(({ set: users = [] }) => {
+          this.fetchedUsers = (users || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
+        })
+    }, 500),
+
+    /**
+     * Adds the given user as a member to this channel
+     * @param {User} user User to add
+     */
+    onAdd (user) {
+      if (!user) {
+        return
+      }
+      const { userID } = user
+      const { channelID } = this.ch
+
+      // Add new member to store
+      this.$MessagingAPI.channelJoin({ channelID, userID }).then(c => {
+        if (!this.ch.members.includes(userID)) {
+          this.ch.members.push(userID)
+        }
+        this.$set(this.users, userID, user)
+      })
     },
 
-    isMember (userID) {
-      return !!this.members.find(m => m.user.userID === userID)
+    /**
+     * Removes the given user from channel members
+     * @param {User} user User to remove
+     */
+    onRemove (user) {
+      const { userID } = user
+      const { channelID } = this.ch
+      this.$MessagingAPI.channelPart({ channelID, userID }).then(c => {
+        this.ch.members = this.ch.members.filter(u => u !== userID)
+        this.$delete(this.users, userID)
+      })
     },
   },
 }
 </script>
 
 <style scoped lang="scss">
-//inlude generic definitions
-@import 'corteza-webapp-messaging/src/themes/corteza-base/btns.scss';
-
 .header {
   height: auto;
 }
+.add-members {
+  height: 50px;
 
-div {
-  &.current-members,
-  &.add-members {
-    position: relative;
-    overflow: scroll;
-    height: auto;
-    height: calc((100vh - 50px) / 2);
+  .user-search {
+    padding: 5px 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid $secondary;
   }
+}
+.current-members {
+  height: 100%;
+  overflow-y: scroll;
 
-  &.add-members {
-    border-top: 1px solid $secondary;
-    .header {
-      background: white;
-      padding-bottom: 5px;
-
-      h1 {
-        margin: 10px 10px;
-      }
-
-      form {
-        padding: 0 5px 10px 5px;
-      }
-    }
+  &:not(.full-height) {
+    height: calc(100% - 50px);
   }
+}
 
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 
-    li {
-      line-height: 30px;
-      margin-bottom: 10px;
-      padding: 0 5px;
-      cursor: pointer;
+  .member-item {
+    padding: 5px;
 
-      &:hover {
-        background: rgba($secondary, 0.15);
-      }
-
-      .confirmation-buttons, .btn {
-        float: right;
-      }
-
-      .btn {
-        margin-top: 5px;
-      }
-
-      .member-name {
-        display: inline-block;
-        line-height: 1;
-        max-width: 60%;
-        overflow: hidden;
-        padding-left: 10px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
+    &:hover {
+      background: rgba($secondary, 0.15);
     }
   }
 }

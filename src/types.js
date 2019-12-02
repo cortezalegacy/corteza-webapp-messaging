@@ -11,6 +11,7 @@ export class Message {
     }
 
     this.messageID = m.messageID
+    this.user = m.user || {}
     this.userID = m.userID
     this.message = m.message
     this.type = m.type
@@ -77,9 +78,10 @@ export class Message {
 }
 
 class MessageReaction {
-  constructor ({ reaction, userIDs, count }) {
+  constructor ({ reaction, users = [], userIDs = [], count }) {
     this.reaction = reaction
     this.userIDs = userIDs
+    this.users = users
     this.count = count
   }
 }
@@ -108,6 +110,7 @@ export class User {
     this.handle = u.handle || ''
     this.name = u.name || ''
     this.email = u.email || ''
+    this.online = u.online || false
 
     this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
   }
@@ -126,6 +129,10 @@ export class User {
       name: fuzzysort.prepare(toNFD(this.name)),
       handle: fuzzysort.prepare(toNFD(this.handle)),
     }
+  }
+
+  get label () {
+    return this.name || this.username || this.handle || this.email || `<@${this.userID}>`
   }
 
   suggestionLabel () {

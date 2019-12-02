@@ -2,6 +2,12 @@
 import { mapGetters } from 'vuex'
 import MessageInput from 'corteza-webapp-messaging/src/components/MessageInput'
 import { getDraft, contentEmpty } from 'corteza-webapp-messaging/src/components/MessageInput/lib'
+import { Activity, activityTTL } from './types'
+import CActivity from './Activity'
+import { User } from 'corteza-webapp-messaging/src/types'
+import { throttle } from 'lodash'
+
+const maxUserSuggestions = 10
 
 /**
  * This base component should be extended by any components that provide
@@ -9,7 +15,10 @@ import { getDraft, contentEmpty } from 'corteza-webapp-messaging/src/components/
  */
 export default {
   components: {
+    // eslint-disable-next-line
     MessageInput,
+    // eslint-disable-next-line
+    CActivity,
   },
 
   props: {
@@ -65,20 +74,53 @@ export default {
       required: false,
       default: () => ({}),
     },
+
+    users: {
+      type: Object,
+      required: true,
+    },
   },
 
   data () {
     return {
       draft: null,
+      channelActivities: [],
+
+      pulledUsers: [],
+      prioritizedUsers: [],
+
+      activityTimeout: undefined,
     }
   },
 
   computed: {
     ...mapGetters({
-      users: 'users/list',
       channels: 'channels/list',
-      statuses: 'users/statuses',
     }),
+
+    /**
+     * Provides all available user suggestions
+     * @returns {Array<Object>}
+     */
+    userSuggestions () {
+      return this.prioritizedUsers.concat(this.pulledUsers)
+    },
+
+    /**
+     * Provides user objects for given activity
+     * @returns {Array<User>}
+     */
+    activityUsers () {
+      return this.channelActivities.map(({ userID }) => this.users[userID])
+    },
+
+    /**
+     * Helper to get channel activities -- eg.: who's typing.
+     * @returns {Array}
+     */
+    getChannelActivity () {
+      return this.channelActivity
+    },
 
     channelID () {
       return this.channel.channelID
@@ -101,34 +143,6 @@ export default {
       })
     },
 
-    /**
-     * Helper to provide a set of online user statuses.
-     * This is moved outside of `userSuggestions`, so it won't be re-evaluated
-     * if some user bit changes.
-     * @returns {Array}
-     */
-    onlineStatuses () {
-      return new Set(this.statuses.filter(s => s.present === 'online').map(s => s.userID))
-    },
-
-    /**
-     * Determines available user suggestions. These values are already
-     * pre-processed by the fuzzy search library.
-     * @returns {Array}
-     */
-    userSuggestions () {
-      return this.users.map(u => {
-        return {
-          type: 'User',
-          id: u.userID,
-          user: u,
-          value: u.suggestionLabel(),
-          online: this.onlineStatuses.has(u.userID),
-          ...u.fuzzyKeys(),
-        }
-      })
-    },
-
     currentUser () {
       return this.$auth.user
     },
@@ -142,7 +156,72 @@ export default {
     },
   },
 
+  watch: {
+    suggestionPriorities: {
+      handler: function (ps) {
+        if (ps.User) {
+          // Fetch new prioritized users
+          this.$SystemAPI.userList({ userID: [...ps.User] })
+            .then(e => {
+              this.prioritizedUsers = e.set.map(u => new User(u)).map(this.prepUserSuggestion)
+            })
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+
+  created () {
+    this.$bus.$on('user.activity', this.onActivity)
+    this.statusCleanup()
+  },
+
+  beforeDestroy () {
+    this.$bus.$off('user.activity', this.onActivity)
+    window.clearTimeout(this.activityTimeout)
+  },
+
   methods: {
+    /**
+     * Fetches new suggestions of the given type for the given query
+     * @param {String} type Type of suggestions
+     * @param {String} query Query to use
+     */
+    onRequestSuggestions: throttle(function ({ type, query }) {
+      if (type === 'user') {
+        this.$SystemAPI.userList({ query, perPage: maxUserSuggestions })
+          .then(({ set: users = [] }) => {
+            this.pulledUsers.push(
+              ...users
+                .filter(u => !this.userSuggestions.find(({ id }) => id === u.userID))
+                .map(u => new User(u)).map(this.prepUserSuggestion)
+            )
+
+            // Limit how manny we can have at once
+            if (this.pulledUsers.length > maxUserSuggestions) {
+              this.pulledUsers.splice(this.pulledUsers.length - maxUserSuggestions - 1, this.pulledUsers.length)
+            }
+          })
+      }
+    }, 500),
+
+    /**
+     * Pre-processes user suggestions into fuzzy-search objects + meta
+     * @returns {Object}
+     */
+    prepUserSuggestion (u) {
+      return {
+        type: 'User',
+        id: u.userID,
+        user: u,
+        value: u.suggestionLabel(),
+        online: false,
+        member: !!this.channel.members.find(uID => uID === u.userID),
+        ...u.fuzzyKeys(),
+      }
+    },
+
     /**
      * Handler for prompting emoji picker. It creates a callback that inserts
      * the emoji at current position.
@@ -155,6 +234,45 @@ export default {
           input.focus()
         },
       })
+    },
+
+    /**
+     * Cleanup stale statuses
+     */
+    statusCleanup () {
+      this.activityTimeout = window.setTimeout(() => {
+        this.channelActivities = this.channelActivities.filter(s => !s.isStale(activityTTL))
+        this.statusCleanup()
+      }, activityTTL)
+    },
+
+    /**
+     * Handle activities
+     * @param {Object} activity Activity to process
+     */
+    onActivity (activity) {
+      if (activity.userID === this.currentUser.userID) {
+        return
+      }
+
+      if (activity.channelID !== this.channelID) {
+        return
+      }
+
+      const handle = () => {
+        const i = this.channelActivities.findIndex(Activity.activityFinder(activity))
+        if (i > -1) {
+          this.channelActivities.splice(i, 1, this.channelActivities[i].update())
+        } else {
+          this.channelActivities.push(new Activity(activity))
+        }
+      }
+
+      if (activity.kind === 'replying' && this.replyToID && activity.messageID === this.replyToID) {
+        handle()
+      } else if (activity.kind === 'typing') {
+        handle()
+      }
     },
 
     /**

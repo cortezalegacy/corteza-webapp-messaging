@@ -28,6 +28,7 @@
         :key="ch.channelID"
         :channel="ch"
         :current="current"
+        :users="users"
         :index="index"
         v-on="$listeners"
       />
@@ -58,6 +59,11 @@ export default {
       type: Object,
       required: false,
       default: undefined,
+    },
+
+    users: {
+      type: Object,
+      default: () => ({}),
     },
 
     canCreate: {

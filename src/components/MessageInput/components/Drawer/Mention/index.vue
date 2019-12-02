@@ -12,6 +12,7 @@
         :suggestion="s"
         :selection="selection"
         :index="i"
+        v-bind="$attrs"
         v-on="$listeners"
       />
     </ul>

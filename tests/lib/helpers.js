@@ -21,6 +21,7 @@ const mounter = (component, { localVue = createLocalVue(), mocks = {}, stubs = [
       $t: (e) => e,
       $SystemAPI: {},
       $ComposeAPI: {},
+      $bus: { $on: () => {}, $emit: () => {}, $off: () => {} },
       $route: { query: { fullPath: '', token: undefined } },
       ...mocks,
     },

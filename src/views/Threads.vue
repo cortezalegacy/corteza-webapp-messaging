@@ -35,10 +35,10 @@
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
 import Empty from 'corteza-webapp-messaging/src/components/Empty'
-import { messagesThreadLoad } from 'corteza-webapp-messaging/src/lib/messenger'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
@@ -46,17 +46,29 @@ export default {
     Empty,
   },
 
+  mixins: [
+    users,
+    messages,
+  ],
+
   computed: {
-    ...mapGetters({
-      getThreads: 'history/getThreads',
-      getThread: 'history/getThread',
-    }),
+    /**
+     * @todo...
+     */
+    getThreads () {
+      return []
+    },
+
+    /**
+     * @todo...
+     */
+    getThread () {
+      return undefined
+    },
   },
 
   mounted () {
-    messagesThreadLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], {}).then((msgs) => {
-      this.$store.commit('history/updateSet', msgs)
-    })
+    this.messagesThreadLoad(this.$MessagingAPI, {})
   },
 }
 </script>

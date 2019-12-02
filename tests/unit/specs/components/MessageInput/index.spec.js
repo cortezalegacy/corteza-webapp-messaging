@@ -123,31 +123,79 @@ describe('components/MessageInput', () => {
       wrap = await mountMI()
     })
 
-    it('user suggestions', async () => {
-      wrap.vm.insert({ content: '@' })
-      expect(wrap.findAll(User)).to.have.length(2)
+    describe('user suggestions', () => {
+      it('filter by given query', async () => {
+        wrap.vm.insert({ content: '@' })
+        expect(wrap.findAll(User)).to.have.length(2)
 
-      wrap.vm.insert({ content: 'a' })
-      expect(wrap.findAll(User)).to.have.length(1)
-    })
-
-    it('channel suggestions', async () => {
-      wrap.vm.insert({ content: '#' })
-      expect(wrap.findAll(Channel)).to.have.length(2)
-
-      wrap.vm.insert({ content: 'c' })
-      expect(wrap.findAll(Channel)).to.have.length(1)
-    })
-
-    it('with priorities', async () => {
-      wrap.setProps({
-        suggestionPriorities: {
-          User: new Set([ '0001' ]),
-        }
+        wrap.vm.insert({ content: 'a' })
+        expect(wrap.findAll(User)).to.have.length(1)
       })
 
-      wrap.vm.insert({ content: '@' })
-      expect(wrap.findAll(User)).to.have.length(1)
+      it('with priorities', async () => {
+        wrap.setProps({
+          suggestionPriorities: {
+            User: new Set([ '0001' ]),
+          }
+        })
+
+        wrap.vm.insert({ content: '@' })
+        expect(wrap.findAll(User)).to.have.length(1)
+      })
+
+      it('api - ignore empty query', async () => {
+        wrap.vm.insert({ content: '@' })
+        expect(wrap.emitted().requestSuggestions).to.be.undefined
+      })
+
+      it('api - ignore duplicates', async () => {
+        wrap.vm.set({ content: '@a' })
+        expect(wrap.emitted().requestSuggestions).to.not.be.undefined
+        wrap.emitted().requestSuggestions = undefined
+
+        wrap.vm.set({ content: '@a' })
+        expect(wrap.emitted().requestSuggestions).to.be.undefined
+      })
+
+      it('api - search', async () => {
+        wrap.vm.insert({ content: '@' })
+        wrap.vm.insert({ content: 'a' })
+        expect(wrap.emitted().requestSuggestions.pop().pop()).to.deep.eq({ type: 'user', query: 'a' })
+      })
+
+      it('update suggestions if prop changes', async () => {
+        wrap.vm.insert({ content: '@' })
+        expect(wrap.findAll(User)).to.have.length(2)
+
+        wrap.setProps({ userSuggestions: [
+          { name: fuzzysort.prepare('a'), type: 'User', id: '0001', user: {} },
+          { name: fuzzysort.prepare('b'), type: 'User', id: '0002', user: {} },
+          { name: fuzzysort.prepare('c'), type: 'User', id: '0003', user: {} },
+        ] })
+        expect(wrap.findAll(User)).to.have.length(3)
+      })
+    })
+
+    describe('channel suggestions', () => {
+      it('channel suggestions', async () => {
+        wrap.vm.insert({ content: '#' })
+        expect(wrap.findAll(Channel)).to.have.length(2)
+
+        wrap.vm.insert({ content: 'c' })
+        expect(wrap.findAll(Channel)).to.have.length(1)
+      })
+
+      it('update suggestions if prop changes', async () => {
+        wrap.vm.insert({ content: '#' })
+        expect(wrap.findAll(Channel)).to.have.length(2)
+
+        wrap.setProps({ channelSuggestions: [
+          { name: fuzzysort.prepare('c'), type: 'Channel', id: '1001', channel: {} },
+          { name: fuzzysort.prepare('d'), type: 'Channel', id: '1002', channel: {} },
+          { name: fuzzysort.prepare('e'), type: 'Channel', id: '1003', channel: {} },
+        ] })
+        expect(wrap.findAll(Channel)).to.have.length(3)
+      })
     })
   })
 })

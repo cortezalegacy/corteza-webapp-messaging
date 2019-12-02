@@ -9,9 +9,7 @@
     <span
       class="user group float-left"
       :class="{
-        'full-moon': suggestion.online,
-        'new-moon': !suggestion.online,
-        member: suggestion.member,
+        member: $attrs.query && suggestion.member,
       }"
     >
 

@@ -43,7 +43,7 @@ export default {
     //
     // If we're following the stream and someone posted something,
     // we mark it as read right away.
-    handleUnreadOnNewMessage ({ message }) {
+    handleUnreadOnNewMessage (message) {
       if (message.updatedAt || message.deletedAt || message.replies > 0) {
         console.debug('updated, deleted, replies')
         return

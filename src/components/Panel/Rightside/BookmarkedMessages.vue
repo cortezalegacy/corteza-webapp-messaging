@@ -11,7 +11,7 @@
     </template>
     <template slot="main">
       <messages
-        :messages="bookmarked"
+        :messages="messages"
         :current-user="$auth.user"
         :origin="{ thread: 'bookmarked' }"
         :scrollable="false"
@@ -22,10 +22,10 @@
   </base-panel>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import BasePanel from '.'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
-import { messagesLoad } from 'corteza-webapp-messaging/src/lib/messenger'
+import users from 'corteza-webapp-messaging/src/mixins/users'
+import messages from 'corteza-webapp-messaging/src/mixins/messages'
 
 export default {
   components: {
@@ -33,16 +33,13 @@ export default {
     Messages,
   },
 
-  computed: {
-    ...mapGetters({
-      bookmarked: 'history/getBookmarked',
-    }),
-  },
+  mixins: [
+    users,
+    messages,
+  ],
 
   mounted () {
-    messagesLoad(this.$MessagingAPI, this.$store.getters['users/findByID'], { bookmarkedOnly: true }).then((msgs) => {
-      this.$store.commit('history/updateSet', msgs)
-    })
+    this.messagesLoad(this.$MessagingAPI, { bookmarkedOnly: true })
   },
 }
 </script>

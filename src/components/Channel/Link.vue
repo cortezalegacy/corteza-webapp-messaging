@@ -3,17 +3,31 @@
     :to="{ name: 'channel', params: { channelID: ID } }"
     @click.native="$emit('click', $event)"
   >
-    <slot>{{ getLabel(channel) }}</slot>
+    <slot>
+      <channel-label
+        :channel="channel"
+        :users="users"
+      />
+    </slot>
   </router-link>
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import ChannelLabel from 'corteza-webapp-messaging/src/components/Channel/ChannelLabel'
 
 export default {
+  components: {
+    ChannelLabel,
+  },
+
   props: {
     ID: {
       type: String,
       required: true,
+    },
+    users: {
+      type: Object,
+      default: () => ({}),
     },
   },
 

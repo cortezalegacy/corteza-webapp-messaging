@@ -11,7 +11,10 @@
         class="channel-name"
         :class="[channel.type]"
       >
-        <channel-label :channel="channel" />
+        <channel-label
+          :channel="channel"
+          :users="users"
+        />
         <span
           v-if="channel.membershipFlag==='pinned'"
           @click="onFlag('')"
@@ -187,7 +190,7 @@
   </header>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 import ChannelLabel from 'corteza-webapp-messaging/src/components/Channel/ChannelLabel'
 
 export default {
@@ -202,16 +205,16 @@ export default {
       type: Object,
       required: true,
     },
+    users: {
+      type: Object,
+      default: () => ({}),
+    },
   },
 
   computed: {
-    ...mapGetters({
-      isPresent: 'users/isPresent',
-    }),
-
     isOnline () {
       if (this.channel.isDirectMessage()) {
-        return this.isPresent(this.channel.members.find(ID => ID !== this.$auth.user.userID))
+        return (this.channel.members.find(ID => ID !== this.$auth.user.userID && this.users[ID]) || {}).online
       }
       return undefined
     },
