@@ -56,7 +56,7 @@ export default {
   },
 
   mounted () {
-    this.messagesLoad(this.$MessagingAPI, { pinnedOnly: true, channelID: this.channelID })
+    this.messagesLoad(this.$MessagingAPI, { pinnedOnly: true, channelID: this.channelID }, true)
   },
 }
 </script>

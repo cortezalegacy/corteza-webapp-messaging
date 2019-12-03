@@ -39,7 +39,7 @@ export default {
   ],
 
   mounted () {
-    this.messagesLoad(this.$MessagingAPI, { bookmarkedOnly: true })
+    this.messagesLoad(this.$MessagingAPI, { bookmarkedOnly: true }, true)
   },
 }
 </script>

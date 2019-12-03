@@ -111,7 +111,7 @@ export default {
 
       messages = messages
         // Do some source validation -- if it's from a correct channel, ...
-        .filter(message => !noCheck || (message.channelID === this.channelID && (!message.replyTo || message.replyTo === this.repliesTo)))
+        .filter(message => noCheck || (message.channelID === this.channelID && (!message.replyTo || message.replyTo === this.repliesTo)))
         .map(m => new Message({ ...m, user: this.users[m.userID] || {} }))
 
       // Add user object for message owner
