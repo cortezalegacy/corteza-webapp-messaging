@@ -10,15 +10,15 @@
     </header>
     <main v-if="getThreads.length > 0">
       <section
-        v-for="(thread) in getThreads"
-        :key="thread.messageID"
+        v-for="(thread, i) in getThreads"
+        :key="i"
       >
         <section>
           <messages
             ref="messages"
-            :messages="getThread(thread.messageID)"
+            :messages="thread"
             :current-user="$auth.user"
-            origin="threads"
+            :origin="{ thread: i }"
             :scrollable="false"
             v-on="$listeners"
           />
@@ -53,22 +53,36 @@ export default {
 
   computed: {
     /**
-     * @todo...
+     * Groups messages into threads
+     * @returns {Array<Array<Message>>}
      */
     getThreads () {
-      return []
-    },
+      const thr = {}
+      this.messages.forEach(msg => {
+        if (!msg.replyTo) {
+          if (msg.replies > 0) {
+            if (!thr[msg.messageID]) {
+              thr[msg.messageID] = { topic: undefined, replies: [] }
+            }
+            thr[msg.messageID].topic = msg
+          }
+          return
+        }
 
-    /**
-     * @todo...
-     */
-    getThread () {
-      return undefined
+        if (!thr[msg.replyTo]) {
+          thr[msg.replyTo] = { topic: undefined, replies: [] }
+        }
+
+        thr[msg.replyTo].replies.push(msg)
+      })
+
+      return Object.values(thr).filter(({ topic }) => topic).sort(({ topic: a }, { topic: b }) => a.sortKey.localeCompare(b.sortKey)).map(({ topic, replies }) => replies.concat([topic]))
     },
   },
 
   mounted () {
-    this.messagesThreadLoad(this.$MessagingAPI, {})
+    // So we don't kill the system
+    this.messagesThreadLoad(this.$MessagingAPI, { limit: 100 }, true)
   },
 }
 </script>
