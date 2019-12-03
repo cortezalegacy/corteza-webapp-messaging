@@ -71,8 +71,8 @@
         </div>
 
         <div
-          v-if="channel.type !== 'group'"
-          class="form-check"
+          v-if="canMakePrivate"
+          class="form-check test-private-ch"
         >
           <input
             id="channel-type"
@@ -254,6 +254,14 @@ export default {
     members () {
       return this.channel.members.map(m => this.users[m]).filter(m => m)
     },
+
+    /**
+     * Determines if a given user can mark this channel as private
+     * @returns {Boolean}
+     */
+    canMakePrivate () {
+      return this.channel.type !== 'group' && this.$store.getters['session/canCreatePrivateChannel']
+    },
   },
 
   watch: {
@@ -327,8 +335,8 @@ export default {
         return
       }
       this.$SystemAPI.userList(({ query, limit: 15 }))
-        .then(({ set = [] }) => {
-          this.fetchedUsers = (set || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
+        .then(({ set: users = [] }) => {
+          this.fetchedUsers = (users || []).filter(({ userID }) => !this.users[userID]).map(u => new User(u))
         })
     }, 500),
 
