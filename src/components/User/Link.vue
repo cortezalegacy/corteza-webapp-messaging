@@ -5,7 +5,7 @@
     @click.prevent
     @click="$parent.$emit('mentionSelect', { userID: ID, type: 'user' })"
   >
-    @{{ (label || ID).trim() }}
+    @{{ label }}
   </a>
 </template>
 

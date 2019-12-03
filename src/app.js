@@ -12,6 +12,8 @@ import i18n from './i18n'
 import store from './store'
 import router from './router'
 
+window.UserNameMask = '#### ########'
+
 export default (options = {}) => {
   options = {
     el: '#app',

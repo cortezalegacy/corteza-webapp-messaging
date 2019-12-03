@@ -33,7 +33,7 @@ function labelDocMentions (doc, users) {
     if (c.type === 'paragraph') {
       labelDocMentions(c, users)
     } else if (c.type === 'mention-user') {
-      c.attrs.label = (users[c.attrs.id] || {}).label || c.attrs.label || c.attrs.id
+      c.attrs.label = (users[c.attrs.id] || {}).label || c.attrs.label || window.UserNameMask || c.attrs.id
     }
   }
 }

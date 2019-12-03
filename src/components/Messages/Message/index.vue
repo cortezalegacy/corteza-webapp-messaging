@@ -45,7 +45,7 @@
         class="author selectable"
       >
         <router-link :to="{ name: 'profile', params: { userID: message.userID } }">
-          {{ message.user.label || ' ' }}
+          {{ getUserLabel }}
         </router-link>
       </em>
       <i18next
@@ -228,6 +228,14 @@ export default {
         return false
       }
       return undefined
+    },
+
+    /**
+     * Determines user's label
+     * @returns {String}
+     */
+    getUserLabel () {
+      return this.message.user.label || window.UserNameMask
     },
 
     /**
