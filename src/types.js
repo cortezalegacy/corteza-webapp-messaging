@@ -34,7 +34,8 @@ export class Message {
     // only to pass values along to unread store, do not use it directly
     this.unread = m.unread
 
-    this.attachment = m.att ? new Attachment(m.att) : null
+    let att = m.att || m.attachment
+    this.attachment = att ? new Attachment(att) : null
 
     // Preparing sort key
     //
@@ -86,18 +87,31 @@ class MessageReaction {
   }
 }
 
-export function Attachment (a) {
-  this.attachmentID = a.attachmentID
-  this.userID = a.userID
-  this.name = a.name
-  this.meta = a.meta
+export class Attachment {
+  constructor (a) {
+    this.attachmentID = a.attachmentID
+    this.userID = a.userID
+    this.name = a.name
+    this.meta = a.meta
 
-  if (window.MessagingAPI) {
-    const base = window.MessagingAPI
+    if (window.MessagingAPI) {
+      const base = window.MessagingAPI
 
-    this.url = base + a.url
-    this.previewUrl = base + a.previewUrl
-    this.downloadUrl = this.url + (this.url.indexOf('?') === -1 ? '?' : '&') + 'download=1'
+      // Attachments URL
+      if (!(a.url || '').startsWith('http')) {
+        this.url = base + a.url
+      } else {
+        this.url = a.url
+      }
+      // Attachment's preview URL
+      if (!(a.previewUrl || '').startsWith('http')) {
+        this.previewUrl = base + a.previewUrl
+      } else {
+        this.previewUrl = a.previewUrl
+      }
+      // Attachment's download URL
+      this.downloadUrl = this.url + (this.url.indexOf('?') === -1 ? '?' : '&') + 'download=1'
+    }
   }
 }
 
