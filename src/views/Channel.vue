@@ -11,6 +11,7 @@
       ref="upload"
       :channel-i-d="channel.channelID"
       :type-supported.sync="uploadFileTypeSupported"
+      @show="showUploadArea=true"
       @close="showUploadArea=false; uploadFileTypeSupported=true"
     />
 
