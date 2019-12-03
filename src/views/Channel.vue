@@ -244,6 +244,10 @@ export default {
     },
 
     isFollowing ({ channelID, replyTo }) {
+      if (!this.channel) {
+        return false
+      }
+
       return document.hasFocus() && this.channel.channelID === channelID && !replyTo
     },
 
