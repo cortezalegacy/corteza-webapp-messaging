@@ -231,7 +231,11 @@ export default {
       this.$emit('show', {})
 
       // Check if file type is allowed
-      if (!validateFileType(file.name, this.$s('Message.Attachments.Mimetypes'))) {
+      let types = this.$s('Message.Attachments.Mimetypes')
+      if (!types || !types.length) {
+        types = ['*/*']
+      }
+      if (!validateFileType(file.name, types)) {
         this.$emit('update:typeSupported', false)
         this.dropzone.removeFile(file)
         return
