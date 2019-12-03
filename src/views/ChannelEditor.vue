@@ -102,25 +102,7 @@
             {{ $t('channel.editor.channelMembershipPolicyFeatured') }}
           </label>
         </div>
-
         <div class="members">
-          <!-- selected members section -->
-          <div class="selected-members">
-            <template v-if="members.length > 0">
-              <label>
-                {{ $t('channel.editor.selectedMembersLabel') }}
-              </label>
-              <ul class="members showcase">
-                <member-item
-                  v-for="u in members"
-                  :key="u.userID"
-                  :user="u"
-                  @removeMember="onRemoveMember"
-                />
-              </ul>
-            </template>
-          </div>
-
           <!-- Add members section -->
           <div class="add-members">
             <label>
@@ -138,6 +120,22 @@
               @search="onQuery"
               @input="onMemberSelect"
             />
+          </div>
+          <!-- selected members section -->
+          <div class="selected-members">
+            <template v-if="members.length > 0">
+              <label>
+                {{ $t('channel.editor.selectedMembersLabel') }}
+              </label>
+              <ul class="members showcase">
+                <member-item
+                  v-for="u in members"
+                  :key="u.userID"
+                  :user="u"
+                  @removeMember="onRemoveMember"
+                />
+              </ul>
+            </template>
           </div>
         </div>
 
@@ -535,19 +533,18 @@ form {
   }
 }
 
+.selected-members {
+  margin-top: 20px;
+  width: 100%;
+}
+
 @media (max-width: $wideminwidth - 1) {
-  .selected-members {
-    width: 100%;
-  }
   .add-members {
     width: 100%;
   }
 }
 
 @media (min-width: $wideminwidth) {
-  .selected-members {
-    width: 70%;
-  }
   .add-members {
     width: 30%;
   }
