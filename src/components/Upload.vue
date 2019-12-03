@@ -146,17 +146,21 @@ export default {
         },
       }
     },
-
-    dropzone () {
-      return this.$refs.dropzone
-    },
   },
 
   methods: {
     onHide () {
-      if (!this.dropzone.getAcceptedFiles().length) {
+      if (!this.dropzone().getAcceptedFiles().length) {
         this.$emit('close')
       }
+    },
+
+    /**
+     * Provides a refference to dropzone's component
+     * @returns {Component}
+     */
+    dropzone () {
+      return this.$refs.dropzone
     },
 
     onDrop (e) {
@@ -206,23 +210,23 @@ export default {
                 'file.jpg',
               { type: blob.type }
             )
-            this.dropzone.addFile(f)
+            this.dropzone().addFile(f)
           }
           xhr.send()
         }, (err) => {
           console.error(err)
         }, options)
       } else {
-        this.dropzone.$el.click()
+        this.dropzone().$el.click()
       }
     },
 
     uploadFile () {
-      this.dropzone.processQueue()
+      this.dropzone().processQueue()
     },
 
     resetUpload () {
-      this.dropzone.removeAllFiles()
+      this.dropzone().removeAllFiles()
       this.queued = 0
       this.$emit('close')
     },
@@ -237,14 +241,14 @@ export default {
       }
       if (!validateFileType(file.name, types)) {
         this.$emit('update:typeSupported', false)
-        this.dropzone.removeFile(file)
+        this.dropzone().removeFile(file)
         return
       }
 
       // If file is already in DZ, remove it and use current one
-      const qFiles = this.dropzone.getQueuedFiles()
+      const qFiles = this.dropzone().getQueuedFiles()
       if (qFiles.length > 0) {
-        this.dropzone.removeFile(qFiles[0])
+        this.dropzone().removeFile(qFiles[0])
       }
 
       this.queued = 1
