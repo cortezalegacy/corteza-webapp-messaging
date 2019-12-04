@@ -51,6 +51,7 @@
 
         <bookmarked-messages-panel
           v-if="isBookmarkedMessagesPanel"
+          :channel="channel"
           @openThreadPanel="switchRightSidePanel('thread', $event)"
           @close="switchRightSidePanel()"
         />

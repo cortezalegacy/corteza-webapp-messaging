@@ -82,7 +82,7 @@ export default {
 
   mounted () {
     // So we don't kill the system
-    this.messagesThreadLoad(this.$MessagingAPI, { limit: 100 }, true)
+    this.messagesThreadLoad({ limit: 100 })
   },
 }
 </script>

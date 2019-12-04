@@ -58,6 +58,7 @@
         @mentionSelect="onMentionSelect"
         @messageReaction="onMessageReaction"
         @bookmarkMessage="onBookmarkMessage"
+        @pinMessage="onPinMessage"
         @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
@@ -180,6 +181,7 @@ export default {
 
     repliesTo: {
       handler: function (newRepliesTo, oldRepliesTo) {
+        this.messages = []
         this.updateMessages(this.message)
         this.loadMessages()
       },
@@ -235,7 +237,7 @@ export default {
         channelID: this.channelID,
         threadID: this.repliesTo,
       }
-      this.messagesLoad(this.$MessagingAPI, params)
+      this.messagesThreadLoad(params)
     },
 
     // Mark entire thread as read
@@ -249,7 +251,7 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.messagesLoad(this.$MessagingAPI, {
+        this.messagesThreadLoad({
           channelID: this.channelID,
           threadID: this.repliesTo,
         })
@@ -266,7 +268,7 @@ export default {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
       // @note this will be improved when the delta endpoint arrives
-      this.messagesLoad(this.$MessagingAPI, {
+      this.messagesThreadLoad({
         threadID: this.repliesTo,
         afterMessageID: lmID,
       })

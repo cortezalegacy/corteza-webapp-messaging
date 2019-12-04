@@ -100,7 +100,7 @@ export default {
       if (!this.unreadChannels) return
 
       this.unreadChannels.forEach(u => {
-        this.messagesLoad(this.$MessagingAPI, { channelID: u.channelID, fromMessageID: u.lastMessageID }).then((msgs) => {
+        this.messagesLoad({ channelID: u.channelID, fromMessageID: u.lastMessageID }).then((msgs) => {
           this.$store.commit('history/updateSet', msgs)
         })
       })

@@ -76,24 +76,22 @@ export default {
 
   methods: {
     /**
-     * Loads messages from a given api with the given filters.
-     * @param {MessagingAPI} api MessagingAPI client
+     * Loads messages with the given filters.
      * @param {Object} filter searchMessages parameters
      * @returns {Promise<Array<Message>>}
      */
-    async messagesLoad (api, filter, noCheck = false) {
+    async messagesLoad (filter, noCheck = false) {
       return this.$MessagingAPI.searchMessages(filter)
         .then(mm => this.onNewMessages(mm, noCheck))
     },
 
     /**
-     * Loads thread messages from a given aoi with the given filters.
-     * @param {MessagingAPI} api MessagingAPI client
+     * Loads thread messages with the given filters.
      * @param {Object} filter searchThreads parameters
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async messagesThreadLoad (api, filter, noCheck = false) {
+    async messagesThreadLoad (filter, noCheck = false) {
       return this.$MessagingAPI.searchThreads(filter)
         .then(mm => this.onNewMessages(mm, noCheck))
     },
@@ -111,7 +109,27 @@ export default {
 
       messages = messages
         // Do some source validation -- if it's from a correct channel, ...
-        .filter(message => noCheck || (message.channelID === this.channelID && (!message.replyTo || message.replyTo === this.repliesTo)))
+        .filter(message => {
+          // Relevant for search, bookmarked and pinned messages
+          if (noCheck) {
+            // If bookmarked or pinned, check if message fits channel
+            if (message.isBookmarked || message.isPinned) {
+              return message.channelID === this.channelID
+            } else {
+              return true
+            }
+          }
+
+          if (message.channelID === this.channelID) {
+            if (this.repliesTo) {
+              // If message is a reply, return it if it belongs to the thread - if this is being used in a thread
+              return message.replyTo === this.repliesTo
+            } else if (!this.repliesTo && !message.replyTo) {
+              // Else, return the message if it doesnt reply to anything - if this is being used in a channel
+              return true
+            }
+          }
+        })
         .map(m => new Message({ ...m, user: this.users[m.userID] || {} }))
 
       // Add user object for message owner

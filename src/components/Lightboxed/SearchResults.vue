@@ -111,8 +111,7 @@ export default {
 
   methods: {
     search (query) {
-      this.results = []
-      this.messagesLoad({ query })
+      this.messagesLoad({ query }, true)
     },
 
     groupByChannel (mm) {
