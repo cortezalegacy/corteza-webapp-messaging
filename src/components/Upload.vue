@@ -130,7 +130,6 @@ export default {
         params: () => ({ replyTo: this.replyTo }),
         thumbnailMethod: 'contain',
         thumbnailWidth: 350,
-        thumbnailHeight: 400,
         withCredentials: true,
         autoProcessQueue: false,
         maxFiles: 1,
@@ -257,7 +256,9 @@ export default {
     // When maximum files exceed, file upload is called and it fails instantly
     onComplete (e) {
       if (e.status !== 'error') {
-        this.resetUpload()
+        setTimeout(() => {
+          this.resetUpload()
+        }, 1000)
       }
     },
   },

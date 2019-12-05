@@ -309,7 +309,7 @@ export default {
   position: relative;
 
   .ch-footer {
-    z-index: 100;
+    z-index: 2;
   }
 
   & > div.messages {
