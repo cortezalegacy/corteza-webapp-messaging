@@ -125,7 +125,7 @@ export default {
       activityOne: '{{- user}} is {{- activity}}',
     },
     file: {
-      download: 'Download {{- label}}',
+      download: 'Download file',
       size: 'Size {{size}}',
       missing: 'Oups... {{0}} is no longer here...',
       unsupportedType: 'Unsupported file type',
