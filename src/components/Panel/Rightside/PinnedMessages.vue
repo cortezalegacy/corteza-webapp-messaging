@@ -62,7 +62,10 @@ export default {
   },
 
   mounted () {
-    this.messagesLoad({ pinnedOnly: true, channelID: this.channelID }, true)
+    this.messagesLoad({
+      filter: { pinnedOnly: true, channelID: this.channelID },
+      noCheck: true,
+    })
   },
 }
 </script>

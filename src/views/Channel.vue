@@ -256,9 +256,11 @@ export default {
 
       this.previousFetchFirstMessageID = null
       this.messagesLoad({
-        channelID: this.channelID,
-        fromMessageID: this.messageID,
-        limit: calcMsgCount(),
+        filter: {
+          channelID: this.channelID,
+          fromMessageID: this.messageID,
+          limit: calcMsgCount(),
+        },
       }).then(messages => {
         messages.forEach(m => this.fromMessage(m))
       })
@@ -276,9 +278,11 @@ export default {
         this.previousFetchFirstMessageID = messageID
 
         this.messagesLoad({
-          channelID: this.channelID,
-          beforeMessageID: messageID,
-          limit: 50,
+          filter: {
+            channelID: this.channelID,
+            beforeMessageID: messageID,
+            limit: 50,
+          },
         })
       }
     },
@@ -290,8 +294,10 @@ export default {
       }
       // @note this will be improved when the delta endpoint arrives
       this.messagesLoad({
-        channelID: this.channelID,
-        afterMessageID: lmID,
+        filter: {
+          channelID: this.channelID,
+          afterMessageID: lmID,
+        },
       })
     },
 

@@ -80,9 +80,9 @@ export default {
      * @param {Object} filter searchMessages parameters
      * @returns {Promise<Array<Message>>}
      */
-    async messagesLoad (filter, noCheck = false) {
+    async messagesLoad ({ filter, noCheck = false, resetState = false }) {
       return this.$MessagingAPI.searchMessages(filter)
-        .then(mm => this.onNewMessages(mm, noCheck))
+        .then(messages => this.onNewMessages(messages, noCheck, resetState))
     },
 
     /**
@@ -91,9 +91,9 @@ export default {
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async messagesThreadLoad (filter, noCheck = false) {
+    async messagesThreadLoad ({ filter, noCheck = false, resetState = false }) {
       return this.$MessagingAPI.searchThreads(filter)
-        .then(mm => this.onNewMessages(mm, noCheck))
+        .then(messages => this.onNewMessages(messages, noCheck, resetState))
     },
 
     /**
@@ -102,7 +102,11 @@ export default {
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async onNewMessages (messages, noCheck = false) {
+    async onNewMessages (messages, noCheck = false, resetState = false) {
+      if (resetState) {
+        this.messages = []
+      }
+
       if (!Array.isArray(messages)) {
         messages = [messages]
       }

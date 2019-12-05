@@ -82,7 +82,10 @@ export default {
 
   mounted () {
     // So we don't kill the system
-    this.messagesThreadLoad({ limit: 100 })
+    this.messagesThreadLoad({
+      filter: { limit: 100 },
+      noCheck: true,
+    })
   },
 }
 </script>

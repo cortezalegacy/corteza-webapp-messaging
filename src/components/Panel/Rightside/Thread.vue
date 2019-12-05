@@ -233,11 +233,11 @@ export default {
 
     // Preloads thread
     loadMessages () {
-      const params = {
+      const filter = {
         channelID: this.channelID,
         threadID: this.repliesTo,
       }
-      this.messagesThreadLoad(params)
+      this.messagesThreadLoad({ filter })
     },
 
     // Mark entire thread as read
@@ -251,10 +251,12 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.messagesThreadLoad({
+        const filter = {
           channelID: this.channelID,
           threadID: this.repliesTo,
-        })
+        }
+
+        this.messagesThreadLoad({ filter })
       }
     },
 
@@ -267,11 +269,14 @@ export default {
       if (this.messages.length) {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
+
       // @note this will be improved when the delta endpoint arrives
-      this.messagesThreadLoad({
+      const filter = {
         threadID: this.repliesTo,
         afterMessageID: lmID,
-      })
+      }
+
+      this.messagesThreadLoad({ filter })
     },
   },
 }

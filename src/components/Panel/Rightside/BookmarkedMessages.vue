@@ -52,7 +52,10 @@ export default {
   },
 
   mounted () {
-    this.messagesLoad({ bookmarkedOnly: true }, true)
+    this.messagesLoad({
+      filter: { bookmarkedOnly: true },
+      noCheck: true,
+    })
   },
 }
 </script>
