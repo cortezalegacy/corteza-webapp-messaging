@@ -49,20 +49,6 @@
         v-if="queued && typeSupported"
         class="button-group"
       >
-        <i18next
-          path="message.file.willUploadTo"
-          tag="h3"
-        >
-          <span>
-            <template v-if="replyTo">{{ $t('message.file.uploadedToThread') }}</template>
-
-            <template v-else>
-              {{ $t('message.file.uploadToChannel', { label: channel.name }) }}.<br>
-              {{ $t('message.file.uploadTarget') }}
-            </template>
-          </span>
-        </i18next>
-
         <button
           class="btn btn-blue"
           @click="uploadFile"

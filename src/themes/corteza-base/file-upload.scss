@@ -16,7 +16,14 @@
 		.dz-progress {
 			display: block;
 			border-radius: 0;
-			height: 5px;
+			height: 7px;
+			border: 1px solid rgba($black, .3);
+			box-shadow: 0 0 5px rgba($black, .3);
+			border-radius: 4px;
+			width: 100px;
+			margin-left: 0;
+			transform: translateX(-50%);
+
 			.dz-upload{
 				animation: unset;
 				transition: unset;
