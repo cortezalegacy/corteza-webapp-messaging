@@ -114,7 +114,7 @@ export default {
       this.messagesLoad({
         filter: { query },
         noCheck: true,
-        resetState: true,
+        overwriteState: true,
       })
     },
 

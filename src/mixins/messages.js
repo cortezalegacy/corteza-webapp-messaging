@@ -80,9 +80,9 @@ export default {
      * @param {Object} filter searchMessages parameters
      * @returns {Promise<Array<Message>>}
      */
-    async messagesLoad ({ filter, noCheck = false, resetState = false }) {
+    async messagesLoad ({ filter, noCheck = false, overwriteState = false }) {
       return this.$MessagingAPI.searchMessages(filter)
-        .then(messages => this.onNewMessages(messages, noCheck, resetState))
+        .then(messages => this.onNewMessages(messages, noCheck, overwriteState))
     },
 
     /**
@@ -91,9 +91,9 @@ export default {
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async messagesThreadLoad ({ filter, noCheck = false, resetState = false }) {
+    async messagesThreadLoad ({ filter, noCheck = false, overwriteState = false }) {
       return this.$MessagingAPI.searchThreads(filter)
-        .then(messages => this.onNewMessages(messages, noCheck, resetState))
+        .then(messages => this.onNewMessages(messages, noCheck, overwriteState))
     },
 
     /**
@@ -102,11 +102,7 @@ export default {
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async onNewMessages (messages, noCheck = false, resetState = false) {
-      if (resetState) {
-        this.messages = []
-      }
-
+    async onNewMessages (messages, noCheck = false, overwriteState = false) {
       if (!Array.isArray(messages)) {
         messages = [messages]
       }
@@ -114,25 +110,21 @@ export default {
       messages = messages
         // Do some source validation -- if it's from a correct channel, ...
         .filter(message => {
-          // Relevant for search, bookmarked and pinned messages
-          if (noCheck) {
-            // If bookmarked or pinned, check if message fits channel
-            if (message.isBookmarked || message.isPinned) {
-              return message.channelID === this.channelID
-            } else {
-              return true
-            }
+          if (this.messageFilter && !this.messageFilter(message)) {
+            return false
           }
 
-          if (message.channelID === this.channelID) {
-            if (this.repliesTo) {
-              // If message is a reply, return it if it belongs to the thread - if this is being used in a thread
-              return message.replyTo === this.repliesTo
-            } else if (!this.repliesTo && !message.replyTo) {
-              // Else, return the message if it doesnt reply to anything - if this is being used in a channel
-              return true
-            }
+          if (noCheck) {
+            return true
           }
+
+          if (message.channelID !== this.channelID) {
+            return false
+          }
+
+          // Since `this.repliesTo` will be undefined for channels and
+          // defined for threads, we can simply do this check.
+          return this.repliesTo === message.replyTo
         })
         .map(m => new Message({ ...m, user: this.users[m.userID] || {} }))
 
@@ -146,6 +138,9 @@ export default {
 
       // Update states
       this.getUsers(messages)
+      if (overwriteState) {
+        this.messages = []
+      }
       this.updateMessages(messages)
 
       setTimeout(() => {
@@ -308,12 +303,12 @@ export default {
      * @param {Object} reaction Reaction
      */
     onReaction (reaction) {
-      const i = this.messages.findIndex(m => m.messageID === reaction.messageID)
-      if (i < 0) {
+      const message = this.messages.find(m => m.messageID === reaction.messageID)
+      if (!message) {
         return
       }
 
-      const nm = new Message(this.messages[i])
+      const nm = new Message(message)
       if (reaction.add) {
         nm.addReaction(reaction)
       } else {
@@ -328,13 +323,8 @@ export default {
      * @param {Message} message Message to pin
      */
     onPinMessage ({ message }) {
-      const i = this.messages.findIndex(m => m.messageID === message.messageID)
-      if (i < 0) {
-        return
-      }
-
       const response = () => {
-        const nm = new Message(this.messages[i])
+        const nm = new Message(message)
         nm.isPinned = !message.isPinned
         this.updateMessages([nm])
       }
@@ -388,7 +378,7 @@ export default {
      * @param {Message} message Message to delete
      */
     onDeleteMessage ({ message }) {
-      if (confirm(this.$t('message.deleteConfirm'))) {
+      if (window.confirm(this.$t('message.deleteConfirm'))) {
         this.$MessagingAPI.messageDelete(message)
       }
     },

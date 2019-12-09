@@ -67,5 +67,16 @@ export default {
       noCheck: true,
     })
   },
+
+  methods: {
+    /**
+     * Custom filter used by messages mixin
+     * @param {Message} message
+     * @returns {Boolean}
+     */
+    messageFilter (message) {
+      return !!message.isPinned
+    },
+  },
 }
 </script>
