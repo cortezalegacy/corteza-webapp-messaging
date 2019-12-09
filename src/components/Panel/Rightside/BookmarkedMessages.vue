@@ -38,8 +38,35 @@ export default {
     messages,
   ],
 
+  props: {
+    channel: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  computed: {
+    channelID () {
+      return this.channel.channelID
+    },
+  },
+
   mounted () {
-    this.messagesLoad(this.$MessagingAPI, { bookmarkedOnly: true }, true)
+    this.messagesLoad({
+      filter: { bookmarkedOnly: true },
+      noCheck: true,
+    })
+  },
+
+  methods: {
+    /**
+     * Custom filter used by messages mixin
+     * @param {Message} message
+     * @returns {Boolean}
+     */
+    messageFilter (message) {
+      return !!message.isBookmarked
+    },
   },
 }
 </script>

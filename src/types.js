@@ -16,7 +16,7 @@ export class Message {
     this.message = m.message
     this.type = m.type
     this.channelID = m.channelID
-    this.replyTo = m.replyTo || ''
+    this.replyTo = m.replyTo || undefined
     this.replies = m.replies || 0
     this.createdAt = m.createdAt
     this.updatedAt = m.updatedAt || null

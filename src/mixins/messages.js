@@ -76,26 +76,24 @@ export default {
 
   methods: {
     /**
-     * Loads messages from a given api with the given filters.
-     * @param {MessagingAPI} api MessagingAPI client
+     * Loads messages with the given filters.
      * @param {Object} filter searchMessages parameters
      * @returns {Promise<Array<Message>>}
      */
-    async messagesLoad (api, filter, noCheck = false) {
+    async messagesLoad ({ filter, noCheck = false, overwriteState = false }) {
       return this.$MessagingAPI.searchMessages(filter)
-        .then(mm => this.onNewMessages(mm, noCheck))
+        .then(messages => this.onNewMessages(messages, noCheck, overwriteState))
     },
 
     /**
-     * Loads thread messages from a given aoi with the given filters.
-     * @param {MessagingAPI} api MessagingAPI client
+     * Loads thread messages with the given filters.
      * @param {Object} filter searchThreads parameters
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async messagesThreadLoad (api, filter, noCheck = false) {
+    async messagesThreadLoad ({ filter, noCheck = false, overwriteState = false }) {
       return this.$MessagingAPI.searchThreads(filter)
-        .then(mm => this.onNewMessages(mm, noCheck))
+        .then(messages => this.onNewMessages(messages, noCheck, overwriteState))
     },
 
     /**
@@ -104,14 +102,30 @@ export default {
      * @param {Boolean} noCheck If we should skip source validation
      * @returns {Promise<Array<Message>>}
      */
-    async onNewMessages (messages, noCheck = false) {
+    async onNewMessages (messages, noCheck = false, overwriteState = false) {
       if (!Array.isArray(messages)) {
         messages = [messages]
       }
 
       messages = messages
         // Do some source validation -- if it's from a correct channel, ...
-        .filter(message => noCheck || (message.channelID === this.channelID && (!message.replyTo || message.replyTo === this.repliesTo)))
+        .filter(message => {
+          if (this.messageFilter && !this.messageFilter(message)) {
+            return false
+          }
+
+          if (noCheck) {
+            return true
+          }
+
+          if (message.channelID !== this.channelID) {
+            return false
+          }
+
+          // Since `this.repliesTo` will be undefined for channels and
+          // defined for threads, we can simply do this check.
+          return this.repliesTo === message.replyTo
+        })
         .map(m => new Message({ ...m, user: this.users[m.userID] || {} }))
 
       // Add user object for message owner
@@ -124,6 +138,9 @@ export default {
 
       // Update states
       this.getUsers(messages)
+      if (overwriteState) {
+        this.messages = []
+      }
       this.updateMessages(messages)
 
       setTimeout(() => {
@@ -286,12 +303,12 @@ export default {
      * @param {Object} reaction Reaction
      */
     onReaction (reaction) {
-      const i = this.messages.findIndex(m => m.messageID === reaction.messageID)
-      if (i < 0) {
+      const message = this.messages.find(m => m.messageID === reaction.messageID)
+      if (!message) {
         return
       }
 
-      const nm = new Message(this.messages[i])
+      const nm = new Message(message)
       if (reaction.add) {
         nm.addReaction(reaction)
       } else {
@@ -306,13 +323,8 @@ export default {
      * @param {Message} message Message to pin
      */
     onPinMessage ({ message }) {
-      const i = this.messages.findIndex(m => m.messageID === message.messageID)
-      if (i < 0) {
-        return
-      }
-
       const response = () => {
-        const nm = new Message(this.messages[i])
+        const nm = new Message(message)
         nm.isPinned = !message.isPinned
         this.updateMessages([nm])
       }
@@ -366,7 +378,7 @@ export default {
      * @param {Message} message Message to delete
      */
     onDeleteMessage ({ message }) {
-      if (confirm(this.$t('message.deleteConfirm'))) {
+      if (window.confirm(this.$t('message.deleteConfirm'))) {
         this.$MessagingAPI.messageDelete(message)
       }
     },

@@ -265,8 +265,11 @@ export default {
   },
 
   watch: {
-    'channelID' (newID) {
-      this.load(newID)
+    channelID: {
+      handler: function (channelID) {
+        this.load(channelID)
+      },
+      immediate: true,
     },
 
     'type' (newType) {
@@ -274,10 +277,6 @@ export default {
         this.load()
       }
     },
-  },
-
-  mounted () {
-    this.load(this.channelID)
   },
 
   methods: {
@@ -379,16 +378,16 @@ export default {
      * @param {Channel} channel The channel to be updated
      * @param {Array<String>} oldMembers Previous memberships
      */
-    channelUpdate (channel, oldMembers = []) {
+    async channelUpdate (channel, oldMembers = []) {
       // Determine members delta
       const joined = channel.members.filter(m => !oldMembers.includes(m))
       const parted = oldMembers.filter(m => !channel.members.includes(m))
 
       for (const m of joined) {
-        this.$MessagingAPI.channelJoin({ channelID: channel.channelID, userID: m })
+        await this.$MessagingAPI.channelJoin({ channelID: channel.channelID, userID: m })
       }
       for (const m of parted) {
-        this.$MessagingAPI.channelPart({ channelID: channel.channelID, userID: m })
+        await this.$MessagingAPI.channelPart({ channelID: channel.channelID, userID: m })
       }
 
       // Update channel

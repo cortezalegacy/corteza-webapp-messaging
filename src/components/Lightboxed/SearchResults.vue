@@ -111,8 +111,11 @@ export default {
 
   methods: {
     search (query) {
-      this.results = []
-      this.messagesLoad({ query })
+      this.messagesLoad({
+        filter: { query },
+        noCheck: true,
+        overwriteState: true,
+      })
     },
 
     groupByChannel (mm) {

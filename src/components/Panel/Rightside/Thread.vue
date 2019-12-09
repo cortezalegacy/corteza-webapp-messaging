@@ -58,6 +58,7 @@
         @mentionSelect="onMentionSelect"
         @messageReaction="onMessageReaction"
         @bookmarkMessage="onBookmarkMessage"
+        @pinMessage="onPinMessage"
         @deleteMessage="onDeleteMessage"
         v-on="$listeners"
       />
@@ -179,16 +180,16 @@ export default {
     },
 
     repliesTo: {
-      handler: function (newRepliesTo, oldRepliesTo) {
-        this.updateMessages(this.message)
-        this.loadMessages()
+      // Vue test utils issue prevents using immediate watcher
+      handler: function () {
+        this.updateState()
       },
-      immediate: true,
     },
   },
 
   created () {
     this.$root.$on('wake', this.fetchNewMessages)
+    this.updateState()
   },
   beforeDestroy () {
     this.$root.$off('wake', this.fetchNewMessages)
@@ -198,6 +199,15 @@ export default {
     ...mapActions({
       markAllAsRead: 'unread/markThreadAsRead',
     }),
+
+    /**
+     * Helper function to update thread's state
+     */
+    updateState () {
+      this.messages = []
+      this.updateMessages(this.message)
+      this.loadMessages()
+    },
 
     /**
      * Helper to cancel message editing
@@ -231,11 +241,11 @@ export default {
 
     // Preloads thread
     loadMessages () {
-      const params = {
+      const filter = {
         channelID: this.channelID,
         threadID: this.repliesTo,
       }
-      this.messagesLoad(this.$MessagingAPI, params)
+      this.messagesThreadLoad({ filter })
     },
 
     // Mark entire thread as read
@@ -249,10 +259,12 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.messagesLoad(this.$MessagingAPI, {
+        const filter = {
           channelID: this.channelID,
           threadID: this.repliesTo,
-        })
+        }
+
+        this.messagesThreadLoad({ filter })
       }
     },
 
@@ -265,11 +277,14 @@ export default {
       if (this.messages.length) {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
+
       // @note this will be improved when the delta endpoint arrives
-      this.messagesLoad(this.$MessagingAPI, {
+      const filter = {
         threadID: this.repliesTo,
         afterMessageID: lmID,
-      })
+      }
+
+      this.messagesThreadLoad({ filter })
     },
   },
 }

@@ -3,29 +3,32 @@
 
 import { expect } from 'chai'
 import { shallowMount } from 'corteza-webapp-messaging/tests/lib/helpers'
-import BookmarkedMessages from 'corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMessages'
+import CChannel from 'corteza-webapp-messaging/src/views/Channel'
 import Messages from 'corteza-webapp-messaging/src/components/Messages'
+import { Channel } from 'corteza-webapp-messaging/src/types'
 import fp from 'flush-promises'
 import sinon from 'sinon'
+import { createLocalVue, mount } from '@vue/test-utils'
+import Vuex from 'vuex'
 
-describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMessages.vue', () => {
+const localVue = createLocalVue()
+localVue.use(Vuex)
+
+describe('corteza-webapp-messaging/src/views/Channel.vue', () => {
   afterEach(() => {
     sinon.restore()
   })
 
-  let propsData, $MessagingAPI, $SystemAPI, $auth
+  let propsData, $MessagingAPI, $SystemAPI, $auth, store
   beforeEach(() => {
     propsData = {
-      channel: {
-        channelID: 'ch.0001',
-        members: [],
-      },
+      channelID: 'ch.0001',
     }
 
     $MessagingAPI = {
       statusList: sinon.stub().resolves([]),
       searchMessages: sinon.stub().resolves({}),
-      searchThreads: sinon.stub().resolves({}),
+      searchChannels: sinon.stub().resolves({}),
       messagePinRemove: sinon.stub().resolves({}),
       messagePinCreate: sinon.stub().resolves({}),
       messageBookmarkRemove: sinon.stub().resolves({}),
@@ -42,37 +45,58 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
     $auth = {
       user: { userID: 'u.0001' },
     }
+
+    store = new Vuex.Store({ modules: {
+      channels: {
+        namespaced: true,
+        state: {},
+        getters: {
+          findByID: () => () => new Channel({ channelID: 'ch.0001' }),
+          findWhereMember: () => () => [],
+        },
+      },
+      unread: {
+        namespaced: true,
+        state: {},
+        getters: {
+          find: () => () => ({}),
+        },
+        actions: {
+          fromMessage: async () => {},
+        },
+      },
+      session: {
+        namespaced: true,
+        state: {},
+        getters: {
+          canCreateGroupChannel: () => {},
+        },
+      },
+      ui: {
+        namespaced: true,
+        state: {},
+        getters: {
+          enableSubmitButton: () => {},
+        },
+      },
+    }})
   })
 
   const mountCmp = (opt) => {
-    return shallowMount(BookmarkedMessages, {
+    return shallowMount(CChannel, {
       mocks: { $MessagingAPI, $SystemAPI, $auth },
+      store,
+      localVue,
       propsData,
       ...opt,
     })
   }
 
-  it('should filter out messages that are not bookmarked', async () => {
-    $MessagingAPI.searchMessages = sinon.stub().resolves([
-      { messageID: '0001', isBookmarked: true, message: 'content1' },
-      { messageID: '0002', isBookmarked: false, message: 'content2' },
-      { messageID: '0003', isPinned: true, message: 'content3' },
-    ])
-
-    const wrap = mountCmp()
-    const msgs = wrap.find(Messages)
-    await fp()
-
-    const { messages } = msgs.props()
-    expect(messages).to.have.length(1)
-    expect(messages[0].messageID).to.eq('0001')
-  })
-
   describe('state', () => {
     it('should fetch messages on load', async () => {
       $MessagingAPI.searchMessages = sinon.stub().resolves([
-        { messageID: '0001', isBookmarked: true, message: 'content1' },
-        { messageID: '0002', isBookmarked: true, message: 'content2' },
+        { messageID: '0001', channelID: 'ch.0001', message: 'content1' },
+        { messageID: '0002', channelID: 'ch.0001', message: 'content2' },
       ])
 
       const wrap = mountCmp()
@@ -87,10 +111,29 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
       expect(messages[1].messageID).to.eq('0002')
     })
 
+    it('should ignore messages for different channels', async () => {
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
+        { messageID: '0001', channelID: 'ch.0001', message: 'content1' },
+        { messageID: '0001', channelID: 'ch.0001', replyTo: 'm.0002', message: 'content1.1' },
+        { messageID: '0002', channelID: 'ch.0002', message: 'content2' },
+        { messageID: '0001', channelID: 'ch.0002', replyTo: 'm.0002', message: 'content2.1' },
+      ])
+
+      const wrap = mountCmp()
+      const msgs = wrap.find(Messages)
+      await fp()
+
+      sinon.assert.calledOnce($MessagingAPI.searchMessages)
+
+      const { messages } = msgs.props()
+      expect(messages).to.have.length(1)
+      expect(messages[0].messageID).to.eq('0001')
+    })
+
     it('should fetch users for given messages', async () => {
       $MessagingAPI.searchMessages = sinon.stub().resolves([
-        { messageID: '0001', isBookmarked: true, userID: 'u.0001', message: 'content1' },
-        { messageID: '0002', isBookmarked: true, userID: 'u.0002', message: 'content2' },
+        { messageID: '0001', channelID: 'ch.0001', userID: 'u.0001', message: 'content1' },
+        { messageID: '0002', channelID: 'ch.0001', userID: 'u.0002', message: 'content2' },
       ])
 
       $SystemAPI.userList = sinon.stub().resolves({
@@ -113,7 +156,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
-          isBookmarked: true,
+          channelID: 'ch.0001',
           userID: 'u.0001',
           message: 'content1',
           reactions: [
@@ -145,7 +188,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
-          isBookmarked: true,
+          channelID: 'ch.0001',
           userID: 'u.0001',
           mentions: ['0003'],
           message: 'for <@0003>',
@@ -176,7 +219,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
-          isBookmarked: true,
+          channelID: 'ch.0001',
           att: {
             attachmentID: 'att.0001',
             url: '/path/att.ext',
@@ -201,7 +244,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/BookmarkedMess
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
-          isBookmarked: true,
+          channelID: 'ch.0001',
           att: {
             attachmentID: 'att.0001',
             url: 'http://base.ur.tld/path/att.ext',

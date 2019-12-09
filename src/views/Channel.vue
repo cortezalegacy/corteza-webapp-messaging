@@ -255,10 +255,12 @@ export default {
       this.editLastMessage = false
 
       this.previousFetchFirstMessageID = null
-      this.messagesLoad(this.$MessagingAPI, {
-        channelID: this.channelID,
-        fromMessageID: this.messageID,
-        limit: calcMsgCount(),
+      this.messagesLoad({
+        filter: {
+          channelID: this.channelID,
+          fromMessageID: this.messageID,
+          limit: calcMsgCount(),
+        },
       }).then(messages => {
         messages.forEach(m => this.fromMessage(m))
       })
@@ -275,10 +277,12 @@ export default {
         // over and over again...
         this.previousFetchFirstMessageID = messageID
 
-        this.messagesLoad(this.$MessagingAPI, {
-          channelID: this.channelID,
-          beforeMessageID: messageID,
-          limit: 50,
+        this.messagesLoad({
+          filter: {
+            channelID: this.channelID,
+            beforeMessageID: messageID,
+            limit: 50,
+          },
         })
       }
     },
@@ -289,9 +293,11 @@ export default {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
       // @note this will be improved when the delta endpoint arrives
-      this.messagesLoad(this.$MessagingAPI, {
-        channelID: this.channelID,
-        afterMessageID: lmID,
+      this.messagesLoad({
+        filter: {
+          channelID: this.channelID,
+          afterMessageID: lmID,
+        },
       })
     },
 

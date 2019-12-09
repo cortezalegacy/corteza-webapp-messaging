@@ -55,8 +55,28 @@ export default {
     },
   },
 
+  computed: {
+    channelID () {
+      return this.channel.channelID
+    },
+  },
+
   mounted () {
-    this.messagesLoad(this.$MessagingAPI, { pinnedOnly: true, channelID: this.channelID }, true)
+    this.messagesLoad({
+      filter: { pinnedOnly: true, channelID: this.channelID },
+      noCheck: true,
+    })
+  },
+
+  methods: {
+    /**
+     * Custom filter used by messages mixin
+     * @param {Message} message
+     * @returns {Boolean}
+     */
+    messageFilter (message) {
+      return !!message.isPinned
+    },
   },
 }
 </script>
