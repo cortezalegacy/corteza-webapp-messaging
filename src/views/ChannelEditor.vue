@@ -366,7 +366,7 @@ export default {
      */
     channelCreate (channel) {
       this.$MessagingAPI.channelCreate(this.channel).then((ch) => {
-        this.$store.commit('channels/updateList', ch)
+        this.$store.commit('channels/updateList', new Channel(ch))
         this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
       }).catch(({ error }) => {
         this.error = error
@@ -392,7 +392,7 @@ export default {
 
       // Update channel
       this.$MessagingAPI.channelUpdate(this.channel).then((ch) => {
-        this.$store.commit('channels/updateList', ch)
+        this.$store.commit('channels/updateList', new Channel(ch))
         this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
       }).catch((error) => {
         this.error = error.message
