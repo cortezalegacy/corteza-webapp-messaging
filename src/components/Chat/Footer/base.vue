@@ -132,15 +132,17 @@ export default {
      * @returns {Array}
      */
     channelSuggestions () {
-      return this.channels.map(c => {
-        return {
-          type: 'Channel',
-          id: c.channelID,
-          channel: c,
-          value: c.suggestionLabel(),
-          ...c.fuzzyKeys(),
-        }
-      })
+      return this.channels
+        .filter(c => c.type !== 'group')
+        .map(c => {
+          return {
+            type: 'Channel',
+            id: c.channelID,
+            channel: c,
+            value: c.suggestionLabel(),
+            ...c.fuzzyKeys(),
+          }
+        })
     },
 
     currentUser () {
