@@ -116,7 +116,7 @@ export default function (MessagingAPI) {
         if (i === -1) {
           l.unshift(channel)
         } else {
-          l[i] = channel
+          l[i] = new Channel(channel)
         }
 
         state.list = [...l]
