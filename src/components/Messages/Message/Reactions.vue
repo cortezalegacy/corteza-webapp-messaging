@@ -25,12 +25,6 @@ export default {
     },
   },
 
-  computed: {
-    getReactions () {
-      return this.reactions.filter(r => r.reaction)
-    },
-  },
-
   methods: {
     emoji (str) {
       return textToEmoji(str)

@@ -15,7 +15,13 @@
     </div>
 
     <template v-if="canPreview">
+      <!--
+        class used for testing;
+        Manual stubbing failed to resolve this component
+        @todo improve
+      -->
       <preview-inline
+        class="test-inline-preview"
         :src="inlineUrl"
         :meta="inlineMeta"
         :name="attachment.name"

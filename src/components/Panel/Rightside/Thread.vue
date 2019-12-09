@@ -180,17 +180,16 @@ export default {
     },
 
     repliesTo: {
-      handler: function (newRepliesTo, oldRepliesTo) {
-        this.messages = []
-        this.updateMessages(this.message)
-        this.loadMessages()
+      // Vue test utils issue prevents using immediate watcher
+      handler: function () {
+        this.updateState()
       },
-      immediate: true,
     },
   },
 
   created () {
     this.$root.$on('wake', this.fetchNewMessages)
+    this.updateState()
   },
   beforeDestroy () {
     this.$root.$off('wake', this.fetchNewMessages)
@@ -200,6 +199,15 @@ export default {
     ...mapActions({
       markAllAsRead: 'unread/markThreadAsRead',
     }),
+
+    /**
+     * Helper function to update thread's state
+     */
+    updateState () {
+      this.messages = []
+      this.updateMessages(this.message)
+      this.loadMessages()
+    },
 
     /**
      * Helper to cancel message editing

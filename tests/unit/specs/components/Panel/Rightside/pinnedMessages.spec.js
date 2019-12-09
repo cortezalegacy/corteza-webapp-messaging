@@ -52,11 +52,27 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
     })
   }
 
+  it('should filter out messages that are not pinned', async () => {
+    $MessagingAPI.searchMessages = sinon.stub().resolves([
+      { messageID: '0001', isPinned: true, message: 'content1' },
+      { messageID: '0002', isPinned: false, message: 'content2' },
+      { messageID: '0003', isBookmarked: true, message: 'content3' },
+    ])
+
+    const wrap = mountCmp()
+    const msgs = wrap.find(Messages)
+    await fp()
+
+    const { messages } = msgs.props()
+    expect(messages).to.have.length(1)
+    expect(messages[0].messageID).to.eq('0001')
+  })
+
   describe('state', () => {
     it('should fetch messages on load', async () => {
       $MessagingAPI.searchMessages = sinon.stub().resolves([
-        { messageID: '0001', message: 'content1' },
-        { messageID: '0002', message: 'content2' },
+        { messageID: '0001', isPinned: true, message: 'content1' },
+        { messageID: '0002', isPinned: true, message: 'content2' },
       ])
 
       const wrap = mountCmp()
@@ -73,8 +89,8 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
 
     it('should fetch users for given messages', async () => {
       $MessagingAPI.searchMessages = sinon.stub().resolves([
-        { messageID: '0001', userID: 'u.0001', message: 'content1' },
-        { messageID: '0002', userID: 'u.0002', message: 'content2' },
+        { messageID: '0001', isPinned: true, userID: 'u.0001', message: 'content1' },
+        { messageID: '0002', isPinned: true, userID: 'u.0002', message: 'content2' },
       ])
 
       $SystemAPI.userList = sinon.stub().resolves({
@@ -97,6 +113,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
+          isPinned: true,
           userID: 'u.0001',
           message: 'content1',
           reactions: [
@@ -128,6 +145,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
+          isPinned: true,
           userID: 'u.0001',
           mentions: ['0003'],
           message: 'for <@0003>',
@@ -158,6 +176,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
+          isPinned: true,
           att: {
             attachmentID: 'att.0001',
             url: '/path/att.ext',
@@ -182,6 +201,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/PinnedMessages
       $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           messageID: '0001',
+          isPinned: true,
           att: {
             attachmentID: 'att.0001',
             url: 'http://base.ur.tld/path/att.ext',
