@@ -80,6 +80,7 @@
     <div class="group borderless float-left">
       <div class="meta-bar">
         <c-activity
+          v-if="showActivities"
           class="activity"
           :users="activityUsers"
           :activity="$t('message.typing')"
@@ -143,6 +144,14 @@ export default {
 
     replyToID () {
       return (this.replyTo || {}).messageID
+    },
+
+    /**
+     * Determines if activities should be visible; only available for channels
+     * @returns {Boolean}
+     */
+    showActivities () {
+      return this.replyTo === undefined
     },
 
     /**
