@@ -277,13 +277,13 @@ export default {
      * Updates current messages to reflect current user's state
      * @param {Object<User>} users A new {key: User} object that we should use
      */
-    onUsersUpdate (users) {
+    onUsersUpdate (users = this.users) {
       this.messages.forEach((m, i) => {
         const nm = new Message(m)
         let update = false
 
         // If we should define/update message's owner
-        if (!m.user || !m.user.userID || (users[m.user] && m.user.online !== users[m.user].online)) {
+        if (!m.user || !m.user.userID || (users[m.userID] && m.user.online !== users[m.userID].online)) {
           nm.user = users[m.userID] || {}
           update = true
         }

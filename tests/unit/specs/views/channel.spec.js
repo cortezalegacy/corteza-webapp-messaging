@@ -209,6 +209,34 @@ describe('corteza-webapp-messaging/src/views/Channel.vue', () => {
         done()
       }, 10)
     })
+
+    it('correctly update message user\'s status', async () => {
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
+        { messageID: '0001', channelID: 'ch.0001', userID: 'u.0003', message: 'content1' },
+      ])
+
+      $SystemAPI.userList = sinon.stub().resolves({
+        set: [{ userID: 'u.0003', name: 'user.3' }],
+      })
+
+      const wrap = mountCmp()
+      const msgs = wrap.find(Messages)
+      await fp()
+
+      let props = msgs.props()
+      expect(props.messages[0].user.online).to.be.false
+
+      // Force update, to check if it works as intended
+      wrap.vm.onUsersUpdate({ 'u.0003': { userID: 'u.0003', online: true } })
+      await fp()
+      props = msgs.props()
+      expect(props.messages[0].user.online).to.be.true
+
+      wrap.vm.onUsersUpdate({ 'u.0003': { userID: 'u.0003', online: false } })
+      await fp()
+      props = msgs.props()
+      expect(props.messages[0].user.online).to.be.false
+    })
   })
 
   describe('message', () => {
