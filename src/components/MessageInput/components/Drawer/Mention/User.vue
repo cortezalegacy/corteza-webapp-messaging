@@ -10,6 +10,8 @@
       class="user group float-left"
       :class="{
         member: $attrs.query && suggestion.member,
+        'full-moon': suggestion.online,
+        'new-moon': !suggestion.online,
       }"
     >
 

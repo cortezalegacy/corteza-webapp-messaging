@@ -27,6 +27,8 @@
         @submit="onSubmit"
         @focus="onFocus"
         @requestSuggestions="onRequestSuggestions"
+        @suggestStart="onSuggestStart"
+        @suggestEnd="onSuggestEnd"
         v-on="$listeners"
       />
 

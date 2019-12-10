@@ -40,6 +40,7 @@ describe('components/Chat/Footer/Footer', () => {
       activitySend: sinon.stub().resolves({}),
       messageReplyCreate: sinon.stub().resolves({}),
       messageCreate: sinon.stub().resolves({}),
+      statusList: sinon.stub().resolves([]),
     }
 
     $SystemAPI = {

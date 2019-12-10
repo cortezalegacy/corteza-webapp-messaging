@@ -385,6 +385,8 @@ export default {
       })
       // Should be in bottom, since test utils don't make batches
       this.drawerFor = 'Mention'
+
+      this.$emit('suggestStart')
     },
 
     /**
@@ -409,6 +411,7 @@ export default {
     onSuggestCancel () {
       this.drawerProps = {}
       this.drawerFor = undefined
+      this.$emit('suggestEnd')
     },
 
     /**
@@ -513,6 +516,7 @@ export default {
           label: suggestion.value,
         },
       })
+      this.$emit('suggestEnd')
     },
   },
 }

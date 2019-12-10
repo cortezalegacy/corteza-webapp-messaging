@@ -88,6 +88,7 @@ export default {
 
       pulledUsers: [],
       prioritizedUsers: [],
+      userStatuses: {},
 
       activityTimeout: undefined,
     }
@@ -104,6 +105,7 @@ export default {
      */
     userSuggestions () {
       return this.prioritizedUsers.concat(this.pulledUsers)
+        .map(s => ({ ...s, online: this.userStatuses[s.id] }))
     },
 
     /**
@@ -192,6 +194,9 @@ export default {
      */
     onRequestSuggestions: throttle(function ({ type, query }) {
       if (type === 'user') {
+        // Get statuses so we can show who is online
+        this.loadStatuses()
+
         this.$SystemAPI.userList({ query, perPage: maxUserSuggestions })
           .then(({ set: users = [] }) => {
             this.pulledUsers.push(
@@ -207,6 +212,33 @@ export default {
           })
       }
     }, 500),
+
+    /**
+     * Handle suggest start; initial status load
+     */
+    onSuggestStart () {
+      this.loadStatuses()
+    },
+
+    /**
+     * Handle suggest end; clear out statuses
+     */
+    onSuggestEnd () {
+      this.userStatuses = {}
+    },
+
+    /**
+     * Helper to load & prepare user statuses
+     * @todo improve this when we migrate to new structure
+     */
+    loadStatuses () {
+      this.$MessagingAPI.statusList().then(s => {
+        this.userStatuses = s.reduce((acc, cur) => {
+          acc[cur.userID] = true
+          return acc
+        }, { [this.currentUser.userID]: true })
+      })
+    },
 
     /**
      * Pre-processes user suggestions into fuzzy-search objects + meta

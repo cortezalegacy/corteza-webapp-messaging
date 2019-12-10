@@ -12,6 +12,9 @@
   color: $dark;
 
   &.user {
+    .new-moon {
+      color: $secondary;
+    }
     .member {
       font-weight: bold;
     }
