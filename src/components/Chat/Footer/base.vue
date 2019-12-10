@@ -302,9 +302,7 @@ export default {
         }
       }
 
-      if (activity.kind === 'replying' && this.replyToID && activity.messageID === this.replyToID) {
-        handle()
-      } else if (activity.kind === 'typing') {
+      if (activity.kind === 'typing') {
         handle()
       }
     },
