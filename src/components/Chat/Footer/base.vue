@@ -77,7 +77,8 @@ export default {
 
     users: {
       type: Object,
-      required: true,
+      required: false,
+      default: () => ({}),
     },
   },
 
