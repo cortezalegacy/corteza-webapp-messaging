@@ -91,7 +91,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
   }
 
   it('filter messages only specific to this thread', async () => {
-    $MessagingAPI.searchThreads = sinon.stub().resolves([
+    $MessagingAPI.searchMessages = sinon.stub().resolves([
       { replyTo: '50001', messageID: '50002', message: 'content1', channelID: 'ch.0001' },
       { replyTo: '50002', messageID: '50003', message: 'content2', channelID: 'ch.0001' },
       { replyTo: '50001', messageID: '50003', message: 'content2', channelID: 'ch.0002' },
@@ -108,7 +108,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
 
   describe('state', () => {
     it('should fetch messages on load', async () => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         { replyTo: '50001', messageID: '50002', message: 'content1', channelID: 'ch.0001' },
         { replyTo: '50001', messageID: '50003', message: 'content2', channelID: 'ch.0001' },
       ])
@@ -117,7 +117,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
       const msgs = wrap.find(Messages)
       await fp()
 
-      sinon.assert.calledOnce($MessagingAPI.searchThreads)
+      sinon.assert.calledOnce($MessagingAPI.searchMessages)
 
       const { messages } = msgs.props()
       expect(messages).to.have.length(3)
@@ -127,7 +127,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
     })
 
     it('should fetch users for given messages', async () => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         { replyTo: '50001', userID: 'u.0001', messageID: '50002', message: 'content1', channelID: 'ch.0001' },
         { replyTo: '50001', userID: 'u.0002', messageID: '50003', message: 'content2', channelID: 'ch.0001' },
       ])
@@ -150,7 +150,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
     })
 
     it('should fetch users for given reactions', async () => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           replyTo: '50001',
           channelID: 'ch.0001',
@@ -183,7 +183,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
     })
 
     it('should fetch users for given mentions', (done) => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           replyTo: '50001',
           channelID: 'ch.0001',
@@ -215,7 +215,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
       window.MessagingAPI = 'http://base.ur.tld'
     })
     it('determine attachment\'s url when only path is provided', async () => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           replyTo: '50001',
           channelID: 'ch.0001',
@@ -241,7 +241,7 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
     })
 
     it('determine attachment\'s url when full URL is provided', async () => {
-      $MessagingAPI.searchThreads = sinon.stub().resolves([
+      $MessagingAPI.searchMessages = sinon.stub().resolves([
         {
           replyTo: '50001',
           channelID: 'ch.0001',

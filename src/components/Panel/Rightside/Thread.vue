@@ -245,7 +245,7 @@ export default {
         channelID: this.channelID,
         threadID: this.repliesTo,
       }
-      this.messagesThreadLoad({ filter })
+      this.messagesLoad({ filter })
     },
 
     // Mark entire thread as read
@@ -264,7 +264,7 @@ export default {
           threadID: this.repliesTo,
         }
 
-        this.messagesThreadLoad({ filter })
+        this.messagesLoad({ filter })
       }
     },
 
@@ -284,7 +284,7 @@ export default {
         afterMessageID: lmID,
       }
 
-      this.messagesThreadLoad({ filter })
+      this.messagesLoad({ filter })
     },
   },
 }
