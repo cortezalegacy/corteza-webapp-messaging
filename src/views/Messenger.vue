@@ -201,7 +201,14 @@ export default {
         setTimeout(navigator.splashscreen.hide, 1000)
       }
 
-      this.windowResizeHandler()
+      setTimeout(() => {
+        // Delay first call to window-resize handler
+        //
+        // not the most optimal solution but we're triggering event-handlers
+        // in the child component (yes, I know...)
+        this.windowResizeHandler()
+      }, 500)
+
       window.addEventListener('resize', this.windowResizeHandler)
       window.addEventListener('focus', this.titleNotificationsHandler)
 
