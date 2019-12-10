@@ -200,7 +200,21 @@ export default {
         const memberIDs = new Set()
         channels.filter(({ type }) => type === 'group').forEach(({ members, type }) => {
           if (type === 'group') {
-            members.forEach(memberIDs.add)
+            members.forEach(member => memberIDs.add(member))
+          }
+        })
+
+        this.fetchUsers([...memberIDs])
+      },
+    },
+
+    pinnedChannels: {
+      immediate: true,
+      handler (channels = []) {
+        const memberIDs = new Set()
+        channels.filter(({ type }) => type === 'group').forEach(({ members, type }) => {
+          if (type === 'group') {
+            members.forEach(member => memberIDs.add(member))
           }
         })
 
