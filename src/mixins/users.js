@@ -47,9 +47,13 @@ export default {
      * @param {Array<String>} IDs An array of ID's that we should have
      */
     async fetchUsers (IDs = []) {
+      if (!Array.isArray(IDs)) {
+        IDs = [IDs]
+      }
+
       const userIDs = new Set(IDs)
       const fetch = ([...userIDs])
-        .filter(uID => !this.users[uID] && uID !== '0')
+        .filter(uID => uID && !this.users[uID] && uID !== '0')
       if (!fetch.length) {
         return this.users
       }
@@ -74,6 +78,7 @@ export default {
         .finally(() => {
           // Remove fetched users
           fetch.forEach(u => this.fetching.delete(u))
+          return this.fetchStatuses()
         })
     },
 
@@ -97,7 +102,7 @@ export default {
         }
       }).reduce((acc, cur) => new Set([ ...acc, ...cur ]), [])
 
-      return this.fetchUsers(userIDs)
+      return this.fetchUsers([ ...userIDs ])
     },
 
     /**
@@ -124,7 +129,11 @@ export default {
      * Used by hybrid apps
      */
     onWakeUsers () {
-      this.$MessagingAPI.statusList().then(this.updateStatuses)
+      this.fetchStatuses()
+    },
+
+    async fetchStatuses () {
+      return this.$MessagingAPI.statusList().then(this.updateStatuses)
     },
 
     /**

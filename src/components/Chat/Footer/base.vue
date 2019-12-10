@@ -200,7 +200,7 @@ export default {
         this.$SystemAPI.userList({ query, perPage: maxUserSuggestions })
           .then(({ set: users = [] }) => {
             this.pulledUsers.push(
-              ...users
+              ...(users || [])
                 .filter(u => !this.userSuggestions.find(({ id }) => id === u.userID))
                 .map(u => new User(u)).map(this.prepUserSuggestion)
             )

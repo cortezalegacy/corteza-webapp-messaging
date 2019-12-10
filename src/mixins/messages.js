@@ -189,7 +189,7 @@ export default {
       }
 
       // Fetch users
-      const users = await this.fetchUsers(userIDs)
+      const users = await this.fetchUsers([ ...userIDs ])
 
       // Update
       const nm = []
