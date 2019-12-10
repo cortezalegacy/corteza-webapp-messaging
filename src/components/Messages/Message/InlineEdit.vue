@@ -10,6 +10,7 @@
         :submit-on-enter="submitOnEnter"
         :user-suggestions="userSuggestions"
         :channel-suggestions="channelSuggestions"
+        :suggestion-priorities="suggestionPriorities"
         :current-user="currentUser"
         :source="channelID"
         @submit="onSubmit"
