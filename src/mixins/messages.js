@@ -29,6 +29,10 @@ function mentionsFromDoc (doc) {
  * @param {Object} users Available users
  */
 function labelDocMentions (doc, users) {
+  if (!doc.content) {
+    return
+  }
+
   for (const c of doc.content) {
     if (c.type === 'paragraph') {
       labelDocMentions(c, users)
