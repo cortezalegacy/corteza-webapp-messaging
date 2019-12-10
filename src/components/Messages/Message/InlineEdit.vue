@@ -89,7 +89,7 @@ export default {
       }
 
       if (!message) {
-        this.$emit('deleteMessage')
+        this.$emit('deleteMessage', { message: this.message })
       } else if (this.channel) {
         this.$MessagingAPI.messageEdit({ ...this.message, message })
           .then(stdResponse)
