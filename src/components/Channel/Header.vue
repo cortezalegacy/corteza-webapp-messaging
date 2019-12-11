@@ -214,8 +214,19 @@ export default {
   computed: {
     isOnline () {
       if (this.channel.isDirectMessage()) {
-        return (this.channel.members.find(ID => ID !== this.$auth.user.userID && this.users[ID]) || {}).online
+        // On direct message (group)
+        return this.channel.members.filter(userID => {
+          // Skip self
+          if (userID === this.$auth.user.userID) {
+            return false
+          }
+
+          // Skip all offline members
+          return !!(this.users[userID] || { online: false }).online
+        }).length > 0
       }
+
+      // Channels and such...
       return undefined
     },
 
