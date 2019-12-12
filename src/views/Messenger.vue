@@ -267,7 +267,8 @@ export default {
       this.searchQuery = null
 
       // go to channel
-      this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.messageID } })
+      this.$router.push({ name: 'channel', params: { channelID: message.channelID } })
+      this.$bus.$emit('Messenger/switchRightSidePanel', { type: 'thread', e: { message } })
     },
 
     onEmojiSelect (emoji) {
