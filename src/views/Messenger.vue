@@ -268,6 +268,12 @@ export default {
 
       // go to channel
       this.$router.push({ name: 'channel', params: { channelID: message.channelID, messageID: message.messageID } })
+
+      if (message.replies) {
+        this.$bus.$emit('Messenger/switchRightSidePanel', { type: 'thread', e: { message } })
+      } else {
+        this.$bus.$emit('Messenger/switchRightSidePanel', {})
+      }
     },
 
     onEmojiSelect (emoji) {

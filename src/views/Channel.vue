@@ -31,6 +31,7 @@
         :scroll-to-message="messageID"
         :consecutive="true"
         :last-read-message-i-d="unread.lastMessageID"
+        :highlight-message-i-d="messageID"
         :submit-on-enter="submitOnEnter"
         :edit="editMessage"
         :channel="channel"
@@ -54,10 +55,12 @@
       class="ch-footer"
       :channel="channel"
       :has-unread="hasUnread"
+      :has-recent="!!messageID"
       :submit-on-enter="submitOnEnter"
       :suggestion-priorities="getSp"
       :readonly="!isMember"
       :users="users"
+      @showRecent="onShowRecent"
       @markAsRead="onMarkAsRead"
       @promptFilePicker="onPromptFilePicker"
       @editLastMessage="onEditLastMessage"
@@ -117,10 +120,12 @@ export default {
   data () {
     return {
       showUploadArea: false,
+      hideNewMessages: false,
       uploadFileTypeSupported: true,
 
       // Assists with on-scroll loading
       previousFetchFirstMessageID: null,
+      previousFetchLastMessageID: null,
 
       // Controlls what message should be edited
       editMessage: undefined,
@@ -195,10 +200,23 @@ export default {
 
   watch: {
     source: {
-      immediate: true,
       handler () {
-        this.loadMessages()
+        if (!this.messageID) {
+          this.loadMessages()
+        }
         this.getUsers([this.channel])
+      },
+    },
+
+    messageID: {
+      immediate: true,
+      handler (messageID) {
+        if (messageID) {
+          this.loadContext(messageID)
+        } else {
+          this.hideNewMessages = false
+          this.loadMessages()
+        }
       },
     },
   },
@@ -244,23 +262,57 @@ export default {
     },
 
     isFollowing ({ channelID, replyTo }) {
-      if (!this.channel) {
+      if (!this.channel || this.hideNewMessages) {
         return false
       }
 
       return document.hasFocus() && this.channel.channelID === channelID && !replyTo
     },
 
-    loadMessages () {
+    loadContext (messageID) {
+      // Set this to false to allow message loading
+      this.hideNewMessages = false
       this.editLastMessage = false
-
       this.previousFetchFirstMessageID = null
+
+      this.messagesLoad({
+        filter: {
+          channelID: this.channelID,
+          toMessageID: messageID,
+          limit: 10,
+        },
+        overwriteState: true,
+      }).then(messages => {
+        messages.forEach(m => this.fromMessage(m))
+        /*
+        this.messagesLoad({
+          filter: {
+            channelID: this.channelID,
+            afterMessageID: messageID,
+            limit: 9,
+          },
+        }).then(messages => {
+          messages.forEach(m => this.fromMessage(m))
+
+          // So the message feed doesn't update with new messages
+          this.hideNewMessages = true
+        })
+        */
+        this.hideNewMessages = true
+      })
+    },
+
+    loadMessages (overwriteState = false) {
+      this.editLastMessage = false
+      this.previousFetchFirstMessageID = null
+
       this.messagesLoad({
         filter: {
           channelID: this.channelID,
           fromMessageID: this.messageID,
           limit: calcMsgCount(),
         },
+        overwriteState,
       }).then(messages => {
         messages.forEach(m => this.fromMessage(m))
       })
@@ -269,6 +321,11 @@ export default {
     // Mark entire channel as read
     onMarkAsRead () {
       this.markAllAsRead(this.channel)
+    },
+
+    // Show the most recent messages
+    onShowRecent () {
+      this.$router.push({ name: 'channel', params: { channelID: this.channelID } })
     },
 
     onScrollTop ({ messageID }) {
@@ -293,16 +350,32 @@ export default {
         lmID = (this.messages[this.messages.length - 1]).messageID
       }
       // @note this will be improved when the delta endpoint arrives
-      this.messagesLoad({
-        filter: {
-          channelID: this.channelID,
-          afterMessageID: lmID,
-        },
-      })
+      if (!this.messageID) {
+        this.messagesLoad({
+          filter: {
+            channelID: this.channelID,
+            afterMessageID: lmID,
+          },
+        })
+      }
     },
 
-    onScrollBottom () {
-      // @todo bottom loading
+    onScrollBottom ({ messageID }) {
+      /*
+      if (this.previousFetchLastMessageID !== messageID && messageID) {
+        // Make sure we do not fetch for the same lastID
+        // over and over again...
+        this.previousFetchLastMessageID = messageID
+
+        this.messagesLoad({
+          filter: {
+            channelID: this.channelID,
+            afterMessageID: messageID,
+            limit: 50,
+          },
+        })
+      }
+      */
     },
   },
 }
