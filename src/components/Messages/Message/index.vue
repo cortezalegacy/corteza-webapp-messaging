@@ -13,6 +13,7 @@
       'edited' : message.updatedAt,
       'pinned' : highlightPinned && message.isPinned,
       'bookmarked' : highlightBookmarked && message.isBookmarked,
+      'highlighted': highlightMessage,
       'last-read': isLastRead && !isLast,
       'unread': isUnread,
       'type-channel-event': message.type === 'channelEvent',
@@ -205,6 +206,7 @@ export default {
     // Controling bookmarked and pinned messages highlighting
     highlightBookmarked: { type: Boolean, default: true },
     highlightPinned: { type: Boolean, default: true },
+    highlightMessage: { type: Boolean, default: false },
   },
 
   data () {
@@ -384,6 +386,10 @@ em{
         }
       }
     }
+  }
+
+  &.highlighted {
+    background-color: rgba($warning, 0.3);
   }
 
   &.unread {

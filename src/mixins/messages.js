@@ -107,6 +107,10 @@ export default {
      * @returns {Promise<Array<Message>>}
      */
     async onNewMessages (messages, noCheck = false, overwriteState = false) {
+      if (this.hideNewMessages) {
+        return []
+      }
+
       if (!Array.isArray(messages)) {
         messages = [messages]
       }

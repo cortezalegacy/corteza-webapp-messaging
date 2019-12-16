@@ -11,6 +11,7 @@
       :key="msg.messageID"
       v-bind="$props"
       :message="msg"
+      :highlight-message="highlightMessageID === msg.messageID"
       :consecutive="consecutive && isConsecutive(messages, index)"
       :is-unread="!!lastReadMessageID && lastReadMessageID < msg.messageID"
       :is-last-read="lastReadMessageID === msg.messageID"
@@ -90,6 +91,11 @@ export default {
 
     // This will help us mark new messages
     lastReadMessageID: {
+      type: String,
+      default: undefined,
+    },
+
+    highlightMessageID: {
       type: String,
       default: undefined,
     },

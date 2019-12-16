@@ -93,6 +93,14 @@
         >
           {{ $t('message.markAsRead') }}
         </button>
+
+        <button
+          v-if="hasRecent"
+          class="btn float-right"
+          @click.prevent="$emit('showRecent')"
+        >
+          {{ $t('message.showRecent') }}
+        </button>
       </div>
     </div>
   </div>
@@ -126,6 +134,12 @@ export default {
     },
 
     hasUnread: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    hasRecent: {
       type: Boolean,
       required: false,
       default: false,
