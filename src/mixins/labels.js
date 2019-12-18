@@ -18,8 +18,8 @@ export default {
       if (c.type === 'group') {
         return this.$store.getters['channels/otherMembersOf'](c.channelID, this.$auth.user.userID)
           // Make sure user exists
-          .filter(o => users[o] !== undefined)
-          .map(u => u.label)
+          .filter(userID => users[userID] !== undefined)
+          .map(userID => users[userID].label)
           .join(', ')
       }
 
