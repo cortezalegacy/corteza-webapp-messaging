@@ -9,8 +9,9 @@
     <main class="quick-search">
       <search-input
         v-model="query"
-        focus="true"
+        :focus="true"
         :placeholder="$t('search.quick.placeholder')"
+        @input="onQuery"
       />
       <ol>
         <li
@@ -28,6 +29,8 @@
             :is="i.cmp"
             :i-d="i.ID"
             :can-create-group-channel="canCreateGroupChannel"
+            :label="i.name"
+            :users="users"
           />
         </li>
       </ol>
@@ -44,11 +47,13 @@
 </template>
 
 <script>
+import { Channel, User } from 'corteza-webapp-messaging/src/types'
 import { mapGetters } from 'vuex'
 import Lightbox from 'corteza-webapp-messaging/src/components/Lightboxed/index.vue'
 import SearchInput from 'corteza-webapp-messaging/src/components/SearchInput'
 import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
 import labelsMixin from 'corteza-webapp-messaging/src/mixins/labels'
+import users from 'corteza-webapp-messaging/src/mixins/users'
 
 const cmp = (type) => (i) => {
   i.cmp = `${type}-link`
@@ -64,11 +69,14 @@ export default {
   mixins: [
     emitCloseOnEscape,
     labelsMixin,
+    users,
   ],
 
   data () {
     return {
       query: '',
+      groups: [],
+      querriedUsers: [],
       canCreate: false,
     }
   },
@@ -95,10 +103,27 @@ export default {
 
     channelsAndUsers () {
       return [
-        // no need to search over users, since we don't provide profiles at the moment
-        ...this.channels.filter(c => !c.isDirectMessage()).map(cmp('channel')),
+        ...this.querriedUsers.map(cmp('user')),
+        ...this.channels.filter(c => !c.isDirectMessage() && c.type !== 'group').map(cmp('channel')),
+        ...this.groups.map(cmp('channel')),
       ]
     },
+  },
+
+  created () {
+    // Get group members for group label
+    const userIDs = new Set()
+    this.groups = this.channels.filter(c => !c.isDirectMessage() && c.type === 'group').map(channel => {
+      channel.members.map(userID => userIDs.add(userID))
+      return channel
+    })
+
+    // Set group names
+    this.fetchUsers([...userIDs]).then(() => {
+      this.groups = this.groups.map(group => {
+        return new Channel({ ...group, name: this.labelChannel(group, this.users) })
+      })
+    })
   },
 
   methods: {
@@ -106,14 +131,26 @@ export default {
       this.$emit('close')
     },
 
-    onSearchSubmit ({ query }) {
-      this.search(query)
+    /**
+     * Handles query requests
+     * @param {String} query Requested query
+     */
+    onQuery (query) {
+      if (!query) {
+        return
+      }
+
+      // Search users
+      this.$SystemAPI.userList(({ query, limit: 15 }))
+        .then(({ set: users = [] }) => {
+          this.querriedUsers = users.filter(u => u.userID !== this.$auth.user.userID).map(u => new User(u))
+        })
     },
 
     targetNames (target) {
       return target.map(i => ({
         ID: i.channelID || i.userID,
-        name: this.getLabel(i),
+        name: i.name || this.getLabel(i),
         cmp: i.cmp,
       }))
     },
