@@ -17,7 +17,7 @@ export default [
     component: view('Messenger'),
     children: [
       { path: 'channel/new/:type', name: 'new-channel', component: view('ChannelEditor'), props: true },
-      { path: 'channel/:channelID', name: 'channel', component: view('Channel'), props: true },
+      { path: 'channel/:channelID/:messageID?', name: 'channel', component: view('Channel'), props: true },
       { path: 'channel/:channelID/editor', name: 'edit-channel', component: view('ChannelEditor'), props: true },
 
       { path: 'user/:userID', name: 'profile', component: view('Profile'), props: true },

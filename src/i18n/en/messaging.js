@@ -111,6 +111,7 @@ export default {
     edited: 'edited',
     typing: 'typing',
     markAsRead: 'Mark as Read',
+    showRecent: 'Show recent messages',
     unread: 'Unread messages',
     markAllAsRead: 'Mark all as read',
     noUnread: 'No unread messages',
