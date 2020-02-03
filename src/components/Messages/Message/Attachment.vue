@@ -20,7 +20,7 @@
         Manual stubbing failed to resolve this component
         @todo improve
       -->
-      <preview-inline
+      <c-preview-inline
         class="test-inline-preview"
         :src="inlineUrl"
         :meta="inlineMeta"
@@ -62,11 +62,12 @@
 </template>
 <script>
 import * as numeral from 'numeral'
-import { PreviewInline, canPreview } from 'corteza-webapp-common/src/components/FilePreview/'
+import { components } from '@cortezaproject/corteza-vue'
+const { CPreviewInline, canPreview } = components
 
 export default {
   components: {
-    PreviewInline,
+    CPreviewInline,
   },
 
   props: {

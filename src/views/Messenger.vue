@@ -41,7 +41,7 @@
         @goToMessage="onGoToMessage"
       />
 
-      <preview-lightbox
+      <c-preview-lightbox
         v-if="uiShowPreview"
         :src="uiShowPreview.document || uiShowPreview.src"
         :name="uiShowPreview.name"
@@ -59,7 +59,7 @@
             {{ $t('message.file.download') }}
           </a>
         </template>
-      </preview-lightbox>
+      </c-preview-lightbox>
 
       <quick-search
         v-if="uiShowQuickSearch"
@@ -80,8 +80,9 @@ import SearchResults from 'corteza-webapp-messaging/src/components/Lightboxed/Se
 import TitleNotifications from 'corteza-webapp-messaging/src/lib/title_notifications'
 import core from 'corteza-webapp-messaging/src/mixins/core'
 import MessengerBase from 'corteza-webapp-messaging/src/components/MessengerBase'
-import { PreviewLightbox } from 'corteza-webapp-common/src/components/FilePreview/index'
 import pusher from 'corteza-webapp-messaging/src/mixins/pusher'
+import { components } from '@cortezaproject/corteza-vue'
+const { CPreviewLightbox } = components
 
 const titleNtf = new TitleNotifications(document)
 
@@ -91,7 +92,7 @@ export default {
     SearchResults,
     QuickSearch,
     MessengerBase,
-    PreviewLightbox,
+    CPreviewLightbox,
   },
 
   mixins: [ core, pusher ],
@@ -159,7 +160,7 @@ export default {
   },
 
   created () {
-    this.$auth.check(this.$SystemAPI).then(() => {
+    this.$auth.check().then(() => {
       this.$Settings.init({ api: this.$MessagingAPI }).then(() => {
         this.init()
         this.$ws.connect()
