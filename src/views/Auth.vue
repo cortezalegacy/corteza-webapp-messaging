@@ -68,7 +68,7 @@ export default {
 
   methods: {
     check () {
-      this.$auth.check(this.$SystemAPI, this.newJWT).then(() => {
+      this.$auth.check(this.newJWT).then(() => {
         this.checkRsp = 'Valid JWT.'
       }).catch(({ message }) => {
         this.checkRsp = message

@@ -71,7 +71,7 @@ import { mapGetters } from 'vuex'
 import vueDropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import 'corteza-webapp-messaging/src/themes/corteza-base/file-upload.scss'
-import { validateFileType } from 'corteza-webapp-common/src/lib/utils'
+import { mixins } from '@cortezaproject/corteza-vue'
 import emitCloseOnEscape from 'corteza-webapp-messaging/src/mixins/emitCloseOnEscape'
 
 export default {
@@ -81,6 +81,7 @@ export default {
 
   mixins: [
     emitCloseOnEscape,
+    mixins.files,
   ],
 
   props: {
@@ -224,7 +225,7 @@ export default {
       if (!types || !types.length) {
         types = ['*/*']
       }
-      if (!validateFileType(file.name, types)) {
+      if (!this.validateFileType(file.name, types)) {
         this.$emit('update:typeSupported', false)
         this.dropzone().removeFile(file)
         return
