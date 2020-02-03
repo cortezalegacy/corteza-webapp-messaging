@@ -1,3 +1,5 @@
+import { components } from '@cortezaproject/corteza-vue'
+
 function view (name, resolve) {
   return function (resolve) {
     return require([`./${name}.vue`], resolve)
@@ -5,7 +7,7 @@ function view (name, resolve) {
 }
 
 export default [
-  { path: '/auth', name: 'auth', component: view('Auth') },
+  { path: '/auth', name: 'auth', component: components.CDevAuthLite },
   {
     path: '/mobile',
     name: 'mobile',
