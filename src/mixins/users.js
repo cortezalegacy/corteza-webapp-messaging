@@ -100,9 +100,9 @@ export default {
         } else {
           return []
         }
-      }).reduce((acc, cur) => new Set([ ...acc, ...cur ]), [])
+      }).reduce((acc, cur) => new Set([...acc, ...cur]), [])
 
-      return this.fetchUsers([ ...userIDs ])
+      return this.fetchUsers([...userIDs])
     },
 
     /**
@@ -112,7 +112,7 @@ export default {
      */
     getUsersFromMessage (message) {
       const { userID, reactions = [] } = message
-      return new Set([ userID ].concat(reactions.map(({ userIDs }) => userIDs).reduce((acc, cur) => acc.concat(cur), [])))
+      return new Set([userID].concat(reactions.map(({ userIDs }) => userIDs).reduce((acc, cur) => acc.concat(cur), [])))
     },
 
     /**
@@ -184,7 +184,7 @@ export default {
         return
       }
 
-      this.updateStatuses([ activity ])
+      this.updateStatuses([activity])
     },
   },
 

@@ -39,8 +39,8 @@ export default function () {
 
     mutations: {
       [types.update] (state, { innerWidth }) {
-        let isComfortableWidth = innerWidth > confortableMinWidth
-        let isWide = innerWidth > wideMinWidth
+        const isComfortableWidth = innerWidth > confortableMinWidth
+        const isWide = innerWidth > wideMinWidth
 
         if (isComfortableWidth !== state.prevIsComfortable) {
           state.isComfortableWidth = isComfortableWidth

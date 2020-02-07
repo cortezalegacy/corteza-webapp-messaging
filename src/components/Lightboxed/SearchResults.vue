@@ -119,8 +119,8 @@ export default {
     },
 
     groupByChannel (mm) {
-      let groups = []
-      let gindex = {}
+      const groups = []
+      const gindex = {}
 
       for (const message of mm) {
         const { channelID } = message

@@ -226,9 +226,9 @@ export default {
 
           new Keyboard({
             map: {
-              'ArrowUp': this.onArrowUp,
-              'Enter': this.onEnter,
-              'Escape': this.onEscape,
+              ArrowUp: this.onArrowUp,
+              Enter: this.onEnter,
+              Escape: this.onEscape,
               // Mimic Enter's behaviour
               's-Enter': baseKeymap.Enter,
             },
@@ -479,7 +479,7 @@ export default {
       items = getMatches({ items, query, priorities: this.suggestionPriorities.User })
 
       // Aditionally sort matches based on status
-      return [ ...items ].sort((a, b) => {
+      return [...items].sort((a, b) => {
         if (a.user.userID === this.currentUser.userID) {
           return -1
         }

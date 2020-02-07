@@ -25,7 +25,7 @@ export default class {
   generateTitle ({ incNew = false }) {
     // NOTE: Possible issue; should be `const brand = this.brand`?
     const brand = process.env.FLAVOUR
-    let title = []
+    const title = []
 
     if (incNew) {
       title.push(i18next.t('general.label.new').toUpperCase())

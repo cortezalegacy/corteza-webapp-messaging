@@ -118,7 +118,7 @@ export default {
     },
 
     cssClass () {
-      let set = [this.channel.type]
+      const set = [this.channel.type]
 
       if (this.channel.isFeatured()) {
         set.push('featured')

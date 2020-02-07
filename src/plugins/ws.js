@@ -54,7 +54,7 @@ Websocket.prototype = Object.assign(Websocket.prototype, {
     })
 
     this.conn.addEventListener('open', () => {
-      this.$bus.$emit(`$ws.open`, true)
+      this.$bus.$emit('$ws.open', true)
 
       console.debug('Connected to Crust Messaging Websocket')
       this.active = true

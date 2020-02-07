@@ -6,7 +6,7 @@ module.exports = {
   env: {
     test: {
       plugins: [
-        [ 'istanbul', { useInlineSourceMaps: false } ],
+        ['istanbul', { useInlineSourceMaps: false }],
       ],
     },
   },

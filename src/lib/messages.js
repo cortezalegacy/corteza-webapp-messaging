@@ -16,10 +16,10 @@ export function isConsecutive (set, index = 0) {
   if (index === 0 || set.length === 0 || set.length < index) return false
 
   // Previous message
-  let pm = set[index - 1]
+  const pm = set[index - 1]
 
   // Current message
-  let cm = set[index]
+  const cm = set[index]
 
   if (!pm || !cm) return false
 

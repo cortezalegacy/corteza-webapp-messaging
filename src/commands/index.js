@@ -31,7 +31,7 @@ export default [
 ].map(cmd => {
   cmd.meta = Object.assign(
     { id: 'local/' + cmd.command },
-    cmd.meta || {}
+    cmd.meta || {},
   )
 
   return cmd

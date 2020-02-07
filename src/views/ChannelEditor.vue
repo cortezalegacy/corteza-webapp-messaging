@@ -343,7 +343,7 @@ export default {
     updateChannelState (state) {
       this.$MessagingAPI.channelState({ channelID: this.channel.channelID, state }).then((ch) => {
         this.channel = new Channel(ch)
-        this.oldMembers = [ ...this.channel.members ]
+        this.oldMembers = [...this.channel.members]
       }).catch(({ message }) => {
         this.error = message
       })

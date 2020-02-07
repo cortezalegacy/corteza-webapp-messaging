@@ -9,9 +9,11 @@ class Api {
   getItem (k) {
     return this.state[k]
   }
+
   setItem (k, v) {
     this.state[k] = v
   }
+
   removeItem (k) {
     delete this.state[k]
   }
@@ -42,17 +44,17 @@ describe('plugins/drafts.js', () => {
     })
 
     it('channelID', () => {
-      let params = { channelID: 'ch1' }
+      const params = { channelID: 'ch1' }
       expect(makeKey.call(ctx, params)).to.eq('draft.ch1')
     })
 
     it('messageID', () => {
-      let params = { messageID: 'ms1' }
+      const params = { messageID: 'ms1' }
       expect(makeKey.call(ctx, params)).to.eq('draft.ms1')
     })
 
     it('messageID.important', () => {
-      let params = { channelID: 'ch1', messageID: 'ms1' }
+      const params = { channelID: 'ch1', messageID: 'ms1' }
       expect(makeKey.call(ctx, params)).to.eq('draft.ms1')
     })
   })
@@ -73,7 +75,7 @@ describe('plugins/drafts.js', () => {
     })
 
     it('hit.object', () => {
-      let stringified = JSON.stringify({ k: 'value' })
+      const stringified = JSON.stringify({ k: 'value' })
       api.state['draft.ch1'] = stringified
       expect(get.call(ctx, dest)).to.deep.eq(JSON.parse(stringified))
     })
@@ -126,7 +128,7 @@ describe('plugins/drafts.js', () => {
 
     it('update', () => {
       api.state['draft.ch1'] = '{"k1":"v1"}'
-      let value = { k2: 'v2' }
+      const value = { k2: 'v2' }
       set.call(ctx, dest, value)
       expect(api.state).to.deep.eq({ 'draft.ch1': '{"k2":"v2"}' })
     })

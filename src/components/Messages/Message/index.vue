@@ -222,8 +222,8 @@ export default {
   computed: {
     embeded () {
       if (this.message) {
-        let regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
-        let match = this.message.message.match(regExp)
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
+        const match = this.message.message.match(regExp)
         if (match && match[2].length === 11) {
           return { src: `https://www.youtube.com/embed/${match[2]}?autoplay=0&enablejsapi=1` }
         }

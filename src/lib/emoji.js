@@ -44,14 +44,14 @@ export function vdomifyEmojis (vtree, createElement) {
       // Text changed, assume emojis
       // vtree[c].text = undefined
       const nodes = []
-      let split = converted.split(emojiRESplit)
+      const split = converted.split(emojiRESplit)
       for (let s = 0; s < split.length; s++) {
         if (s % 2 === 0) {
           if (split[s].length > 0) {
             nodes.push(split[s])
           }
         } else {
-          let [ , classes,, style, dataCodepoints, nativeEmoji ] = split[s].match(emojiREMatch)
+          const [, classes,, style, dataCodepoints, nativeEmoji] = split[s].match(emojiREMatch)
           nodes.push(createElement(
             'span',
             { attrs: { class: classes, style, 'data-codepoints': dataCodepoints } },

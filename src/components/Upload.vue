@@ -128,7 +128,7 @@ export default {
           // https://github.com/enyo/dropzone/issues/1154
           'Cache-Control': '',
           'X-Requested-With': '',
-          'Authorization': 'Bearer ' + this.$auth.JWT,
+          Authorization: 'Bearer ' + this.$auth.JWT,
         },
       }
     },
@@ -180,13 +180,13 @@ export default {
           // get File object
           // @note cordova-plugin-file not used, because it overwrites
           // the global File constructor, so things break...
-          let xhr = new XMLHttpRequest()
+          const xhr = new XMLHttpRequest()
           xhr.open('GET', imageUri)
           xhr.responseType = 'blob'
           xhr.onload = () => {
             // insert into dropzone
-            let blob = xhr.response
-            let f = new File(
+            const blob = xhr.response
+            const f = new File(
               [blob],
               imageUri
                 .split('/')
@@ -194,7 +194,7 @@ export default {
                 .split('?')
                 .shift() ||
                 'file.jpg',
-              { type: blob.type }
+              { type: blob.type },
             )
             this.dropzone().addFile(f)
           }

@@ -95,7 +95,7 @@ export default {
     CPreviewLightbox,
   },
 
-  mixins: [ core, pusher ],
+  mixins: [core, pusher],
 
   data () {
     return {

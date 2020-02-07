@@ -29,8 +29,8 @@ export function getDraft (draft) {
 }
 
 // Mention regexps
-export const mentionSplitRE = new RegExp(`(<[@#]\\d+\\s?[^>]*?>)`)
-export const mentionRE = new RegExp(`<([@#])(\\d+)((?:\\s)([^>]+))?>`)
+export const mentionSplitRE = new RegExp('(<[@#]\\d+\\s?[^>]*?>)')
+export const mentionRE = new RegExp('<([@#])(\\d+)((?:\\s)([^>]+))?>')
 
 /**
  * Helper function to export given document to plain text
@@ -42,7 +42,7 @@ export function stringifyDocument (doc = {}) {
     return
   }
 
-  let out = ``
+  let out = ''
   for (const c of doc.content || []) {
     if (c.type === 'paragraph') {
       out += stringifyLine(c) + '\n'
@@ -59,7 +59,7 @@ export function stringifyDocument (doc = {}) {
  * @private
  */
 function stringifyLine ({ content = [] }) {
-  let line = ``
+  let line = ''
 
   for (const { type, ...rest } of content) {
     if (type === 'text') {
@@ -79,7 +79,7 @@ function stringifyLine ({ content = [] }) {
  * @returns {Document}
  */
 export function parseDocument (message = '') {
-  let lines = message
+  const lines = message
     .trim()
     .split('\n')
 
@@ -121,7 +121,7 @@ function parseLine (line = '') {
         content.push({ type: 'text', text: chunks[i] })
       }
     } else {
-      const [ , denotationChar, id, , label ] = mentionRE.exec(chunks[i])
+      const [, denotationChar, id, , label] = mentionRE.exec(chunks[i])
       content.push({
         type: `mention-${mentionTypes.find(({ char }) => char === denotationChar).type}`,
         attrs: {

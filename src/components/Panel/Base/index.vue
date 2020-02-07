@@ -80,22 +80,22 @@ export default {
     // ---
 
     styles () {
-      let s = {
+      const s = {
         '--width': this.width + 'px',
       }
 
       // If mid-gesture, determine panel's position based on orientation
       if (this.dx) {
-        let base = this.dx * this.orientationMult
-        let l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
-        s['transform'] = `translateX(${l + 'px'})`
+        const base = this.dx * this.orientationMult
+        const l = base < 0 ? Math.max(this.dx, -this.width) : Math.min(0, -this.width + this.dx)
+        s.transform = `translateX(${l + 'px'})`
       }
 
       return s
     },
 
     classes () {
-      let c = {
+      const c = {
         unpinned: !this.pinned,
         hidden: this.hidden,
         transitioning: this.transitioning,
@@ -128,11 +128,13 @@ export default {
     // Helpers for gestures
     panelShow (hidden, properties, ...targets) {
       this.ignorePan = true
-      this.animate({ ...properties,
+      this.animate({
+        ...properties,
         complete: () => {
           this.$emit('update:hidden', hidden)
           this.dx = 0
-        } }, ...targets)
+        },
+      }, ...targets)
     },
     panelAbort (hidden) {
       this.$emit('update:hidden', hidden)
@@ -150,7 +152,7 @@ export default {
 
       // Conditions to ignore gesture
       const { changedTouches = new TouchList() } = e
-      const [ t ] = changedTouches
+      const [t] = changedTouches
       if (t && this.hidden) {
         // Check if gesture is allowed based on start touch & panel orientation
         this.ignorePan = (this.orientationLeft && t.pageX > this.openThreshold) ||
@@ -185,7 +187,7 @@ export default {
         const speed = Math.abs(this.dx / (e.timeStamp - this.panStarted))
         const distLeft = this.width - Math.abs(this.dx)
         const duration = distLeft / speed
-        let properties = { duration }
+        const properties = { duration }
 
         // Checks if it should open
         if (Math.abs(this.dx) > this.width / 2 || speed > this.speedThreshold) {

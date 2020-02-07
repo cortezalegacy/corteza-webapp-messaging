@@ -7,7 +7,7 @@ const emitGesture = (e) => {
 }
 
 /* eslint-disable no-unused-vars */
-let af = new AlloyFinger(target, {
+const af = new AlloyFinger(target, {
   touchStart: emitGesture,
   touchMove: emitGesture,
   touchEnd: emitGesture,

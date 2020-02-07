@@ -34,7 +34,7 @@ export class Message {
     // only to pass values along to unread store, do not use it directly
     this.unread = m.unread
 
-    let att = m.att || m.attachment
+    const att = m.att || m.attachment
     this.attachment = att ? new Attachment(att) : null
 
     // Preparing sort key
@@ -55,7 +55,7 @@ export class Message {
     if (i === -1) {
       this.reactions.push(new MessageReaction({ reaction, userIDs: [userID], count: 1 }))
     } else {
-      let r = this.reactions[i]
+      const r = this.reactions[i]
 
       if (r.userIDs.indexOf(userID) === -1) {
         r.userIDs.push(userID)
@@ -68,7 +68,7 @@ export class Message {
     const i = this.reactions.findIndex(r => r.reaction === reaction)
 
     if (i !== -1) {
-      let r = this.reactions[i]
+      const r = this.reactions[i]
       r.userIDs = r.userIDs.filter(ID => ID !== userID)
       r.count = r.userIDs.length
     }

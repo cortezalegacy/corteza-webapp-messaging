@@ -203,7 +203,7 @@ export default {
             this.pulledUsers.push(
               ...(users || [])
                 .filter(u => !this.userSuggestions.find(({ id }) => id === u.userID))
-                .map(u => new User(u)).map(this.prepUserSuggestion)
+                .map(u => new User(u)).map(this.prepUserSuggestion),
             )
 
             // Limit how manny we can have at once
