@@ -82,6 +82,11 @@
       >
         Log out
       </router-link>
+      <div
+        class="version"
+      >
+        {{ frontendVersion }}
+      </div>
     </div>
   </nav>
 </template>
@@ -133,6 +138,11 @@ export default {
       canCreatePrivateChannel: 'session/canCreatePrivateChannel',
       canCreatePublicChannel: 'session/canCreatePublicChannel',
     }),
+
+    frontendVersion () {
+      /* eslint-disable no-undef */
+      return VERSION
+    },
 
     // Returns filtered list of channels
     filteredChannels () {
@@ -344,11 +354,14 @@ nav {
     }
   }
 
-  pre.version {
+  .version {
     margin: 30px 0 0 0;
     padding: 10px;
     color: $secondary;
     font-size: 70%;
+    display: block;
+    text-align: right;
+    width: 100%;
   }
 }
 
