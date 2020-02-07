@@ -30,12 +30,17 @@ module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias,
 
   return {
     publicPath,
-    lintOnSave: true,
-    runtimeCompiler: true,
 
-    transpileDependencies: [
-      /^[\\/]node_modules[\\/]corteza-webapp-/,
-    ],
+    // Vue ESLint does not understand that it should NOT dive into node_modules!
+    //
+    // This presents a problem because it loads @cortezaproject/corteza-*/.eslintrc.js files
+    // that contain @typescript-eslint plugins + the entire typescript toolset that we do not
+    // want or need here.
+    //
+    // Keep this value on false and run `yarn lint` to inspect and fix lint issues.
+    lintOnSave: false,
+
+    runtimeCompiler: true,
 
     configureWebpack: {
       // other webpack options to merge in ...
@@ -85,9 +90,24 @@ module.exports = ({ appFlavour, appName, appLabel, version, theme, packageAlias,
     },
 
     devServer: {
-      host: '0.0.0.0',
+      host: '127.0.0.1',
       hot: true,
       disableHostCheck: true,
+
+      overlay: {
+        warnings: true,
+        errors: true,
+      },
+
+      watchOptions: {
+        ignored: [
+          // Do not watch for changes under node_modules
+          // (exception is node_modules/@cortezaproject)
+          /node_modules([\\]+|\/)+(?!@cortezaproject)/,
+        ],
+        aggregateTimeout: 200,
+        poll: 1000,
+      },
     },
 
     css: {
