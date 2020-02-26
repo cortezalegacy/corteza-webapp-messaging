@@ -115,6 +115,10 @@ export class Attachment {
   }
 }
 
+function trimMask (i) {
+  return i.replace(/^##.+##$/, '') || undefined
+}
+
 export class User {
   constructor (u) {
     u = u || {}
@@ -126,31 +130,42 @@ export class User {
     this.email = u.email || ''
     this.online = u.online || false
 
-    this.fts = (this.name + ' ' + this.username + ' ' + this.handle + ' ' + this.email + ' ' + this.userID).toLocaleLowerCase()
+    // Make full-text-search index
+    // (omitting masked data)
+    this.fts = [
+      this.username,
+      this.handle,
+      trimMask(this.name),
+      trimMask(this.email),
+      this.userID,
+    ]
+      .filter(s => s && s.length > 0)
+      .join(' ')
+      .toLocaleLowerCase()
   }
 
   emailName () {
-    return (this.email || '').split('@')[0]
+    return (trimMask(this.email) || '').split('@')[0]
   }
 
   fuzzyKeys () {
-    if (!this.name && !this.handle) {
+    if (!trimMask(this.name) && !this.handle) {
       return {
-        email: fuzzysort.prepare(toNFD(this.emailName())),
+        email: fuzzysort.prepare(toNFD(trimMask(this.emailName()) || '')),
       }
     }
     return {
-      name: fuzzysort.prepare(toNFD(this.name)),
+      name: fuzzysort.prepare(toNFD(trimMask(this.name) || '')),
       handle: fuzzysort.prepare(toNFD(this.handle)),
     }
   }
 
   get label () {
-    return this.name || this.username || this.handle || this.email || `<@${this.userID}>`
+    return trimMask(this.name) || this.username || this.handle || trimMask(this.email) || `anonymous-${this.userID}`
   }
 
   suggestionLabel () {
-    return this.name || this.handle || this.emailName() || this.userID || ''
+    return trimMask(this.name) || this.handle || trimMask(this.emailName()) || this.userID || ''
   }
 
   Match (q) {

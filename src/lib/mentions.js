@@ -6,7 +6,7 @@ export const mentionRE = new RegExp('<([@#])(\\d+)((?:\\s)([^>]+))?>')
 export function cleanMentions (string, users = [], channels = []) {
   const split = string.split(mentionSplitRE, -1)
 
-  const userLabel = (ID, label) => label || users.find(u => u.userID === ID || {}).label || window.UserNameMask || ID
+  const userLabel = (ID, label) => label || users.find(u => u.userID === ID || {}).label || ID
   const chanLabel = (ID, label) => '#' + (label || channels.find(c => c.channelID === ID || {}).name || ID)
 
   for (let s = 0; s < split.length; s++) {

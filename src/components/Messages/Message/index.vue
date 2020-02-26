@@ -237,7 +237,7 @@ export default {
      * @returns {String}
      */
     getUserLabel () {
-      return this.message.user.label || window.UserNameMask
+      return this.message.user.label
     },
 
     /**
