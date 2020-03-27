@@ -160,7 +160,12 @@ export default {
   },
 
   created () {
-    this.$auth.check().then(() => {
+    this.$auth.check().then((user) => {
+      if (!user) {
+        // check performed: no error & no user,
+        // redirect to auth
+        throw new Error()
+      }
       this.$Settings.init({ api: this.$MessagingAPI }).then(() => {
         this.init()
         this.$ws.connect()
