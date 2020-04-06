@@ -22,7 +22,7 @@
       -->
       <c-preview-inline
         class="test-inline-preview"
-        :src="inlineUrl"
+        :src="baseURL + inlineUrl"
         :meta="inlineMeta"
         :name="attachment.name"
         :alt="attachment.name"
@@ -33,7 +33,7 @@
     <template v-else-if="attachment.meta.original">
       <span class="no-preview">
         <!-- file has size but not image -->
-        <a :href="attachment.downloadUrl">
+        <a :href="baseURL + attachment.downloadUrl">
           <div>
             <font-awesome-icon
               :icon="['far', 'file-'+ext]"
@@ -78,6 +78,10 @@ export default {
   },
 
   computed: {
+    baseURL () {
+      return window.MessagingAPI
+    },
+
     inlineMeta () {
       return this.attachment.meta
     },
@@ -130,7 +134,13 @@ export default {
 
   methods: {
     openPreview (e) {
-      this.$bus.$emit('$message.previewAttachment', { ...this.attachment, ...e })
+      this.$bus.$emit('$message.previewAttachment', Object.freeze({
+        ...this.attachment,
+        ...e,
+
+        src: this.baseURL + this.attachment.url,
+        download: this.baseURL + this.attachment.downloadUrl,
+      }))
     },
 
     numeral: numeral,

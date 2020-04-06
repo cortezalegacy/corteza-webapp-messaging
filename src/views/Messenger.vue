@@ -220,13 +220,13 @@ export default {
 
       titleNtf.update()
 
-      this.$bus.$on('$message.previewAttachment', ({ url, downloadUrl, name, document = undefined, meta }) => {
+      this.$bus.$on('$message.previewAttachment', ({ src, download, name, document = undefined, meta }) => {
         this.uiShowPreview = {
           document,
           meta,
-          src: url,
-          download: downloadUrl,
-          name: name,
+          src,
+          download,
+          name,
           caption: name,
         }
       })

@@ -94,24 +94,9 @@ export class Attachment {
     this.name = a.name
     this.meta = a.meta
 
-    if (window.MessagingAPI) {
-      const base = window.MessagingAPI
-
-      // Attachments URL
-      if (!(a.url || '').startsWith('http')) {
-        this.url = base + a.url
-      } else {
-        this.url = a.url
-      }
-      // Attachment's preview URL
-      if (!(a.previewUrl || '').startsWith('http')) {
-        this.previewUrl = base + a.previewUrl
-      } else {
-        this.previewUrl = a.previewUrl
-      }
-      // Attachment's download URL
-      this.downloadUrl = this.url + (this.url.indexOf('?') === -1 ? '?' : '&') + 'download=1'
-    }
+    this.url = a.url
+    this.previewUrl = a.previewUrl
+    this.downloadUrl = this.url + (this.url.indexOf('?') === -1 ? '?' : '&') + 'download=1'
   }
 }
 

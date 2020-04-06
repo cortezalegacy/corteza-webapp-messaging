@@ -211,61 +211,6 @@ describe('corteza-webapp-messaging/src/components/Panel/Rightside/Thread.vue', (
   })
 
   describe('message', () => {
-    beforeEach(() => {
-      window.MessagingAPI = 'http://base.ur.tld'
-    })
-    it('determine attachment\'s url when only path is provided', async () => {
-      $MessagingAPI.searchMessages = sinon.stub().resolves([
-        {
-          replyTo: '50001',
-          channelID: 'ch.0001',
-          messageID: '50002',
-          att: {
-            attachmentID: 'att.0001',
-            url: '/path/att.ext',
-            previewUrl: '/path/att.ext/prv',
-          },
-        },
-      ])
-
-      const wrap = mountCmp()
-      const msgs = wrap.find(Messages)
-      await fp()
-
-      const { messages: [_,  msg ] } = msgs.props()
-      expect(msg.attachment).to.deep.include({
-        attachmentID: 'att.0001',
-        url: 'http://base.ur.tld/path/att.ext',
-        previewUrl: 'http://base.ur.tld/path/att.ext/prv',
-      })
-    })
-
-    it('determine attachment\'s url when full URL is provided', async () => {
-      $MessagingAPI.searchMessages = sinon.stub().resolves([
-        {
-          replyTo: '50001',
-          channelID: 'ch.0001',
-          messageID: '50002',
-          att: {
-            attachmentID: 'att.0001',
-            url: 'http://base.ur.tld/path/att.ext',
-            previewUrl: 'http://base.ur.tld/path/att.ext/prv',
-          },
-        },
-      ])
-
-      const wrap = mountCmp()
-      const msgs = wrap.find(Messages)
-      await fp()
-
-      const { messages: [ _, msg ] } = msgs.props()
-      expect(msg.attachment).to.deep.include({
-        attachmentID: 'att.0001',
-        url: 'http://base.ur.tld/path/att.ext',
-        previewUrl: 'http://base.ur.tld/path/att.ext/prv',
-      })
-    })
-
     it('create message reaction', async () => {
       const wrap = mountCmp()
       const msgs = wrap.find(Messages)
