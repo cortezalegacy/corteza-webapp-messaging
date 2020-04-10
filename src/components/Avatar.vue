@@ -43,14 +43,8 @@ export default {
     },
 
     initials () {
-      if (this.user) {
-        if (this.user.name) {
-          return this.user.name[0]
-        }
-
-        if (this.user.username) {
-          return this.user.username[0]
-        }
+      if (this.user && this.user.label) {
+        return this.user.label.slice(0, 1).toUpperCase()
       }
 
       return '?'
