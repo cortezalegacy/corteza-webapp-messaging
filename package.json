@@ -36,6 +36,7 @@
     "fstream": "^1.0.12",
     "fuzzysort": "^1.1.4",
     "highlight.js": "9.18.1",
+    "html-parse-stringify": "^1.0.3",
     "i18next": "^15.0.7",
     "i18next-browser-languagedetector": "3.0.2",
     "i18next-intervalplural-postprocessor": "1.0.3",

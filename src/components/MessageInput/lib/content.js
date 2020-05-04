@@ -49,7 +49,7 @@ export function stringifyDocument (doc = {}) {
     }
   }
 
-  return out.trim()
+  return out.trimRight()
 }
 
 /**
@@ -64,13 +64,15 @@ function stringifyLine ({ content = [] }) {
   for (const { type, ...rest } of content) {
     if (type === 'text') {
       line += rest.text
+    } else if (type === 'hard_break') {
+      line += '\n'
     } else {
       const mentionType = type.split('-').pop()
       line += `<${mentionTypes.find(m => m.type === mentionType).char}${rest.attrs.id} ${rest.attrs.label}>`
     }
   }
 
-  return line.trim()
+  return line
 }
 
 /**

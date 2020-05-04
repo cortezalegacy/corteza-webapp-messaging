@@ -23,8 +23,8 @@
 <script>
 import Drawer from './components/Drawer'
 import { Editor, EditorContent } from 'tiptap'
-import { Placeholder, History } from 'tiptap-extensions'
-import { Mention, Keyboard } from './extensions'
+import { Placeholder, History, HardBreak } from 'tiptap-extensions'
+import { Mention, Keyboard, HtmlPaster } from './extensions'
 import { contentEmpty, getMatches } from './lib'
 import { insertText } from 'tiptap-commands'
 import { baseKeymap } from 'prosemirror-commands'
@@ -217,6 +217,8 @@ export default {
 
         // Extensions
         extensions: [
+          new HardBreak(),
+          new HtmlPaster(),
           new History(),
           new Placeholder({
             emptyNodeClass: 'placeholder',
