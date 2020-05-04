@@ -4,6 +4,7 @@
     class="channel"
     @dragover="handleShow($event, () => showUploadArea = true)"
     @dragenter="handleShow($event, () => showUploadArea = true)"
+    @paste="onPaste"
   >
     <upload
       v-if="$s('Message.Attachments.Enabled', true)"
@@ -230,6 +231,18 @@ export default {
   },
 
   methods: {
+    onPaste (e) {
+      const cd = e.clipboardData || window.clipboardData
+      const files = cd.files
+      if (!files || !files.length) {
+        return
+      }
+      e.preventDefault()
+      e.stopPropagation()
+
+      this.$refs.upload.dropzone().addFile(files[0])
+    },
+
     /**
      * Helper to cancel message editing
      */
