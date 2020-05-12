@@ -222,10 +222,10 @@ export default {
   computed: {
     embeded () {
       if (this.message) {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|\?v=)([^#&?]*).*/
-        const match = this.message.message.match(regExp)
-        if (match && match[2].length === 11) {
-          return { src: `https://www.youtube.com/embed/${match[2]}?autoplay=0&enablejsapi=1` }
+        const regExp = /^http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-_]*)(&(amp;)?[\w?=]*)?$/gi
+        const match = regExp.exec(this.message.message)
+        if (match && match[1] && match[1].length === 11) {
+          return { src: `https://www.youtube.com/embed/${match[1]}?autoplay=0&enablejsapi=0` }
         }
         return false
       }
