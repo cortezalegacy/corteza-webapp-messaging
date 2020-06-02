@@ -676,12 +676,13 @@
     lodash "^4.17.13"
     to-fast-properties "^2.0.0"
 
-"@cortezaproject/corteza-js@^2020.3.0-rc.13", "@cortezaproject/corteza-js@^2020.3.0-rc.14":
-  version "2020.3.0-rc.14"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.3.0-rc.14.tgz#792fe00f8ff3576aa21d4d9d781ea5fee685e702"
-  integrity sha512-iy+KJZQN78Sypw1xm7gtAwbwY9K+GwnOG1vdYQFuxB6yjG3+SxrmKD5mWk0HA4/pMZ3JSSlXqShBDz0IcY1kYg==
+"@cortezaproject/corteza-js@^2020.3.0-rc.30":
+  version "2020.3.0-rc.30"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-js/-/corteza-js-2020.3.0-rc.30.tgz#5eed026f20c4e835158b0d7884c58eaa28d308dc"
+  integrity sha512-fslB/5+0XJQW7gZkggb4sOLYFM2HXXkGv4hStnnXYPAtKj2TatI8sJBDKW4xGhLpwlwfGzR0Fg089wPIjZMOVw==
   dependencies:
     axios "^0.19.1"
+    chart.js "^2.7.3"
     hex-rgb "^4.1.0"
     lodash "^4.17.15"
     minimatch "^3.0.4"
@@ -690,12 +691,12 @@
     pino "^5.16.0"
     ts-sinon "^1.0.25"
 
-"@cortezaproject/corteza-vue@^2020.3.0-rc.16":
-  version "2020.3.0-rc.16"
-  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2020.3.0-rc.16.tgz#987e620e6ab90507011b7a602cead0ae1a583735"
-  integrity sha512-b1aIdSr3hRC2/LbKEgzhS0jWIzoCDMi1qHmgsqIqwxPnuXPViLfnDdoV5qp2iPVMWRv64/1OjQDhG7OMdDABRA==
+"@cortezaproject/corteza-vue@^2020.3.0-rc.21":
+  version "2020.3.0-rc.21"
+  resolved "https://registry.yarnpkg.com/@cortezaproject/corteza-vue/-/corteza-vue-2020.3.0-rc.21.tgz#2625cea125697e2a225d27da39a8c853f1a64151"
+  integrity sha512-X9UI9G6HP0Pvn4B/YmgUZRrBC2jaLA5hTZmubeoO8F7oR5wTFA0o4aVmoj4sVMGmtL349lZGrv3dinDRPd9dFg==
   dependencies:
-    "@cortezaproject/corteza-js" "^2020.3.0-rc.13"
+    "@cortezaproject/corteza-js" "^2020.3.0-rc.30"
     "@fortawesome/fontawesome-svg-core" "^1.2.26"
     "@fortawesome/free-solid-svg-icons" "^5.12.0"
     "@fortawesome/vue-fontawesome" "^0.1.9"
@@ -1553,6 +1554,11 @@ acorn@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
   integrity sha512-kL5CuoXA/dgxlBbVrflsflzQ3PAas7RYZB52NOm/6839iVYJgKMJ3cQJD+t2i5+qFa8h3MDpEOJiS64E8JLnSQ==
+
+acorn@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.2.0.tgz#17ea7e40d7c8640ff54a694c889c26f31704effe"
+  integrity sha512-apwXVmYVpQ34m/i71vrApRrRKCWQnZZF1+npOD0WV5xZFfwWOmKGQ2RWlfdy9vWITsenisM8M0Qeq8agcFHNiQ==
 
 address@^1.0.3:
   version "1.1.2"
@@ -2481,6 +2487,29 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
+chart.js@^2.7.3:
+  version "2.9.3"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-2.9.3.tgz#ae3884114dafd381bc600f5b35a189138aac1ef7"
+  integrity sha512-+2jlOobSk52c1VU6fzkh3UwqHMdSlgH1xFv9FKMqHiNCpXsGPQa/+81AFa+i3jZ253Mq9aAycPwDjnn1XbRNNw==
+  dependencies:
+    chartjs-color "^2.1.0"
+    moment "^2.10.2"
+
+chartjs-color-string@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/chartjs-color-string/-/chartjs-color-string-0.6.0.tgz#1df096621c0e70720a64f4135ea171d051402f71"
+  integrity sha512-TIB5OKn1hPJvO7JcteW4WY/63v6KwEdt6udfnDE9iCAZgy+V4SrbSxoIbTw/xkUIapjEI4ExGtD0+6D3KyFd7A==
+  dependencies:
+    color-name "^1.0.0"
+
+chartjs-color@^2.1.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/chartjs-color/-/chartjs-color-2.4.1.tgz#6118bba202fe1ea79dd7f7c0f9da93467296c3b0"
+  integrity sha512-haqOg1+Yebys/Ts/9bLo/BqUcONQOdr/hoEr2LLTRl6C5LXctUdHxsCYfvQVg5JIxITrfCNUDr4ntqmQk9+/0w==
+  dependencies:
+    chartjs-color-string "^0.6.0"
+    color-convert "^1.9.3"
+
 check-error@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/check-error/-/check-error-1.0.2.tgz#574d312edd88bb5dd8912e9286dd6c0aed4aac82"
@@ -2668,7 +2697,7 @@ collection-visit@^1.0.0:
     map-visit "^1.0.0"
     object-visit "^1.0.0"
 
-color-convert@^1.9.0, color-convert@^1.9.1:
+color-convert@^1.9.0, color-convert@^1.9.1, color-convert@^1.9.3:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/color-convert/-/color-convert-1.9.3.tgz#bb71850690e1f136567de629d2d5471deda4c1e8"
   integrity sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==
@@ -6612,6 +6641,11 @@ mocha@^5.2.0:
     minimatch "3.0.4"
     mkdirp "0.5.1"
     supports-color "5.4.0"
+
+moment@^2.10.2:
+  version "2.26.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.26.0.tgz#5e1f82c6bafca6e83e808b30c8705eed0dcbd39a"
+  integrity sha512-oIixUO+OamkUkwjhAVE18rAMfRJNsNe/Stid/gwHSOfHrOtw9EhAY2AHvdKZ/k/MggcYELFCJz/Sn2pL8b8JMw==
 
 moment@^2.22.2, moment@^2.24.0:
   version "2.24.0"
