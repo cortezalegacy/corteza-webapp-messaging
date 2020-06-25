@@ -342,7 +342,7 @@ export default {
         return
       }
 
-      this.editor.setSelection(0, this.editor.state.doc.content.size)
+      this.editor.setSelection(0, this.editor.state.doc.content.size - 1)
     },
 
     /**
