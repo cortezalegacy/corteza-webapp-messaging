@@ -481,16 +481,21 @@ export default {
       items = getMatches({ items, query, priorities: this.suggestionPriorities.User })
 
       // Aditionally sort matches based on status
-      return [...items].sort((a, b) => {
+      const sorted = [...items].sort((a, b) => {
         if (a.user.userID === this.currentUser.userID) {
           return -1
         }
-        if (a.online && a.user.userID !== this.currentUser.userID && !b.online) {
+
+        if (!a.online && b.online) {
           return +1
+        } else if (a.online && !b.online) {
+          return -1
         }
 
-        return 0
+        return a.value.localeCompare(b.value)
       }).reverse()
+
+      return sorted
     },
 
     /**
