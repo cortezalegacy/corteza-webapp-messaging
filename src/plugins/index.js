@@ -21,7 +21,7 @@ Vue.use(plugins.CortezaAPI('system'))
 Vue.use(plugins.CortezaAPI('messaging'))
 
 Vue.use(plugins.Auth(), { api: Vue.prototype.$SystemAPI })
-Vue.use(plugins.Settings, { api: Vue.prototype.$MessagingAPI })
+Vue.use(plugins.Settings, { api: Vue.prototype.$SystemAPI })
 
 Vue.use(bus, { eventbus })
 Vue.use(commands, { store })

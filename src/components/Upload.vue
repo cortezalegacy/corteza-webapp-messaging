@@ -112,7 +112,7 @@ export default {
     options () {
       return {
         paramName: 'upload',
-        maxFilesize: this.$s('Message.Attachments.MaxSize', 10), // mb
+        maxFilesize: this.$s('messaging.Message.Attachments.MaxSize', 10), // mb
         url: () => `${this.$MessagingAPI.baseURL}/channels/${this.channelID}/attach`,
         params: () => ({ replyTo: this.replyTo }),
         thumbnailMethod: 'contain',
@@ -221,7 +221,7 @@ export default {
       this.$emit('show', {})
 
       // Check if file type is allowed
-      let types = this.$s('Message.Attachments.Mimetypes')
+      let types = this.$s('messaging.Message.Attachments.Mimetypes')
       if (!types || !types.length) {
         types = ['*/*']
       }

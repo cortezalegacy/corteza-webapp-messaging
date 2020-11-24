@@ -23,7 +23,7 @@ export default {
      * @returns {Promise<*>}
      */
     async handleNotifications (message) {
-      if (!this.$s('UI.BrowserNotifications.Enabled', true)) {
+      if (!this.$s('messaging.UI.BrowserNotifications.Enabled', true)) {
         // Ignoring if not allowed
         return
       }
@@ -79,12 +79,12 @@ export default {
       // eslint-disable-next-line
       const channel = ch.name
       // eslint-disable-next-line
-      const headerTpl = this.$s('UI.BrowserNotifications.Header', '${user.label} in ${channel.name}')
+      const headerTpl = this.$s('messaging.UI.BrowserNotifications.Header', '${user.label} in ${channel.name}')
       // eslint-disable-next-line
       const header = eval('`' + headerTpl + '`')
 
       // Determine body
-      const bodyTrim = this.$s('UI.BrowserNotifications.MessageTrim', 200)
+      const bodyTrim = this.$s('messaging.UI.BrowserNotifications.MessageTrim', 200)
 
       const body = cleanMentions(message.message, this.users, this.channels)
       this.$notification.show(

@@ -44,7 +44,7 @@
 
       <!-- Add media buttons -->
       <button
-        v-if="!hideEmojiButton && $s('UI.Emoji.Enabled', true)"
+        v-if="!hideEmojiButton && $s('messaging.UI.Emoji.Enabled', true)"
         class="emoji-button input-button"
         @mousedown.stop.prevent="onEmojiClick"
       >
@@ -53,14 +53,14 @@
 
       <!-- Media source s for the hybrid app -->
       <button
-        v-if="enableAttachments && showCameraSource && $s('Message.Attachments.Source.Camera.Enabled', true)"
+        v-if="enableAttachments && showCameraSource && $s('messaging.Message.Attachments.Source.Camera.Enabled', true)"
         class="camera-button input-button"
         @mousedown.stop.prevent="onPromptCamera"
       >
         <font-awesome-icon icon="camera" />
       </button>
       <button
-        v-if="enableAttachments && showGallerySource && $s('Message.Attachments.Source.Gallery.Enabled', true)"
+        v-if="enableAttachments && showGallerySource && $s('messaging.Message.Attachments.Source.Gallery.Enabled', true)"
         class="gallery-button input-button"
         @mousedown.stop.prevent="onPromptGallery"
       >
@@ -153,7 +153,7 @@ export default {
 
   computed: {
     enableAttachments () {
-      return this.$s('Message.Attachments.Enabled', true)
+      return this.$s('messaging.Message.Attachments.Enabled', true)
     },
 
     replyToID () {

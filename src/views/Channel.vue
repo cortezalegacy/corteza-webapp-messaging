@@ -7,7 +7,7 @@
     @paste="onPaste"
   >
     <upload
-      v-if="$s('Message.Attachments.Enabled', true)"
+      v-if="$s('messaging.Message.Attachments.Enabled', true)"
       v-show="showUploadArea"
       ref="upload"
       :channel-i-d="channel.channelID"

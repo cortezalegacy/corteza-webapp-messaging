@@ -166,7 +166,7 @@ export default {
         // redirect to auth
         throw new Error()
       }
-      this.$Settings.init({ api: this.$MessagingAPI }).then(() => {
+      this.$Settings.init({ api: this.$SystemAPI }).then(() => {
         this.init()
         this.$ws.connect()
       })
