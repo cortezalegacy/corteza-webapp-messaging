@@ -65,10 +65,10 @@
     "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "3.10.0",
+    "@vue/cli-plugin-babel": "^3.10.0",
     "@vue/cli-plugin-eslint": "^4.1.2",
-    "@vue/cli-plugin-unit-mocha": "3.10.0",
-    "@vue/cli-service": "3.10.0",
+    "@vue/cli-plugin-unit-mocha": "^3.10.0",
+    "@vue/cli-service": "^3.10.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-standard": "^5.1.0",
     "@vue/test-utils": "^1.0.0-beta.20",
@@ -87,6 +87,13 @@
     "sass-loader": "^7.0.1",
     "sinon": "^7.5.0",
     "vue-template-compiler": "2.6.11"
+  },
+  "resolutions": {
+    "**/**/node-forge": "^0.10.0",
+    "**/**/serialize-javascript": "^3.1.0",
+    "**/**/yargs-parser": "^13.1.2",
+    "**/**/@hapi/hoek": "^8.5.1",
+    "**/**/highlight.js": "^10.4.1"
   },
   "nyc": {
     "all": true,
