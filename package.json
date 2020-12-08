@@ -86,7 +86,7 @@
     "nyc": "^14.1.1",
     "sass-loader": "^7.0.1",
     "sinon": "^7.5.0",
-    "vue-template-compiler": "2.6.11"
+    "vue-template-compiler": "2.6.12"
   },
   "resolutions": {
     "**/**/node-forge": "^0.10.0",
