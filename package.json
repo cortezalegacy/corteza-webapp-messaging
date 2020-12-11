@@ -46,7 +46,7 @@
     "lodash": "^4.17.19",
     "markdown-it": "^8.4.2",
     "markdown-it-v": "^1.1.0",
-    "moment": "^2.22.2",
+    "moment": "2.25.3",
     "numeral": "^2.0.6",
     "portal-vue": "2.1.7",
     "reconnecting-websocket": "4.4.0",
@@ -93,7 +93,8 @@
     "**/**/serialize-javascript": "^3.1.0",
     "**/**/yargs-parser": "^13.1.2",
     "**/**/@hapi/hoek": "^8.5.1",
-    "**/**/highlight.js": "^10.4.1"
+    "**/**/highlight.js": "^10.4.1",
+    "**/**/moment": "2.25.3"
   },
   "nyc": {
     "all": true,
