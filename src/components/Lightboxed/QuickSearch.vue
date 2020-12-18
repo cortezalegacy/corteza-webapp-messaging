@@ -142,8 +142,8 @@ export default {
 
       // Search users
       this.$SystemAPI.userList(({ query, limit: 15 }))
-        .then(({ set: users = [] }) => {
-          this.querriedUsers = users.filter(u => u.userID !== this.$auth.user.userID).map(u => new User(u))
+        .then(({ set = [] }) => {
+          this.querriedUsers = (set || []).filter(u => u.userID !== this.$auth.user.userID).map(u => new User(u))
         })
     },
 
