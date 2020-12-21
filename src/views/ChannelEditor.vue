@@ -205,7 +205,7 @@
 </template>
 <script>
 import { Channel, User } from 'corteza-webapp-messaging/src/types'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapActions } from 'vuex'
 import ConfirmationRow from 'corteza-webapp-messaging/src/components/Form/ConfirmationRow'
 import users from 'corteza-webapp-messaging/src/mixins/users'
 import MemberItem from 'corteza-webapp-messaging/src/components/Channel/MemberItem'
@@ -282,6 +282,10 @@ export default {
   methods: {
     ...mapMutations({
       removeChannelFromList: 'channels/removeFromList',
+    }),
+
+    ...mapActions({
+      loadChannels: 'channels/load',
     }),
 
     /**
@@ -365,8 +369,9 @@ export default {
      * @param {Channel} channel The channel to be created
      */
     channelCreate (channel) {
-      this.$MessagingAPI.channelCreate(this.channel).then((ch) => {
+      this.$MessagingAPI.channelCreate(this.channel).then(async (ch) => {
         this.$store.commit('channels/updateList', new Channel(ch))
+        await this.loadChannels()
         this.$router.push({ name: 'channel', params: { channelID: ch.channelID } })
       }).catch(({ error }) => {
         this.error = error
