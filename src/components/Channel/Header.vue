@@ -259,6 +259,7 @@ export default {
 
     onPart () {
       this.$MessagingAPI.channelPart({ channelID: this.channel.channelID, userID: this.$auth.user.userID })
+      this.$router.push({ name: 'landing' })
     },
 
     onJoin () {
