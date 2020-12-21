@@ -57,6 +57,7 @@
     "vue-focus": "^2.1.0",
     "vue-global-events": "^1.0.3",
     "vue-native-notification": "^1.0.5",
+    "vue-progressbar": "^0.7.5",
     "vue-router": "3.1.5",
     "vue-select": "3.4.0",
     "vue-simple-suggest": "1.10.1",

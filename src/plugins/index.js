@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueNativeNotification from 'vue-native-notification'
-
 import Router from 'vue-router'
+import VueProgressBar from 'vue-progressbar'
+import vars from '../themes/corteza-base/variables.scss'
 
 import store from 'corteza-webapp-messaging/src/store'
 
@@ -16,6 +17,11 @@ const eventbus = new Vue()
 
 Vue.use(Router)
 Vue.use(VueNativeNotification)
+Vue.use(VueProgressBar, {
+  color: vars.primary,
+  failedColor: vars.danger,
+  thickness: '7px',
+})
 
 Vue.use(plugins.CortezaAPI('system'))
 Vue.use(plugins.CortezaAPI('messaging'))

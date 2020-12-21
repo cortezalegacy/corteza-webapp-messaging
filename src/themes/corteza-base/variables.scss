@@ -31,5 +31,8 @@ $currentmymessagebgcolor : #a7d0e3 !default;
 :export {
   wideMinWidth: $wideminwidth;
   confortableMinWidth: $confortableminwidth;
+  primary: $primary;
+  danger: $danger;
+  secondary: $secondary;
 }
 /* stylelint-enable */

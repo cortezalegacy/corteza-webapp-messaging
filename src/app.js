@@ -16,11 +16,29 @@ export default (options = {}) => {
   options = {
     el: '#app',
     name: 'messaging',
-    template: '<div id="messenger" class="crust"><router-view/></div>',
+    template: '<div id="messenger" class="crust"><router-view/><vue-progress-bar /></div>',
 
     router,
     store,
     i18n: i18n(),
+
+    mounted () {
+      this.$Progress.finish()
+    },
+
+    created () {
+      if (this.$auth.is()) {
+        // Setup the progress bar
+        this.$Progress.start()
+        this.$router.beforeEach((to, from, next) => {
+          this.$Progress.start()
+          next()
+        })
+        this.$router.afterEach((to, from) => {
+          this.$Progress.finish()
+        })
+      }
+    },
 
     // Any additional options we want to merge
     ...options,
